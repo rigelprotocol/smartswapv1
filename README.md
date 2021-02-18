@@ -1,5 +1,6 @@
-### Rigel Protocol Smart Swap
-
+<h1 align="center">
+Rigel Protocol Smart Swap
+</h1>
 <br />
 
 <div align="center">A highly scalable, offline-first foundation with the best DX and a focus on performance and best practices</div>
