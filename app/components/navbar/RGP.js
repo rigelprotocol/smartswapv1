@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
-
+import RGPImage from '../../assets/rgp.svg';
 const RGP = () => {
   const modal2Disclosure = useDisclosure();
 
@@ -72,7 +72,7 @@ const RGP = () => {
               px={4}
               rounded="md"
             >
-              <img alt="rgp" zIndex="10" src="/rgp.svg" width={90} height={50} />
+              <RGPImage />
               <Text zIndex="10" color="#fff" fontSize="4xl" fontWeight="bold">
                 2,632.34
               </Text>

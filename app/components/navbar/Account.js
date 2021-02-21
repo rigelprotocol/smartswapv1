@@ -10,7 +10,9 @@ import {
   Modal,
   useDisclosure,
 } from '@chakra-ui/react';
-
+import CurrentImage from '../../assets/current.svg';
+import EditImage from '../../assets/edit.svg';
+import CopyImage from '../../assets/copy.svg';
 const Account = () => {
   const modal3Disclosure = useDisclosure();
 
@@ -45,7 +47,7 @@ const Account = () => {
           border="0px"
         >
           <Text mr="10px">0xDa7a...362b</Text>
-          <img src="/current.svg" width={20} height={20} alt="current" />
+          <CurrentImage />
         </Button>
       </Flex>
 
@@ -94,7 +96,7 @@ const Account = () => {
             </Flex>
 
             <Flex color="#fff" alignItems="center" rounded="md">
-              <img alt="alt" src="/current.svg" width={20} height={15} />
+              <CurrentImage />
               <Text color="gray.400" fontSize="13px" ml={2}>
                 0xDa7a...362b
               </Text>
@@ -108,14 +110,14 @@ const Account = () => {
               mb={3}
             >
               <Flex alignItems="center">
-                <img alt="alt" src="/copy.svg" width={20} height={15} />
+                <CopyImage />
                 <Text color="gray.400" fontSize="13px" ml={2}>
                   Copy Address
                 </Text>
               </Flex>
 
               <Flex alignItems="center">
-                <img alt="alt" src="/edit.svg" width={20} height={15} />
+                <EditImage />
                 <Text color="gray.400" fontSize="13px" ml={2}>
                   View on Etherscan
                 </Text>

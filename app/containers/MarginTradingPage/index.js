@@ -1,6 +1,6 @@
 /**
  *
- * MarginTradingPage
+ * Margin Trading Page
  *
  */
 
