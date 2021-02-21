@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/layout';
-import styles from '../../styles/navbar.module.css';
-import React from 'react'
+import React from 'react';
+import styles from '../../styles/navbar.css';
 
 import {
   ModalOverlay,

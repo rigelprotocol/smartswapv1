@@ -1,16 +1,9 @@
-import Link from 'next/link';
-import styles from '../../styles/navbar.module.css';
-import {
-  MenuButton,
-  Button,
-  Menu,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-} from '@chakra-ui/react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { MenuButton, Button, Menu, MenuList, MenuItem } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { ROUTES } from '../../utils/constants';
-
+import styles from '../../styles/navbar.css';
 const TradeButton = () => {
   return (
     <Menu mr={4} isLazy>
@@ -37,32 +30,28 @@ const TradeButton = () => {
         rounded="2xl"
         border=" 1px solid rgba(255, 255, 255,0.15) "
       >
-        <Link href={ROUTES.SMART_SWAPPING}>
-          <MenuItem
-            _hover={{ background: '#29235E' }}
-            _focus={{ outline: 0, background: '#29235E' }}
-            cursor="pointer"
-            fontSize="14px"
-            rounded="xl"
-            h="40px"
-            className={styles.trade__button__item}
-          >
-            Smart Swapping
-          </MenuItem>
-        </Link>
-        <Link href={ROUTES.LIQUIDITY}>
-          <MenuItem
-            _hover={{ background: '#29235E' }}
-            _focus={{ outline: 0, background: '#29235E' }}
-            cursor="pointer"
-            fontSize="14px"
-            rounded="xl"
-            h="40px"
-            className={styles.trade__button__item}
-          >
-            Liquidity
-          </MenuItem>
-        </Link>
+        <MenuItem
+          _hover={{ background: '#29235E' }}
+          _focus={{ outline: 0, background: '#29235E' }}
+          cursor="pointer"
+          fontSize="14px"
+          rounded="xl"
+          h="40px"
+          className={styles.trade__button__item}
+        >
+          <Link to={ROUTES.SMART_SWAPPING}> Smart Swapping </Link>
+        </MenuItem>
+        <MenuItem
+          _hover={{ background: '#29235E' }}
+          _focus={{ outline: 0, background: '#29235E' }}
+          cursor="pointer"
+          fontSize="14px"
+          rounded="xl"
+          h="40px"
+          className={styles.trade__button__item}
+        >
+          <Link to={ROUTES.LIQUIDITY}> Liquidity </Link>
+        </MenuItem>
       </MenuList>
     </Menu>
   );

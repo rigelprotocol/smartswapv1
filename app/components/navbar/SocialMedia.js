@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Menu, MenuButton, MenuList, Button } from '@chakra-ui/react';
 import Telegram from '../../assets/social/telegram.svg';
 import Twitter from '../../assets/social/twitter.svg';

@@ -1,5 +1,4 @@
 import { Flex, Text } from '@chakra-ui/layout';
-import Image from 'next/dist/client/image';
 import React from 'react'
 import {
   ModalOverlay,
@@ -46,7 +45,7 @@ const Account = () => {
           border="0px"
         >
           <Text mr="10px">0xDa7a...362b</Text>
-          <Image src="/current.svg" width={20} height={20} />
+          <img src="/current.svg" width={20} height={20} alt="current" />
         </Button>
       </Flex>
 
@@ -95,7 +94,7 @@ const Account = () => {
             </Flex>
 
             <Flex color="#fff" alignItems="center" rounded="md">
-              <Image src="/current.svg" width={20} height={15} />
+              <img alt="alt" src="/current.svg" width={20} height={15} />
               <Text color="gray.400" fontSize="13px" ml={2}>
                 0xDa7a...362b
               </Text>
@@ -109,14 +108,14 @@ const Account = () => {
               mb={3}
             >
               <Flex alignItems="center">
-                <Image src="/copy.svg" width={20} height={15} />
+                <img alt="alt" src="/copy.svg" width={20} height={15} />
                 <Text color="gray.400" fontSize="13px" ml={2}>
                   Copy Address
                 </Text>
               </Flex>
 
               <Flex alignItems="center">
-                <Image src="/edit.svg" width={20} height={15} />
+                <img alt="alt" src="/edit.svg" width={20} height={15} />
                 <Text color="gray.400" fontSize="13px" ml={2}>
                   View on Etherscan
                 </Text>

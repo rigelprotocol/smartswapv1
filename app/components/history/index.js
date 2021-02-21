@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 import React, { useState } from 'react';
-import styles from '../../styles/history.module.css';
+import styles from '../../styles/history.css';
 import Empty from './EmptyHistory';
 
 export default function Home() {

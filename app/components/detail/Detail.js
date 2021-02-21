@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import styles from '../../styles/details.module.css';
+import styles from '../../styles/details.css';
 
 const Detail = () => {
   return (

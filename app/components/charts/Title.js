@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/layout';
 import { AddIcon } from '@chakra-ui/icons';
-import styles from '../../styles/chart.module.css';
+import styles from '../../styles/chart.css';
 import React from 'react';
 
 const ShowDetails = ({ setShow }) => {

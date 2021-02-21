@@ -1,6 +1,5 @@
+import React from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
-import Image from 'next/dist/client/image';
-import BreakdownBg from '../../assets/breakdown-bg.svg';
 import {
   ModalOverlay,
   Button,
@@ -11,6 +10,7 @@ import {
   Modal,
   useDisclosure,
 } from '@chakra-ui/react';
+import BreakdownBg from '../../assets/breakdown-bg.svg';
 
 const RGP = () => {
   const modal2Disclosure = useDisclosure();
@@ -72,7 +72,7 @@ const RGP = () => {
               px={4}
               rounded="md"
             >
-              <Image zIndex="10" src="/rgp.svg" width={90} height={50} />
+              <img alt="rgp" zIndex="10" src="/rgp.svg" width={90} height={50} />
               <Text zIndex="10" color="#fff" fontSize="4xl" fontWeight="bold">
                 2,632.34
               </Text>

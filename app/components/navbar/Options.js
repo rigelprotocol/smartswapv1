@@ -1,3 +1,4 @@
+import React from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { ModalBody, ModalHeader } from '@chakra-ui/react';
 import { WalletContext } from '../../context';

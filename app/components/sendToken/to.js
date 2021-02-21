@@ -1,5 +1,6 @@
 import { useDisclosure } from '@chakra-ui/hooks';
 import { Box, Flex, Text } from '@chakra-ui/layout';
+import React, { useState } from 'react';
 import { Menu } from '@chakra-ui/menu';
 import { Button } from '@chakra-ui/button';
 import { ChevronDownIcon } from '@chakra-ui/icons';
@@ -18,7 +19,6 @@ import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
-import React, { useState } from 'react';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

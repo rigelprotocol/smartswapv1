@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import styles from '../../styles/chart.module.css';
+import styles from '../../styles/chart.css';
 import Chart from 'chart.js';
 import React, { useEffect } from 'react';
 import { MinusIcon } from '@chakra-ui/icons';

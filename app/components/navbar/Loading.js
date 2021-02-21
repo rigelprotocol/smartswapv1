@@ -1,5 +1,5 @@
+import React from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
-import Image from 'next/dist/client/image';
 import { ModalBody, ModalHeader, Spinner } from '@chakra-ui/react';
 import { WalletContext } from '../../context';
 
@@ -45,7 +45,7 @@ const Loading = () => {
                 <Text color="white">Metamask</Text>
                 <Text color="white">Easy-to-use browser extension.</Text>
               </div>
-              <Image src="/mask.svg" width={50} height={25} />
+              <img alt="mask" src="/mask.svg" width={50} height={25} />
             </Flex>
           </ModalBody>
         </>

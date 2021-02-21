@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box } from '@chakra-ui/layout';
 import ChartGraph from './ChartGraph';
-import styles from '../../styles/chart.module.css';
+import styles from '../../styles/chart.css';
 import Title from './Title';
 
 const ShowDetails = () => {

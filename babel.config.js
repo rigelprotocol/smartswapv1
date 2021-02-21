@@ -9,6 +9,7 @@ module.exports = {
     '@babel/preset-react',
   ],
   plugins: [
+    'inline-react-svg',
     'styled-components',
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-syntax-dynamic-import',

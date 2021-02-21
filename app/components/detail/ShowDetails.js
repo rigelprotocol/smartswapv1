@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 import Detail from './Detail';
-import styles from '../../styles/details.module.css';
+import styles from '../../styles/details.css';
 
 const ShowDetails = () => {
   const [detail, setDetail] = useState(false);
