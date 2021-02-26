@@ -6,10 +6,12 @@
  * contain code that should be seen on all pages. (e.g. navigation bar)
  *
  */
-
 import React, { useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { ThemeProvider, theme } from '@chakra-ui/react';
+import { ToastProvider } from 'react-toast-notifications';
+import { connect } from 'react-redux';
+import Web3Provider, { Connectors } from 'web3-react';
 
 import HomePage from 'containers/HomePage/Loadable';
 import FarmingPage from 'containers/FarmingPage/Loadable';
@@ -20,7 +22,10 @@ import NotFoundPage from 'containers/NotFoundPage/Loadable';
 
 import '../../styles/globals.css';
 import { WalletContext } from '../../context';
+import Toast from '../../components/Toast';
 
+const { InjectedConnector } = Connectors;
+const MetaMask = new InjectedConnector({ supportedNetworks: [1, 4] });
 const breakpoints = ['360px', '768px', '1024px', '1440px'];
 breakpoints.sm = breakpoints[0];
 breakpoints.md = breakpoints[1];
@@ -31,24 +36,44 @@ const newTheme = {
   ...theme,
   breakpoints,
 };
-export default function App() {
+function App(props) {
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   return (
-    <ThemeProvider theme={newTheme}>
-      <WalletContext.Provider
-        value={{ connected, loading, show, setConnected, setLoading, setShow }}
-      >
-        <Switch>
-          <Route exact path="/" component={HomePage} />
-          <Route exact path="/farming" component={FarmingPage} />
-          <Route exact path="/liquidity" component={LiquidityPage} />
-          <Route exact path="/smart-swapping" component={SmartSwappingPage} />
-          <Route exact path="/margin-trading" component={MarginTradingPage} />
-          <Route component={NotFoundPage} />
-        </Switch>
-      </WalletContext.Provider>
-    </ThemeProvider>
+    <ToastProvider>
+      <ThemeProvider theme={newTheme}>
+        <Toast {...props} />
+        <Web3Provider connectors={{ MetaMask }} libraryName="ethers.js">
+          <WalletContext.Provider
+            value={{
+              connected,
+              loading,
+              show,
+              setConnected,
+              setLoading,
+              setShow,
+            }}
+          >
+            <Switch>
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/farming" component={FarmingPage} />
+              <Route exact path="/liquidity" component={LiquidityPage} />
+              <Route exact path="/smart-swapping" component={SmartSwappingPage} />
+              <Route exact path="/margin-trading" component={MarginTradingPage} />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </WalletContext.Provider>
+        </Web3Provider>
+      </ThemeProvider>
+    </ToastProvider>
   );
 }
+const mapStateToProps = state => {
+  return state;
+};
+
+export default connect(
+  mapStateToProps,
+  {},
+)(App);

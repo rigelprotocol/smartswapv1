@@ -7,13 +7,16 @@ import { connectRouter } from 'connected-react-router';
 
 import history from 'utils/history';
 import languageProviderReducer from 'containers/LanguageProvider/reducer';
-
+import NoticeProviderReducer from 'containers/NoticeProvider/reducer'
+import WalletProviderReducer from 'containers/WalletProvider/reducer'
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
  */
 export default function createReducer(injectedReducers = {}) {
   const rootReducer = combineReducers({
     language: languageProviderReducer,
+    notice: NoticeProviderReducer,
+    wallet: WalletProviderReducer,
     router: connectRouter(history),
     ...injectedReducers,
   });

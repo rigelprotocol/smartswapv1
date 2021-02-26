@@ -16,7 +16,6 @@ export const TABS = {
 };
 export default function HomePage() {
   const [tab, setTab] = useState(TABS.MANUAL);
-
   return (
     <Layout title="Home Page">
       <>

@@ -13,7 +13,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  MenuDivider,
   ModalCloseButton,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
@@ -92,11 +91,7 @@ const Wallet = () => {
               </MenuItem>
             </MenuList>
           </Menu>
-          <Modal
-            isOpen={modal1Disclosure.isOpen}
-            onClose={close}
-            isCentered="true"
-          >
+          <Modal isOpen={modal1Disclosure.isOpen} onClose={close} isCentered>
             <ModalOverlay />
             <ModalContent
               bg="#120136"
@@ -106,9 +101,9 @@ const Wallet = () => {
               minHeight="40vh"
             >
               <ModalCloseButton
-                bg={'none'}
+                bg="none"
                 border="0px"
-                color={'#fff'}
+                color="#fff"
                 cursor="pointer"
                 _focus={{ outline: 'none' }}
               />
