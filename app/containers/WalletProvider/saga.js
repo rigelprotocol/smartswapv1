@@ -1,4 +1,4 @@
-import { put, takeLatest } from 'redux-saga/effects';
+import { put, all, fork, takeEvery, takeLatest } from 'redux-saga/effects';
 import { notify } from '../NoticeProvider/actions';
 import { connectedWallet } from './actions';
 import { WALLET_CONNECTED } from './constants';
@@ -22,6 +22,10 @@ export function* connectWallet() {
     );
   }
 }
-export default function* walletProviderSaga() {
-  yield takeLatest(WALLET_CONNECTED, connectWallet);
+export function* walletProviderSaga() {
+  yield takeLatest(WALLET_CONNECTED, linkWallet);
+}
+
+export default function* rootSaga() {
+  yield all([fork(walletProviderSaga)]);
 }

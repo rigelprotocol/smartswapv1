@@ -22,6 +22,8 @@ const walletProviderReducer = (state = initialState, action) =>
         draft.wallet = action.wallet;
         draft.connected = true;
         break;
+      default:
+        break;
     }
   });
 

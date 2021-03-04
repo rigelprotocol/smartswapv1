@@ -13,7 +13,6 @@ export function defaultAction() {
 }
 
 export function notify(message) {
-  console.log('Sooner')
   return {
     type: NOTICE,
     message,
