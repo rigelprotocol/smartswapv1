@@ -19,8 +19,8 @@ import MarginTradingPage from 'containers/MarginTradingPage/Loadable';
 import SmartSwappingPage from 'containers/SmartSwappingPage/Loadable';
 import LiquidityPage from 'containers/LiquidityPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
-// import swapConnect from '../../utils/swapConnect.js';
-// import smartSwap from '../../utils/smartSwap.js';
+import swapConnect from '../../utils/swapConnect.js';
+import smartSwap from '../../utils/smartSwap.js';
 
 import '../../styles/globals.css';
 import { WalletContext } from '../../context';
