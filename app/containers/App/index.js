@@ -19,6 +19,8 @@ import MarginTradingPage from 'containers/MarginTradingPage/Loadable';
 import SmartSwappingPage from 'containers/SmartSwappingPage/Loadable';
 import LiquidityPage from 'containers/LiquidityPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+// import swapConnect from '../../utils/swapConnect.js';
+// import smartSwap from '../../utils/smartSwap.js';
 
 import '../../styles/globals.css';
 import { WalletContext } from '../../context';
@@ -59,8 +61,16 @@ function App(props) {
               <Route exact path="/" component={HomePage} />
               <Route exact path="/farming" component={FarmingPage} />
               <Route exact path="/liquidity" component={LiquidityPage} />
-              <Route exact path="/smart-swapping" component={SmartSwappingPage} />
-              <Route exact path="/margin-trading" component={MarginTradingPage} />
+              <Route
+                exact
+                path="/smart-swapping"
+                component={SmartSwappingPage}
+              />
+              <Route
+                exact
+                path="/margin-trading"
+                component={MarginTradingPage}
+              />
               <Route component={NotFoundPage} />
             </Switch>
           </WalletContext.Provider>
@@ -69,9 +79,7 @@ function App(props) {
     </ToastProvider>
   );
 }
-const mapStateToProps = state => {
-  return state;
-};
+const mapStateToProps = state => state;
 
 export default connect(
   mapStateToProps,
