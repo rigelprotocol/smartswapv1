@@ -14,7 +14,6 @@ const Options = () => {
   const connectMetaMask = () => {
     connectWallet();
     context.setFirstValidConnector(['MetaMask']);
-    notify({ title: 'Dagogo', body: 'Shoot all', type: 'success' });
   };
   const connectTrustWallet = () => {
     context.setFirstValidConnector(['TrustWallet']);
