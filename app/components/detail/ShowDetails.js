@@ -14,7 +14,9 @@ const ShowDetails = () => {
         px={4}
         className={styles.header__container}
       >
-        <Text className={styles.header}>Details</Text>
+        <Text className={`${styles.header} ${styles.show_effect}`}>
+          Details
+        </Text>
         <Flex alignItems="center" rounded={100} bg="#">
           {detail ? (
             <MinusIcon

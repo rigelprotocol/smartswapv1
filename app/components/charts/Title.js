@@ -12,7 +12,7 @@ const ShowDetails = ({ setShow }) => {
       rounded="sm"
       className={styles.header__container}
     >
-      <Text className={styles.header}>Chart Graph</Text>
+      <Text className={`${styles.header} ${styles.chartTitle}`}>Chart Graph</Text>
       <Flex alignItems="center" rounded={100} bg="#">
         <AddIcon
           w={6}

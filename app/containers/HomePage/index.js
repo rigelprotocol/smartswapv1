@@ -20,14 +20,20 @@ export default function HomePage() {
     <Layout title="Home Page">
       <>
         <Flex mb="100px" mx={2} flexWrap="wrap">
-          <Box mx={5} w={['100%', '100%', '45%', '29.5%']} mb={4}>
+          <Box w={['100%', '100%', '30%', '29.5%']} mb={4} ml="2.8" mr="-0.7">
             <Box bg="#120136" rounded="2xl">
               {tab === TABS.MANUAL ? <ShowDetails /> : <ActiveOrder active />}
             </Box>
           </Box>
 
-          <Box mx={5} w={['100%', '100%', '45%', '29.5%']} rounded="lg" mb={4}>
-            <Box bg="#120136" rounded="2xl">
+          <Box mx={5} w={['100%', '100%', '30%', '29.5%']} rounded="lg" mb={4}>
+            <Box
+              style={{
+                boxShadow: '0px 0px 1px inset #343337, 0px 0px 1px gray',
+              }}
+              bg="#120136"
+              rounded="2xl"
+            >
               <Flex color="gray.500" justifyContent="space-between" px={4}>
                 <Text
                   cursor="pointer"
@@ -68,8 +74,14 @@ export default function HomePage() {
             <ChartGraph />
             <SendToken />
           </Box>
-          <Box mx={5} w={['100%', '100%', '45%', '29.5%']} mb={4}>
-            <Box bg="#120136" rounded="2xl">
+          <Box mx={5} w={['100%', '100%', '30%', '29.5%']} mb={4}>
+            <Box
+              bg="#120136"
+              rounded="2xl"
+              style={{
+                boxShadow: '0px 0px 1px inset #343337, 0px 0px 1px gray',
+              }}
+            >
               <History />
             </Box>
           </Box>
