@@ -15,6 +15,13 @@ const Options = () => {
     connectWallet();
     context.setFirstValidConnector(['MetaMask']);
   };
+  // to access the Wallet connected please use context
+  console.log(context)
+  // to use else where apart from the Options page
+  // import { useWeb3Context } from 'web3-react';
+  // const context = useWeb3Context();
+  // then use the context
+
   const connectTrustWallet = () => {
     context.setFirstValidConnector(['TrustWallet']);
   };
