@@ -3,11 +3,20 @@ import Web3 from 'web3';
 import { useEffect, useState } from 'react';
 import swapConnect from './swapConnect';
 // states Value
+<<<<<<< HEAD
 // const [rgpBal, setrgpBal] = useState(0);
 // const [weth9, setWeth9] = useState(0);
 // const [busd, setbusd] = useState(0);
 
 export default async function smartSwap() {
+=======
+
+export default async function smartSwap() {
+  const [rgpBal, setrgpBal] = useState(0);
+  const [weth9, setWeth9] = useState(0);
+  const [busd, setbusd] = useState(0);
+  useEffect(() => {
+>>>>>>> f485ad207bc125feba9c0bd29a95df11f8aaac34
     const contractBal = async () => {
       const {
         BUSD_CONTRACT,

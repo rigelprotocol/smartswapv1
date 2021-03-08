@@ -1,8 +1,12 @@
+import React, { useState } from 'react';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Menu } from '@chakra-ui/menu';
 import { Button } from '@chakra-ui/button';
+import { Input } from '@chakra-ui/input';
 import { ChevronDownIcon } from '@chakra-ui/icons';
+import { useMediaQuery } from '@chakra-ui/react';
+
 import {
   Modal,
   ModalBody,
@@ -12,25 +16,26 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/modal';
-import { Input } from '@chakra-ui/input';
+
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
-import React, { useState } from 'react';
-import { color } from '@chakra-ui/react';
+import InputSelector from './InputSelector';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
+  const [fromAmount, setFromAmount] = useState('');
+  const handleChangeFromAmount = event => setFromAmount(event.target.value);
 
   return (
     <>
       <Box
         color="#fff"
         bg="#29235E"
-        h="100px"
+        h="100%"
         mb="10px"
         justifyContent="space-between"
         px={4}
@@ -44,54 +49,15 @@ const Manual = () => {
             Balance: 2,632.34
           </Text>
         </Flex>
-        <Flex justifyContent="space-between">
-          <Text fontSize="lg" color=" rgba(255, 255, 255,0.25)">
-            0.0
-          </Text>
-          <Flex
-            cursor="pointer"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text
-              bg="rgba(64, 186, 213,0.25)"
-              p="5px 10px"
-              rounded="lg"
-              mt="10px"
-              mr="15px"
-              fontSize="sm"
-              color="#72cfe4"
-              _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-            >
-              MAX
-            </Text>
-            <Flex>
-              <Menu>
-                <Button
-                  onClick={onOpen}
-                  border="0px"
-                  h="30px"
-                  fontWeight="regular"
-                  fontSize="16px"
-                  cursor="pointer"
-                  bg={selectedToken ? 'none' : '#40BAD5'}
-                  marginBottom="5px"
-                  color="white"
-                  _hover={{ background: '#72cfe4', color: '#29235E' }}
-                  rightIcon={<ChevronDownIcon />}
-                >
-                  {selectedToken === TOKENS.BNB && <BNBImage />}
-                  {selectedToken === TOKENS.ETH && <ETHImage />}
-                  {selectedToken === TOKENS.RGP && <RGPImage />}
-                  <Text ml={4}>{selectedToken}</Text>
-                </Button>
-              </Menu>
-            </Flex>
-          </Flex>
-        </Flex>
+        <InputSelector
+          handleChange={handleChangeFromAmount}
+          value={fromAmount}
+          max
+          onOpen={onOpen}
+          selectedToken={selectedToken}
+        />
       </Box>
-
-      <Modal isOpen={isOpen} onClose={onClose} isCentered="true">
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent
           bg="#120136"
@@ -101,9 +67,9 @@ const Manual = () => {
           minHeight="60vh"
         >
           <ModalCloseButton
-            bg={'none'}
+            bg="none"
             border="0px"
-            color={'#fff'}
+            color="#fff"
             cursor="pointer"
             _focus={{ outline: 'none' }}
           />
@@ -116,6 +82,7 @@ const Manual = () => {
               rounded="2xl"
               h="50px"
               fontSize="sm"
+              variant="outline"
             />
             <Flex justifyContent="space-between" mt={5}>
               <Text fontSize="sm" fontWeight="light" color="#fff">
@@ -182,7 +149,7 @@ const Manual = () => {
             </Flex>
           </ModalBody>
 
-          <ModalFooter></ModalFooter>
+          <ModalFooter />
         </ModalContent>
       </Modal>
     </>
