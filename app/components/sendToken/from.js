@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Menu } from '@chakra-ui/menu';
@@ -22,13 +22,20 @@ import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
+import swapConnect from '../../utils/swapConnect';
 import InputSelector from './InputSelector';
+import { ethers } from 'ethers';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
   const [fromAmount, setFromAmount] = useState('');
+  // const [tokenBalance, setTokenaBalance] = useState('');
   const handleChangeFromAmount = event => setFromAmount(event.target.value);
+  
+
+  const {} = swapConnect();
+
 
   return (
     <>
@@ -46,6 +53,7 @@ const Manual = () => {
             From
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+            {/* Balance: {tokenBalance} */}
             Balance: 2,632.34
           </Text>
         </Flex>

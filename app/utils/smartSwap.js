@@ -1,22 +1,11 @@
 import { ethers } from 'ethers';
 import Web3 from 'web3';
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import swapConnect from './swapConnect';
-// states Value
-<<<<<<< HEAD
-// const [rgpBal, setrgpBal] = useState(0);
-// const [weth9, setWeth9] = useState(0);
-// const [busd, setbusd] = useState(0);
+
 
 export default async function smartSwap() {
-=======
-
-export default async function smartSwap() {
-  const [rgpBal, setrgpBal] = useState(0);
-  const [weth9, setWeth9] = useState(0);
-  const [busd, setbusd] = useState(0);
-  useEffect(() => {
->>>>>>> f485ad207bc125feba9c0bd29a95df11f8aaac34
+  // useEffect(() => {
     const contractBal = async () => {
       const {
         BUSD_CONTRACT,
@@ -27,13 +16,13 @@ export default async function smartSwap() {
         SmartSwapFactory_Contract,
       } = await swapConnect();
       if (signer && address) {
-        // setrgpBal(rgpBal);
+        setTokenaBalance(tokenBalance);
         // get rigel Balances of Account
         const rigelBal = await RigelToken_Contract.balanceOf(
           address.toString(),
         );
         const rigelBalance = ethers.utils.formatEther(rigelBal).toString();
-        // setrgpBal(rigelBalance);
+        setTokenaBalance(rigelBalance);
 
         // get WETH9 Balances of Account
         // setWeth9(weth9);
@@ -47,8 +36,8 @@ export default async function smartSwap() {
         const BUSDbalance = ethers.utils.formatEther(BUSDBal).toString();
         // setbusd(BUSDbalance);
       }
-    };
-
+    }
+  // }
   // search by address
   const lcokUpAddress = async () => {
     // Will require storing the name in a state value, then user call from state
@@ -187,5 +176,3 @@ export default async function smartSwap() {
     );
   };
 }
-
-// export default smartSwap;
