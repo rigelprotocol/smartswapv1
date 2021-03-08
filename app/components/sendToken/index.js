@@ -46,7 +46,7 @@ const Manual = () => {
               connectMetaMask();
             }}
           >
-            Connect
+            Enter an Amount
           </Button>
         </Box>
       </Box>
