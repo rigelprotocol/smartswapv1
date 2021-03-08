@@ -3,12 +3,11 @@ import Web3 from 'web3';
 import { useEffect, useState } from 'react';
 import swapConnect from './swapConnect';
 // states Value
-const [rgpBal, setrgpBal] = useState(0);
-const [weth9, setWeth9] = useState(0);
-const [busd, setbusd] = useState(0);
+// const [rgpBal, setrgpBal] = useState(0);
+// const [weth9, setWeth9] = useState(0);
+// const [busd, setbusd] = useState(0);
 
 export default async function smartSwap() {
-  useEffect(() => {
     const contractBal = async () => {
       const {
         BUSD_CONTRACT,
@@ -19,30 +18,27 @@ export default async function smartSwap() {
         SmartSwapFactory_Contract,
       } = await swapConnect();
       if (signer && address) {
-        setrgpBal(rgpBal);
+        // setrgpBal(rgpBal);
         // get rigel Balances of Account
         const rigelBal = await RigelToken_Contract.balanceOf(
           address.toString(),
         );
         const rigelBalance = ethers.utils.formatEther(rigelBal).toString();
-        setrgpBal(rigelBalance);
+        // setrgpBal(rigelBalance);
 
         // get WETH9 Balances of Account
-        setWeth9(weth9);
+        // setWeth9(weth9);
         const WETH9Bal = await WETH9_Contract.balanceOf(address.toString());
         const WETHbalance = ethers.utils.formatEther(WETH9Bal).toString();
-        setWeth9(WETHbalance);
+        // setWeth9(WETHbalance);
 
         // get BUSD Balances of Account
-        setbusd(busd);
+        // setbusd(busd);
         const BUSDBal = await BUSD_CONTRACT.balanceOf(address.toString());
         const BUSDbalance = ethers.utils.formatEther(BUSDBal).toString();
-        setbusd(BUSDbalance);
+        // setbusd(BUSDbalance);
       }
     };
-
-    contractBal();
-  }, [props]);
 
   // search by address
   const lcokUpAddress = async () => {
@@ -171,7 +167,6 @@ export default async function smartSwap() {
     const accounts = await web3.eth.getAccounts();
 
     const amountOUT = ethers.utils.formatEther().toString();
-    const getAmountOutM = ethers.utils.formatEther().toString();
     // const dLine = ethers.utils.formatEther().toString();
 
     const _swap = SmartSwapRouter02_Contract.swapETHForExactTokens(
