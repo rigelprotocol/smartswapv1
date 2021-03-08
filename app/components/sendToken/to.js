@@ -19,11 +19,13 @@ import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
+import InputSelector from './InputSelector';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState('Select a token');
-
+  const [toAmount, setToAmount] = useState('');
+  const handleChangeToAmount = event => setToAmount(event.target.value);
   return (
     <>
       <Box
@@ -40,34 +42,16 @@ const Manual = () => {
             To
           </Text>
         </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="lg" color=" rgba(255, 255, 255,0.25)">
-            0.0
-          </Text>
-          <Menu>
-            <Button
-              onClick={onOpen}
-              border="0px"
-              h="30px"
-              fontWeight="regular"
-              fontSize="16px"
-              cursor="pointer"
-              bg={selectedToken ? 'none' : '#40BAD5'}
-              marginBottom="5px"
-              color="white"
-              _hover={{ background: '#72cfe4', color: '#29235E' }}
-              rightIcon={<ChevronDownIcon />}
-            >
-              {selectedToken === TOKENS.BNB && <BNBImage />}
-              {selectedToken === TOKENS.ETH && <ETHImage />}
-              {selectedToken === TOKENS.RGP && <RGPImage />}
-              <Text>{selectedToken}</Text>
-            </Button>
-          </Menu>
-        </Flex>
+        <InputSelector
+          max={false}
+          handleChange={handleChangeToAmount}
+          value={toAmount}
+          selectedToken={selectedToken}
+          onOpen={onOpen}
+        />
       </Box>
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered="true">
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent
           bg="#120136"

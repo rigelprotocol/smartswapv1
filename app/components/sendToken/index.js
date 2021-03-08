@@ -2,17 +2,11 @@
 import { Box } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import React from 'react';
-import { useWeb3Context } from 'web3-react';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
 
 const Manual = () => {
-  const context = useWeb3Context();
-
-  const connectMetaMask = () => {
-    context.setFirstValidConnector(['MetaMask']);
-  };
   return (
     <div>
       <Box
@@ -43,7 +37,7 @@ const Manual = () => {
             _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
             _active={{ outline: '#29235E', background: '#29235E' }}
             onClick={() => {
-              connectMetaMask();
+              console.log('Hello')
             }}
           >
             Enter an Amount

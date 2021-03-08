@@ -22,132 +22,13 @@ import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
+import InputSelector from './InputSelector';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
   const [fromAmount, setFromAmount] = useState('');
-  const [toAmount, setToAmount] = useState('');
   const handleChangeFromAmount = event => setFromAmount(event.target.value);
-  const handleChangeToAmount = event => setToAmount(event.target.value);
-  const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
-  const isMobile = () => {
-    if (isMobileDevice) {
-      return (
-        <>
-          <Flex justifyContent="space-between">
-            <Input
-              isFullWidth
-              placeholder="0.0"
-              fontSize="lg"
-              color=" rgba(255, 255, 255,0.25)"
-              value={fromAmount}
-              isRequired
-              type="number"
-              width="38%"
-              onChange={handleChangeFromAmount}
-            />
-            <Flex
-              cursor="pointer"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Text
-                bg="rgba(64, 186, 213,0.25)"
-                p="5px 10px"
-                rounded="lg"
-                mt="10px"
-                mr="15px"
-                fontSize="sm"
-                color="#72cfe4"
-                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-              >
-                MAX
-              </Text>
-              <Flex>
-                <Menu>
-                  <Button
-                    onClick={onOpen}
-                    border="0px"
-                    h="30px"
-                    fontWeight="regular"
-                    fontSize="16px"
-                    cursor="pointer"
-                    bg={selectedToken ? 'none' : '#40BAD5'}
-                    marginBottom="5px"
-                    color="white"
-                    _hover={{ background: '#72cfe4', color: '#29235E' }}
-                    rightIcon={<ChevronDownIcon />}
-                  >
-                    {selectedToken === TOKENS.BNB && <BNBImage />}
-                    {selectedToken === TOKENS.ETH && <ETHImage />}
-                    {selectedToken === TOKENS.RGP && <RGPImage />}
-                    <Text ml={4}>{selectedToken}</Text>
-                  </Button>
-                </Menu>
-              </Flex>
-            </Flex>
-          </Flex>
-        </>
-      );
-    }
-    return (
-      <>
-        <Flex justifyContent="space-between">
-          <Input
-            isFullWidth
-            placeholder="0.0"
-            fontSize="lg"
-            color=" rgba(255, 255, 255,0.25)"
-            value={fromAmount}
-            isRequired
-            type="number"
-            onChange={handleChangeFromAmount}
-          />
-        </Flex>
-        <Flex
-          cursor="pointer"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Text
-            bg="rgba(64, 186, 213,0.25)"
-            p="5px 10px"
-            rounded="lg"
-            mt="10px"
-            mr="15px"
-            fontSize="sm"
-            color="#72cfe4"
-            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-          >
-            MAX
-          </Text>
-          <Flex>
-            <Menu>
-              <Button
-                onClick={onOpen}
-                border="0px"
-                h="30px"
-                fontWeight="regular"
-                fontSize="16px"
-                cursor="pointer"
-                bg={selectedToken ? 'none' : '#40BAD5'}
-                marginBottom="5px"
-                color="white"
-                _hover={{ background: '#72cfe4', color: '#29235E' }}
-                rightIcon={<ChevronDownIcon />}
-              >
-                {selectedToken === TOKENS.BNB && <BNBImage />}
-                {selectedToken === TOKENS.ETH && <ETHImage />}
-                {selectedToken === TOKENS.RGP && <RGPImage />}
-                <Text ml={4}>{selectedToken}</Text>
-              </Button>
-            </Menu>
-          </Flex>
-        </Flex>
-      </>
-    );
-  };
 
   return (
     <>
@@ -168,7 +49,13 @@ const Manual = () => {
             Balance: 2,632.34
           </Text>
         </Flex>
-        {isMobile()}
+        <InputSelector
+          handleChange={handleChangeFromAmount}
+          value={fromAmount}
+          max
+          onOpen={onOpen}
+          selectedToken={selectedToken}
+        />
       </Box>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
