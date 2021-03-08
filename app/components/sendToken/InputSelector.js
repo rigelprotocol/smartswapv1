@@ -79,25 +79,27 @@ const InputSelector = props => {
           placeholder="0.0"
           fontSize="lg"
           color=" rgba(255, 255, 255,0.25)"
-          value={fromAmount}
+          value={value}
           isRequired
           type="number"
-          onChange={handleChangeFromAmount}
+          onChange={handleChange}
         />
       </Flex>
       <Flex cursor="pointer" justifyContent="space-between" alignItems="center">
-        <Text
-          bg="rgba(64, 186, 213,0.25)"
-          p="5px 10px"
-          rounded="lg"
-          mt="10px"
-          mr="15px"
-          fontSize="sm"
-          color="#72cfe4"
-          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-        >
-          MAX
-        </Text>
+        {max && (
+          <Text
+            bg="rgba(64, 186, 213,0.25)"
+            p="5px 10px"
+            rounded="lg"
+            mt="10px"
+            mr="15px"
+            fontSize="sm"
+            color="#72cfe4"
+            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+          >
+            MAX
+          </Text>
+        )}
         <Flex>
           <Menu>
             <Button
