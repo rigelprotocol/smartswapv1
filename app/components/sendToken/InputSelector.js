@@ -31,7 +31,7 @@ const InputSelector = props => {
             justifyContent="space-between"
             alignItems="center"
           >
-            {max && (
+            {max ? (
               <Text
                 bg="rgba(64, 186, 213,0.25)"
                 p="5px 10px"
@@ -44,7 +44,9 @@ const InputSelector = props => {
               >
                 MAX
               </Text>
-            )}
+            ) : (
+                <></>
+              )}
             <Flex>
               <Menu>
                 <Button
@@ -86,7 +88,7 @@ const InputSelector = props => {
         />
       </Flex>
       <Flex cursor="pointer" justifyContent="space-between" alignItems="center">
-        {max && (
+        {max ? (
           <Text
             bg="rgba(64, 186, 213,0.25)"
             p="5px 10px"
@@ -99,7 +101,9 @@ const InputSelector = props => {
           >
             MAX
           </Text>
-        )}
+        ) : (
+            <></>
+          )}
         <Flex>
           <Menu>
             <Button

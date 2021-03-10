@@ -32,7 +32,7 @@ const Manual = () => {
         color="#fff"
         bg="#29235E"
         mt="10px"
-        h="100px"
+        h="100%"
         justifyContent="space-between"
         px={4}
         rounded="2xl"
