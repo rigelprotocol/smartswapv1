@@ -6,7 +6,7 @@
  * contain code that should be seen on all pages. (e.g. navigation bar)
  *
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { ThemeProvider, theme } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
@@ -20,6 +20,7 @@ import MarginTradingPage from 'containers/MarginTradingPage/Loadable';
 import SmartSwappingPage from 'containers/SmartSwappingPage/Loadable';
 import LiquidityPage from 'containers/LiquidityPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import Splash from 'components/splash/index';
 
 import '../../styles/globals.css';
 import { WalletContext } from '../../context';
@@ -50,6 +51,14 @@ function App(props) {
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
+  const [splashView, setSplashView] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashView(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <ToastProvider>
       <ThemeProvider theme={newTheme}>
@@ -65,22 +74,26 @@ function App(props) {
               setShow,
             }}
           >
-            <Switch>
-              <Route exact path="/" component={HomePage} />
-              <Route exact path="/farming" component={FarmingPage} />
-              <Route exact path="/liquidity" component={LiquidityPage} />
-              <Route
-                exact
-                path="/smart-swapping"
-                component={SmartSwappingPage}
-              />
-              <Route
-                exact
-                path="/margin-trading"
-                component={MarginTradingPage}
-              />
-              <Route component={NotFoundPage} />
-            </Switch>
+            {splashView ? (
+              <Splash />
+            ) : (
+              <Switch>
+                <Route exact path="/" component={HomePage} />
+                <Route exact path="/farming" component={FarmingPage} />
+                <Route exact path="/liquidity" component={LiquidityPage} />
+                <Route
+                  exact
+                  path="/smart-swapping"
+                  component={SmartSwappingPage}
+                />
+                <Route
+                  exact
+                  path="/margin-trading"
+                  component={MarginTradingPage}
+                />
+                <Route component={NotFoundPage} />
+              </Switch>
+            )}
           </WalletContext.Provider>
         </Web3Provider>
       </ThemeProvider>
