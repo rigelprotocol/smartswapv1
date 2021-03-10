@@ -1,12 +1,16 @@
 // @ts-nocheck
+import { ethers } from 'ethers';
 import { Box } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
+import swapConnect, {provider, signer} from '../../utils/swapConnect';
+import SmartSwapRouter02 from '../../utils/abis/SmartSwapRouter02.json';
 
 const Manual = () => {
+ 
   return (
     <div>
       <Box
@@ -37,7 +41,7 @@ const Manual = () => {
             _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
             _active={{ outline: '#29235E', background: '#29235E' }}
             onClick={() => {
-              console.log('Hello')
+              console.log('Hellooo.....')
             }}
           >
             Enter an Amount

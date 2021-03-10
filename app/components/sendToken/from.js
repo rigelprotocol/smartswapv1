@@ -24,7 +24,6 @@ import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
 import swapConnect from '../../utils/swapConnect';
 import InputSelector from './InputSelector';
-import { ethers } from 'ethers';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,10 +31,8 @@ const Manual = () => {
   const [fromAmount, setFromAmount] = useState('');
   // const [tokenBalance, setTokenaBalance] = useState('');
   const handleChangeFromAmount = event => setFromAmount(event.target.value);
-  
 
   const {} = swapConnect();
-
 
   return (
     <>
