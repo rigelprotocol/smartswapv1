@@ -1,5 +1,6 @@
 // @ts-nocheck
-import React from 'react';
+import { ethers } from 'ethers';
+import React, {useState, useEffect} from 'react';
 import { Box } from '@chakra-ui/layout';
 import {
   Flex,
@@ -23,6 +24,8 @@ import { Input } from '@chakra-ui/input';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
+import swapConnect, {provider, signer} from '../../utils/swapConnect';
+import SmartSwapRouter02 from '../../utils/abis/SmartSwapRouter02.json';
 
 const Manual = () => (
   <div>
