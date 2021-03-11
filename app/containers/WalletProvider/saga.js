@@ -1,7 +1,10 @@
 import { put, all, fork, takeEvery, takeLatest } from 'redux-saga/effects';
 import { notify } from '../NoticeProvider/actions';
-import { connectedWallet } from './actions';
-import { WALLET_CONNECTED } from './constants';
+import { WALLET_CONNECTED, WALLET_PROPS } from './constants';
+
+export function* setWalletProps(walletProps) {
+  console.log('Hello', walletProps, 'So much');
+}
 
 export function* connectWallet() {
   try {
@@ -23,9 +26,14 @@ export function* connectWallet() {
   }
 }
 export function* walletProviderSaga() {
-  yield takeLatest(WALLET_CONNECTED, linkWallet);
+  yield takeLatest(WALLET_CONNECTED, connectWallet);
 }
 
-export default function* rootSaga() {
-  yield all([fork(walletProviderSaga)]);
+export function* setWallet() {
+  yield takeEvery(WALLET_PROPS, setWalletProps);
+}
+
+export default function* WalletSagas() {
+  console.log('Hello')
+  yield all([fork(walletProviderSaga), fork(setWallet)]);
 }
