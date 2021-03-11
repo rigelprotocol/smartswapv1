@@ -4,10 +4,11 @@
  *
  */
 import produce from 'immer';
-import { DEFAULT_ACTION, WALLET_CONNECTED } from './constants';
+import { DEFAULT_ACTION, WALLET_CONNECTED, WALLET_PROPS } from './constants';
 
 export const initialState = {
   wallet: {},
+  wallet_props: [],
   connected: false,
 };
 
@@ -18,12 +19,14 @@ const walletProviderReducer = (state = initialState, action) =>
       case DEFAULT_ACTION:
         break;
       case WALLET_CONNECTED:
-        console.log('Got to reducer');
         draft.wallet = action.wallet;
         draft.connected = true;
         break;
+      case WALLET_PROPS:
+        console.log(`Action: ${action}`)
+        return draft.wallet_props.push(action.payload);
       default:
-        break;
+        return state;
     }
   });
 

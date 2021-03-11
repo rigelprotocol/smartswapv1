@@ -1,12 +1,9 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Menu } from '@chakra-ui/menu';
-import { Button } from '@chakra-ui/button';
 import { Input } from '@chakra-ui/input';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { useMediaQuery } from '@chakra-ui/react';
-
+import { connect } from 'react-redux';
 import {
   Modal,
   ModalBody,
@@ -16,24 +13,38 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/modal';
+import { ethers } from 'ethers';
+import RigelToken from 'utils/abis/RigelToken.json';
 
+import swapConnect from '../../utils/swapConnect';
+import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
-import swapConnect from '../../utils/swapConnect';
-import InputSelector from './InputSelector';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
+  const [rgpBalance, setRGPBalance] = useState('0.0');
   const [fromAmount, setFromAmount] = useState('');
-  // const [tokenBalance, setTokenaBalance] = useState('');
   const handleChangeFromAmount = event => setFromAmount(event.target.value);
-
-  const {} = swapConnect();
-
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  useEffect(() => {
+    const rigelToken = async () => {
+      const rgpContractAddress = '0xD848eD7f625165D7fFa9e3B3b0661d6074902FD4';
+      const rgp2ABI = RigelToken;
+      const rgpToken = new ethers.Contract(rgpContractAddress, rgp2ABI, signer);
+      const rigelBal = await rgpToken.balanceOf(
+        '0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E',
+      );
+      const balance = ethers.utils.formatEther(rigelBal).toString();
+      setRGPBalance(balance);
+    };
+    rigelToken();
+  }, []);
   return (
     <>
       <Box
@@ -51,7 +62,7 @@ const Manual = () => {
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             {/* Balance: {tokenBalance} */}
-            Balance: 2,632.34
+            Balance: {rgpBalance}
           </Text>
         </Flex>
         <InputSelector
@@ -161,4 +172,4 @@ const Manual = () => {
   );
 };
 
-export default Manual;
+export default connect()(Manual);

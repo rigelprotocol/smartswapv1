@@ -4,7 +4,7 @@
  *
  */
 
-import { DEFAULT_ACTION, WALLET_CONNECTED } from './constants';
+import { DEFAULT_ACTION, WALLET_CONNECTED, WALLET_PROPS } from './constants';
 
 export function defaultAction() {
   return {
@@ -21,4 +21,9 @@ export function connectWallet() {
 export const connectedWallet = wallet => ({
   type: WALLET_CONNECTED,
   wallet,
+});
+
+export const setWalletProps = wallet => ({
+  type: WALLET_PROPS,
+  payload: wallet,
 });
