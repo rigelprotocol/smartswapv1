@@ -59,6 +59,7 @@ export default async function swapConnect() {
         signer
       );
       const rigelBal = await rgpToken.balanceOf("0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E");
+
       const balance = ethers.utils.formatEther(rigelBal).toString();
       console.log("rgpBalance........: ", balance);
     }

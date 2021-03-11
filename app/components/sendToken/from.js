@@ -6,6 +6,7 @@ import { Button } from '@chakra-ui/button';
 import { Input } from '@chakra-ui/input';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useMediaQuery } from '@chakra-ui/react';
+// import {rigelToken} from '../../utils/swapConnect';
 
 import {
   Modal,
@@ -22,7 +23,7 @@ import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
-import swapConnect from '../../utils/swapConnect';
+import swapConnect, {rigelToken} from '../../utils/swapConnect';
 import InputSelector from './InputSelector';
 
 const Manual = () => {
@@ -51,7 +52,7 @@ const Manual = () => {
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             {/* Balance: {tokenBalance} */}
-            Balance: 2,632.34
+        Balance: 25, 9778
           </Text>
         </Flex>
         <InputSelector
