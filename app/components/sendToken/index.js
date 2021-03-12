@@ -41,7 +41,7 @@ const Manual = props => (
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
           onClick={() => {
-            console.log(props);
+            swap()
           }}
         >
           Enter an Amount
