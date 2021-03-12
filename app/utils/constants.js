@@ -19,3 +19,9 @@ export const TOKENS = {
   ETH: 'ETH',
   RGP: 'RGP',
 };
+
+export const TOKENS_CONTRACT = {
+  BNB: '',
+  ETH: '',
+  RGP: '0xD848eD7f625165D7fFa9e3B3b0661d6074902FD4',
+};

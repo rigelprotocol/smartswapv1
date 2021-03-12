@@ -22,16 +22,18 @@ import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
-import { TOKENS } from '../../utils/constants';
+import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
   const [rgpBalance, setRGPBalance] = useState('0.0');
   const [fromAmount, setFromAmount] = useState('');
+  const [path, setPath] = useState([]);
   const handleChangeFromAmount = event => setFromAmount(event.target.value);
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
+  swapConnect()
   useEffect(() => {
     const rigelToken = async () => {
       const rgpContractAddress = '0xD848eD7f625165D7fFa9e3B3b0661d6074902FD4';
@@ -112,6 +114,7 @@ const Manual = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.BNB);
+                setPath(TOKENS_CONTRACT.BNB);
                 onClose();
               }}
             >
@@ -131,6 +134,7 @@ const Manual = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.ETH);
+                setPath(TOKENS_CONTRACT.ETH);
                 onClose();
               }}
             >
@@ -150,6 +154,7 @@ const Manual = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.RGP);
+                setPath(TOKENS_CONTRACT.RGP);
                 onClose();
               }}
             >
@@ -160,7 +165,7 @@ const Manual = () => {
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                2,632.34
+                {rgpBalance}
               </Text>
             </Flex>
           </ModalBody>
