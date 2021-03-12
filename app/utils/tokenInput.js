@@ -2,7 +2,7 @@
 
 export default async function tokenInput() {
    //will be moved to swap page
-   const amountIn = ethers.utils.formatEther('1000').toString();
+   const amountIn = ethers.utils.formatEther('1000').toString(); 
    const amountOut = ethers.utils.formatEther('1000').toString();
    const amountInMax = ethers.utils.formatEther('1000').toString();
    const amountOutMin = ethers.utils.formatEther('2000').toString();
