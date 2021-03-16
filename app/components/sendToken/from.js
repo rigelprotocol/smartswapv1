@@ -18,13 +18,13 @@ import RigelToken from 'utils/abis/RigelToken.json';
 import BUSD from 'utils/abis/BUSD.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 
-import swapConnect from '../../utils/swapConnect';
+// import swapConnect from '../../utils/swapConnect';
 import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
-import { TOKENS } from '../../utils/constants';
+import { TOKENS, TOKENS_CONTRACT, SMART_SWAP } from '../../utils/constants';
 
 const Manual = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,30 +32,46 @@ const Manual = () => {
   const [rgpBalance, setRGPBalance] = useState('0.0');
   const [busdBalance, setBUSDBalance] = useState('0.0');
   const [fromAmount, setFromAmount] = useState('');
+  const [path, setPath] = useState([]);
+  const handleChangeFromAmount = event => {
+    setFromAmount(event.target.value);
+    setAmountIn(event.target.value);
+  };
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  // swapConnect();
 
-  //state function swapExactTokensForTokens
+  // state function swapExactTokensForTokens
   const [amountIn, setAmountIn] = useState();
   const [amountOutMin, setAmountOutMin] = useState();
   const [deadline, setDeadline] = useState();
   const [SwapTokenForToken, setSwapTokenForToken] = useState();
 
-  const handleChangeFromAmount = event => setFromAmount(event.target.value);
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-  
   useEffect(() => {
     const contractProvider = async () => {
-      const rgpContractAddress = '0xD848eD7f625165D7fFa9e3B3b0661d6074902FD4';
-      const BUSDContractAddress = '0x80278a0cf536e568a76425b67fb3931dca21535c';
-      const SmartSwap_Address = '0x3175bfbc3e620FaF654309186f66908073cF9CBB';
+      const rgpContractAddress = TOKENS_CONTRACT.RGP;
+      const BUSDContractAddress = TOKENS_CONTRACT.BNB;
+      const SmartSwap_Address = SMART_SWAP.SMART_SWAPPING;
 
       const rgp2ABI = RigelToken;
       const BusdABI = BUSD;
       const SmartSwap_ABI = SmartSwapRouter02;
 
-      const rgpToken = new ethers.Contract(rgpContractAddress, rgp2ABI, signer);
-      const busdToken = new ethers.Contract(BUSDContractAddress, BusdABI, signer);
-      const SmartSwapContractAddress = new ethers.Contract( SmartSwap_Address, SmartSwap_ABI, signer);
+      const rgpToken = new ethers.Contract(
+        TOKENS_CONTRACT.RGP,
+        rgp2ABI,
+        signer
+      );
+      const busdToken = new ethers.Contract(
+        TOKENS_CONTRACT.BNB,
+        BusdABI,
+        signer,
+      );
+      const SmartSwapContractAddress = new ethers.Contract(
+        SmartSwap_Address,
+        SmartSwap_ABI,
+        signer,
+      );
 
       const rigelBal = await rgpToken.balanceOf(
         '0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E',
@@ -68,29 +84,37 @@ const Manual = () => {
       const busdbal = ethers.utils.formatEther(busdBal).toString();
       setRGPBalance(rgpbalance);
       setBUSDBalance(busdbal);
-
     };
     contractProvider();
   }, []);
 
-
   // Approve contract address to spend input amount
-  
+
   // set swapExactTokensForTokens
-  const swap = async (e) => {        
-    const { rgpToken, busdToken, SmartSwapContractAddress } = await contractProvider();
+  const swap = async e => {
+    const {
+      rgpToken,
+      busdToken,
+      SmartSwapContractAddress,
+    } = await contractProvider();
     // swapping Exact token for tokens
-    const deadline = "1200";
-    const rgpAprove = await rgpToken.approve("0x3175bfbc3e620FaF654309186f66908073cF9CBB", amountIn)
-    const busdAprove = await busdToken.approve("0x3175bfbc3e620FaF654309186f66908073cF9CBB", amountIn)
+    const deadline = '1200';
+    const rgpAprove = await rgpToken.approve(
+      '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
+      amountIn,
+    );
+    const busdAprove = await busdToken.approve(
+      '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
+      amountIn,
+    );
     const swapExactTokforTok = await SmartSwapContractAddress.swapExactTokensForTokens(
       amountIn,
       amountOutMin,
       path,
       addressTo,
-      deadline
+      deadline,
     );
-  }
+  };
 
   return (
     <>
@@ -159,6 +183,7 @@ const Manual = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.BNB);
+                setPath(TOKENS_CONTRACT.BNB);
                 onClose();
               }}
             >
@@ -169,7 +194,7 @@ const Manual = () => {
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-              {busdBalance}
+                {busdBalance}
               </Text>
             </Flex>
             <Flex
@@ -178,6 +203,7 @@ const Manual = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.ETH);
+                setPath(TOKENS_CONTRACT.ETH);
                 onClose();
               }}
             >
@@ -197,6 +223,7 @@ const Manual = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.RGP);
+                setPath(TOKENS_CONTRACT.RGP);
                 onClose();
               }}
             >
@@ -207,7 +234,7 @@ const Manual = () => {
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-              {rgpBalance}
+                {rgpBalance}
               </Text>
             </Flex>
           </ModalBody>
