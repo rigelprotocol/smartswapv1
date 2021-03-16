@@ -18,7 +18,7 @@ const NoticeProviderReducer = (state = initialState, action) =>
       case DEFAULT_ACTION:
         break;
       case NOTICE:
-        console.log('hello')
+        console.log(action.message);
         draft.message = action.message;
         break;
     }

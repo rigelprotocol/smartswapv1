@@ -12,13 +12,12 @@ import WalletProviderReducer from 'containers/WalletProvider/reducer'
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
  */
-export default function createReducer(injectedReducers = {}) {
+export default function createReducer() {
   const rootReducer = combineReducers({
     language: languageProviderReducer,
     notice: NoticeProviderReducer,
     wallet: WalletProviderReducer,
     router: connectRouter(history),
-    ...injectedReducers,
   });
 
   return rootReducer;

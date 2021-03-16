@@ -18,6 +18,7 @@ import RigelToken from 'utils/abis/RigelToken.json';
 import BUSD from 'utils/abis/BUSD.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 
+import { notify } from 'containers/NoticeProvider/actions';
 import swapConnect from '../../utils/swapConnect';
 import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
@@ -25,8 +26,7 @@ import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
-
-const Manual = () => {
+const From = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
   const [rgpBalance, setRGPBalance] = useState('0.0');
@@ -37,8 +37,9 @@ const Manual = () => {
     setFromAmount(event.target.value);
     setAmountIn(event.target.value);
   };
+
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
+  const signer = provider && provider.getSigner();
   swapConnect();
 
   // state function swapExactTokensForTokens
@@ -82,8 +83,9 @@ const Manual = () => {
       setBUSDBalance(busdbal);
     };
     contractProvider();
+    notify('Hello');
   }, []);
-
+  notify('Hello');
   // Approve contract address to spend input amount
 
   // set swapExactTokensForTokens
@@ -242,4 +244,11 @@ const Manual = () => {
   );
 };
 
-export default connect()(Manual);
+const mapStateToProps = () => ({
+  // ...
+});
+
+export default connect(
+  mapStateToProps,
+  { notify },
+)(From);

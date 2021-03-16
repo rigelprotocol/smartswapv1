@@ -10,9 +10,9 @@ export default function checkStore(store) {
     subscribe: isFunction,
     getState: isFunction,
     replaceReducer: isFunction,
-    runSaga: isFunction,
+    // runSaga: isFunction,
     injectedReducers: isObject,
-    injectedSagas: isObject,
+    // injectedSagas: isObject,
   };
   invariant(
     conformsTo(store, shape),
