@@ -4,6 +4,8 @@ import { useDisclosure } from '@chakra-ui/hooks';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/input';
 import { connect } from 'react-redux';
+// import { useWeb3Context } from 'web3-react';
+// import { useWeb3React } from '@web3-react/core';
 import {
   Modal,
   ModalBody,
@@ -39,19 +41,18 @@ const Manual = () => {
   };
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
+  console.log('signer: ', signer);
   // swapConnect();
 
   // state function swapExactTokensForTokens
   const [amountIn, setAmountIn] = useState();
   const [amountOutMin, setAmountOutMin] = useState();
-  const [deadline, setDeadline] = useState();
-  const [SwapTokenForToken, setSwapTokenForToken] = useState();
+  // const [deadline, setDeadline] = useState();
+  // const [SwapTokenForToken, setSwapTokenForToken] = useState();
 
   useEffect(() => {
     const contractProvider = async () => {
-      const rgpContractAddress = TOKENS_CONTRACT.RGP;
-      const BUSDContractAddress = TOKENS_CONTRACT.BNB;
-      const SmartSwap_Address = SMART_SWAP.SMART_SWAPPING;
+      // const SmartSwap_Address = SMART_SWAP.SMART_SWAPPING;
 
       const rgp2ABI = RigelToken;
       const BusdABI = BUSD;
@@ -60,7 +61,7 @@ const Manual = () => {
       const rgpToken = new ethers.Contract(
         TOKENS_CONTRACT.RGP,
         rgp2ABI,
-        signer
+        signer,
       );
       const busdToken = new ethers.Contract(
         TOKENS_CONTRACT.BNB,
@@ -68,7 +69,7 @@ const Manual = () => {
         signer,
       );
       const SmartSwapContractAddress = new ethers.Contract(
-        SmartSwap_Address,
+        SMART_SWAP.SMART_SWAPPING,
         SmartSwap_ABI,
         signer,
       );
@@ -97,6 +98,7 @@ const Manual = () => {
       busdToken,
       SmartSwapContractAddress,
     } = await contractProvider();
+
     // swapping Exact token for tokens
     const deadline = '1200';
     const rgpAprove = await rgpToken.approve(

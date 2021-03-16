@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useWeb3Context } from 'web3-react';
+import React from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { ModalBody, ModalHeader } from '@chakra-ui/react';
 import MetaMaskImage from '../../assets/mask.svg';
@@ -8,12 +7,13 @@ import { connectWallet } from '../../containers/WalletProvider/actions';
 // import { notify } from '../../containers/NoticeProvider/actions';
 const Options = () => {
   const context = useWeb3Context();
+
   const connectMetaMask = () => {
     connectWallet();
     context.setFirstValidConnector(['MetaMask']);
   };
   // to access the Wallet connected please use context
-  console.log(context)
+  // console.log(context)
   // to use else where apart from the Options page
   // import { useWeb3Context } from 'web3-react';
   // const context = useWeb3Context();
