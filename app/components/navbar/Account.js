@@ -1,5 +1,6 @@
+import React from 'react';
+import { useSelector, useDispatch, connect } from 'react-redux';
 import { Flex, Text } from '@chakra-ui/layout';
-import React from 'react'
 import {
   ModalOverlay,
   Button,
@@ -13,9 +14,10 @@ import {
 import CurrentImage from '../../assets/current.svg';
 import EditImage from '../../assets/edit.svg';
 import CopyImage from '../../assets/copy.svg';
-const Account = () => {
-  const modal3Disclosure = useDisclosure();
 
+const Account = ({ wallet }) => {
+  const { address, balance } = wallet;
+  const modal3Disclosure = useDisclosure();
   return (
     <>
       <Flex
@@ -29,7 +31,7 @@ const Account = () => {
         ml={5}
       >
         <Text color="#fff" fontSize="sm" ml={2} mr={4}>
-          0 ETH
+          {balance} ETH
         </Text>
         <Button
           onClick={modal3Disclosure.onOpen}
@@ -46,7 +48,7 @@ const Account = () => {
           fontWeight="light"
           border="0px"
         >
-          <Text mr="10px">0xDa7a...362b</Text>
+          <Text mr="10px">{address}</Text>
           <CurrentImage />
         </Button>
       </Flex>
@@ -54,7 +56,7 @@ const Account = () => {
       <Modal
         isOpen={modal3Disclosure.isOpen}
         onClose={modal3Disclosure.onClose}
-        isCentered="true"
+        isCentered
       >
         <ModalOverlay />
         <ModalContent
@@ -65,9 +67,9 @@ const Account = () => {
           width="90vw"
         >
           <ModalCloseButton
-            bg={'none'}
+            bg="none"
             border="0px"
-            color={'#fff'}
+            color="#fff"
             _focus={{ outline: 'none' }}
           />
           <ModalHeader fontWeight="light" fontSize="sm">
@@ -142,5 +144,8 @@ const Account = () => {
     </>
   );
 };
-
-export default Account;
+const mapStateToProps = ({ wallet }) => wallet;
+export default connect(
+  mapStateToProps,
+  null,
+)(Account);

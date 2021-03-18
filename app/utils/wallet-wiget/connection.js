@@ -21,6 +21,7 @@ export const provider = async () => {
 
 export const signer = async () => (await provider()).getSigner();
 
-export const connectMetaMask = async () => {
-  await window.ethereum.enable();
-};
+export const connectMetaMask = async () =>
+  await window.ethereum.request({
+    method: 'eth_requestAccounts',
+  });

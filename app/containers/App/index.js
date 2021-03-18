@@ -60,9 +60,9 @@ function App(props) {
     return () => clearTimeout(timer);
   }, []);
   return (
-    <ToastProvider>
+    <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
-        <Toast {...props} />
+        <Toast style={{ zIndex: '99999' }} {...props} />
         <Web3Provider connectors={{ MetaMask }} libraryName="ethers.js">
           <WalletContext.Provider
             value={{

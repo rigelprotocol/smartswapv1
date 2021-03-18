@@ -34,17 +34,8 @@ const From = () => {
     setFromAmount(event.target.value);
     setAmountIn(event.target.value);
   };
-
-  // const provider = new ethers.providers.Web3Provider(window.ethereum);
-  // const signer = provider.getSigner();
-  // console.log('signer: ', signer);
-  // swapConnect();
-
-  // state function swapExactTokensForTokens
   const [amountIn, setAmountIn] = useState();
   const [amountOutMin, setAmountOutMin] = useState();
-  // const [deadline, setDeadline] = useState();
-  // const [SwapTokenForToken, setSwapTokenForToken] = useState();
 
   useEffect(() => {
     const contractProvider = async () => {
