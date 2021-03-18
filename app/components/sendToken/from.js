@@ -100,7 +100,7 @@ const Manual = () => {
     } = await contractProvider();
 
     // swapping Exact token for tokens
-    const deadline = '1200';
+    const deadline = '1616043285';
     const rgpAprove = await rgpToken.approve(
       '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
       amountIn,

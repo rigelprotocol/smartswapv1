@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import ArrowDownImage from '../../assets/arrow-down.svg';
-import From from './from';
+import From, {swapExactTokforTok} from './from';
 import To from './to';
 import swapConnect, { provider, signer } from '../../utils/swapConnect';
 import SmartSwapRouter02 from '../../utils/abis/SmartSwapRouter02.json';
 import swapSettings from './swapSettings';
+import from from './from';
 
 const Manual = props => {
   return (
@@ -42,7 +43,7 @@ const Manual = props => {
             _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
             _active={{ outline: '#29235E', background: '#29235E' }}
             onClick={() => {
-              console.log(props);
+              swapExactTokforTok();
             }}
           >
             Enter an Amount
