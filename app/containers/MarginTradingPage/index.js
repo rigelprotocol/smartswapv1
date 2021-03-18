@@ -4,24 +4,15 @@
  *
  */
 
-import React, { memo } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import { compose } from 'redux';
 import { Box, Flex } from '@chakra-ui/layout';
 
 import Layout from 'components/layout/index';
 
-import { useInjectSaga } from 'utils/injectSaga';
-import { useInjectReducer } from 'utils/injectReducer';
 import makeSelectMarginTradingPage from './selectors';
-import reducer from './reducer';
-import saga from './saga';
 
 export function MarginTradingPage() {
-  useInjectReducer({ key: 'marginTradingPage', reducer });
-  useInjectSaga({ key: 'marginTradingPage', saga });
 
   return (
     <Layout title="Margin Trading">
@@ -53,11 +44,7 @@ export function MarginTradingPage() {
   );
 }
 
-MarginTradingPage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = createStructuredSelector({
+const mapStateToProps = () => ({
   marginTradingPage: makeSelectMarginTradingPage(),
 });
 
@@ -67,12 +54,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const withConnect = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps,
-);
-
-export default compose(
-  withConnect,
-  memo,
 )(MarginTradingPage);

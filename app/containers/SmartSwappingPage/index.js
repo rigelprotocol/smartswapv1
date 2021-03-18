@@ -4,11 +4,8 @@
  *  Add Git Book Link to show Others what we ant to achieve
  */
 
-import React, { memo, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import { compose } from 'redux';
 import { Box, Flex, Text } from '@chakra-ui/react';
 
 import Layout from 'components/layout/index';
@@ -19,16 +16,10 @@ import SendToken from 'components/sendToken';
 import History from 'components/history';
 import { TABS } from 'utils/constants';
 
-import { useInjectSaga } from 'utils/injectSaga';
-import { useInjectReducer } from 'utils/injectReducer';
 import makeSelectSmartSwappingPage from './selectors';
-import reducer from './reducer';
-import saga from './saga';
 import styles from '../../styles/Home.css';
 
 export function SmartSwappingPage() {
-  useInjectReducer({ key: 'smartSwappingPage', reducer });
-  useInjectSaga({ key: 'smartSwappingPage', saga });
   const [tab, setTab] = useState(TABS.MANUAL);
   return (
     <Layout title="Smart Swapping Page">
@@ -88,11 +79,7 @@ export function SmartSwappingPage() {
   );
 }
 
-SmartSwappingPage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = createStructuredSelector({
+const mapStateToProps = () => ({
   smartSwappingPage: makeSelectSmartSwappingPage(),
 });
 
@@ -102,12 +89,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const withConnect = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps,
-);
-
-export default compose(
-  withConnect,
-  memo,
 )(SmartSwappingPage);

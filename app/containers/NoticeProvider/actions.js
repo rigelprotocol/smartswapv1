@@ -12,9 +12,8 @@ export function defaultAction() {
   };
 }
 
-export function notify(message) {
-  return {
+export const notify = message => dispatch =>
+  dispatch({
     type: NOTICE,
     message,
-  };
-}
+  });

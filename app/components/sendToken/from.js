@@ -26,9 +26,8 @@ import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
-import { TOKENS, TOKENS_CONTRACT, SMART_SWAP } from '../../utils/constants';
-
-const Manual = () => {
+import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
+const From = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
   const [rgpBalance, setRGPBalance] = useState('0.0');
@@ -39,6 +38,7 @@ const Manual = () => {
     setFromAmount(event.target.value);
     setAmountIn(event.target.value);
   };
+
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   console.log('signer: ', signer);
@@ -88,14 +88,13 @@ const Manual = () => {
     };
     contractProvider();
   }, []);
-
   // Approve contract address to spend input amount
 
   // set swapExactTokensForTokens
   const swap = async e => {
     const {
       rgpToken,
-      busdToken,
+      busd,
       SmartSwapContractAddress,
     } = await contractProvider();
 
@@ -105,7 +104,7 @@ const Manual = () => {
       '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
       amountIn,
     );
-    const busdAprove = await busdToken.approve(
+    const busdAprove = await busd.approve(
       '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
       amountIn,
     );
@@ -247,5 +246,4 @@ const Manual = () => {
     </>
   );
 };
-
-export default connect()(Manual);
+export default From;

@@ -4,23 +4,15 @@
  *
  */
 
-import React, { memo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import { compose } from 'redux';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { useInjectSaga } from 'utils/injectSaga';
-import { useInjectReducer } from 'utils/injectReducer';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
 import makeSelectFarmingPage from './selectors';
-import reducer from './reducer';
-import saga from './saga';
 
 export function FarmingPage({ farmingPage }) {
-  useInjectReducer({ key: 'farmingPage', reducer });
-  useInjectSaga({ key: 'farmingPage', saga });
   return (
     <div>
       <Layout title="Farming Page">
@@ -71,9 +63,11 @@ FarmingPage.propTypes = {
   farmingPage: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = createStructuredSelector({
-  farmingPage: makeSelectFarmingPage(),
-});
+const mapStateToProps = () => {
+  return {
+    farmingPage: makeSelectFarmingPage(),
+  };
+};
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -81,12 +75,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const withConnect = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps,
-);
-
-export default compose(
-  withConnect,
-  memo,
 )(FarmingPage);
