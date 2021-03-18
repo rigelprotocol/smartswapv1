@@ -116,11 +116,11 @@ module.exports = require('./webpack.base.babel')({
     }),
 
     new WebpackPwaManifest({
-      name: 'React Boilerplate',
-      short_name: 'React BP',
-      description: 'My React Boilerplate-based project!',
+      name: 'Rigel Smart Swap',
+      short_name: 'Rigel-SS',
+      description: 'Rigel Protocol Smart Swap',
       background_color: '#fafafa',
-      theme_color: '#b1624d',
+      theme_color: '#29235e',
       inject: true,
       ios: true,
       icons: [

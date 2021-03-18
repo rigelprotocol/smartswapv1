@@ -74,26 +74,22 @@ function App(props) {
               setShow,
             }}
           >
-            {splashView ? (
-              <Splash />
-            ) : (
-              <Switch>
-                <Route exact path="/" component={HomePage} />
-                <Route exact path="/farming" component={FarmingPage} />
-                <Route exact path="/liquidity" component={LiquidityPage} />
-                <Route
-                  exact
-                  path="/smart-swapping"
-                  component={SmartSwappingPage}
-                />
-                <Route
-                  exact
-                  path="/margin-trading"
-                  component={MarginTradingPage}
-                />
-                <Route component={NotFoundPage} />
-              </Switch>
-            )}
+            <Switch>
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/farming" component={FarmingPage} />
+              <Route exact path="/liquidity" component={LiquidityPage} />
+              <Route
+                exact
+                path="/smart-swapping"
+                component={SmartSwappingPage}
+              />
+              <Route
+                exact
+                path="/margin-trading"
+                component={MarginTradingPage}
+              />
+              <Route component={NotFoundPage} />
+            </Switch>
           </WalletContext.Provider>
         </Web3Provider>
       </ThemeProvider>
