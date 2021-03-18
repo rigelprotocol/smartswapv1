@@ -16,15 +16,7 @@ const Options = ({ notify, connectWallet, connectingWallet }) => {
 
   const connectMetaMask = () => {
     connectingWallet(true);
-    context
-      .setFirstValidConnector(['MetaMask'])
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-
+    context.setFirstValidConnector(['MetaMask']);
     // fulfilled
   };
 
