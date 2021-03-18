@@ -1,17 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ethers } from 'ethers';
 import { setWalletProps } from 'containers/WalletProvider/actions';
-import configureStore from 'configureStore';
 import BUSD from './abis/BUSD.json';
 import RigelToken from './abis/RigelToken.json';
 import SmartSwapFactoryForSwap from './abis/SmartSwapFactoryForSwap.json';
 import SmartSwapRouter02 from './abis/SmartSwapRouter02.json';
 import WETH9 from './abis/WETH9.json';
-import Manual, { setTokenaBalance } from '../components/sendToken';
-import checkStore from './checkStore';
-
-function UNISWAP() { }
 
 // const [allow, setAllow] = useState();
 

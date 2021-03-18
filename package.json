@@ -70,6 +70,7 @@
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@metamask/detect-provider": "^1.2.0",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "babel-plugin-inline-react-svg": "^1.1.2",

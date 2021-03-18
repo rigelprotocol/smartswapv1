@@ -1,42 +1,37 @@
 import { ethers } from 'ethers';
-import Web3 from 'web3';
-import React, { useState } from 'react';
-import swapConnect from './swapConnect';
-
+import swapConnect from './SwapConnect';
 
 export default async function smartSwap() {
   // useEffect(() => {
-    const contractBal = async () => {
-      const {
-        BUSD_CONTRACT,
-        RigelToken_Contract,
-        WETH9_Contract,
-        SmartSwapRouter02_Contract,
-        SmartSwapFactoryForSwap_Contract,
-        SmartSwapFactory_Contract,
-      } = await swapConnect();
-      if (signer && address) {
-        setTokenaBalance(tokenBalance);
-        // get rigel Balances of Account
-        const rigelBal = await RigelToken_Contract.balanceOf(
-          address.toString(),
-        );
-        const rigelBalance = ethers.utils.formatEther(rigelBal).toString();
-        setTokenaBalance(rigelBalance);
+  const contractBal = async () => {
+    const {
+      BUSD_CONTRACT,
+      RigelToken_Contract,
+      WETH9_Contract,
+      SmartSwapRouter02_Contract,
+      SmartSwapFactoryForSwap_Contract,
+      SmartSwapFactory_Contract,
+    } = await swapConnect();
+    if (signer && address) {
+      setTokenaBalance(tokenBalance);
+      // get rigel Balances of Account
+      const rigelBal = await RigelToken_Contract.balanceOf(address.toString());
+      const rigelBalance = ethers.utils.formatEther(rigelBal).toString();
+      setTokenaBalance(rigelBalance);
 
-        // get WETH9 Balances of Account
-        // setWeth9(weth9);
-        const WETH9Bal = await WETH9_Contract.balanceOf(address.toString());
-        const WETHbalance = ethers.utils.formatEther(WETH9Bal).toString();
-        // setWeth9(WETHbalance);
+      // get WETH9 Balances of Account
+      // setWeth9(weth9);
+      const WETH9Bal = await WETH9_Contract.balanceOf(address.toString());
+      const WETHbalance = ethers.utils.formatEther(WETH9Bal).toString();
+      // setWeth9(WETHbalance);
 
-        // get BUSD Balances of Account
-        // setbusd(busd);
-        const BUSDBal = await BUSD_CONTRACT.balanceOf(address.toString());
-        const BUSDbalance = ethers.utils.formatEther(BUSDBal).toString();
-        // setbusd(BUSDbalance);
-      }
+      // get BUSD Balances of Account
+      // setbusd(busd);
+      const BUSDBal = await BUSD_CONTRACT.balanceOf(address.toString());
+      const BUSDbalance = ethers.utils.formatEther(BUSDBal).toString();
+      // setbusd(BUSDbalance);
     }
+  };
   // }
   // search by address
   const lcokUpAddress = async () => {
