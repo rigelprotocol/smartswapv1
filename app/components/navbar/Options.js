@@ -13,6 +13,7 @@ import { notify } from '../../containers/NoticeProvider/actions';
 
 const Options = ({ notify, connectWallet, connectingWallet }) => {
   const context = useWeb3Context();
+
   const connectMetaMask = () => {
     connectingWallet(true);
     context
