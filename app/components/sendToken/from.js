@@ -18,7 +18,6 @@ import RigelToken from 'utils/abis/RigelToken.json';
 import BUSD from 'utils/abis/BUSD.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 
-import { notify } from 'containers/NoticeProvider/actions';
 import swapConnect from '../../utils/swapConnect';
 import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
@@ -83,16 +82,14 @@ const From = () => {
       setBUSDBalance(busdbal);
     };
     contractProvider();
-    notify('Hello');
   }, []);
-  notify('Hello');
   // Approve contract address to spend input amount
 
   // set swapExactTokensForTokens
   const swap = async e => {
     const {
       rgpToken,
-      busdToken,
+      busd,
       SmartSwapContractAddress,
     } = await contractProvider();
     // swapping Exact token for tokens
@@ -101,7 +98,7 @@ const From = () => {
       '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
       amountIn,
     );
-    const busdAprove = await busdToken.approve(
+    const busdAprove = await busd.approve(
       '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
       amountIn,
     );
@@ -243,12 +240,4 @@ const From = () => {
     </>
   );
 };
-
-const mapStateToProps = () => ({
-  // ...
-});
-
-export default connect(
-  mapStateToProps,
-  { notify },
-)(From);
+export default From;

@@ -1,23 +1,31 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useWeb3Context } from 'web3-react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { ModalBody, ModalHeader } from '@chakra-ui/react';
+import { connect } from 'react-redux';
 import MetaMaskImage from '../../assets/mask.svg';
 import TrustWalletImage from '../../assets/trust.svg';
-import { connectWallet } from '../../containers/WalletProvider/actions';
-// import { notify } from '../../containers/NoticeProvider/actions';
-const Options = () => {
+import {
+  connectWallet,
+  connectingWallet,
+} from '../../containers/WalletProvider/actions';
+import { notify } from '../../containers/NoticeProvider/actions';
+
+const Options = ({ notify, connectWallet, connectingWallet }) => {
   const context = useWeb3Context();
   const connectMetaMask = () => {
-    connectWallet();
-    context.setFirstValidConnector(['MetaMask']);
+    connectingWallet(true);
+    context
+      .setFirstValidConnector(['MetaMask'])
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    // fulfilled
   };
-  // to access the Wallet connected please use context
-  console.log(context)
-  // to use else where apart from the Options page
-  // import { useWeb3Context } from 'web3-react';
-  // const context = useWeb3Context();
-  // then use the context
 
   const connectTrustWallet = () => {
     context.setFirstValidConnector(['TrustWallet']);
@@ -70,4 +78,7 @@ const Options = () => {
     </>
   );
 };
-export default Options;
+export default connect(
+  null,
+  { notify, connectWallet, connectingWallet },
+)(Options);

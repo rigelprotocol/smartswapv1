@@ -12,12 +12,12 @@ export default function configureStore(initialState = {}, history) {
 
   // If Redux Dev Tools and Saga Dev Tools Extensions are installed, enable them
   /* istanbul ignore next */
-  // if (process.env.NODE_ENV !== 'production' && typeof window === 'object') {
-  //   /* eslint-disable no-underscore-dangle */
-  //   if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__)
-  //     composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({});
-  //   /* eslint-enable */
-  // }
+  if (process.env.NODE_ENV !== 'production' && typeof window === 'object') {
+    /* eslint-disable no-underscore-dangle */
+    if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__)
+      composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({});
+    /* eslint-enable */
+  }
 
   const middlewares = [thunk, routerMiddleware(history)];
 
@@ -28,14 +28,13 @@ export default function configureStore(initialState = {}, history) {
     initialState,
     composeEnhancers(...enhancers),
   );
-
   // Make reducers hot reloadable, see http://mxs.is/googmo
   /* istanbul ignore next */
-  // if (module.hot) {
-  //   module.hot.accept('./reducers', () => {
-  //     store.replaceReducer(createReducer(store.injectedReducers));
-  //   });
-  // }
+  if (module.hot) {
+    module.hot.accept('./reducers', () => {
+      store.replaceReducer(createReducer(store.injectedReducers));
+    });
+  }
 
   return store;
 }
