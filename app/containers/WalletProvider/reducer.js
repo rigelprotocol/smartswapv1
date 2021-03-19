@@ -38,12 +38,12 @@ const walletProviderReducer = (state = initialState, action) =>
         draft.loading = action.payload;
         break;
       case WALLET_CONNECTED:
-        console.log(action.wallet);
         draft.wallet = action.wallet;
         draft.connected = true;
         break;
       case WALLET_PROPS:
-        return draft.wallet_props.push(action.payload);
+        draft.wallet_props.push(action.payload);
+        break;
       default:
         return state;
     }
