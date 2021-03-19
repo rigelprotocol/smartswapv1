@@ -10,6 +10,7 @@ import {
   ModalHeader,
   Modal,
   useDisclosure,
+  useClipboard,
 } from '@chakra-ui/react';
 import CurrentImage from '../../assets/current.svg';
 import EditImage from '../../assets/edit.svg';
@@ -18,6 +19,7 @@ import CopyImage from '../../assets/copy.svg';
 const Account = ({ wallet, wallet_props }) => {
   const { address, balance, signer } = wallet;
   const modal3Disclosure = useDisclosure();
+  const { hasCopied, onCopy } = useClipboard(address);
   return (
     <>
       <Flex
@@ -100,7 +102,7 @@ const Account = ({ wallet, wallet_props }) => {
             <Flex color="#fff" alignItems="center" rounded="md">
               <CurrentImage />
               <Text color="gray.400" fontSize="13px" ml={2}>
-                0xDa7a...362b
+                {address}
               </Text>
             </Flex>
 
@@ -113,15 +115,26 @@ const Account = ({ wallet, wallet_props }) => {
             >
               <Flex alignItems="center">
                 <CopyImage />
-                <Text color="gray.400" fontSize="13px" ml={2}>
-                  Copy Address
+                <Text
+                  color="gray.400"
+                  cursor="pointer"
+                  onClick={onCopy}
+                  fontSize="13px"
+                  ml={2}
+                >
+                  {hasCopied ? 'Copied Address' : 'Copy Address'}
                 </Text>
               </Flex>
 
               <Flex alignItems="center">
                 <EditImage />
                 <Text color="gray.400" fontSize="13px" ml={2}>
-                  View on Etherscan
+                  <a
+                    href={`https://etherscan.io/address/${address}`}
+                    target="_blank"
+                  >
+                    View on Etherscan
+                  </a>
                 </Text>
               </Flex>
             </Flex>
