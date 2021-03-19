@@ -23,6 +23,8 @@ import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
+import Web3 from 'web3';
+
 const From = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
@@ -71,7 +73,7 @@ const From = () => {
       );
 
       const rigelBal = await rgpToken.balanceOf(
-        '0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E',
+        account[0],
       );
       const busdBal = await busdToken.balanceOf(
         '0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E',
@@ -81,6 +83,12 @@ const From = () => {
       const busdbal = ethers.utils.formatEther(busdBal).toString();
       setRGPBalance(rgpbalance);
       setBUSDBalance(busdbal);
+
+      const web3 = new Web3(window.ethereum)
+      await window.ethereum.enable();
+      const account = await web3.eth.getAccounts();
+      console.log("user Account: ", account[0])
+      
     };
     contractProvider();
   }, []);
@@ -111,6 +119,8 @@ const From = () => {
       addressTo,
       deadline,
     );
+      
+   
   };
 
   return (
