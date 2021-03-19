@@ -3,9 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/input';
-import { connect } from 'react-redux';
-// import { useWeb3Context } from 'web3-react';
-// import { useWeb3React } from '@web3-react/core';
 import {
   Modal,
   ModalBody,
@@ -20,7 +17,6 @@ import RigelToken from 'utils/abis/RigelToken.json';
 import BUSD from 'utils/abis/BUSD.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 
-// import swapConnect from '../../utils/swapConnect';
 import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
@@ -38,17 +34,8 @@ const From = () => {
     setFromAmount(event.target.value);
     setAmountIn(event.target.value);
   };
-
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-  console.log('signer: ', signer);
-  // swapConnect();
-
-  // state function swapExactTokensForTokens
   const [amountIn, setAmountIn] = useState();
   const [amountOutMin, setAmountOutMin] = useState();
-  // const [deadline, setDeadline] = useState();
-  // const [SwapTokenForToken, setSwapTokenForToken] = useState();
 
   useEffect(() => {
     const contractProvider = async () => {

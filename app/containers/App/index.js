@@ -60,9 +60,9 @@ function App(props) {
     return () => clearTimeout(timer);
   }, []);
   return (
-    <ToastProvider>
+    <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
-        <Toast {...props} />
+        <Toast style={{ zIndex: '99999' }} {...props} />
         <Web3Provider connectors={{ MetaMask }} libraryName="ethers.js">
           <WalletContext.Provider
             value={{
@@ -74,22 +74,26 @@ function App(props) {
               setShow,
             }}
           >
-            <Switch>
-              <Route exact path="/" component={HomePage} />
-              <Route exact path="/farming" component={FarmingPage} />
-              <Route exact path="/liquidity" component={LiquidityPage} />
-              <Route
-                exact
-                path="/smart-swapping"
-                component={SmartSwappingPage}
-              />
-              <Route
-                exact
-                path="/margin-trading"
-                component={MarginTradingPage}
-              />
-              <Route component={NotFoundPage} />
-            </Switch>
+            {splashView ? (
+              <Splash />
+            ) : (
+              <Switch>
+                <Route exact path="/" component={HomePage} />
+                <Route exact path="/farming" component={FarmingPage} />
+                <Route exact path="/liquidity" component={LiquidityPage} />
+                <Route
+                  exact
+                  path="/smart-swapping"
+                  component={SmartSwappingPage}
+                />
+                <Route
+                  exact
+                  path="/margin-trading"
+                  component={MarginTradingPage}
+                />
+                <Route component={NotFoundPage} />
+              </Switch>
+            )}
           </WalletContext.Provider>
         </Web3Provider>
       </ThemeProvider>
