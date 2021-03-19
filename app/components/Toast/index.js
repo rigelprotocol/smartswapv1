@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { withToastManager } from 'react-toast-notifications';
 
 function Toast(props) {
-  const { showNotice, message } = props.notice;
+  const { showNotice, message } = props.state.notice;
   const { toastManager } = props;
   useEffect(() => {
     if (showNotice) {
