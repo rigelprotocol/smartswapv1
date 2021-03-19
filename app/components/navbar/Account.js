@@ -15,8 +15,8 @@ import CurrentImage from '../../assets/current.svg';
 import EditImage from '../../assets/edit.svg';
 import CopyImage from '../../assets/copy.svg';
 
-const Account = ({ wallet }) => {
-  const { address, balance } = wallet;
+const Account = ({ wallet, wallet_props }) => {
+  const { address, balance, signer } = wallet;
   const modal3Disclosure = useDisclosure();
   return (
     <>

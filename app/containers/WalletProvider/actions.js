@@ -8,10 +8,13 @@
 import { NOTICE } from 'containers/NoticeProvider/constants';
 import {
   connectMetaMask,
+  getAddressTokenBalance,
   provider,
   signer,
 } from 'utils/wallet-wiget/connection';
 import { ethers } from 'ethers';
+import { TOKENS_CONTRACT } from 'utils/constants';
+import RigelToken from 'utils/abis/RigelToken.json';
 import {
   DEFAULT_ACTION,
   WALLET_CONNECTED,
@@ -47,13 +50,14 @@ export const connectWallet = () => async dispatch => {
       },
     })
     const balance = await ethProvider.getBalance(res[0]);
-    //
-    return dispatch({
+    dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: res[0], balance: ethers.utils.formatEther(balance).toString(),
         provider: ethProvider, signer: walletSigner, chainId,
       },
     });
+    return dispatch({ type: WALLET_PROPS, payload: { rgp: await getAddressTokenBalance(res[0], TOKENS_CONTRACT.RGP, RigelToken, walletSigner) } });
+
   })
     .catch(e => {
       dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
