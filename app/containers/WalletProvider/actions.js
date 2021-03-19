@@ -15,6 +15,7 @@ import {
 import { ethers } from 'ethers';
 import { TOKENS_CONTRACT } from 'utils/constants';
 import RigelToken from 'utils/abis/RigelToken.json';
+import configureStore from 'configureStore';
 import {
   DEFAULT_ACTION,
   WALLET_CONNECTED,
@@ -23,6 +24,7 @@ import {
   CLOSE_LOADING_WALLET,
 } from './constants';
 
+const store = configureStore()
 export function defaultAction() {
   return {
     type: DEFAULT_ACTION,
@@ -78,7 +80,6 @@ export const setWalletProps = wallet => dispatch =>
   });
 
 export function connectingWallet(option) {
-  console.log(option);
   return dispatch => {
     dispatch({
       type: option ? LOADING_WALLET : CLOSE_LOADING_WALLET,
@@ -86,3 +87,43 @@ export function connectingWallet(option) {
     });
   };
 }
+/**
+ *
+ * @param {*} wallet
+ * @returns {*} dispatch
+ */
+export const connectionEventListener = (wallet) => dispatch => {
+  if (window.ethereum) {
+    const reduxWallet = store.getStore().wallet
+    window.ethereum.on("connect", (...args) => dispatch({
+      type: WALLET_CONNECTED
+    }))
+    window.ethereum.on('chainChanged', (chainId) => dispatch({
+      type: WALLET_CONNECTED,
+      wallet: { ...reduxWallet, chainId }
+    }));
+
+    window.ethereum.on('accountsChanged', async accounts => {
+      if (accounts.length === 0) {
+        // disconnectUser();
+        console.log('>>> are you leaving')
+      } else if (accounts[0] !== wallet.address) {
+        const address = accounts[0];
+      }
+    });
+    window.ethereum.on('disconnect', error => {
+      // disconnectUser();
+    });
+  }
+}
+/**
+ *
+ * @param {*} tokens
+ */
+// export const getTokenBalance = async (tokens = []) => {
+//   for (let index = 0; index < tokens.length; index++) {
+//     const element = array[index];
+//     await getAddressTokenBalance('wallet_address', 'tokenAddress', 'TokenAbi', 'signer')
+
+//   }
+// }

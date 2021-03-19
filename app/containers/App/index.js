@@ -25,6 +25,7 @@ import Splash from 'components/splash/index';
 import '../../styles/globals.css';
 import { WalletContext } from '../../context';
 import Toast from '../../components/Toast';
+import { connectionEventListener } from 'containers/WalletProvider/actions';
 
 const { InjectedConnector } = Connectors;
 const MetaMask = new InjectedConnector({ supportedNetworks: [1, 4] });
@@ -47,18 +48,19 @@ const newTheme = {
   ...theme,
   breakpoints,
 };
-function App(props) {
+function App(props, { wallet }) {
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [splashView, setSplashView] = useState(true);
 
   useEffect(() => {
+    connectionEventListener(wallet)
     const timer = setTimeout(() => {
       setSplashView(false);
     }, 3000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [props]);
   return (
     <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
@@ -100,7 +102,7 @@ function App(props) {
     </ToastProvider>
   );
 }
-const mapStateToProps = state => state;
+const mapStateToProps = (state, { wallet }) => ({ state, wallet });
 
 export default connect(
   mapStateToProps,

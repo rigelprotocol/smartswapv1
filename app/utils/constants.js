@@ -18,9 +18,9 @@ export const TOKENS = {
 };
 
 export const TOKENS_CONTRACT = {
-  BNB: '0x80278a0cf536e568a76425b67fb3931dca21535c',
+  BNB: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
   ETH: '',
-  RGP: '0xD848eD7f625165D7fFa9e3B3b0661d6074902FD4',
+  RGP: '0x80278a0cf536e568a76425b67fb3931dca21535c',
 };
 
 export const SMART_SWAP = {

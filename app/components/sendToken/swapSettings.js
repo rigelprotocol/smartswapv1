@@ -18,7 +18,7 @@ import {
 import { Input } from '@chakra-ui/input';
 import { SettingsIcon } from '@chakra-ui/icons';
 
-const swapSettings = () => (
+const SwapSettings = () => (
   <Flex
     style={{
       right: '0px',
@@ -150,4 +150,4 @@ const swapSettings = () => (
   </Flex>
 );
 
-export default swapSettings;
+export default SwapSettings;
