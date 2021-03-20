@@ -10,9 +10,8 @@ import { connect } from 'react-redux';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
-import makeSelectFarmingPage from './selectors';
 
-export function FarmingPage({ farmingPage }) {
+export function FarmingPage({ farming }) {
   return (
     <div>
       <Layout title="Farming Page">
@@ -47,7 +46,7 @@ export function FarmingPage({ farmingPage }) {
                 <Text>Total Liquidity</Text>
                 <Text />
               </Flex>
-              {farmingPage.contents.map(content => (
+              {farming.contents.map(content => (
                 <YieldFarm content={content} key={content.id} />
               ))}
             </Box>
