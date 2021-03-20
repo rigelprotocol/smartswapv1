@@ -67,7 +67,7 @@ const From = ({
     busdApproval();
   }, [wallet]);
 
-     // onclick of Approve should be set to (approval) for busd
+     // onclick of Approve should be set to (approval) for rgp
      useEffect(() => {
       const rgpApproval = async () => {
         if (wallet.signer !== 'signer') {
