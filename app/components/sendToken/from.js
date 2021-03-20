@@ -13,7 +13,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 
-import { BUSDToken, router } from 'utils/SwapConnect';
+import { BUSDToken, router, rigelToken } from 'utils/SwapConnect';
 import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import InputSelector from './InputSelector';
@@ -36,7 +36,7 @@ const From = ({
   const [busdBalance, setBUSDBalance] = useState('0.0');
   const [ETHBalance, setETHBalance] = useState('0.0');
 
-  //state value for smartSwap
+  // state value for smartSwap
   const [amountIn, setAmountIn] = useState('2');
 
   useEffect(() => {
@@ -55,29 +55,37 @@ const From = ({
     getBalance();
   }, [wallet]);
 
-    // onclick of Approve should be set to (approval) for busd
+  // onclick of Approve should be set to (approval) for busd
   useEffect(() => {
     const busdApproval = async () => {
       if (wallet.signer !== 'signer') {
         const bnb = await BUSDToken();
-        const walletBal = ethers.utils.parseUnits(await bnb.balanceOf(wallet.address)).toString();
-        await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, { from: wallet.address });
+        const walletBal = ethers.utils
+          .parseUnits(await bnb.balanceOf(wallet.address))
+          .toString();
+        await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+          from: wallet.address,
+        });
       }
     };
     busdApproval();
   }, [wallet]);
 
-     // onclick of Approve should be set to (approval) for rgp
-     useEffect(() => {
-      const rgpApproval = async () => {
-        if (wallet.signer !== 'signer') {
-          const rgp = await rigelToken();
-          const walletBal = ethers.utils.parseUnits(await rgp.balanceOf(wallet.address)).toString();
-          await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, { from: wallet.address });
-        }
-      };
-      rgpApproval();
-    }, [wallet]);
+  // onclick of Approve should be set to (approval) for rgp
+  useEffect(() => {
+    const rgpApproval = async () => {
+      if (wallet.signer !== 'signer') {
+        const rgp = await rigelToken();
+        const walletBal = ethers.utils
+          .parseUnits(await rgp.balanceOf(wallet.address))
+          .toString();
+        await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+          from: wallet.address,
+        });
+      }
+    };
+    rgpApproval();
+  }, [wallet]);
 
   // useEffect(() => {
   //   const getOutPutPrice = async () => {
@@ -100,14 +108,23 @@ const From = ({
       if (wallet.signer !== 'signer') {
         const rout = await router();
         setAmountIn(amountIn);
-        const deadL = Math.floor(new Date().getTime()/1000.0+300)
+        const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
         const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
         const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
-        const passOutPut = (amountIn);
-        await rout.swapExactTokensForTokens(amountIn, passOutPut, [bnb, rgp], wallet.address, deadL,
-          { from: wallet.address,
-            gasLimit: 150000, gasPrice: ethers.utils.parseUnits('20', 'gwei')})
-        console.log('Router', deadL)
+        const passOutPut = amountIn;
+        await rout.swapExactTokensForTokens(
+          amountIn,
+          passOutPut,
+          [bnb, rgp],
+          wallet.address,
+          deadL,
+          {
+            from: wallet.address,
+            gasLimit: 150000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
+        console.log('Router', deadL);
       }
     };
     swapTokenForTokens();
