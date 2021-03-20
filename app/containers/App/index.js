@@ -23,10 +23,10 @@ import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Splash from 'components/splash/index';
 
 import '../../styles/globals.css';
+// import { connectionEventListener } from 'containers/WalletProvider/actions';
+import { connectionEventListener } from 'utils/wallet-wiget/connection';
 import { WalletContext } from '../../context';
 import Toast from '../../components/Toast';
-import { connectionEventListener } from 'containers/WalletProvider/actions';
-
 const { InjectedConnector } = Connectors;
 const MetaMask = new InjectedConnector({ supportedNetworks: [1, 4] });
 const breakpoints = ['360px', '768px', '1024px', '1440px'];
@@ -55,11 +55,20 @@ function App(props, { wallet }) {
   const [splashView, setSplashView] = useState(true);
 
   useEffect(() => {
-    connectionEventListener(wallet)
-    const timer = setTimeout(() => {
-      setSplashView(false);
-    }, 3000);
-    return () => clearTimeout(timer);
+    connectionEventListener(wallet);
+    if (
+      window.ethereum.isConnected() &&
+      window.ethereum.selectedAddress &&
+      window.ethereum.isMetaMask
+    ) {
+      console.log('Hello>>> ', window.ethereum.selectedAddress);
+      window.ethereum.on('connect', (...args) => {
+        // dispatch({
+        //   type: WALLET_CONNECTED,
+        // });
+      });
+    }
+    return showSplashScreen(setSplashView);
   }, [props]);
   return (
     <ToastProvider placement="bottom-right">
@@ -108,3 +117,10 @@ export default connect(
   mapStateToProps,
   {},
 )(App);
+function showSplashScreen(setSplashView) {
+  const timer = setTimeout(() => {
+    setSplashView(false);
+  }, 3000);
+  return () => clearTimeout(timer);
+}
+

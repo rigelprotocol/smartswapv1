@@ -15,7 +15,6 @@ import {
 import { ethers } from 'ethers';
 import { TOKENS_CONTRACT } from 'utils/constants';
 import RigelToken from 'utils/abis/RigelToken.json';
-import configureStore from 'configureStore';
 import {
   DEFAULT_ACTION,
   WALLET_CONNECTED,
@@ -24,7 +23,6 @@ import {
   CLOSE_LOADING_WALLET,
 } from './constants';
 
-const store = configureStore()
 export function defaultAction() {
   return {
     type: DEFAULT_ACTION,
@@ -87,35 +85,7 @@ export function connectingWallet(option) {
     });
   };
 }
-/**
- *
- * @param {*} wallet
- * @returns {*} dispatch
- */
-export const connectionEventListener = (wallet) => dispatch => {
-  if (window.ethereum) {
-    const reduxWallet = store.getStore().wallet
-    window.ethereum.on("connect", (...args) => dispatch({
-      type: WALLET_CONNECTED
-    }))
-    window.ethereum.on('chainChanged', (chainId) => dispatch({
-      type: WALLET_CONNECTED,
-      wallet: { ...reduxWallet, chainId }
-    }));
 
-    window.ethereum.on('accountsChanged', async accounts => {
-      if (accounts.length === 0) {
-        // disconnectUser();
-        console.log('>>> are you leaving')
-      } else if (accounts[0] !== wallet.address) {
-        const address = accounts[0];
-      }
-    });
-    window.ethereum.on('disconnect', error => {
-      // disconnectUser();
-    });
-  }
-}
 /**
  *
  * @param {*} tokens
