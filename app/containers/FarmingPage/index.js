@@ -63,9 +63,9 @@ FarmingPage.propTypes = {
   farmingPage: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = () => {
+const mapStateToProps = ({ farming }) => {
   return {
-    farmingPage: makeSelectFarmingPage(),
+    farming,
   };
 };
 
