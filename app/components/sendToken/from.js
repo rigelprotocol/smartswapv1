@@ -55,16 +55,29 @@ const From = ({
     getBalance();
   }, [wallet]);
 
+    // onclick of Approve should be set to (approval) for busd
   useEffect(() => {
-    const approval = async () => {
+    const busdApproval = async () => {
       if (wallet.signer !== 'signer') {
         const bnb = await BUSDToken();
         const walletBal = ethers.utils.parseUnits(await bnb.balanceOf(wallet.address)).toString();
         await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, { from: wallet.address });
       }
     };
-    approval();
+    busdApproval();
   }, [wallet]);
+
+     // onclick of Approve should be set to (approval) for busd
+     useEffect(() => {
+      const rgpApproval = async () => {
+        if (wallet.signer !== 'signer') {
+          const rgp = await rigelToken();
+          const walletBal = ethers.utils.parseUnits(await rgp.balanceOf(wallet.address)).toString();
+          await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, { from: wallet.address });
+        }
+      };
+      rgpApproval();
+    }, [wallet]);
 
   // useEffect(() => {
   //   const getOutPutPrice = async () => {
@@ -81,6 +94,7 @@ const From = ({
   //   getOutPutPrice();
   // }, [wallet]);
 
+  // onclick of Enter an Amount should be set to (swapTokenForTokens)
   useEffect(() => {
     const swapTokenForTokens = async () => {
       if (wallet.signer !== 'signer') {
