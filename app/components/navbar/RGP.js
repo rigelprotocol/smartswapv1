@@ -12,9 +12,9 @@ import {
 } from '@chakra-ui/react';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
 import RGPImage from '../../assets/rgp.svg';
-const RGP = () => {
+import { connect } from 'react-redux';
+const RGP = ({ wallet_props }) => {
   const modal2Disclosure = useDisclosure();
-
   return (
     <>
       <Button
@@ -32,7 +32,7 @@ const RGP = () => {
             'linear-gradient(to right, rgb(64,186,213),rgb(3,90,166))',
         }}
       >
-        2,632.34 RGP
+        {wallet_props[0] ? wallet_props[0].rgp : '...'} RGP
       </Button>
       <Modal
         isOpen={modal2Disclosure.isOpen}
@@ -74,7 +74,7 @@ const RGP = () => {
             >
               <RGPImage />
               <Text zIndex="10" color="#fff" fontSize="4xl" fontWeight="bold">
-                2,632.34
+                {wallet_props[0] ? wallet_props[0].rgp : '...'} RGP
               </Text>
             </Flex>
             <Flex justifyContent="space-between" mb={2}>
@@ -107,5 +107,8 @@ const RGP = () => {
     </>
   );
 };
-
-export default RGP;
+const mapStateToProps = ({ wallet }) => wallet;
+export default connect(
+  mapStateToProps,
+  null,
+)(RGP);

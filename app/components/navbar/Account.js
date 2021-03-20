@@ -1,5 +1,6 @@
+import React from 'react';
+import { useSelector, useDispatch, connect } from 'react-redux';
 import { Flex, Text } from '@chakra-ui/layout';
-import React from 'react'
 import {
   ModalOverlay,
   Button,
@@ -9,13 +10,16 @@ import {
   ModalHeader,
   Modal,
   useDisclosure,
+  useClipboard,
 } from '@chakra-ui/react';
 import CurrentImage from '../../assets/current.svg';
 import EditImage from '../../assets/edit.svg';
 import CopyImage from '../../assets/copy.svg';
-const Account = () => {
-  const modal3Disclosure = useDisclosure();
 
+const Account = ({ wallet, wallet_props }) => {
+  const { address, balance, signer } = wallet;
+  const modal3Disclosure = useDisclosure();
+  const { hasCopied, onCopy } = useClipboard(address);
   return (
     <>
       <Flex
@@ -29,7 +33,7 @@ const Account = () => {
         ml={5}
       >
         <Text color="#fff" fontSize="sm" ml={2} mr={4}>
-          0 ETH
+          {balance} ETH
         </Text>
         <Button
           onClick={modal3Disclosure.onOpen}
@@ -46,7 +50,7 @@ const Account = () => {
           fontWeight="light"
           border="0px"
         >
-          <Text mr="10px">0xDa7a...362b</Text>
+          <Text mr="10px">{address}</Text>
           <CurrentImage />
         </Button>
       </Flex>
@@ -54,7 +58,7 @@ const Account = () => {
       <Modal
         isOpen={modal3Disclosure.isOpen}
         onClose={modal3Disclosure.onClose}
-        isCentered="true"
+        isCentered
       >
         <ModalOverlay />
         <ModalContent
@@ -65,9 +69,9 @@ const Account = () => {
           width="90vw"
         >
           <ModalCloseButton
-            bg={'none'}
+            bg="none"
             border="0px"
-            color={'#fff'}
+            color="#fff"
             _focus={{ outline: 'none' }}
           />
           <ModalHeader fontWeight="light" fontSize="sm">
@@ -98,7 +102,7 @@ const Account = () => {
             <Flex color="#fff" alignItems="center" rounded="md">
               <CurrentImage />
               <Text color="gray.400" fontSize="13px" ml={2}>
-                0xDa7a...362b
+                {address}
               </Text>
             </Flex>
 
@@ -111,15 +115,26 @@ const Account = () => {
             >
               <Flex alignItems="center">
                 <CopyImage />
-                <Text color="gray.400" fontSize="13px" ml={2}>
-                  Copy Address
+                <Text
+                  color="gray.400"
+                  cursor="pointer"
+                  onClick={onCopy}
+                  fontSize="13px"
+                  ml={2}
+                >
+                  {hasCopied ? 'Copied Address' : 'Copy Address'}
                 </Text>
               </Flex>
 
               <Flex alignItems="center">
                 <EditImage />
                 <Text color="gray.400" fontSize="13px" ml={2}>
-                  View on Etherscan
+                  <a
+                    href={`https://etherscan.io/address/${address}`}
+                    target="_blank"
+                  >
+                    View on Etherscan
+                  </a>
                 </Text>
               </Flex>
             </Flex>
@@ -142,5 +157,8 @@ const Account = () => {
     </>
   );
 };
-
-export default Account;
+const mapStateToProps = ({ wallet }) => wallet;
+export default connect(
+  mapStateToProps,
+  null,
+)(Account);

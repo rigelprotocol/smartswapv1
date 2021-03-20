@@ -4,10 +4,10 @@ import { Box } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 // eslint-disable-next-line import/no-cycle
+// import { BUSDToken, router } from 'utils/SwapConnect';
+// import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
 import From from './from';
 import To from './to';
-import swapSettings from './swapSettings';
-import from from './from';
 
 const Manual = props => (
   <div>

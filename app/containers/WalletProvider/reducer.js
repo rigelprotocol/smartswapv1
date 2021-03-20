@@ -13,7 +13,13 @@ import {
 } from './constants';
 
 export const initialState = {
-  wallet: {},
+  wallet: {
+    balance: 0,
+    address: '0x',
+    provider: 'provider',
+    signer: 'signer',
+    chainId: 'chainId',
+  },
   wallet_props: [],
   connected: false,
   loading: false,
@@ -26,11 +32,9 @@ const walletProviderReducer = (state = initialState, action) =>
       case DEFAULT_ACTION:
         break;
       case LOADING_WALLET:
-        console.log('go hello');
         draft.loading = action.payload;
         break;
       case CLOSE_LOADING_WALLET:
-        console.log('Dagogo Show');
         draft.loading = action.payload;
         break;
       case WALLET_CONNECTED:
@@ -38,7 +42,8 @@ const walletProviderReducer = (state = initialState, action) =>
         draft.connected = true;
         break;
       case WALLET_PROPS:
-        return draft.wallet_props.push(action.payload);
+        draft.wallet_props.push(action.payload);
+        break;
       default:
         return state;
     }

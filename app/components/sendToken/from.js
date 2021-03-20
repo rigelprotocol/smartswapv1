@@ -12,116 +12,92 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/modal';
-import { ethers } from 'ethers';
-import RigelToken from 'utils/abis/RigelToken.json';
-import BUSD from 'utils/abis/BUSD.json';
-import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 
+import { BUSDToken, router } from 'utils/SwapConnect';
+import { connect } from 'react-redux';
+import { ethers } from 'ethers';
 import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
-import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
-import Web3 from 'web3';
+import { TOKENS, TOKENS_CONTRACT, SMART_SWAP } from '../../utils/constants';
 
-const From = () => {
+const From = ({
+  fromAmount,
+  handleChangeFromAmount,
+  setPathArray,
+  wallet,
+  wallet_props,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
   const [rgpBalance, setRGPBalance] = useState('0.0');
   const [busdBalance, setBUSDBalance] = useState('0.0');
-  const [fromAmount, setFromAmount] = useState('');
-  const [path, setPath] = useState([]);
-  const handleChangeFromAmount = event => {
-    setFromAmount(event.target.value);
-    setAmountIn(event.target.value);
-  };
+  const [ETHBalance, setETHBalance] = useState('0.0');
 
-  // const provider = new ethers.providers.Web3Provider(window.ethereum);
-  // const signer = provider.getSigner();
-  // console.log('signer: ', signer);
-  // swapConnect();
-
-  // state function swapExactTokensForTokens
-  const [amountIn, setAmountIn] = useState();
-  const [amountOutMin, setAmountOutMin] = useState();
-  // const [deadline, setDeadline] = useState();
-  // const [SwapTokenForToken, setSwapTokenForToken] = useState();
+  //state value for smartSwap
+  const [amountIn, setAmountIn] = useState('2');
 
   useEffect(() => {
-    const contractProvider = async () => {
-      // const SmartSwap_Address = SMART_SWAP.SMART_SWAPPING;
-
-      const rgp2ABI = RigelToken;
-      const BusdABI = BUSD;
-      const SmartSwap_ABI = SmartSwapRouter02;
-
-      const rgpToken = new ethers.Contract(
-        TOKENS_CONTRACT.RGP,
-        rgp2ABI,
-        signer,
-      );
-      const busdToken = new ethers.Contract(
-        TOKENS_CONTRACT.BNB,
-        BusdABI,
-        signer,
-      );
-      const SmartSwapContractAddress = new ethers.Contract(
-        SMART_SWAP.SMART_SWAPPING,
-        SmartSwap_ABI,
-        signer,
-      );
-
-      const rigelBal = await rgpToken.balanceOf(
-        account[0],
-      );
-      const busdBal = await busdToken.balanceOf(
-        '0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E',
-      );
-
-      const rgpbalance = ethers.utils.formatEther(rigelBal).toString();
-      const busdbal = ethers.utils.formatEther(busdBal).toString();
-      setRGPBalance(rgpbalance);
-      setBUSDBalance(busdbal);
-
-      const web3 = new Web3(window.ethereum)
-      await window.ethereum.enable();
-      const account = await web3.eth.getAccounts();
-      console.log("user Account: ", account[0])
-      
+    const getBalance = async () => {
+      if (wallet.signer !== 'signer') {
+        const bnb = await BUSDToken();
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : '0.0');
+        setETHBalance(wallet ? wallet.balance : '0.0');
+        setBUSDBalance(
+          ethers.utils
+            .formatEther(await bnb.balanceOf(wallet.address))
+            .toString(),
+        );
+      }
     };
-    contractProvider();
-  }, []);
-  // Approve contract address to spend input amount
+    getBalance();
+  }, [wallet]);
 
-  // set swapExactTokensForTokens
-  const swap = async e => {
-    const {
-      rgpToken,
-      busd,
-      SmartSwapContractAddress,
-    } = await contractProvider();
+  useEffect(() => {
+    const approval = async () => {
+      if (wallet.signer !== 'signer') {
+        const bnb = await BUSDToken();
+        const walletBal = ethers.utils.parseUnits(await bnb.balanceOf(wallet.address)).toString();
+        await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, { from: wallet.address });
+      }
+    };
+    approval();
+  }, [wallet]);
 
-    // swapping Exact token for tokens
-    const deadline = '1616043285';
-    const rgpAprove = await rgpToken.approve(
-      '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
-      amountIn,
-    );
-    const busdAprove = await busd.approve(
-      '0x3175bfbc3e620FaF654309186f66908073cF9CBB',
-      amountIn,
-    );
-    const swapExactTokforTok = await SmartSwapContractAddress.swapExactTokensForTokens(
-      amountIn,
-      amountOutMin,
-      path,
-      addressTo,
-      deadline,
-    );
-      
-   
-  };
+  // useEffect(() => {
+  //   const getOutPutPrice = async () => {
+  //     if (wallet.signer !== 'signer') {
+  //       const rout = await router();
+  //       setAmountIn(amountIn);
+  //       const passOutPut = ethers.utils.parseUnits("100").toString();
+  //       const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
+  //       const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
+  //       const outPut = await rout.getAmountsOut(passOutPut, [rgp, bnb])
+  //       console.log('AmountOut', outPut)
+  //     }
+  //   };
+  //   getOutPutPrice();
+  // }, [wallet]);
+
+  useEffect(() => {
+    const swapTokenForTokens = async () => {
+      if (wallet.signer !== 'signer') {
+        const rout = await router();
+        setAmountIn(amountIn);
+        const deadL = Math.floor(new Date().getTime()/1000.0+300)
+        const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
+        const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
+        const passOutPut = (amountIn);
+        await rout.swapExactTokensForTokens(amountIn, passOutPut, [bnb, rgp], wallet.address, deadL,
+          { from: wallet.address,
+            gasLimit: 150000, gasPrice: ethers.utils.parseUnits('20', 'gwei')})
+        console.log('Router', deadL)
+      }
+    };
+    swapTokenForTokens();
+  }, [wallet]);
 
   return (
     <>
@@ -140,7 +116,12 @@ const From = () => {
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             {/* Balance: {tokenBalance} */}
-            Balance: {rgpBalance}
+            Balance:{' '}
+            {selectedToken == 'BNB'
+              ? busdBalance
+              : selectedToken == 'ETH'
+                ? ETHBalance
+                : rgpBalance}
           </Text>
         </Flex>
         <InputSelector
@@ -190,7 +171,7 @@ const From = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.BNB);
-                setPath(TOKENS_CONTRACT.BNB);
+                setPathArray(TOKENS_CONTRACT.BNB);
                 onClose();
               }}
             >
@@ -210,7 +191,7 @@ const From = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.ETH);
-                setPath(TOKENS_CONTRACT.ETH);
+                setPathArray(wallet.address);
                 onClose();
               }}
             >
@@ -221,7 +202,7 @@ const From = () => {
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                0
+                {ETHBalance}
               </Text>
             </Flex>
             <Flex
@@ -230,7 +211,7 @@ const From = () => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.RGP);
-                setPath(TOKENS_CONTRACT.RGP);
+                setPathArray(TOKENS_CONTRACT.RGP);
                 onClose();
               }}
             >
@@ -252,4 +233,12 @@ const From = () => {
     </>
   );
 };
-export default From;
+const mapStateToProps = ({ wallet }) => ({
+  wallet: wallet.wallet,
+  wallet_props: wallet.wallet_props,
+});
+
+export default connect(
+  mapStateToProps,
+  {},
+)(From);

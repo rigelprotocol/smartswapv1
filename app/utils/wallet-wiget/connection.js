@@ -21,6 +21,23 @@ export const provider = async () => {
 
 export const signer = async () => (await provider()).getSigner();
 
-export const connectMetaMask = async () => {
-  await window.ethereum.enable();
-};
+export const connectMetaMask = async () =>
+  await window.ethereum.request({
+    method: 'eth_requestAccounts',
+  });
+
+export const getAddressTokenBalance = async (
+  address,
+  tokenAddress,
+  ABI,
+  walletSigner,
+) =>
+  ethers.utils
+    .formatEther(
+      await new ethers.Contract(tokenAddress, ABI, walletSigner).balanceOf(
+        address,
+      ),
+    )
+    .toString();
+
+// Object.fromEntries( Object.entries(TOKENS_CONTRACT).filter(([key, value]) => key === symbol))
