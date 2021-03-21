@@ -53,10 +53,28 @@ const Manual = props => {
       const { fromPath } = path[0]
       const { toPath } = path[1]
       const amount = await rout.getAmountsOut(SMART_SWAP.SMART_SWAPPING, fromAmount, [fromPath, toPath]);
-      console.log(fromPath, toPath, amount);
+      console.log("starting......", fromPath, toPath, amount);
     }
     console.log('Final Show');
+    console.log(fromAmount)
   };
+  
+
+  // onclick of Enter an Amount should be set to (swapTokenForTokens)
+    const swapTokenForTokens = async () => {
+      if (wallet.signer !== 'signer') {
+        const rout = await router();
+        const deadLine = Math.floor(new Date().getTime()/1000.0+300)
+        const { fromPath } = path[0]
+        const { toPath } = path[1]
+        const passOutPut = setAmountIn(amountIn);
+        await rout.swapExactTokensForTokens(amountIn, passOutPut, [fromPath, toPath], wallet.address, deadLine,
+          { from: wallet.address,
+            gasLimit: 150000, gasPrice: ethers.utils.parseUnits('20', 'gwei')})
+        console.log('Router', deadL)
+      }
+    };
+
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
@@ -73,16 +91,6 @@ const Manual = props => {
     getBalance();
   }, [wallet]);
 
-
-  useEffect(() => {
-    const getAmountOutPut = async () => {
-      if (wallet.signer !== 'signer') {
-        const rout = await router();
-        await rout.getAmountsOut(SMART_SWAP.SmartFactory, amountIn, [bnb, rgp])
-      }
-    };
-    getAmountOutPut();
-  }, [wallet]);
 
   const sendNotice = (message) => {
     props.notify({
