@@ -51,7 +51,7 @@ const Manual = props => {
       const rout = await router();
       const { fromPath } = path[0]
       const { toPath } = path[1]
-      const amount = await rout.getAmountsOut(SMART_SWAP.SMART_SWAPPING, fromAmount, [fromPath, toPath]);
+      const amount = await rout.getAmountsOut(SMART_SWAP.SmartFactory, fromAmount, [fromPath, toPath]);
       console.log(fromPath, toPath, amount);
     }
     console.log('Final Show');
