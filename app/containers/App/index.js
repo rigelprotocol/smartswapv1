@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  *
  * App.js
@@ -11,7 +12,6 @@ import { Switch, Route } from 'react-router-dom';
 import { ThemeProvider, theme } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
 import { connect } from 'react-redux';
-import Web3Provider, { Connectors } from 'web3-react';
 import WebFont from 'webfontloader';
 
 import HomePage from 'containers/HomePage/Loadable';
@@ -25,10 +25,8 @@ import Splash from 'components/splash/index';
 import '../../styles/globals.css';
 import { WalletContext } from '../../context';
 import Toast from '../../components/Toast';
-import { connectionEventListener } from 'containers/WalletProvider/actions';
+import { reConnect } from '../WalletProvider/actions';
 
-const { InjectedConnector } = Connectors;
-const MetaMask = new InjectedConnector({ supportedNetworks: [1, 4] });
 const breakpoints = ['360px', '768px', '1024px', '1440px'];
 breakpoints.sm = breakpoints[0];
 breakpoints.md = breakpoints[1];
@@ -48,63 +46,98 @@ const newTheme = {
   ...theme,
   breakpoints,
 };
-function App(props, { wallet }) {
+
+const App = props => {
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [splashView, setSplashView] = useState(true);
-
+  const { wallet } = props.state;
   useEffect(() => {
-    connectionEventListener(wallet)
-    const timer = setTimeout(() => {
-      setSplashView(false);
-    }, 3000);
-    return () => clearTimeout(timer);
+    listener(wallet, props);
+    reConnector(props);
+    return showSplashScreen(setSplashView);
   }, [props]);
   return (
     <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
-        <Toast style={{ zIndex: '99999' }} {...props} />
-        <Web3Provider connectors={{ MetaMask }} libraryName="ethers.js">
-          <WalletContext.Provider
-            value={{
-              connected,
-              loading,
-              show,
-              setConnected,
-              setLoading,
-              setShow,
-            }}
-          >
-            {splashView ? (
-              <Splash />
-            ) : (
-              <Switch>
-                <Route exact path="/" component={HomePage} />
-                <Route exact path="/farming" component={FarmingPage} />
-                <Route exact path="/liquidity" component={LiquidityPage} />
-                <Route
-                  exact
-                  path="/smart-swapping"
-                  component={SmartSwappingPage}
-                />
-                <Route
-                  exact
-                  path="/margin-trading"
-                  component={MarginTradingPage}
-                />
-                <Route component={NotFoundPage} />
-              </Switch>
-            )}
-          </WalletContext.Provider>
-        </Web3Provider>
+        <Toast {...props} />
+        <WalletContext.Provider
+          value={{
+            connected,
+            loading,
+            show,
+            setConnected,
+            setLoading,
+            setShow,
+          }}
+        >
+          {splashView ? (
+            <Splash />
+          ) : (
+            <Switch>
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/farming" component={FarmingPage} />
+              <Route exact path="/liquidity" component={LiquidityPage} />
+              <Route
+                exact
+                path="/smart-swapping"
+                component={SmartSwappingPage}
+              />
+              <Route
+                exact
+                path="/margin-trading"
+                component={MarginTradingPage}
+              />
+              <Route component={NotFoundPage} />
+            </Switch>
+          )}
+        </WalletContext.Provider>
       </ThemeProvider>
     </ToastProvider>
   );
-}
-const mapStateToProps = (state, { wallet }) => ({ state, wallet });
+};
+const mapStateToProps = state => ({ state });
 
 export default connect(
   mapStateToProps,
-  {},
+  { reConnect },
 )(App);
+
+function reConnector(props) {
+  if (
+    window.ethereum &&
+    window.ethereum.isConnected() &&
+    window.ethereum.selectedAddress &&
+    window.ethereum.isMetaMask &&
+    !props.state.wallet.connected
+  ) {
+    props.reConnect(window.ethereum);
+  }
+}
+
+function listener(wallet, props) {
+  if (
+    window.ethereum &&
+    window.ethereum.isConnected() &&
+    window.ethereum.selectedAddress &&
+    window.ethereum.isMetaMask &&
+    props.state.wallet.connected
+  ) {
+    window.ethereum.on('accountsChanged', async accounts => {
+      if (accounts.length === 0) {
+        // disconnectUser();
+        console.log('>>> are you leaving');
+      } else if (accounts[0] !== wallet.address) {
+        return props.reConnect(window.ethereum);
+      }
+    });
+  }
+}
+
+function showSplashScreen(setSplashView) {
+  const timer = setTimeout(() => {
+    setSplashView(false);
+  }, 3000);
+  return () => clearTimeout(timer);
+}

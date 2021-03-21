@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import swapConnect from './SwapConnect';
+import SwapConnect from './SwapConnect';
 
 export default async function smartSwap() {
   // useEffect(() => {
@@ -11,7 +11,7 @@ export default async function smartSwap() {
       SmartSwapRouter02_Contract,
       SmartSwapFactoryForSwap_Contract,
       SmartSwapFactory_Contract,
-    } = await swapConnect();
+    } = await SwapConnect();
     if (signer && address) {
       setTokenaBalance(tokenBalance);
       // get rigel Balances of Account
@@ -59,7 +59,7 @@ export default async function smartSwap() {
 
   // to swapExactTokensForTokens Func.
   const sExactTokensforTokens = async e => {
-    const { SmartSwapRouter02_Contract } = await swapConnect();
+    const { SmartSwapRouter02_Contract } = await SwapConnect();
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
 
@@ -78,7 +78,7 @@ export default async function smartSwap() {
 
   // The swapTokensForExactTokens func...
   const swapTForExactT = async e => {
-    const { SmartSwapRouter02_Contract } = await swapConnect();
+    const { SmartSwapRouter02_Contract } = await SwapConnect();
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
 
@@ -98,7 +98,7 @@ export default async function smartSwap() {
 
   // The swapExactETHForTokens func...
   const swapEForTokens = async e => {
-    const { SmartSwapRouter02_Contract } = await swapConnect();
+    const { SmartSwapRouter02_Contract } = await SwapConnect();
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
 
@@ -117,7 +117,7 @@ export default async function smartSwap() {
 
   // The swapTokensForExactETH func...
   const swapTForExactEth = async e => {
-    const { SmartSwapRouter02_Contract } = await swapConnect();
+    const { SmartSwapRouter02_Contract } = await SwapConnect();
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
 
@@ -136,7 +136,7 @@ export default async function smartSwap() {
   };
 
   const swapExactTForEth = async e => {
-    const { SmartSwapRouter02_Contract } = await swapConnect();
+    const { SmartSwapRouter02_Contract } = await SwapConnect();
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
 
@@ -155,7 +155,7 @@ export default async function smartSwap() {
   };
 
   const swapEthforTok = async e => {
-    const { SmartSwapRouter02_Contract } = await swapConnect();
+    const { SmartSwapRouter02_Contract } = await SwapConnect();
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
 

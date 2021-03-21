@@ -11,7 +11,10 @@ const store = configureStore();
 const { wallet } = store.getState().wallet;
 let { signer } = wallet;
 if (typeof signer === 'string') {
-  signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
+  if (window.ethereum !== 'undefined') {
+    console.log(typeof signer, window.ethereum);
+    signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
+  }
 }
 
 // router contract where trx is made for both liquidity and swap

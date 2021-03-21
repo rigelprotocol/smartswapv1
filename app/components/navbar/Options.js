@@ -1,16 +1,10 @@
 import React from 'react';
-import { useWeb3Context } from 'web3-react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { ModalBody, ModalHeader } from '@chakra-ui/react';
 import { connect } from 'react-redux';
-import { connectMetaMask } from 'utils/wallet-wiget/connection';
 import MetaMaskImage from '../../assets/mask.svg';
 import TrustWalletImage from '../../assets/trust.svg';
-import {
-  connectWallet,
-  connectingWallet,
-} from '../../containers/WalletProvider/actions';
-import { notify } from '../../containers/NoticeProvider/actions';
+import { connectWallet } from '../../containers/WalletProvider/actions';
 
 const Options = ({ connectWallet }) => (
   <>
@@ -61,5 +55,5 @@ const Options = ({ connectWallet }) => (
 );
 export default connect(
   null,
-  { notify, connectWallet, connectingWallet },
+  { connectWallet },
 )(Options);

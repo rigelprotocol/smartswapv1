@@ -1,9 +1,7 @@
+/* eslint-disable react/prop-types */
 import { useDisclosure } from '@chakra-ui/hooks';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import React, { useState } from 'react';
-import { Menu } from '@chakra-ui/menu';
-import { Button } from '@chakra-ui/button';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import React, { useEffect } from 'react';
 import {
   Modal,
   ModalBody,
@@ -18,14 +16,27 @@ import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
-import { TOKENS } from '../../utils/constants';
+import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
 import InputSelector from './InputSelector';
 
-const Manual = () => {
+const SendTo = props => {
+  const {
+    amountIn,
+    handleChangeToAmount,
+    setPathToArray,
+    selectedToToken,
+    setSelectedToToken,
+    rgpBalance,
+    busdBalance,
+    ETHBalance,
+    userWallet,
+    getToAmount,
+  } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedToken, setSelectedToken] = useState('Select a token');
-  const [toAmount, setToAmount] = useState('');
-  const handleChangeToAmount = event => setToAmount(event.target.value);
+  useEffect(() => {
+    setSelectedToToken('Select a token');
+  }, []);
+  const { wallet } = userWallet;
   return (
     <>
       <Box
@@ -45,8 +56,8 @@ const Manual = () => {
         <InputSelector
           max={false}
           handleChange={handleChangeToAmount}
-          value={toAmount}
-          selectedToken={selectedToken}
+          value={amountIn}
+          selectedToken={selectedToToken}
           onOpen={onOpen}
         />
       </Box>
@@ -61,9 +72,9 @@ const Manual = () => {
           minHeight="60vh"
         >
           <ModalCloseButton
-            bg={'none'}
+            bg="none"
             border="0px"
-            color={'#fff'}
+            color="#fff"
             cursor="pointer"
             _focus={{ outline: 'none' }}
           />
@@ -88,7 +99,9 @@ const Manual = () => {
               mt={3}
               cursor="pointer"
               onClick={() => {
-                setSelectedToken(TOKENS.BNB);
+                setSelectedToToken(TOKENS.BNB);
+                setPathToArray(TOKENS_CONTRACT.BNB);
+                getToAmount(TOKENS_CONTRACT.BNB, TOKENS.BNB);
                 onClose();
               }}
             >
@@ -99,7 +112,7 @@ const Manual = () => {
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                0
+                {busdBalance}
               </Text>
             </Flex>
             <Flex
@@ -107,7 +120,9 @@ const Manual = () => {
               mt={1}
               cursor="pointer"
               onClick={() => {
-                setSelectedToken(TOKENS.ETH);
+                setSelectedToToken(TOKENS.ETH);
+                setPathToArray(wallet.address);
+                getToAmount(TOKENS_CONTRACT.ETH, TOKENS.ETH);
                 onClose();
               }}
             >
@@ -118,7 +133,7 @@ const Manual = () => {
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                0
+                {ETHBalance}
               </Text>
             </Flex>
             <Flex
@@ -126,7 +141,9 @@ const Manual = () => {
               mt={1}
               cursor="pointer"
               onClick={() => {
-                setSelectedToken(TOKENS.RGP);
+                setSelectedToToken(TOKENS.RGP);
+                setPathToArray(TOKENS_CONTRACT.RGP);
+                getToAmount(TOKENS_CONTRACT.RGP, TOKENS.RGP);
                 onClose();
               }}
             >
@@ -137,16 +154,16 @@ const Manual = () => {
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                2,632.34
+                {rgpBalance}
               </Text>
             </Flex>
           </ModalBody>
 
-          <ModalFooter></ModalFooter>
+          <ModalFooter />
         </ModalContent>
       </Modal>
     </>
   );
 };
 
-export default Manual;
+export default SendTo;

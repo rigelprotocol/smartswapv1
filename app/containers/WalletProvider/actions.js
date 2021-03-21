@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable prettier/prettier */
 /*
  *
@@ -15,20 +16,25 @@ import {
 import { ethers } from 'ethers';
 import { TOKENS_CONTRACT } from 'utils/constants';
 import RigelToken from 'utils/abis/RigelToken.json';
-import configureStore from 'configureStore';
 import {
-  DEFAULT_ACTION,
   WALLET_CONNECTED,
   WALLET_PROPS,
   LOADING_WALLET,
   CLOSE_LOADING_WALLET,
 } from './constants';
 
-const store = configureStore()
-export function defaultAction() {
-  return {
-    type: DEFAULT_ACTION,
-  };
+export const reConnect = (wallet) => async dispatch => {
+  const { selectedAddress, chainId } = wallet;
+  const ethProvider = await provider();
+  const walletSigner = await signer();
+  const balance = ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress)).toString();
+  dispatch({ type: WALLET_PROPS, payload: { rgp: await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, RigelToken, walletSigner) } });
+  return dispatch({
+    type: WALLET_CONNECTED, wallet: {
+      address: selectedAddress,
+      provider: ethProvider, signer: walletSigner, chainId, balance
+    },
+  })
 }
 
 export const connectWallet = () => async dispatch => {
@@ -87,35 +93,7 @@ export function connectingWallet(option) {
     });
   };
 }
-/**
- *
- * @param {*} wallet
- * @returns {*} dispatch
- */
-export const connectionEventListener = (wallet) => dispatch => {
-  if (window.ethereum) {
-    const reduxWallet = store.getStore().wallet
-    window.ethereum.on("connect", (...args) => dispatch({
-      type: WALLET_CONNECTED
-    }))
-    window.ethereum.on('chainChanged', (chainId) => dispatch({
-      type: WALLET_CONNECTED,
-      wallet: { ...reduxWallet, chainId }
-    }));
 
-    window.ethereum.on('accountsChanged', async accounts => {
-      if (accounts.length === 0) {
-        // disconnectUser();
-        console.log('>>> are you leaving')
-      } else if (accounts[0] !== wallet.address) {
-        const address = accounts[0];
-      }
-    });
-    window.ethereum.on('disconnect', error => {
-      // disconnectUser();
-    });
-  }
-}
 /**
  *
  * @param {*} tokens
