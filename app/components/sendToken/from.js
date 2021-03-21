@@ -22,10 +22,8 @@ import ETHImage from '../../assets/eth.svg';
 import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
 
 const From = ({
-  // fromAmount,
-  // handleChangeFromAmount,
-  amountIn,
-  handleChangeToAmount,
+  fromAmount,
+  handleChangeFromAmount,
   setPathArray,
   selectedToken,
   setSelectedToken,
@@ -40,7 +38,7 @@ const From = ({
   const { wallet } = userWallet;
   useEffect(() => {
     setSelectedToken(TOKENS.RGP);
-    path.push({ fromPath: TOKENS_CONTRACT.RGP });
+    path.push({ toPath: TOKENS_CONTRACT.RGP });
   }, []);
 
   return (
@@ -69,8 +67,8 @@ const From = ({
           </Text>
         </Flex>
         <InputSelector
-          handleChange={handleChangeToAmount}
-          value={amountIn}
+          handleChange={handleChangeFromAmount}
+          value={fromAmount}
           max
           onOpen={onOpen}
           selectedToken={selectedToken}

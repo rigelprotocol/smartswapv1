@@ -27,7 +27,7 @@ const Manual = props => {
   const [rgpBalance, setRGPBalance] = useState('0.0');
   const [busdBalance, setBUSDBalance] = useState('0.0');
   const [ETHBalance, setETHBalance] = useState('0.0');
-  const [amountIn, setAmountIn] = useState();
+  const [amountIn, setAmountIn] = useState('5');
 
   const handleChangeToAmount = event => setAmountIn(event.target.value);
   const handleChangeFromAmount = event => setFromAmount(event.target.value);
