@@ -20,7 +20,7 @@ import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 
 const Manual = props => {
 
-  const [fromAmount, setFromAmount] = useState('5');
+  const [fromAmount, setFromAmount] = useState('');
   const [path, setPath] = useState([]);
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
@@ -56,42 +56,46 @@ const Manual = props => {
       console.log("starting......", fromPath, toPath, amount);
     }
     console.log('Final Show');
-    console.log(fromAmount)
   };
 
-  // onclick of Approve should be set to (approval) for rgp
-  // useEffect(() => {
-    const rgpApproval = async () => {
-      if (wallet.signer !== 'signer') {
-        const rgp = await rigelToken();
-        const walletBal = await rgp.balanceOf(wallet.address);
-        await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
-          from: wallet.address,
-        });
-      }
-    };
-  //   rgpApproval();
-  // }, [wallet]);
+  const rgpApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+        from: wallet.address,
+      });
+    }
+  };
   
+  // console.log("get otput amount", amountIn)
 
-  // onclick of Enter an Amount should be set to (swapTokenForTokens)
+  useEffect(() => {
     const swapTokenForTokens = async () => {
       if (wallet.signer !== 'signer') {
         const rout = await router();
-        setAmountIn(fromAmount);
-        const deadLine = Math.floor(new Date().getTime()/1000.0+300)
+        // setAmountIn(amountIn);
+        const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
         const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
         const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
-        // const { fromPath } = path[0]
-        // const { toPath } = path[1]
         const passOutPut = amountIn;
-        await rout.swapExactTokensForTokens(amountIn, passOutPut, [bnb, rgp], wallet.address, deadLine,
-          { from: wallet.address,
-            gasLimit: 150000, gasPrice: ethers.utils.parseUnits('20', 'gwei')
-          })
-        // console.log('Router', deadL)
+        await rout.swapExactTokensForTokens(
+          amountIn,
+          passOutPut,
+          [bnb, rgp],
+          wallet.address,
+          deadL,
+          {
+            from: wallet.address,
+            gasLimit: 150000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
+        console.log('Router', deadL);
       }
     };
+    swapTokenForTokens();
+  }, [wallet]);
 
   useEffect(() => {
     const getBalance = async () => {

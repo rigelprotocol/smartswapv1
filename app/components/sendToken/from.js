@@ -22,8 +22,10 @@ import ETHImage from '../../assets/eth.svg';
 import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
 
 const From = ({
-  fromAmount,
-  handleChangeFromAmount,
+  // fromAmount,
+  // handleChangeFromAmount,
+  amountIn,
+  handleChangeToAmount,
   setPathArray,
   selectedToken,
   setSelectedToken,
@@ -67,8 +69,8 @@ const From = ({
           </Text>
         </Flex>
         <InputSelector
-          handleChange={handleChangeFromAmount}
-          value={fromAmount}
+          handleChange={handleChangeToAmount}
+          value={amountIn}
           max
           onOpen={onOpen}
           selectedToken={selectedToken}
