@@ -9,14 +9,14 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { connect } from 'react-redux';
-import { BUSDToken, router } from 'utils/SwapConnect';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
+import { BUSDToken, router } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
-// eslint-disable-next-line import/no-cycle
 import From from './from';
 import To from './to';
-import SwapSettings from './SwapSettings';
+import SwapSettings from "./SwapSettings";
+import { SMART_SWAP } from "../../utils/constants";
 
 const Manual = props => {
 
@@ -39,8 +39,6 @@ const Manual = props => {
     if (pathObject) pathObject.toPath = target;
     else path.push({ toPath: target });
   };
-
-  console.info(path, selectedToToken);
   const { wallet, wallet_props } = props.wallet;
   /**
    * @describe this Function is suppose to get the
@@ -50,8 +48,14 @@ const Manual = props => {
    */
   
   const getToAmount = async (tokenAddress, symbol) => {
-    console.log(tokenAddress, symbol)
-
+    if (wallet.signer !== 'signer') {
+      const rout = await router();
+      const { fromPath } = path[0]
+      const { toPath } = path[1]
+      const amount = await rout.getAmountsOut(SMART_SWAP.SMART_SWAPPING, fromAmount, [fromPath, toPath]);
+      console.log(fromPath, toPath, amount);
+    }
+    console.log('Final Show');
   };
   useEffect(() => {
     const getBalance = async () => {
