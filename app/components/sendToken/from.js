@@ -13,7 +13,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 
-import { BUSDToken, router } from 'utils/SwapConnect';
+import { BUSDToken, router, rigelToken } from 'utils/SwapConnect';
 import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import InputSelector from './InputSelector';
@@ -100,11 +100,11 @@ const From = ({
       if (wallet.signer !== 'signer') {
         const rout = await router();
         setAmountIn(amountIn);
-        const deadL = Math.floor(new Date().getTime()/1000.0+300)
+        const deadLine = Math.floor(new Date().getTime()/1000.0+300)
         const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
         const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
         const passOutPut = (amountIn);
-        await rout.swapExactTokensForTokens(amountIn, passOutPut, [bnb, rgp], wallet.address, deadL,
+        await rout.swapExactTokensForTokens(amountIn, passOutPut, [bnb, rgp], wallet.address, deadLine,
           { from: wallet.address,
             gasLimit: 150000, gasPrice: ethers.utils.parseUnits('20', 'gwei')})
         console.log('Router', deadL)
