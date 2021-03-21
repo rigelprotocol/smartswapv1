@@ -11,12 +11,12 @@ import { Button } from '@chakra-ui/button';
 import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
-// import { BUSDToken, router } from '../../utils/SwapConnect';
+import { BUSDToken, router } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
-// eslint-disable-next-line import/no-cycle
 import From from './from';
 import To from './to';
-// import SwapSettings from "./SwapSettings";
+import SwapSettings from "./SwapSettings";
+import { SMART_SWAP } from "../../utils/constants";
 
 const Manual = props => {
 
@@ -48,28 +48,13 @@ const Manual = props => {
    */
   const getToAmount = async (tokenAddress, symbol) => {
     if (wallet.signer !== 'signer') {
-
-      // const rout = await router(wallet.signer);
-      // console.log(wallet.provider, rout)
-      // const passOutPut = rout.outputAmount(fromAmount)
-
-      // const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
-      // const { fromPath, toPath } = path[0];
-      // const passOutPut = fromAmount;
-      // const result = await rout.swapExactTokensForTokens(
-      //   fromAmount,
-      //   passOutPut,
-      //   [fromPath, toPath],
-      //   wallet.address,
-      //   deadL,
-      //   {
-      //     from: wallet.address,
-      //     gasLimit: 150000,
-      //     gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-      //   },
-      // );
-      console.log('Final Show');
+      const rout = await router();
+      const { fromPath } = path[0]
+      const { toPath } = path[1]
+      const amount = await rout.getAmountsOut(SMART_SWAP.SMART_SWAPPING, fromAmount, [fromPath, toPath]);
+      console.log(fromPath, toPath, amount);
     }
+    console.log('Final Show');
   };
   useEffect(() => {
     const getBalance = async () => {
@@ -103,7 +88,7 @@ const Manual = props => {
         p={5}
         rounded="2xl"
       >
-        {/* <SwapSettings /> */}
+        <SwapSettings />
         <From
           fromAmount={fromAmount}
           handleChangeFromAmount={handleChangeFromAmount}
