@@ -11,23 +11,23 @@ import { Button } from '@chakra-ui/button';
 import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
-import { BUSDToken, router } from '../../utils/SwapConnect';
+import { BUSDToken, rigelToken, router } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
 import SwapSettings from "./SwapSettings";
-import { SMART_SWAP } from "../../utils/constants";
+import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 
 const Manual = props => {
 
-  const [fromAmount, setFromAmount] = useState(0);
+  const [fromAmount, setFromAmount] = useState('5');
   const [path, setPath] = useState([]);
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
   const [rgpBalance, setRGPBalance] = useState('0.0');
   const [busdBalance, setBUSDBalance] = useState('0.0');
   const [ETHBalance, setETHBalance] = useState('0.0');
-  const [amountIn, setAmountIn] = useState(0);
+  const [amountIn, setAmountIn] = useState();
 
   const handleChangeToAmount = event => setAmountIn(event.target.value);
   const handleChangeFromAmount = event => setFromAmount(event.target.value);
@@ -58,20 +58,38 @@ const Manual = props => {
     console.log('Final Show');
     console.log(fromAmount)
   };
+
+  // onclick of Approve should be set to (approval) for rgp
+  // useEffect(() => {
+    const rgpApproval = async () => {
+      if (wallet.signer !== 'signer') {
+        const rgp = await rigelToken();
+        const walletBal = await rgp.balanceOf(wallet.address);
+        await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+          from: wallet.address,
+        });
+      }
+    };
+  //   rgpApproval();
+  // }, [wallet]);
   
 
   // onclick of Enter an Amount should be set to (swapTokenForTokens)
     const swapTokenForTokens = async () => {
       if (wallet.signer !== 'signer') {
         const rout = await router();
+        setAmountIn(fromAmount);
         const deadLine = Math.floor(new Date().getTime()/1000.0+300)
-        const { fromPath } = path[0]
-        const { toPath } = path[1]
-        const passOutPut = setAmountIn(amountIn);
-        await rout.swapExactTokensForTokens(amountIn, passOutPut, [fromPath, toPath], wallet.address, deadLine,
+        const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
+        const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
+        // const { fromPath } = path[0]
+        // const { toPath } = path[1]
+        const passOutPut = amountIn;
+        await rout.swapExactTokensForTokens(amountIn, passOutPut, [bnb, rgp], wallet.address, deadLine,
           { from: wallet.address,
-            gasLimit: 150000, gasPrice: ethers.utils.parseUnits('20', 'gwei')})
-        console.log('Router', deadL)
+            gasLimit: 150000, gasPrice: ethers.utils.parseUnits('20', 'gwei')
+          })
+        // console.log('Router', deadL)
       }
     };
 
@@ -162,8 +180,10 @@ const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? console.log('Approve Amount')
-                      : console.log('Swap Amount');
+                      ? swapTokenForTokens()
+                      // ? rgpApproval()
+                      : swapTokenForTokens()
+                      
             }}
           >
             {wallet.signer === 'signer' ?
@@ -174,8 +194,8 @@ const Manual = props => {
                   ? 'Click Select a Token'
                   : typeof wallet.signer === 'object' &&
                     fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                    ? 'Approve Amount'
-                    : 'Swap Amount'}
+                    ? 'Swap Amount'
+                    : 'Approve Amount'}
           </Button>
         </Box>
       </Box>

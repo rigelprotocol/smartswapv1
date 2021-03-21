@@ -20,7 +20,7 @@ if (typeof signer === 'string') {
 // router contract where trx is made for both liquidity and swap
 export const router = async walletSigner => {
   const SmartSwapAddress = '0x3175bfbc3e620FaF654309186f66908073cF9CBB';
-  return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, walletSigner);
+  return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, signer);
 };
 
 //Factory smartContract for getting and creating pairs
