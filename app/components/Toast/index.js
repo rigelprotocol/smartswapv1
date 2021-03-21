@@ -9,6 +9,7 @@ import { withToastManager } from 'react-toast-notifications';
 
 function Toast(props) {
   const { showNotice, message } = props.state.notice;
+  console.log(showNotice)
   const { toastManager } = props;
   useEffect(() => {
     if (showNotice) {
@@ -20,6 +21,7 @@ function Toast(props) {
       );
       toastManager.add(content, {
         appearance: message.type,
+        autoDismiss: true,
       });
     }
   }, [showNotice]);

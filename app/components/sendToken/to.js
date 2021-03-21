@@ -30,6 +30,7 @@ const SendTo = props => {
     busdBalance,
     ETHBalance,
     userWallet,
+    getToAmount,
   } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   useEffect(() => {
@@ -100,6 +101,7 @@ const SendTo = props => {
               onClick={() => {
                 setSelectedToToken(TOKENS.BNB);
                 setPathToArray(TOKENS_CONTRACT.BNB);
+                getToAmount(TOKENS_CONTRACT.BNB, TOKENS.BNB);
                 onClose();
               }}
             >
@@ -120,6 +122,7 @@ const SendTo = props => {
               onClick={() => {
                 setSelectedToToken(TOKENS.ETH);
                 setPathToArray(wallet.address);
+                getToAmount(TOKENS_CONTRACT.ETH, TOKENS.ETH);
                 onClose();
               }}
             >
@@ -140,6 +143,7 @@ const SendTo = props => {
               onClick={() => {
                 setSelectedToToken(TOKENS.RGP);
                 setPathToArray(TOKENS_CONTRACT.RGP);
+                getToAmount(TOKENS_CONTRACT.RGP, TOKENS.RGP);
                 onClose();
               }}
             >

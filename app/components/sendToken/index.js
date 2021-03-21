@@ -1,3 +1,7 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable eqeqeq */
+/* eslint-disable prettier/prettier */
 /* eslint-disable camelcase */
 /* eslint-disable react/prop-types */
 // @ts-nocheck
@@ -5,8 +9,9 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { connect } from 'react-redux';
-import { BUSDToken } from 'utils/SwapConnect';
+import { BUSDToken, router } from 'utils/SwapConnect';
 import { ethers } from 'ethers';
+import { notify } from 'containers/NoticeProvider/actions';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 // eslint-disable-next-line import/no-cycle
 import From from './from';
@@ -37,7 +42,16 @@ const Manual = props => {
 
   console.info(path, selectedToToken);
   const { wallet, wallet_props } = props.wallet;
+  /**
+   * @describe this Function is suppose to get the
+   * amount of token for the ToField
+   * @param {*} tokenAddress
+   * @param {*} symbol
+   */
+  const getToAmount = async (tokenAddress, symbol) => {
+    console.log(tokenAddress, symbol)
 
+  };
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
@@ -53,6 +67,13 @@ const Manual = props => {
     };
     getBalance();
   }, [wallet]);
+  const sendNotice = (message) => {
+    props.notify({
+      title: 'Site Information',
+      body: message,
+      type: 'info'
+    })
+  }
 
   return (
     <div>
@@ -90,6 +111,7 @@ const Manual = props => {
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
           ETHBalance={ETHBalance}
+          getToAmount={getToAmount}
         />
         <Box mt={14}>
           <Button
@@ -108,18 +130,27 @@ const Manual = props => {
             _active={{ outline: '#29235E', background: '#29235E' }}
             onClick={() => {
               wallet.signer === 'signer' ?
-                console.log('connect to Wallet')
+                sendNotice('Please use the Connect button above')
                 : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
-                  ? console.log('Enter Amount')
+                  ? sendNotice('Enter the amount of token to exchange')
                   : typeof wallet.signer === 'object' && fromAmount != parseFloat(0.0) && selectedToToken === 'Select a token'
-                    ? console.log('Select a Token')
+                    ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
                       ? console.log('Approve Amount')
                       : console.log('Swap Amount');
             }}
           >
-            Enter an Amount
+            {wallet.signer === 'signer' ?
+              'connect to Wallet'
+              : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
+                ? 'Enter Amount'
+                : typeof wallet.signer === 'object' && fromAmount != parseFloat(0.0) && selectedToToken === 'Select a token'
+                  ? 'Click Select a Token'
+                  : typeof wallet.signer === 'object' &&
+                    fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
+                    ? 'Approve Amount'
+                    : 'Swap Amount'}
           </Button>
         </Box>
       </Box>
@@ -129,7 +160,7 @@ const Manual = props => {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 export default connect(
   mapStateToProps,
-  {},
+  { notify },
 )(Manual);
 
 function setPathObject(path, target) {

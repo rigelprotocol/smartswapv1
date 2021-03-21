@@ -54,14 +54,14 @@ const App = props => {
   const [splashView, setSplashView] = useState(true);
   const { wallet } = props.state;
   useEffect(() => {
-    // listener(wallet);
+    listener(wallet, props);
     reConnector(props);
     return showSplashScreen(setSplashView);
   }, [props]);
   return (
-    <ToastProvider placement="bottom-right" autoDismiss autoDismissTimeout={5}>
+    <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
-        <Toast style={{ zIndex: '99999' }} {...props} />
+        <Toast {...props} />
         <WalletContext.Provider
           value={{
             connected,
@@ -106,24 +106,33 @@ export default connect(
 
 function reConnector(props) {
   if (
+    window.ethereum &&
     window.ethereum.isConnected() &&
     window.ethereum.selectedAddress &&
-    window.ethereum.isMetaMask
+    window.ethereum.isMetaMask &&
+    !props.state.wallet.connected
   ) {
     props.reConnect(window.ethereum);
   }
 }
 
-function listener(wallet) {
-  window.ethereum.on('accountsChanged', async accounts => {
-    if (accounts.length === 0) {
-      // disconnectUser();
-      console.log('>>> are you leaving');
-    } else if (accounts[0] !== wallet.address) {
-      const address = accounts[0];
-      return console.log(address);
-    }
-  });
+function listener(wallet, props) {
+  if (
+    window.ethereum &&
+    window.ethereum.isConnected() &&
+    window.ethereum.selectedAddress &&
+    window.ethereum.isMetaMask &&
+    props.state.wallet.connected
+  ) {
+    window.ethereum.on('accountsChanged', async accounts => {
+      if (accounts.length === 0) {
+        // disconnectUser();
+        console.log('>>> are you leaving');
+      } else if (accounts[0] !== wallet.address) {
+        return props.reConnect(window.ethereum);
+      }
+    });
+  }
 }
 
 function showSplashScreen(setSplashView) {
