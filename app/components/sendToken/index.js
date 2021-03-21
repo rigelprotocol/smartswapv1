@@ -9,14 +9,14 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { connect } from 'react-redux';
-import { BUSDToken, router } from 'utils/SwapConnect';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
+import { BUSDToken, router } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 // eslint-disable-next-line import/no-cycle
 import From from './from';
 import To from './to';
-import SwapSettings from './SwapSettings';
+import SwapSettings from "./SwapSettings";
 
 const Manual = props => {
 
@@ -39,8 +39,6 @@ const Manual = props => {
     if (pathObject) pathObject.toPath = target;
     else path.push({ toPath: target });
   };
-
-  console.info(path, selectedToToken);
   const { wallet, wallet_props } = props.wallet;
   /**
    * @describe this Function is suppose to get the
@@ -49,8 +47,27 @@ const Manual = props => {
    * @param {*} symbol
    */
   const getToAmount = async (tokenAddress, symbol) => {
-    console.log(tokenAddress, symbol)
+    if (wallet.signer !== 'signer') {
 
+      console.log(wallet.provider, symbol)
+      const rout = await router(wallet.signer);
+      const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
+      const { fromPath, toPath } = path[0];
+      const passOutPut = fromAmount;
+      const result = await rout.swapExactTokensForTokens(
+        fromAmount,
+        passOutPut,
+        [fromPath, toPath],
+        wallet.address,
+        deadL,
+        {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+      console.log('Final Show', result);
+    }
   };
   useEffect(() => {
     const getBalance = async () => {

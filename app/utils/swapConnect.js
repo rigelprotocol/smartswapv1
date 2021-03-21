@@ -11,16 +11,16 @@ const store = configureStore();
 const { wallet } = store.getState().wallet;
 let { signer } = wallet;
 if (typeof signer === 'string') {
-  if (window.ethereum !== 'undefined') {
+  if (window.ethereum && window.ethereum !== 'undefined') {
     console.log(typeof signer, window.ethereum);
     signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
   }
 }
 
 // router contract where trx is made for both liquidity and swap
-export const router = async () => {
+export const router = async walletSigner => {
   const SmartSwapAddress = '0x3175bfbc3e620FaF654309186f66908073cF9CBB';
-  return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, signer);
+  return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, walletSigner);
 };
 
 //Factory smartContract for getting and creating pairs
