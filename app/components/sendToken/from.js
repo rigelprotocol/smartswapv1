@@ -38,7 +38,7 @@ const From = ({
   const { wallet } = userWallet;
   useEffect(() => {
     setSelectedToken(TOKENS.RGP);
-    path.push({ fromPath: TOKENS_CONTRACT.RGP });
+    path.push({ toPath: TOKENS_CONTRACT.RGP });
   }, []);
 
   return (
