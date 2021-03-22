@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/input';
@@ -13,47 +14,32 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 
-import { BUSDToken, router, rigelToken } from 'utils/SwapConnect';
-import { connect } from 'react-redux';
-import { ethers } from 'ethers';
 import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
-import { TOKENS, TOKENS_CONTRACT, SMART_SWAP } from '../../utils/constants';
+import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
 
 const From = ({
   fromAmount,
   handleChangeFromAmount,
   setPathArray,
-  wallet,
-  wallet_props,
+  selectedToken,
+  setSelectedToken,
+  rgpBalance,
+  busdBalance,
+  ETHBalance,
+  userWallet,
+  path,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedToken, setSelectedToken] = useState(TOKENS.RGP);
-  const [rgpBalance, setRGPBalance] = useState('0.0');
-  const [busdBalance, setBUSDBalance] = useState('0.0');
-  const [ETHBalance, setETHBalance] = useState('0.0');
 
-  // state value for smartSwap
-  const [amountIn, setAmountIn] = useState('2');
-
+  const { wallet } = userWallet;
   useEffect(() => {
-    const getBalance = async () => {
-      if (wallet.signer !== 'signer') {
-        const bnb = await BUSDToken();
-        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : '0.0');
-        setETHBalance(wallet ? wallet.balance : '0.0');
-        setBUSDBalance(
-          ethers.utils
-            .formatEther(await bnb.balanceOf(wallet.address))
-            .toString(),
-        );
-      }
-    };
-    getBalance();
-  }, [wallet]);
+    setSelectedToken(TOKENS.RGP);
+    path.push({ toPath: TOKENS_CONTRACT.RGP });
+  }, []);
 
   return (
     <>
@@ -189,12 +175,4 @@ const From = ({
     </>
   );
 };
-const mapStateToProps = ({ wallet }) => ({
-  wallet: wallet.wallet,
-  wallet_props: wallet.wallet_props,
-});
-
-export default connect(
-  mapStateToProps,
-  {},
-)(From);
+export default From;
