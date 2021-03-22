@@ -46,21 +46,20 @@ const Manual = props => {
    * @param {*} tokenAddress
    * @param {*} symbol
    */
-  
+
   const getToAmount = async (tokenAddress, symbol) => {
     if (wallet.signer !== 'signer') {
-      const rout = await router();
+      const rout = await router(wallet.signer);
       const { fromPath } = path[0]
       const { toPath } = path[1]
-
-      const amount = await rout.getAmountsOut(SMART_SWAP.SMART_SWAPPING, fromAmount, [fromPath, toPath]);
-      console.log("starting......", fromPath, toPath, amount);
-
-      const amount = await rout.getAmountsOut(SMART_SWAP.SmartFactory, fromAmount, [fromPath, toPath]);
-      console.log(fromPath, toPath, amount);
-
+      console.log(path, fromPath, toPath);
+      console.log(ethers.BigNumber(4), ethers.utils.formatUnits(fromAmount, 8).toString())
+      const amount = await rout.getAmountsOut(
+        fromAmount,
+        [fromPath, toPath]
+      );
+      console.log(ethers.utils.formatUnits(amount, 18).toString())
     }
-    console.log('Final Show');
   };
 
   const rgpApproval = async () => {
@@ -72,35 +71,35 @@ const Manual = props => {
       });
     }
   };
-  
+
   // console.log("get otput amount", amountIn)
 
   // useEffect(() => {
-    const swapTokenForTokens = async () => {
-      if (wallet.signer !== 'signer') {
-        const rout = await router();
-        // setAmountIn(amountIn);
-        const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
-        const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
-        const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
-        const passOutPut = amountIn;
-        await rout.swapExactTokensForTokens(
-          amountIn,
-          passOutPut,
-          [bnb, rgp],
-          wallet.address,
-          deadL,
-          {
-            from: wallet.address,
-            gasLimit: 150000,
-            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-          },
-        );
-        console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
-         "From: ", bnb, "To: ", rgp, "Recipient: ", wallet.address,
-          'Deadline: ', deadL);
-      }
-    };
+  const swapTokenForTokens = async () => {
+    if (wallet.signer !== 'signer') {
+      const rout = await router();
+      // setAmountIn(amountIn);
+      const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
+      const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
+      const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
+      const passOutPut = amountIn;
+      await rout.swapExactTokensForTokens(
+        amountIn,
+        passOutPut,
+        [bnb, rgp],
+        wallet.address,
+        deadL,
+        {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+      console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
+        "From: ", bnb, "To: ", rgp, "Recipient: ", wallet.address,
+        'Deadline: ', deadL);
+    }
+  };
   //   swapTokenForTokens();
   // }, [wallet]);
 
@@ -194,7 +193,7 @@ const Manual = props => {
                       ? swapTokenForTokens()
                       // ? rgpApproval()
                       : swapTokenForTokens()
-                      
+
             }}
           >
             {wallet.signer === 'signer' ?

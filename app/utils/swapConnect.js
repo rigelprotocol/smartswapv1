@@ -12,7 +12,6 @@ const { wallet } = store.getState().wallet;
 let { signer } = wallet;
 if (typeof signer === 'string') {
   if (window.ethereum && window.ethereum !== 'undefined') {
-    console.log(typeof signer, window.ethereum);
     signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
   }
 }
@@ -23,7 +22,7 @@ export const router = async walletSigner => {
   return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, signer);
 };
 
-//Factory smartContract for getting and creating pairs
+// Factory smartContract for getting and creating pairs
 export const SmartFactory = async () => {
   const SmartFactoryAddress = '0xc33b4cB9eAFE64BEa3c96e723bEBdB961d462288';
   return new ethers.Contract(SmartFactoryAddress, SmartSwapFactoryForSwap, signer);
