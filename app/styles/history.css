@@ -1,0 +1,47 @@
+.header {
+	font-size: 16px;
+	color: white;
+	font-weight: 400;
+	padding:  10px 0;
+}
+
+.market__history__header {
+	font-size: 16px;
+	font-weight: 400;
+	padding: 10px;
+	margin-left: 30px;
+	cursor: pointer;
+}
+
+.icon {
+	background: #29235e;
+	padding: 5px;
+	border-radius: 7px;
+}
+
+.header__container {
+	border-bottom: 1px solid #29235e;
+}
+
+.container {
+	width: 100%;
+	padding: 0 10px;
+}
+
+.details__container {
+	width: 100%;
+	padding: 0 10px;
+}
+
+.empty__container {
+	width: 100%;
+	text-align: center;
+	justify-content: center;
+	margin: 30px 0;
+	height: 100%;
+}
+
+.text {
+	color: rgba(255, 255, 255,0.25);
+	padding-bottom: 30px;
+}

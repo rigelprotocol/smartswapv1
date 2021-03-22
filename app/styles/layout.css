@@ -1,0 +1,18 @@
+.height {
+	min-height: 100vh;
+	background-color: #29235e;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.children {
+	margin-top: 90px;
+	z-index: 1;
+}
+
+@media only screen and (max-width: 768px) {
+	.children {
+		margin-bottom: 50px;
+		margin-top: 90px;
+	}
+}

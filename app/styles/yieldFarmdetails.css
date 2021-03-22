@@ -1,0 +1,58 @@
+.themeSwitch,
+.themeRadio {
+  display: inline-block;
+  height: 26px;
+  position: relative;
+  width: 46px;
+  margin-top: 12px;
+}
+
+.themeSwitch .input,
+.input2 {
+  display: none;
+}
+.slider {
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.4s;
+  background: rgba(53, 44, 129, 0.4);
+}
+.slider:before {
+  background-color: #463f82;
+  bottom: 4px;
+  content: '';
+  height: 18px;
+  left: 4px;
+  position: absolute;
+  transition: 0.4s;
+  width: 18px;
+}
+.input:checked + .slider {
+  background: rgba(64, 186, 213, 0.25);
+}
+.input:checked + .slider:before {
+  transform: translateX(20px);
+  background-color: #40bad5;
+}
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+/* radioButton */
+.radioButton {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 2px solid white;
+  margin-top: -10px;
+  cursor: pointer;
+}
+.input2:checked + .radioButton {
+  background: blue;
+}

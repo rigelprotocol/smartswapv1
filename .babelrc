@@ -1,0 +1,8 @@
+{
+  "presets": [
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "inline-react-svg"
+  ]
+}

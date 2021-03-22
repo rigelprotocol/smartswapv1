@@ -1,0 +1,69 @@
+.header {
+  font-size: 16px;
+  color: white;
+  font-weight: 400;
+  padding: 10px 0;
+}
+
+.icon {
+  background: #29235e;
+  padding: 5px;
+  border-radius: 7px;
+}
+
+.header__container {
+  border-bottom: 1px solid #29235e;
+  margin: 0 10px;
+}
+
+.chartTitle {
+  background: rgba(64, 186, 213, 0.1);
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 15px;
+  box-shadow: inset 1px 1px 1px #9d9999, inset 0px 0px 1px #9d9999;
+}
+.container {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  background: #120136;
+}
+
+.charts__container {
+  width: 100%;
+  padding: 0 10px;
+}
+
+.details__container {
+  margin: 5px 0 10px 0;
+}
+
+.charts {
+  width: 100%;
+  height: 50px;
+  padding: 0 10px 10px 10px;
+}
+
+.text {
+  color: #fff;
+  font-size: 14px;
+}
+.text__market {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.increase {
+  color: #68c18a;
+  margin-left: 10px;
+}
+
+.decrease {
+  color: #ea4659;
+  margin-left: 10px;
+}
+
+.charts {
+  max-height: 150px;
+}

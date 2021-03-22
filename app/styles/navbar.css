@@ -1,0 +1,155 @@
+.nav__text {
+	font-size: 14px;
+	margin: auto 10px;
+}
+
+.trade__button,
+.trade__button:hover {
+	margin-top: 5px;
+	color: white;
+	border: none;
+	border-color: unset;
+	font-size: 16px;
+}
+
+.trade__button__item,
+.trade__button__item:hover {
+	background: #120136;
+	margin: 5px 0;
+	border: none;
+	color: white;
+}
+
+.trade__button__list {
+	padding: 10px;
+}
+
+.footer {
+	text-align: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.logo {
+	display: none;
+}
+
+.mobile__logo {
+	height: 30px;
+}
+
+.navbar {
+	width: 100vw;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 70px;
+	padding: 10px;
+	display: flex;
+	z-index: 2;
+	border: 1px solid #362f75;
+	background: #29235e;
+	justify-content: space-between;
+}
+
+.logo__container {
+	margin: 10px auto 0 10px;
+	cursor: pointer;
+}
+
+.links__container {
+	display: flex;
+}
+
+.wallet__container {
+	display: none;
+}
+
+@media only screen and (min-width: 568px) {
+	.navbar {
+		padding: 10px 30px;
+	}
+	.logo {
+		display: block;
+		width: 120px;
+	}
+
+	.mobile__logo {
+		display: none;
+	}
+
+	.links__container {
+		display: flex;
+	}
+
+	.nav__text {
+		font-size: 15px;
+		margin: auto 15px;
+	}
+}
+@media only screen and (max-width: 568px) {
+	.navbar {
+		padding: 10px 30px;
+	}
+
+}
+@media only screen and (min-width: 768px) {
+	.navbar {
+		height: 70px;
+		padding: 10px 40px;
+		display: flex;
+	}
+
+	.logo__container {
+		margin: 10px 10px 0 10px;
+		cursor: pointer;
+	}
+
+	.wallet__container {
+		display: flex;
+		margin-top: 10px;
+		margin-right: 10px;
+	}
+
+	.nav__text {
+		font-size: 15px;
+		margin: auto 10px;
+	}
+}
+
+@media only screen and (min-width: 990px) {
+	.logo {
+		width: 180px;
+	}
+
+	.navbar {
+		padding: 10px 50px;
+	}
+
+	.links__container {
+		display: flex;
+	}
+
+	.wallet__container {
+		display: flex;
+		margin-top: 10px;
+	}
+}
+
+@media only screen and (min-width: 1024px) {
+	.nav__text {
+		font-size: 16px;
+		margin: auto 15px;
+	}
+}
+
+@media only screen and (min-width: 1200px) {
+	.wallet__container {
+		display: flex;
+		margin-right: 40px;
+	}
+
+	.nav__text {
+		margin: auto 25px;
+	}
+}

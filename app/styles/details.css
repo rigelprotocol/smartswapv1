@@ -1,0 +1,37 @@
+.header {
+  font-size: 16px;
+  color: white;
+  font-weight: 400;
+  padding: 10px 0;
+}
+
+.icon {
+  background: #29235e;
+  padding: 5px;
+  border-radius: 7px;
+}
+
+.header__container {
+  border-bottom: 1px solid #29235e;
+}
+
+.container {
+  width: 100%;
+  padding: 0 10px;
+}
+
+.details__container {
+  width: 100%;
+  padding: 0 10px;
+}
+@media only screen and (max-width: 1023px) {
+  .container {
+    display: none;
+  }
+}
+
+.show_effect {
+  box-shadow: 1px 1px 1px inset, 1px 0px 2px inset gray;
+  border-radius: 10px;
+  padding: 10px;
+}

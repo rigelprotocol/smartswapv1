@@ -1,0 +1,15 @@
+.active,
+.inactive:hover {
+	color: #40bad5;
+	background: rgba(64, 186, 213, 0.1);
+	padding: 10px 20px;
+	font-size:  1em ;
+	border-radius: 15px;
+}
+
+.inactive {
+	padding: 10px 20px;
+	border-radius: 15px;
+	font-size:  1em ;
+	color: white;
+}
