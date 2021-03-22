@@ -70,7 +70,7 @@ const Manual = props => {
   
   // console.log("get otput amount", amountIn)
 
-  useEffect(() => {
+  // useEffect(() => {
     const swapTokenForTokens = async () => {
       if (wallet.signer !== 'signer') {
         const rout = await router();
@@ -91,11 +91,13 @@ const Manual = props => {
             gasPrice: ethers.utils.parseUnits('20', 'gwei'),
           },
         );
-        console.log('Router', deadL);
+        console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
+         "From: ", bnb, "To: ", rgp, "Recipient: ", wallet.address,
+          'Deadline: ', deadL);
       }
     };
-    swapTokenForTokens();
-  }, [wallet]);
+  //   swapTokenForTokens();
+  // }, [wallet]);
 
   useEffect(() => {
     const getBalance = async () => {
