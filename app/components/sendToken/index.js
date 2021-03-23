@@ -57,18 +57,18 @@ const Manual = props => {
     }
   };
   
-  // console.log("get otput amount", amountIn)
+  // console.log("get otput amount", amountIn)toPath
 
   const getToAmount = async (tokenAddress, symbol) => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
-      const { fromPath } = path[0]
-      const { toPath } = path[1]
-      // const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
-      // const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
-      const amount = await rout.getAmountsOut( fromAmount, [fromPath, toPath]);
+      // const { fromPath } = path[0]
+      // const { toPath } = path[1]
+      const weth = ethers.utils.getAddress(TOKENS_CONTRACT.WETH);
+      const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
+      const amount = await rout.getAmountsOut( fromAmount, [rgp, weth]);
+      console.log('Final Show', amount.toString());
     }
-    console.log('Final Show', amount);
   };
   
   //when user select 
@@ -76,14 +76,13 @@ const Manual = props => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
       const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
-      const { fromPath } = path[0]
-      const { toPath } = path[1]
-      // const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
-      // const weth = ethers.utils.getAddress(TOKENS_CONTRACT.WETH);
+      // const { fromPath } = path[0]
+      // const { toPath } = path[1]
+      const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
+      const weth = ethers.utils.getAddress(TOKENS_CONTRACT.WETH);
       await rout.swapExactETHForTokens( 
-        fromAmount,
-        amountIn,
-        [fromPath, toPath],
+        fromAmount, 
+        [rgp, weth],
         wallet.address,
         deadL,
         {
@@ -101,15 +100,15 @@ const Manual = props => {
       const rout = await router();
       // setAmountIn(fromAmount);
       const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
-      const { fromPath } = path[0]
-      const { toPath } = path[1]
-      // const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
-      // const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
+      // const { fromPath } = path[0]
+      // const { toPath } = path[1]
+      const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
+      const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
       // const passOutPut = amountIn;
       await rout.swapExactTokensForTokens( 
         fromAmount,
         amountIn,
-        [fromPath, toPath],
+        [rgp, bnb],
         wallet.address,
         deadL,
         {
