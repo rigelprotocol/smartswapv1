@@ -2,9 +2,43 @@ import React, { useState } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import ShowYieldFarmDetails from './ShowYieldFarmDetails';
+import { ethers } from 'ethers';
+import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
+import { BUSDToken, rigelToken, MasterChefContract } from '../../utils/SwapConnect';
+
 
 const YieldFarm = ({ content }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
+
+  const useDeposit = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.deposit("uint", "uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+  const useWithdrawal = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.withdraw("uint", "uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+  const rgpApproveMasterChef = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
+        from: wallet.address,
+      });
+    }
+  };
+
+
   return (
     <>
       <Flex

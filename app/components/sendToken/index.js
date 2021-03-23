@@ -59,6 +59,18 @@ const Manual = props => {
   
   // console.log("get otput amount", amountIn)toPath
 
+  const allowanceCheck = async () => {
+    const rgp = await rigelToken();
+    const walletBal = await rgp.balanceOf(wallet.address);
+    const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
+    if(checkAllow == walletBal) {
+      //
+    } else {
+      console.log("your balance is: ", checkAllow.toString())
+    }
+  };
+
+
   const getToAmount = async (tokenAddress, symbol) => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
@@ -66,7 +78,7 @@ const Manual = props => {
       // const { toPath } = path[1]
       const weth = ethers.utils.getAddress(TOKENS_CONTRACT.WETH);
       const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
-      const amount = await rout.getAmountsOut( fromAmount, [rgp, weth]);
+      const amount = await rout.getAmountsOut( fromAmount, [weth, rgp]);
       console.log('Final Show', amount.toString());
     }
   };
@@ -75,16 +87,16 @@ const Manual = props => {
   const swapExactETHForTok = async () => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
-      const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
+      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
       // const { fromPath } = path[0]
       // const { toPath } = path[1]
       const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
       const weth = ethers.utils.getAddress(TOKENS_CONTRACT.WETH);
       await rout.swapExactETHForTokens( 
         fromAmount, 
-        [rgp, weth],
+        [weth, rgp],
         wallet.address,
-        deadL,
+        deadLine,
         {
           from: wallet.address,
           gasLimit: 150000,
@@ -99,18 +111,17 @@ const Manual = props => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
       // setAmountIn(fromAmount);
-      const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
+      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
       // const { fromPath } = path[0]
       // const { toPath } = path[1]
       const rgp = ethers.utils.getAddress(TOKENS_CONTRACT.RGP);
       const bnb = ethers.utils.getAddress(TOKENS_CONTRACT.BNB);
-      // const passOutPut = amountIn;
       await rout.swapExactTokensForTokens( 
         fromAmount,
         amountIn,
         [rgp, bnb],
         wallet.address,
-        deadL,
+        deadLine,
         {
           from: wallet.address,
           gasLimit: 150000,
@@ -210,7 +221,7 @@ const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? swapTokenForTokens()
+                      ? allowanceCheck()
                       // ? rgpApproval()
                       : swapTokenForTokens()
                       
