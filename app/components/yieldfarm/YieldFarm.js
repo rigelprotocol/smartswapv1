@@ -10,6 +10,7 @@ import { BUSDToken, rigelToken, MasterChefContract } from '../../utils/SwapConne
 const YieldFarm = ({ content }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
+  // user to deposit 
   const useDeposit = async () => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
@@ -19,6 +20,7 @@ const YieldFarm = ({ content }) => {
     }
   };
 
+  //withdrawal of funds
   const useWithdrawal = async () => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
@@ -28,6 +30,17 @@ const YieldFarm = ({ content }) => {
     }
   };
 
+   //Emmergency withdrawal of funds
+   const useEmmergency = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.emergencyWithdraw("uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+  //rgp approve masterchef
   const rgpApproveMasterChef = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
