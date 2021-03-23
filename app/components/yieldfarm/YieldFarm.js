@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import ShowYieldFarmDetails from './ShowYieldFarmDetails';
-import { ethers } from 'ethers';
-import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
-import { BUSDToken, rigelToken, MasterChefContract } from '../../utils/SwapConnect';
+import { SMART_SWAP } from "../../utils/constants";
+import { rigelToken, MasterChefContract } from '../../utils/SwapConnect';
 
 
 const YieldFarm = ({ content }) => {
