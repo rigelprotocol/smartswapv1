@@ -101,6 +101,7 @@ const Manual = props => {
   };
 
   useEffect(() => {
+    checkUser()
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
         await checkUser();
