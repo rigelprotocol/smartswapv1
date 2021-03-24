@@ -144,7 +144,7 @@ const SendTo = props => {
               onClick={() => {
                 setSelectedToToken(TOKENS.RGP);
                 setPathToArray(TOKENS_CONTRACT.RGP);
-                getToAmount(TOKENS_CONTRACT.RGP, TOKENS.RGP);
+                getToAmount();
                 onClose();
               }}
             >
