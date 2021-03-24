@@ -77,23 +77,28 @@ const Manual = props => {
   const swapTokenForTokens = async () => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
-      // setAmountIn(amountIn);
       const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
       const fromPath = ethers.utils.getAddress(path[0].fromPath);
       const toPath = ethers.utils.getAddress(path[1].toPath);
-      const passOutPut = ethers.utils.formatUnits(amountIn).toString();
-      await rout.swapExactTokensForTokens(
-        fromAmount,
-        passOutPut,
-        [fromPath, toPath],
-        wallet.address, 
-        deadL,
-        {
-          from: wallet.address,
-          gasLimit: 150000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        }
-      );
+      const passOutPut = amountIn;
+      try {
+        await rout.swapExactTokensForTokens(
+          Web3.utils.toWei(fromAmount.toString()),
+          Web3.utils.toWei(amountIn.toString()),
+          [fromPath, toPath],
+          wallet.address,
+          deadL,
+          {
+            from: wallet.address,
+            gasLimit: 150000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
+        notify({ title: 'Transaction  Message', body: 'Swap was successful', type: 'success' })
+
+      } catch (e) {
+        notify({ title: 'Transaction Message', body: e.message, type: 'error' })
+      }
       console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
         "From: ", bnb, "To: ", rgp, "Recipient: ", wallet.address,
         'Deadline: ', deadL);
