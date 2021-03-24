@@ -9,7 +9,8 @@ import { rigelToken, MasterChefContract } from '../../utils/SwapConnect';
 const YieldFarm = ({ content }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
-  // user to deposit 
+  // user to deposit to yield
+
   const useDeposit = async () => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();

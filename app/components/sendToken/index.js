@@ -68,8 +68,8 @@ const Manual = props => {
       const walletBal = await rgp.balanceOf(wallet.address);
       await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
-          gasLimit: 150000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei')
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
       });
     }
   };
