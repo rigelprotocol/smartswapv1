@@ -247,5 +247,5 @@ const checkUser = async (wallet, setIsNewUser) => {
   if (checkAllow > 0) {
     return setIsNewUser(true)
   }
-  return setIsNewUser(false)
+  return setIsNewUser(true)
 };
