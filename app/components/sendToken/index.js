@@ -68,6 +68,8 @@ const Manual = props => {
       const walletBal = await rgp.balanceOf(wallet.address);
       await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
       });
     }
   };
@@ -104,7 +106,6 @@ const Manual = props => {
   };
 
   useEffect(() => {
-    checkUser()
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
         await checkUser();
@@ -194,9 +195,8 @@ const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? swapTokenForTokens()
+                      ? swapTokenForTokens() 
                       : ''
-              // ((isNewUser) ? rgpApproval() : swapTokenForTokens())
 
             }}
           >
@@ -208,7 +208,7 @@ const Manual = props => {
                   ? 'Click Select a Token'
                   : typeof wallet.signer === 'object' &&
                     fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                    ? 'Swap Amount'
+                    ? 'swap Amount'
                     : 'Swap Amount'}
           </Button>
         </Box>
@@ -250,7 +250,7 @@ const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
   if (checkAllow > 0) {
-    return setIsNewUser(false)
+    return setIsNewUser(true)
   }
-  return setIsNewUser(true)
+  return setIsNewUser(false)
 };
