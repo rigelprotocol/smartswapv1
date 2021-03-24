@@ -83,7 +83,7 @@ const Manual = props => {
       const toPath = ethers.utils.getAddress(path[1].toPath);
       const passOutPut = amountIn;
       await rout.swapExactTokensForTokens(
-        amountIn,
+        fromAmount,
         passOutPut,
         [fromPath, toPath],
         wallet.address,
@@ -190,7 +190,7 @@ const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
+                      ? swapTokenForTokens() 
                       : ''
 
             }}
@@ -203,7 +203,7 @@ const Manual = props => {
                   ? 'Click Select a Token'
                   : typeof wallet.signer === 'object' &&
                     fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                    ? 'Approve Amount'
+                    ? 'swap Amount'
                     : 'Swap Amount'}
           </Button>
         </Box>
@@ -245,7 +245,7 @@ const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
   if (checkAllow > 0) {
-    return setIsNewUser(false)
+    return setIsNewUser(true)
   }
-  return setIsNewUser(true)
+  return setIsNewUser(false)
 };
