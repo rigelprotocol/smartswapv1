@@ -68,6 +68,8 @@ const Manual = props => {
       const walletBal = await rgp.balanceOf(wallet.address);
       await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei')
       });
     }
   };
@@ -90,7 +92,7 @@ const Manual = props => {
           from: wallet.address,
           gasLimit: 150000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
+        }
       );
       console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
         "From: ", bnb, "To: ", rgp, "Recipient: ", wallet.address,
@@ -188,7 +190,7 @@ const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
+                      ? ((isNewUser) ? swapTokenForTokens() : swapTokenForTokens())
                       : ''
 
             }}
