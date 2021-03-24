@@ -57,7 +57,7 @@ const Manual = () => {
                 >
                   RGP
 
-                                </Button>
+                </Button>
               </Menu>
             </Flex>
           </Flex>

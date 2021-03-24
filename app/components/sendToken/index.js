@@ -63,7 +63,7 @@ const Manual = props => {
     const rgp = await rigelToken();
     const walletBal = await rgp.balanceOf(wallet.address);
     const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-    if(checkAllow == walletBal) {
+    if(checkAllow == 0) {
       //
     } else {
       console.log("your balance is: ", checkAllow.toString())
