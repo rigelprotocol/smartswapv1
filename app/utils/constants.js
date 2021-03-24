@@ -13,13 +13,13 @@ export const ROUTES = {
 
 export const TOKENS = {
   BNB: 'BNB',
-  WETH: 'WETH',
+  ETH: 'ETH',
   RGP: 'RGP',
 };
 
 export const TOKENS_CONTRACT = {
   BNB: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
-  WETH: '0x492Df17f202e36525151Ce7BcD49d5637Dc10659',
+  ETH: '0x492Df17f202e36525151Ce7BcD49d5637Dc10659',
   RGP: '0x80278a0cf536e568a76425b67fb3931dca21535c',
 };
 

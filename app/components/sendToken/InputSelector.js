@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { Menu } from '@chakra-ui/menu';
 import { Button } from '@chakra-ui/button';
@@ -11,7 +11,14 @@ import ETHImage from '../../assets/eth.svg';
 import { TOKENS } from '../../utils/constants';
 
 const InputSelector = props => {
-  const { handleChange, value, selectedToken, max, onOpen } = props;
+  const {
+    handleChange,
+    value,
+    selectedToken,
+    max,
+    onOpen,
+    getToAmount,
+  } = props;
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   if (isMobileDevice) {
     return (
@@ -24,7 +31,9 @@ const InputSelector = props => {
             value={value}
             isRequired
             width="38%"
-            onChange={handleChange}
+            onChange={e => {
+              handleChange(e);
+            }}
           />
           <Flex
             cursor="pointer"
@@ -45,8 +54,8 @@ const InputSelector = props => {
                 MAX
               </Text>
             ) : (
-                <></>
-              )}
+              <></>
+            )}
             <Flex>
               <Menu>
                 <Button
@@ -84,7 +93,10 @@ const InputSelector = props => {
           value={value}
           isRequired
           type="number"
-          onChange={handleChange}
+          onChange={e => {
+            handleChange(e);
+            getToAmount(e.target.value);
+          }}
         />
       </Flex>
       <Flex cursor="pointer" justifyContent="space-between" alignItems="center">
@@ -102,8 +114,8 @@ const InputSelector = props => {
             MAX
           </Text>
         ) : (
-            <></>
-          )}
+          <></>
+        )}
         <Flex>
           <Menu>
             <Button

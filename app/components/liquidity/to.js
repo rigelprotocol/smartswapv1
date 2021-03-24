@@ -26,12 +26,12 @@ const Manual = () => {
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
             To
-          </Text>
+                    </Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="lg" color=" rgba(255, 255, 255,0.25)">
             0.0
-          </Text>
+                    </Text>
           {/*<Menu>*/}
           {/*    <Button*/}
 
@@ -66,14 +66,14 @@ const Manual = () => {
                 rightIcon={<ChevronDownIcon />}
               >
                 BNB
-              </Button>
+
+                            </Button>
             </Menu>
           </Flex>
         </Flex>
       </Box>
     </>
   );
-
 };
 
 export default Manual;
