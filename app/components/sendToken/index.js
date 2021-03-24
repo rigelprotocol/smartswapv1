@@ -244,7 +244,7 @@ const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
   if (checkAllow > 0) {
-    return setIsNewUser(true)
+    return setIsNewUser(false)
   }
-  return setIsNewUser(false)
+  return setIsNewUser(true)
 };
