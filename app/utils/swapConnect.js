@@ -5,6 +5,7 @@ import RigelToken from 'utils/abis/RigelToken.json';
 import SmartSwapFactoryForSwap from 'utils/abis/SmartSwapFactoryForSwap.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 import WETH9 from 'utils/abis/WETH9.json';
+import masterChef from 'utils/abis/masterChef.json';
 import configureStore from 'configureStore';
 
 const store = configureStore();
@@ -26,6 +27,11 @@ export const router = async walletSigner => {
 export const SmartFactory = async () => {
   const SmartFactoryAddress = '0xc33b4cB9eAFE64BEa3c96e723bEBdB961d462288';
   return new ethers.Contract(SmartFactoryAddress, SmartSwapFactoryForSwap, signer);
+};
+
+export const MasterChefContract = async () => {
+  const MasterChefAddress = '0xc33b4cB9eAFE64BEa3c96e723bEBdB961d462288';
+  return new ethers.Contract(MasterChefAddress, masterChef, signer);
 };
 
 // rigel token

@@ -74,7 +74,6 @@ const Manual = () => {
       </Box>
     </>
   );
-
 };
 
 export default Manual;
