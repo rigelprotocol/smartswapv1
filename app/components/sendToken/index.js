@@ -189,8 +189,9 @@ const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
+                      ? swapTokenForTokens()
                       : ''
+              // ((isNewUser) ? rgpApproval() : swapTokenForTokens())
 
             }}
           >
@@ -202,7 +203,7 @@ const Manual = props => {
                   ? 'Click Select a Token'
                   : typeof wallet.signer === 'object' &&
                     fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                    ? 'Approve Amount'
+                    ? 'Swap Amount'
                     : 'Swap Amount'}
           </Button>
         </Box>
