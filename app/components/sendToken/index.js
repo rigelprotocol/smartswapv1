@@ -101,7 +101,6 @@ const Manual = props => {
   };
 
   useEffect(() => {
-    checkUser()
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
         await checkUser();
@@ -191,7 +190,7 @@ const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? ((isNewUser) ? swapTokenForTokens() : swapTokenForTokens())
+                      ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
                       : ''
 
             }}
