@@ -110,7 +110,6 @@ const Manual = props => {
             .formatEther(await bnb.balanceOf(wallet.address))
             .toString(),
         );
-
       }
     };
     getBalance();
