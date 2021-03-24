@@ -81,12 +81,12 @@ const Manual = props => {
       const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
       const fromPath = ethers.utils.getAddress(path[0].fromPath);
       const toPath = ethers.utils.getAddress(path[1].toPath);
-      const passOutPut = amountIn;
+      const passOutPut = ethers.utils.formatUnits(amountIn).toString();
       await rout.swapExactTokensForTokens(
         fromAmount,
         passOutPut,
         [fromPath, toPath],
-        wallet.address,
+        wallet.address, 
         deadL,
         {
           from: wallet.address,
