@@ -183,9 +183,7 @@ LiquidityPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = () => ({
-  liquidityPage: makeSelectLiquidityPage()
-});
+const mapStateToProps = ({ state }) => ({ state });
 
 function mapDispatchToProps(dispatch) {
   return {

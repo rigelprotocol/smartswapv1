@@ -2,9 +2,56 @@ import React, { useState } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import ShowYieldFarmDetails from './ShowYieldFarmDetails';
+import { SMART_SWAP } from "../../utils/constants";
+import { rigelToken, MasterChefContract } from '../../utils/SwapConnect';
+
 
 const YieldFarm = ({ content }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
+
+  // user to deposit to yield
+
+  const useDeposit = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.deposit("uint", "uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+  //withdrawal of funds
+  const useWithdrawal = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.withdraw("uint", "uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+   //Emmergency withdrawal of funds
+   const useEmmergency = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.emergencyWithdraw("uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+  //rgp approve masterchef
+  const rgpApproveMasterChef = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
+        from: wallet.address,
+      });
+    }
+  };
+
+
   return (
     <>
       <Flex

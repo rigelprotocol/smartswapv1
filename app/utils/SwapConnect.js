@@ -5,6 +5,7 @@ import RigelToken from 'utils/abis/RigelToken.json';
 import SmartSwapFactoryForSwap from 'utils/abis/SmartSwapFactoryForSwap.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 import WETH9 from 'utils/abis/WETH9.json';
+import masterChef from 'utils/abis/masterChef.json';
 import configureStore from 'configureStore';
 
 const store = configureStore();
@@ -12,7 +13,6 @@ const { wallet } = store.getState().wallet;
 let { signer } = wallet;
 if (typeof signer === 'string') {
   if (window.ethereum && window.ethereum !== 'undefined') {
-    console.log(typeof signer, window.ethereum);
     signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
   }
 }
@@ -23,16 +23,22 @@ export const router = async walletSigner => {
   return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, signer);
 };
 
-//Factory smartContract for getting and creating pairs
+// Factory smartContract for getting and creating pairs
 export const SmartFactory = async () => {
   const SmartFactoryAddress = '0xc33b4cB9eAFE64BEa3c96e723bEBdB961d462288';
   return new ethers.Contract(SmartFactoryAddress, SmartSwapFactoryForSwap, signer);
+};
+
+export const MasterChefContract = async () => {
+  const MasterChefAddress = '0xc33b4cB9eAFE64BEa3c96e723bEBdB961d462288';
+  return new ethers.Contract(MasterChefAddress, masterChef, signer);
 };
 
 // rigel token
 export const rigelToken = async () => {
   const rgpContractAddress = '0x80278a0cf536e568a76425b67fb3931dca21535c';
   return new ethers.Contract(rgpContractAddress, RigelToken, signer);
+  // console.log("get my rgp bala: ", ethers.utils.formatEther(await rgpbab.balanceOf("0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E"))).toString();
 };
 
 // BUSD token
