@@ -20,7 +20,7 @@ import SwapSettings from "./SwapSettings";
 import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 import ShowMessageBox from './../Toast/ShowMessageBox';
 
-const Manual = props => {
+export const Manual = props => {
   const { wallet, wallet_props } = props.wallet;
   const [fromAmount, setFromAmount] = useState('');
   const [path, setPath] = useState([]);
@@ -42,6 +42,7 @@ const Manual = props => {
     setFromAmount(event.target.value)
     getToAmount(event.target.value, 'from');
   };
+
   const setPathArray = target => setPathObject(path, target);
   const setPathToArray = target => {
     const pathObject = path.find(value => value.hasOwnProperty('toPath'));
@@ -108,9 +109,9 @@ const Manual = props => {
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
-        await checkUser();
+        // await checkUser();
         const bnb = await BUSDToken();
-        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : '0.0');
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
         setETHBalance(wallet ? wallet.balance : '0.0');
         setBUSDBalance(
           ethers.utils
