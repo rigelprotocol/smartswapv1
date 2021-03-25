@@ -107,6 +107,7 @@ export const Manual = props => {
     }
   };
 
+  //get user balance
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
@@ -123,7 +124,6 @@ export const Manual = props => {
     };
     getBalance();
   }, [wallet]);
-
 
   const sendNotice = (message) => {
     props.notify({
@@ -248,7 +248,7 @@ function setPathObject(path, target) {
   else path.push({ fromPath: target });
 }
 
-//subject
+//subjected
 const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
