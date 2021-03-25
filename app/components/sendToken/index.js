@@ -34,6 +34,7 @@ export const Manual = props => {
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
 
+  //handling change ev
   const handleChangeToAmount = (event) => {
     setAmountIn(event.target.value);
     getToAmount(event.target.value, 'to');
@@ -247,6 +248,7 @@ function setPathObject(path, target) {
   else path.push({ fromPath: target });
 }
 
+//subject
 const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
