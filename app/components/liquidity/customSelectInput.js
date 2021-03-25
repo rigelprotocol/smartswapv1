@@ -6,9 +6,7 @@ import { Flex } from '@chakra-ui/layout';
 import PropTypes from 'prop-types';
 import styles from '../../styles/custom-select-box.css';
 import BNBImage from '../../assets/bnb.svg';
-import TRXImage from '../../assets/trx.svg';
 import ETHImage from '../../assets/eth.svg';
-import USDTImage from '../../assets/usdt.svg';
 import RGPImage from '../../assets/rgp.svg';
 
 const CustomSelectInput = ({
@@ -51,18 +49,14 @@ const CustomSelectInput = ({
             {defaultSelectText.id === 0 ? (
               defaultSelectText.name
             ) : (
-              <div>
-                {' '}
-                {defaultSelectText.img === 'bnb.svg' && <BNBImage mr="3" />}
-                {defaultSelectText.img === 'eth.svg' && <ETHImage mr="3" />}
-                {defaultSelectText.img === 'trx.svg' && <TRXImage mr="3" />}
-                {defaultSelectText.img === 'rgp.svg' && <RGPImage mr="3" />}
-                {defaultSelectText.img === 'usdt.svg' && (
-                  <USDTImage mr="3" />
-                )}{' '}
-                {defaultSelectText.name}
-              </div>
-            )}
+                <div>
+                  {' '}
+                  {defaultSelectText.img === 'bnb.svg' && <BNBImage mr="3" />}
+                  {defaultSelectText.img === 'eth.svg' && <ETHImage mr="3" />}
+                  {defaultSelectText.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
+                  {defaultSelectText.name}
+                </div>
+              )}
           </div>
           {showSpinList && (
             <ul className={styles.selectOptions}>
@@ -75,9 +69,7 @@ const CustomSelectInput = ({
                 >
                   {option.img === 'bnb.svg' && <BNBImage mr="3" />}
                   {option.img === 'eth.svg' && <ETHImage mr="3" />}
-                  {option.img === 'trx.svg' && <TRXImage mr="3" />}
-                  {option.img === 'rgp.svg' && <RGPImage mr="3" />}
-                  {option.img === 'usdt.svg' && <USDTImage mr="3" />}{' '}
+                  {option.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
                   {option.name}
                 </li>
               ))}

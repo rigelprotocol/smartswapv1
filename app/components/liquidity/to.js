@@ -37,8 +37,8 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
               Balance: {inputHeading2}
             </Text>
           ) : (
-            <div />
-          )}
+              <div />
+            )}
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           {selectedValue.id === 0 ? (
@@ -46,18 +46,18 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
               0.0
             </Text>
           ) : (
-            <Input
-              type="number"
-              id="input__field"
-              placeholder="0.0"
-              value={toValue}
-              border="1px solid rgba(255, 255, 255,0.25)"
-              fontSize="lg"
-              color="rgb(255, 255, 255)"
-              disabled
-              onChange={event => event.preventDefault()}
-            />
-          )}
+              <Input
+                type="number"
+                id="input__field"
+                placeholder="0.0"
+                value={toValue}
+                border="1px solid rgba(255, 255, 255,0.25)"
+                fontSize="lg"
+                color="rgb(255, 255, 255)"
+                disabled
+                onChange={event => event.preventDefault()}
+              />
+            )}
           <Flex alignItems="center">
             <Menu>
               <CustomSelectInput
@@ -75,7 +75,7 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
 
 Manual.propTypes = {
   selectingToken: PropTypes.array.isRequired,
-  toValue: PropTypes.string.isRequired,
+  toValue: PropTypes.number.isRequired,
   selectedToken: PropTypes.func.isRequired,
   selectedValue: PropTypes.object.isRequired,
 };
