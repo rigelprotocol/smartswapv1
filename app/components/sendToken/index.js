@@ -112,6 +112,7 @@ export const Manual = props => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
         // await checkUser();
+        console.log("wallet address is: ",wallet.address)
         const bnb = await BUSDToken();
         console.log(wallet.address)
         setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
@@ -119,7 +120,7 @@ export const Manual = props => {
         setBUSDBalance(
           ethers.utils
             .formatEther(await bnb.balanceOf(wallet.address))
-            .toString(),
+            .toString().toPrecision(5),
         );
       }
     };
