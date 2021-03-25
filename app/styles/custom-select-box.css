@@ -1,0 +1,73 @@
+
+.select {
+  cursor: pointer;
+  color: #fff;
+}
+/* custom select */
+.customSelectContainer,
+.customWheelSelectContainer {
+  display: inline-block;
+  min-width: 50%;
+  position: relative;
+  right: 0%;
+}
+.customWheelSelectContainer {
+  min-width: 100%;
+}
+.selectedText,
+.selectedWheelText {
+  background-color: transparent;
+  padding: 6px 9px;
+  position: relative;
+  width: 150px;
+  text-align:center
+}
+.selectedWheelText {
+  background: rgba(41, 35, 94, 1);
+  width: 100%;
+}
+
+.selectedText::after,
+.selectedWheelText::after {
+  content: "";
+  position: absolute;
+  /* right: 10px; */
+  top: 13px;
+  border: 7px solid transparent;
+  border-color: #fff transparent transparent transparent;
+  right: 0px;
+}
+
+.selectedText.active::after,
+.selectedWheelText.active::after {
+  top: 8px;
+  border-color: transparent transparent #fff transparent;
+}
+
+.selectOptions,
+.selectWheelOptions {
+  position: absolute;
+  width: 100%;
+  margin: 6px 0;
+  padding: 5px 0;
+  z-index: 999;
+  border-radius: 10px;
+  border: 1px solid rgba(41, 35, 94, 0.5);
+  background: #120136;
+  left: 0;
+}
+.selectWheelOptions {
+  margin-top: 40px;
+  left: 0;
+}
+
+.customSelectOption {
+  list-style-type: none;
+  padding: 10px 20px;
+
+  cursor: pointer;
+}
+
+.customSelectOption:hover {
+  color: #32a6a6;
+}
