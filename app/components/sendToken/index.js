@@ -114,6 +114,7 @@ export const Manual = props => {
         // await checkUser();
         const bnb = await BUSDToken();
         console.log(wallet.address);
+        console.log(wallet.address)
         setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
         setETHBalance(wallet ? wallet.balance : '0.0');
         setBUSDBalance(

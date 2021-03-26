@@ -9,7 +9,7 @@ import BNBImage from "../../assets/bnb.svg";
 import ETHImage from "../../assets/eth.svg";
 import RGPImage from "../../assets/rgp.svg";
 
-const Manual = () => {
+const balanceOf = () => {
 
   return (
     <>
@@ -76,4 +76,4 @@ const Manual = () => {
   );
 };
 
-export default Manual;
+export default balanceOf;
