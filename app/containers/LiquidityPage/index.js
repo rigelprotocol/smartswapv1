@@ -20,11 +20,9 @@ import makeSelectLiquidityPage from './selectors';
 
 export function LiquidityPage() {
 
-  const liquidities = [
-  ];
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
-  const [selectingToken, setSelectedToken] = useState([
+  const [selectingToken, setSelectingToken] = useState([
     { id: 0, name: 'Select a token', img: '' },
     { id: 1, name: 'BNB', img: 'bnb.svg' },
     { id: 2, name: 'ETH', img: 'eth.svg' },
@@ -35,6 +33,7 @@ export function LiquidityPage() {
     name: 'Select a token',
     img: '',
   });
+  const [liquidities, setLiquidities] = useState([])
   const [liquidityTab, setLiquidityTab] = useState("INDEX")
   const [popupText, setPopupText] = useState('Approve BNB');
   const [displayButton, setDisplayButton] = useState(false);
@@ -44,12 +43,29 @@ export function LiquidityPage() {
 
   useEffect(() => {
     displayBNBbutton();
-    calculateToken();
+    calculateToValue();
     changeButtonValue();
   }, [fromValue, selectedValue, liquidities]);
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const modal3Disclosure = useDisclosure();
+
+  function addDataCloseInputs(data) {
+    setLiquidities([...liquidities, data])
+    // close all opened values
+    setApproveBNBPopup(false)
+    setFromValue(0)
+    calculateToValue()
+    setOpenSupplyButton(true)
+    setPopupText("Approve BNB")
+    setButtonValue("Invalid pair")
+    setDisplayButton(false)
+    setSelectedValue({
+      id: 0,
+      name: 'Select a token',
+      img: '',
+    })
+  }
 
   const open = () => {
     modal1Disclosure.onOpen();
@@ -61,8 +77,10 @@ export function LiquidityPage() {
   const closeModal3 = () => {
     modal3Disclosure.onClose();
   };
+  // open the last modal
   const openModal3 = () => {
     modal3Disclosure.onOpen();
+    // close all modal one by one
     setTimeout(() => {
       closeModal3();
     }, 5000);
@@ -76,18 +94,20 @@ export function LiquidityPage() {
     }, 7000);
     setTimeout(() => {
       setLiquidityTab("INDEX")
-      liquidities.push(
-        {
-          id: 1,
-          imageFrom: '<BNBImage/>',
-          imageTo: '<RGPImage/>',
-          from: 'BNB',
-          to: 'RGP',
-          pooledRGP: 1,
-          pooledBNB: '1.89849849',
-          poolToken: '0.838383',
-          poolShare: '0.00%',
-        })
+      // add transaction to liquidity array and fix all opened input
+
+      let data = {
+        id: 1,
+        imageFrom: '<BNBImage/>',
+        imageTo: '<RGPImage/>',
+        from: 'BNB',
+        to: 'RGP',
+        pooledRGP: 1,
+        pooledBNB: '1.89849849',
+        poolToken: '0.838383',
+        poolShare: '0.00%',
+      }
+      addDataCloseInputs(data)
     }, 12000)
   };
   const confirmingSupply = () => {
@@ -121,7 +141,7 @@ export function LiquidityPage() {
       setButtonValue('Enter an Amount');
     }
   }
-  function calculateToken() {
+  function calculateToValue() {
     setToValue((fromValue * 10) - 4.637)
   }
   function approveBNB() {
