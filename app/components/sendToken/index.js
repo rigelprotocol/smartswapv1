@@ -25,7 +25,7 @@ export const Manual = props => {
   const [fromAmount, setFromAmount] = useState('');
   const [path, setPath] = useState([]);
   const [showBox, setShowBox] = useState(false);
-  const [isNewUser, setIsNewuser] = useState(true)
+  const [isNewUser, setIsNewUser] = useState(true)
   const [amountIn, setAmountIn] = useState('0.0');
   const [boxMessage, setBoxMessage] = useState('');
   const [rgpBalance, setRGPBalance] = useState('0.0');
@@ -106,14 +106,11 @@ export const Manual = props => {
         'Deadline: ', deadL);
     }
   };
-
-  //get user balance
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
-        // await checkUser();
+        await checkUser(wallet, setIsNewUser);
         const bnb = await BUSDToken();
-        console.log(wallet.address)
         setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
         setETHBalance(wallet ? wallet.balance : '0.0');
         setBUSDBalance(
@@ -133,7 +130,6 @@ export const Manual = props => {
       type: 'info'
     })
   }
-
   return (
     <div>
       <Box
@@ -198,8 +194,8 @@ export const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? swapTokenForTokens()
-                      : ''
+                      ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
+                      : null
 
             }}
           >
@@ -211,8 +207,9 @@ export const Manual = props => {
                   ? 'Click Select a Token'
                   : typeof wallet.signer === 'object' &&
                     fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                    ? 'swap Amount'
-                    : 'Swap Amount'}
+                    ? ((isNewUser) ? 'Approve Transaction' : 'Swap Tokens')
+                    : ''
+            }
           </Button>
         </Box>
       </Box>
@@ -249,12 +246,11 @@ function setPathObject(path, target) {
   else path.push({ fromPath: target });
 }
 
-//subjected
 const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-  if (checkAllow > 0) {
-    return setIsNewUser(true)
+  if (ethers.utils.formatEther(checkAllow).toString() > 0) {
+    return setIsNewUser(false)
   }
-  return setIsNewUser(false)
+  return setIsNewUser(true)
 };
