@@ -111,11 +111,12 @@ export const Manual = props => {
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
+        console.log("wallet address", wallet)
         // await checkUser();
         const bnb = await BUSDToken();
-        console.log(wallet.address);
-        console.log(wallet.address)
-        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
+        console.log("wallet address 2", wallet)
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);        
+        console.log("main address 3", wallet.address);
         setETHBalance(wallet ? wallet.balance : '0.0');
         setBUSDBalance(
           ethers.utils
@@ -254,8 +255,10 @@ function setPathObject(path, target) {
 const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-  if (checkAllow > 0) {
-    return setIsNewUser(true)
-  }
-  return setIsNewUser(false)
+   if (wallet.signer !== 'signer') {
+      if (checkAllow == setIsNewUser(true)) {
+        return setIsNewUser(true)
+      }
+      return setIsNewUser(false)
+   }
 };
