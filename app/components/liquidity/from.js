@@ -1,13 +1,19 @@
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import RGPImage from "../../assets/rgp.svg";
-import React from 'react'
-import { Menu } from "@chakra-ui/menu";
-import { Button } from "@chakra-ui/button";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-
-
-const Manual = () => {
-
+/* eslint-disable no-unused-vars */
+import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Input } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import CustomSelectInput from './customSelectInput';
+const Manual = ({ selectingToken, fromValue, setFromValue, selectedValue }) => {
+  const [inputHeading1, setInputHeading1] = useState('From');
+  const [inputHeading2, setInputHeading2] = useState('2,632.34');
+  useEffect(() => {
+    if (selectedValue.id !== 0) {
+      setInputHeading1('Input');
+    } else {
+      setInputHeading1('From');
+    }
+  }, [selectedValue]);
   return (
     <>
       <Box
@@ -26,8 +32,8 @@ const Manual = () => {
             From
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-            Balance: 2,632.34
-                    </Text>
+            Balance: {inputHeading2}
+          </Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Text fontSize="lg" color=" rgba(255, 255, 255,0.25)">
@@ -38,7 +44,6 @@ const Manual = () => {
             justifyContent="space-between"
             alignItems="center"
           >
-
             <Flex alignItems="center">
               <RGPImage />
               <Menu>
@@ -62,11 +67,15 @@ const Manual = () => {
             </Flex>
           </Flex>
         </Flex>
-
       </Box>
     </>
   );
-
+};
+Manual.propTypes = {
+  selectingToken: PropTypes.array.isRequired,
+  fromValue: PropTypes.string.isRequired,
+  setFromValue: PropTypes.func.isRequired,
+  selectedValue: PropTypes.object.isRequired,
 };
 
 export default Manual;

@@ -4,8 +4,6 @@
  *
  */
 
-
-
  export const LIQUIDITYTABS = {
 INDEX: "INDEX",
 LIQUIDITYPAGE: "LIQUIDITYPAGE"
