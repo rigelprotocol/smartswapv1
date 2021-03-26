@@ -1,16 +1,21 @@
-import { useState } from "react";
-import React from 'react'
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import { Menu } from "@chakra-ui/menu";
-import { Button } from "@chakra-ui/button";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { TOKENS } from "../../utils/constants";
-import BNBImage from "../../assets/bnb.svg";
-import ETHImage from "../../assets/eth.svg";
-import RGPImage from "../../assets/rgp.svg";
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
+import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Input } from '@chakra-ui/react';
+import { Menu } from '@chakra-ui/menu';
+import PropTypes from 'prop-types';
+import CustomSelectInput from './customSelectInput';
 
-const Manual = () => {
-
+const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
+  const [inputHeading1, setInputHeading1] = useState('To');
+  const [inputHeading2, setInputHeading2] = useState('2,632.34');
+  useEffect(() => {
+    if (selectedValue.id !== 0) {
+      setInputHeading1('Input');
+    } else {
+      setInputHeading1('To');
+    }
+  }, [selectedValue]);
   return (
     <>
       <Box
@@ -25,49 +30,41 @@ const Manual = () => {
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
-            To
-                    </Text>
+            {inputHeading1}
+          </Text>
+          {selectedValue.id !== 0 ? (
+            <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+              Balance: {inputHeading2}
+            </Text>
+          ) : (
+              <div />
+            )}
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="lg" color=" rgba(255, 255, 255,0.25)">
-            0.0
-                    </Text>
-          {/*<Menu>*/}
-          {/*    <Button*/}
-
-          {/*        border="0px"*/}
-          {/*        h="30px"*/}
-          {/*        fontWeight="regular"*/}
-          {/*        fontSize="16px"*/}
-          {/*        cursor="pointer"*/}
-          {/*        bg= '#40BAD5'*/}
-          {/*        marginBottom="5px"*/}
-          {/*        color="white"*/}
-          {/*        _hover={{ background: '#72cfe4', color: '#29235E' }}*/}
-          {/*        rightIcon={<ChevronDownIcon />}*/}
-          {/*    >*/}
-          {/*    Select a token*/}
-          {/*    </Button>*/}
-          {/*</Menu>*/}
+          {selectedValue.id === 0 ? (
+            <Text fontSize="lg" color=" rgba(255, 255, 255,0.25)">
+              0.0
+            </Text>
+          ) : (
+              <Input
+                type="number"
+                id="input__field"
+                placeholder="0.0"
+                value={toValue}
+                border="1px solid rgba(255, 255, 255,0.25)"
+                fontSize="lg"
+                color="rgb(255, 255, 255)"
+                disabled
+                onChange={event => event.preventDefault()}
+              />
+            )}
           <Flex alignItems="center">
-            <BNBImage />
             <Menu>
-              <Button
-
-                border="0px"
-                h="30px"
-                fontWeight="regular"
-                fontSize="16px"
-                cursor="pointer"
-                bg='#29235E'
-                marginBottom="5px"
-                color="white"
-                _hover={{ background: '#72cfe4', color: '#29235E' }}
-                rightIcon={<ChevronDownIcon />}
-              >
-                BNB
-
-                            </Button>
+              <CustomSelectInput
+                selectingToken={selectingToken}
+                defaultSelect={0}
+                selectedToken={selectedToken}
+              />
             </Menu>
           </Flex>
         </Flex>
@@ -76,4 +73,10 @@ const Manual = () => {
   );
 };
 
+Manual.propTypes = {
+  selectingToken: PropTypes.array.isRequired,
+  toValue: PropTypes.number.isRequired,
+  selectedToken: PropTypes.func.isRequired,
+  selectedValue: PropTypes.object.isRequired,
+};
 export default Manual;

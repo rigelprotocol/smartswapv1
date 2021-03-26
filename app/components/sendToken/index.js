@@ -198,7 +198,7 @@ export const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? swapTokenForTokens() 
+                      ? swapTokenForTokens()
                       : ''
 
             }}
