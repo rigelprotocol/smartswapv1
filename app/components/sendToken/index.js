@@ -109,6 +109,9 @@ export const Manual = props => {
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
+        // console.log("wallet address", wallet.address)
+        // await checkUser();
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address); 
         await checkUser(wallet, setIsNewUser);
         const bnb = await BUSDToken();
         setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
@@ -249,6 +252,12 @@ function setPathObject(path, target) {
 const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
+   if (wallet.signer !== 'signer') {
+      if (checkAllow == setIsNewUser(true)) {
+        return setIsNewUser(true)
+      }
+      return setIsNewUser(false)
+   }
   if (ethers.utils.formatEther(checkAllow).toString() > 0) {
     return setIsNewUser(false)
   }

@@ -1,13 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Button, Input } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Menu } from '@chakra-ui/react';
 import CustomSelectInput from './customSelectInput';
-import { RGPImage } from '../../assets/rgp.svg';
-
 const Manual = ({ selectingToken, fromValue, setFromValue, selectedValue }) => {
   const [inputHeading1, setInputHeading1] = useState('From');
   const [inputHeading2, setInputHeading2] = useState('2,632.34');
