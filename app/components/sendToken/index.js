@@ -20,7 +20,7 @@ import SwapSettings from "./SwapSettings";
 import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 import ShowMessageBox from './../Toast/ShowMessageBox';
 
-const Manual = props => {
+export const Manual = props => {
   const { wallet, wallet_props } = props.wallet;
   const [fromAmount, setFromAmount] = useState('');
   const [path, setPath] = useState([]);
@@ -34,6 +34,7 @@ const Manual = props => {
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
 
+  //handling change ev
   const handleChangeToAmount = (event) => {
     setAmountIn(event.target.value);
     getToAmount(event.target.value, 'to');
@@ -42,6 +43,7 @@ const Manual = props => {
     setFromAmount(event.target.value)
     getToAmount(event.target.value, 'from');
   };
+
   const setPathArray = target => setPathObject(path, target);
   const setPathToArray = target => {
     const pathObject = path.find(value => value.hasOwnProperty('toPath'));
@@ -105,12 +107,14 @@ const Manual = props => {
     }
   };
 
+  //get user balance
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
-        await checkUser();
+        // await checkUser();
         const bnb = await BUSDToken();
-        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : '0.0');
+        console.log(wallet.address)
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
         setETHBalance(wallet ? wallet.balance : '0.0');
         setBUSDBalance(
           ethers.utils
@@ -121,7 +125,6 @@ const Manual = props => {
     };
     getBalance();
   }, [wallet]);
-
 
   const sendNotice = (message) => {
     props.notify({
@@ -246,6 +249,7 @@ function setPathObject(path, target) {
   else path.push({ fromPath: target });
 }
 
+//subjected
 const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);

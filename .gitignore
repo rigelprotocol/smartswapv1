@@ -1,18 +1,13 @@
 # Don't check auto-generated stuff into git
 coverage
 build
+
+
+
+
+
 node_modules
 stats.json
-<<<<<<< HEAD
-=======
-docs
->>>>>>> 6cedca60f060c0457d9f23762c50920567a325ac
-# Cruft
 .DS_Store
 npm-debug.log
 .idea
-<<<<<<< HEAD
-=======
-server
-.github
->>>>>>> 6cedca60f060c0457d9f23762c50920567a325ac

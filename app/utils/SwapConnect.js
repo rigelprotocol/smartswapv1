@@ -38,6 +38,7 @@ export const MasterChefContract = async () => {
 export const rigelToken = async () => {
   const rgpContractAddress = '0x80278a0cf536e568a76425b67fb3931dca21535c';
   return new ethers.Contract(rgpContractAddress, RigelToken, signer);
+  // console.log("get my rgp bala: ", ethers.utils.formatEther(await rgpbab.balanceOf("0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E"))).toString();
 };
 
 // BUSD token
