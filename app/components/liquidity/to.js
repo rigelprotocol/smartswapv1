@@ -1,20 +1,10 @@
-
-import { Button } from "@chakra-ui/button";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { TOKENS } from "../../utils/constants";
-import BNBImage from "../../assets/bnb.svg";
-import ETHImage from "../../assets/eth.svg";
-import RGPImage from "../../assets/rgp.svg";
-
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
 import CustomSelectInput from './customSelectInput';
-
-// const balanceOf = () => {
-/* eslint-disable no-unused-vars */
 
 const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
   const [inputHeading1, setInputHeading1] = useState('To');
@@ -83,12 +73,10 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
   );
 };
 
-
 Manual.propTypes = {
   selectingToken: PropTypes.array.isRequired,
   toValue: PropTypes.number.isRequired,
   selectedToken: PropTypes.func.isRequired,
   selectedValue: PropTypes.object.isRequired,
 };
-// export default balanceOf;
 export default Manual;
