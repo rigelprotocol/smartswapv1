@@ -100,7 +100,7 @@ const Manual = props => {
         notify({ title: 'Transaction Message', body: e.message, type: 'error' })
       }
       console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
-        "From: ", bnb, "To: ", rgp, "Recipient: ", wallet.address,
+        "From: ", fromPath, "To: ", toPath, "Recipient: ", wallet.address,
         'Deadline: ', deadL);
     }
   };
@@ -195,7 +195,7 @@ const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? swapTokenForTokens() 
+                      ? swapTokenForTokens()
                       : ''
 
             }}
