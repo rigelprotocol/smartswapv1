@@ -100,7 +100,16 @@ export function LiquidityPage(props) {
       const rout = await router();
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
       await rout.removeLiquidity(
-      
+        // for the tokens kindly note that they will be selected from the drop down.
+        // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
+        tokenA,
+        tokenB,
+        uintLiquidity, //input from max
+        // not to be shown in FE
+        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
+        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
+        wallet.signer, //the recipient wallet address
+        deadLine,
         {
           from: wallet.address,
           gasLimit: 150000,
