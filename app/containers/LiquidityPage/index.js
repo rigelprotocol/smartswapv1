@@ -15,6 +15,7 @@ import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
+import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 import { LIQUIDITYTABS } from "./constants";
 import makeSelectLiquidityPage from './selectors';
 
@@ -66,6 +67,34 @@ export function LiquidityPage() {
       img: '',
     })
   }
+
+  const addingLiquidity = async () => {
+    if (wallet.signer !== 'signer') {
+      const rout = await router();
+      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+      await rout.addLiquidity(
+        // for the tokens kindly note that they will be selected from the drop down.
+        // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
+        tokenA,
+        tokenB,
+        //amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
+        // input amount from and input amount to
+        amountADesired,
+        amountBDesired,
+        // not to be shown in FE
+        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
+        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
+        wallet.signer, //the recipient wallet address
+        deadLine,
+        {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+   
 
   const open = () => {
     modal1Disclosure.onOpen();
