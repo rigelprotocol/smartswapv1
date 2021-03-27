@@ -98,10 +98,10 @@ export function connectingWallet(option) {
  *
  * @param {*} tokens
  */
-// export const getTokenBalance = async (tokens = []) => {
-//   for (let index = 0; index < tokens.length; index++) {
-//     const element = array[index];
-//     await getAddressTokenBalance('wallet_address', 'tokenAddress', 'TokenAbi', 'signer')
+export const getTokenBalance = async (tokens = []) => {
+  for (let index = 0; index < tokens.length; index++) {
+    const element = tokens[index];
+    // await getAddressTokenBalance('wallet_address', 'tokenAddress', 'TokenAbi', 'signer')
 
-//   }
-// }
+  }
+}

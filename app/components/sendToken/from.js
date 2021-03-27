@@ -31,6 +31,7 @@ const From = ({
   busdBalance,
   ETHBalance,
   userWallet,
+  getToAmount,
   path,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -38,7 +39,7 @@ const From = ({
   const { wallet } = userWallet;
   useEffect(() => {
     setSelectedToken(TOKENS.RGP);
-    path.push({ toPath: TOKENS_CONTRACT.RGP });
+    path.push({ fromPath: TOKENS_CONTRACT.RGP });
   }, []);
 
   return (
@@ -71,6 +72,7 @@ const From = ({
           value={fromAmount}
           max
           onOpen={onOpen}
+          getToAmount={getToAmount}
           selectedToken={selectedToken}
         />
       </Box>
@@ -114,6 +116,7 @@ const From = ({
               onClick={() => {
                 setSelectedToken(TOKENS.BNB);
                 setPathArray(TOKENS_CONTRACT.BNB);
+                getToAmount();
                 onClose();
               }}
             >
@@ -134,6 +137,7 @@ const From = ({
               onClick={() => {
                 setSelectedToken(TOKENS.ETH);
                 setPathArray(wallet.address);
+                getToAmount();
                 onClose();
               }}
             >
@@ -154,6 +158,7 @@ const From = ({
               onClick={() => {
                 setSelectedToken(TOKENS.RGP);
                 setPathArray(TOKENS_CONTRACT.RGP);
+                getToAmount();
                 onClose();
               }}
             >

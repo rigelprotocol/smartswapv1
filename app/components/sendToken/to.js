@@ -59,6 +59,7 @@ const SendTo = props => {
           value={amountIn}
           selectedToken={selectedToToken}
           onOpen={onOpen}
+          getToAmount={getToAmount}
         />
       </Box>
 
@@ -101,7 +102,7 @@ const SendTo = props => {
               onClick={() => {
                 setSelectedToToken(TOKENS.BNB);
                 setPathToArray(TOKENS_CONTRACT.BNB);
-                getToAmount(TOKENS_CONTRACT.BNB, TOKENS.BNB);
+                getToAmount();
                 onClose();
               }}
             >
@@ -122,7 +123,7 @@ const SendTo = props => {
               onClick={() => {
                 setSelectedToToken(TOKENS.ETH);
                 setPathToArray(wallet.address);
-                getToAmount(TOKENS_CONTRACT.ETH, TOKENS.ETH);
+                getToAmount();
                 onClose();
               }}
             >
@@ -143,7 +144,7 @@ const SendTo = props => {
               onClick={() => {
                 setSelectedToToken(TOKENS.RGP);
                 setPathToArray(TOKENS_CONTRACT.RGP);
-                getToAmount(TOKENS_CONTRACT.RGP, TOKENS.RGP);
+                getToAmount();
                 onClose();
               }}
             >

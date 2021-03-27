@@ -50,7 +50,10 @@ const Account = ({ wallet, wallet_props }) => {
           fontWeight="light"
           border="0px"
         >
-          <Text mr="10px">{address}</Text>
+          <Text mr="10px">{`${address.substr(0, 6)}...${address.slice(
+            -6,
+            address.length,
+          )}`}</Text>
           <CurrentImage />
         </Button>
       </Flex>
