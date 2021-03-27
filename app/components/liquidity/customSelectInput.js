@@ -49,14 +49,14 @@ const CustomSelectInput = ({
             {defaultSelectText.id === 0 ? (
               defaultSelectText.name
             ) : (
-                <div>
-                  {' '}
-                  {defaultSelectText.img === 'bnb.svg' && <BNBImage mr="3" />}
-                  {defaultSelectText.img === 'eth.svg' && <ETHImage mr="3" />}
-                  {defaultSelectText.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
-                  {defaultSelectText.name}
-                </div>
-              )}
+              <div>
+                {' '}
+                {defaultSelectText.img === 'bnb.svg' && <BNBImage mr="3" />}
+                {defaultSelectText.img === 'eth.svg' && <ETHImage mr="3" />}
+                {defaultSelectText.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
+                {defaultSelectText.name}
+              </div>
+            )}
           </div>
           {showSpinList && (
             <ul className={styles.selectOptions}>
@@ -70,7 +70,7 @@ const CustomSelectInput = ({
                   {option.img === 'bnb.svg' && <BNBImage mr="3" />}
                   {option.img === 'eth.svg' && <ETHImage mr="3" />}
                   {option.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
-                  {option.name}
+                  {option.name}{' '} {option.balance}
                 </li>
               ))}
             </ul>
