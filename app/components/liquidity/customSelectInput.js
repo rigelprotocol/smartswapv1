@@ -13,6 +13,7 @@ const CustomSelectInput = ({
   selectingToken,
   defaultSelect,
   selectedToken,
+  setSelectedToken
 }) => {
   const [showSpinList, setShowSpinList] = useState(false);
   const [defaultSelectText, setDefaultSelectText] = useState(
@@ -32,6 +33,7 @@ const CustomSelectInput = ({
     setDefaultSelectText(obj);
     setShowSpinList(false);
     selectedToken(obj);
+    setSelectedToken(obj)
   };
   return (
     <>
@@ -70,7 +72,7 @@ const CustomSelectInput = ({
                   {option.img === 'bnb.svg' && <BNBImage mr="3" />}
                   {option.img === 'eth.svg' && <ETHImage mr="3" />}
                   {option.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
-                  {option.name}
+                  {option.name}{' '} {option.balance}
                 </li>
               ))}
             </ul>
@@ -84,5 +86,6 @@ CustomSelectInput.propTypes = {
   selectingToken: PropTypes.array.isRequired,
   defaultSelect: PropTypes.number.isRequired,
   selectedToken: PropTypes.func,
+  setSelectedToken: PropTypes.func,
 };
 export default CustomSelectInput;

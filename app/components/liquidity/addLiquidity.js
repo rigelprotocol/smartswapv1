@@ -11,22 +11,29 @@ import {
   ModalBody,
 } from '@chakra-ui/react';
 import { CheckIcon } from '@chakra-ui/icons';
-import From from 'components/liquidity/from';
+import LiquidityFromBox from 'components/liquidity/from';
 import To from 'components/liquidity/to';
 import React from 'react';
 import PropTypes from 'prop-types';
+import ApproveBox from './ApproveBox';
+import LiquidityPriceBox from './LiquidityPriceBox';
 import Question from '../../assets/question.svg';
 import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ETHImage from '../../assets/eth.svg';
 import RGPImage from '../../assets/rgp.svg';
+
 const AddLiquidity = ({
   fromValue,
   setFromValue,
   toValue,
   selectingToken,
   setSelectedValue,
+  fromSelectedToken,
+  toSelectedToken,
+  setFromSelectedToken,
+  setToSelectedToken,
   selectedValue,
   popupText,
   confirmingSupply,
@@ -50,43 +57,18 @@ const AddLiquidity = ({
       w={['100%', '100%', '29.50%', '29.5%']}
       rounded="lg"
     >
-      {approveBNBPopup ? (
-        <Box
-          bg="#120136"
-          borderRadius="20px"
-          width="220px"
-          position="fixed"
-          right="150px"
-          top="150px"
-          p="2"
-          border="1px solid rgba(255, 255, 255,0.25)"
-        >
-          <Flex>
-            <Box pt="2" mr="4">
-              <Circle size="30px" borderRadius="50%" bg="#68C18A" border="0">
-                <CheckIcon color="white" />
-              </Circle>
-            </Box>
-            <Box>
-              <Text color="white">{popupText}</Text>
-              <Text>
-                <a href="google.com">view on bscscan</a>
-              </Text>
-            </Box>
-          </Flex>
-        </Box>
-      ) : (
-          <div />
-        )}
+      {approveBNBPopup ? <ApproveBox popupText={popupText} /> : <div />}
       <Flex justifyContent="space-between" alignItems="center" px={4}>
         <ArrowLeft cursor="pointer" onClick={back} />
         <Text color="gray.200">Add Liquidity</Text>
         <Question />
       </Flex>
 
-      <From
+      <LiquidityFromBox
         selectingToken={selectingToken}
         fromValue={fromValue}
+        fromSelectedToken={fromSelectedToken}
+        setFromSelectedToken={setFromSelectedToken}
         setFromValue={e => setFromValue(e)}
         selectedValue={selectedValue}
       />
@@ -97,54 +79,12 @@ const AddLiquidity = ({
         selectingToken={selectingToken}
         selectedToken={val => setSelectedValue(val)}
         toValue={toValue}
+        toSelectedToken={toSelectedToken}
+        setToSelectedToken={setToSelectedToken}
         selectedValue={selectedValue}
       />
       {selectedValue.id !== 0 ? (
-        <Box
-          color="#fff"
-          bg="#29235E"
-          mt="10px"
-          justifyContent="space-between"
-          py={1}
-          px={4}
-          mx={4}
-          rounded="2xl"
-        >
-          <Text fontSize="sm" color="gray.200" my={3}>
-            Prices and pool share
-        </Text>
-          <Flex
-            justifyContent="space-between"
-            px={2}
-            bg="background: rgba(41, 35, 94, 1);
-"
-          >
-            <Box>
-              <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
-                497.209
-            </Text>
-              <Text fontSize="sm" color="gray.500" my={3}>
-                RGP per {selectedValue.name}
-              </Text>
-            </Box>
-            <Box>
-              <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
-                0.00201078
-            </Text>
-              <Text fontSize="sm" color="gray.500" my={3}>
-                ETH per DAI
-            </Text>
-            </Box>
-            <Box>
-              <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
-                0%
-            </Text>
-              <Text fontSize="sm" color="gray.500" my={3}>
-                Share of Pool
-            </Text>
-            </Box>
-          </Flex>
-        </Box>
+        <LiquidityPriceBox selectedValue={selectedValue} />
       ) : (
           <div />
         )}
@@ -328,7 +268,11 @@ const AddLiquidity = ({
 AddLiquidity.propTypes = {
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
+  setFromSelectedToken: PropTypes.func.isRequired,
+  fromSelectedToken: PropTypes.object.isRequired,
   toValue: PropTypes.string.isRequired,
+  toSelectedToken: PropTypes.object.isRequired,
+  setToSelectedToken: PropTypes.func.isRequired,
   setSelectedValue: PropTypes.func.isRequired,
   back: PropTypes.func.isRequired,
   selectedValue: PropTypes.object.isRequired,

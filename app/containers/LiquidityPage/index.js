@@ -15,19 +15,28 @@ import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
+import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
+import { BUSDToken, rigelToken, router } from '../../utils/SwapConnect';
+import { TOKENS } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
-import makeSelectLiquidityPage from './selectors';
 
-export function LiquidityPage() {
-
+export function LiquidityPage(props) {
+  const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
   const [selectingToken, setSelectingToken] = useState([
     { id: 0, name: 'Select a token', img: '' },
     { id: 1, name: 'BNB', img: 'bnb.svg' },
-    { id: 2, name: 'ETH', img: 'eth.svg' },
-    { id: 3, name: 'RGP', img: 'rgp.svg' },
+    { id: 2, name: 'ETH', img: 'eth.svg', balance: typeof wallet.signer !== 'object' ? 0 : wallet.balance },
+    { id: 3, name: 'RGP', img: 'rgp.svg', balance: wallet_props.length === 0 ? 0 : wallet_props[0].rgp },
   ]);
+  const [fromSelectedToken, setFromSelectedToken] = useState({
+    id: 3,
+    name: 'RGP',
+    img: 'rgp.svg',
+    balance: wallet_props.length === 0 ? 0 : wallet_props[0].rgp
+  })
+  const [toSelectedToken, setToSelectedToken] = useState({})
   const [selectedValue, setSelectedValue] = useState({
     id: 0,
     name: 'Select a token',
@@ -67,6 +76,85 @@ export function LiquidityPage() {
     })
   }
 
+  const addingLiquidity = async () => {
+    console.log("adding")
+    console.log(fromSelectedToken)
+    console.log(toSelectedToken)
+    if (wallet.signer !== 'signer') {
+      const rout = await router();
+      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+      await rout.addLiquidity(
+        // for the tokens kindly note that they will be selected from the drop down.
+        // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
+        tokenA = Object.keys(TOKENS).filter(token => token === fromSelectedToken.name)[0],
+        tokenB = Object.keys(TOKENS).filter(token => token === toSelectedToken.name)[0],
+        //amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
+        // input amount from and input amount to
+        amountADesired = parseInt(fromValue),
+        amountBDesired = parseInt(toValue),
+
+        // not to be shown in FE
+        amountAMin = parseInt(fromValue) / parseInt(toValue), // inout amount of amountADesired / input amount of amountBDesired
+        amountBMin = parseInt(fromValue) / parseInt(toValue), // inout amount of amountADesired / input amount of amountBDesired
+        wallet.signer, //the recipient wallet address
+        deadLine,
+        {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+
+      );
+      console.log(tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin)
+    }
+
+  };
+
+  const removingLiquidity = async () => {
+    if (wallet.signer !== 'signer') {
+      const rout = await router();
+      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+      await rout.removeLiquidity(
+        // for the tokens kindly note that they will be selected from the drop down.
+        // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
+        tokenA,
+        tokenB,
+        uintLiquidity, //input from max
+        // not to be shown in FE
+        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
+        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
+        wallet.signer, //the recipient wallet address
+        deadLine,
+        {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  useEffect(() => {
+    const getBalance = async () => {
+      if (wallet.signer !== 'signer') {
+        // console.log("wallet address", wallet.address)
+        // await checkUser();
+        await checkUser(wallet, setIsNewUser);
+        const bnb = await BUSDToken();
+        const rigel = await rigelToken();
+        setRGPBalance(await rigel.balanceOf(wallet.address));
+        setETHBalance(await rigel.balanceOf(wallet.address));
+        setBUSDBalance(
+          ethers.utils
+            .formatEther(await bnb.balanceOf(wallet.address))
+            .toString(),
+        );
+      }
+    };
+    getBalance();
+  }, [wallet]);
+
+  console.log('state', wallet)
   const open = () => {
     modal1Disclosure.onOpen();
   };
@@ -111,10 +199,11 @@ export function LiquidityPage() {
     }, 12000)
   };
   const confirmingSupply = () => {
-    modal2Disclosure.onOpen();
-    setTimeout(() => {
-      openModal3();
-    }, 5000);
+    // modal2Disclosure.onOpen();
+    // setTimeout(() => {
+    //   openModal3();
+    // }, 5000);
+    addingLiquidity()
   };
   const back = () => {
     setLiquidityTab("INDEX")
@@ -173,6 +262,10 @@ export function LiquidityPage() {
             selectingToken={selectingToken}
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
+            fromSelectedToken={fromSelectedToken}
+            toSelectedToken={toSelectedToken}
+            setToSelectedToken={setToSelectedToken}
+            setFromSelectedToken={setFromSelectedToken}
             displayBNBbutton={displayBNBbutton}
             displayButton={displayButton}
             setOpenSupplyButton={setOpenSupplyButton}
@@ -198,21 +291,9 @@ export function LiquidityPage() {
   );
 }
 
-LiquidityPage.propTypes = {
-  // eslint-disable-next-line react/no-unused-prop-types
-  dispatch: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = ({ state }) => ({ state });
-
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
-}
-
+const mapStateToProps = ({ wallet }) => ({ wallet })
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(LiquidityPage);

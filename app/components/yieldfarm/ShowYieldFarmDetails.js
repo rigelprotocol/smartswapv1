@@ -95,7 +95,11 @@ const ShowYieldFarmDetails = ({
               mb="4"
               mr="6"
               cursor="pointer"
+<<<<<<< HEAD
               _hover={approveButtonColor ? { color: '#423a85' } : { color: "white" }}
+=======
+              _hover={approveButtonColor ? { color: '#423a85' } : { color: "white       " }}
+>>>>>>> dev
               onClick={setApprove}
             >
               {approveValue ? 'unstake' : 'Approve'}
