@@ -17,6 +17,7 @@ import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 import { BUSDToken, rigelToken, router } from '../../utils/SwapConnect';
+import { TOKENS } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
 
 export function LiquidityPage(props) {
@@ -29,6 +30,13 @@ export function LiquidityPage(props) {
     { id: 2, name: 'ETH', img: 'eth.svg', balance: typeof wallet.signer !== 'object' ? 0 : wallet.balance },
     { id: 3, name: 'RGP', img: 'rgp.svg', balance: wallet_props.length === 0 ? 0 : wallet_props[0].rgp },
   ]);
+  const [fromSelectedToken, setFromSelectedToken] = useState({
+    id: 3,
+    name: 'RGP',
+    img: 'rgp.svg',
+    balance: wallet_props.length === 0 ? 0 : wallet_props[0].rgp
+  })
+  const [toSelectedToken, setToSelectedToken] = useState({})
   const [selectedValue, setSelectedValue] = useState({
     id: 0,
     name: 'Select a token',
@@ -69,21 +77,25 @@ export function LiquidityPage(props) {
   }
 
   const addingLiquidity = async () => {
+    console.log("adding")
+    console.log(fromSelectedToken)
+    console.log(toSelectedToken)
     if (wallet.signer !== 'signer') {
       const rout = await router();
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
       await rout.addLiquidity(
         // for the tokens kindly note that they will be selected from the drop down.
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
-        tokenA,
-        tokenB,
+        tokenA = Object.keys(TOKENS).filter(token => token === fromSelectedToken.name)[0],
+        tokenB = Object.keys(TOKENS).filter(token => token === toSelectedToken.name)[0],
         //amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
         // input amount from and input amount to
-        amountADesired,
-        amountBDesired,
+        amountADesired = parseInt(fromValue),
+        amountBDesired = parseInt(toValue),
+
         // not to be shown in FE
-        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
-        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
+        amountAMin = parseInt(fromValue) / parseInt(toValue), // inout amount of amountADesired / input amount of amountBDesired
+        amountBMin = parseInt(fromValue) / parseInt(toValue), // inout amount of amountADesired / input amount of amountBDesired
         wallet.signer, //the recipient wallet address
         deadLine,
         {
@@ -91,11 +103,14 @@ export function LiquidityPage(props) {
           gasLimit: 150000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
+
       );
+      console.log(tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin)
     }
+
   };
 
-   const removingLiquidity = async () => {
+  const removingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
@@ -118,8 +133,8 @@ export function LiquidityPage(props) {
       );
     }
   };
-   
-   useEffect(() => {
+
+  useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
         // console.log("wallet address", wallet.address)
@@ -184,10 +199,11 @@ export function LiquidityPage(props) {
     }, 12000)
   };
   const confirmingSupply = () => {
-    modal2Disclosure.onOpen();
-    setTimeout(() => {
-      openModal3();
-    }, 5000);
+    // modal2Disclosure.onOpen();
+    // setTimeout(() => {
+    //   openModal3();
+    // }, 5000);
+    addingLiquidity()
   };
   const back = () => {
     setLiquidityTab("INDEX")
@@ -246,6 +262,10 @@ export function LiquidityPage(props) {
             selectingToken={selectingToken}
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
+            fromSelectedToken={fromSelectedToken}
+            toSelectedToken={toSelectedToken}
+            setToSelectedToken={setToSelectedToken}
+            setFromSelectedToken={setFromSelectedToken}
             displayBNBbutton={displayBNBbutton}
             displayButton={displayButton}
             setOpenSupplyButton={setOpenSupplyButton}
