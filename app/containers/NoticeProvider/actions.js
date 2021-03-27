@@ -4,7 +4,7 @@
  *
  */
 
-import { DEFAULT_ACTION, NOTICE } from './constants';
+import { DEFAULT_ACTION, NOTICE, OFF_NOTICE } from './constants';
 
 export function defaultAction() {
   return {
@@ -12,9 +12,10 @@ export function defaultAction() {
   };
 }
 
-export const notify = message => dispatch => {
-  return dispatch({
+export const notify = message => dispatch =>
+  dispatch({
     type: NOTICE,
     message,
   });
-}
+
+export const offNotice = () => dispatch => dispatch({ type: OFF_NOTICE });

@@ -6,11 +6,13 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withToastManager } from 'react-toast-notifications';
+import { offNotice } from 'containers/NoticeProvider/actions';
+import { connect } from 'react-redux';
 
 function Toast(props) {
   const { showNotice, message } = props.state.notice;
-  console.log(showNotice)
   const { toastManager } = props;
+  console.log(showNotice)
   useEffect(() => {
     if (showNotice) {
       const content = (
@@ -24,6 +26,7 @@ function Toast(props) {
         autoDismiss: true,
       });
     }
+    props.offNotice();
   }, [showNotice]);
   return null;
 }
@@ -33,4 +36,4 @@ Toast.propTypes = {
   message: PropTypes.object,
 };
 
-export default withToastManager(Toast);
+export default connect(null, { offNotice })(withToastManager(Toast));
