@@ -102,8 +102,8 @@ export function LiquidityPage() {
         imageTo: '<RGPImage/>',
         from: 'BNB',
         to: 'RGP',
-        pooledRGP: 1,
-        pooledBNB: '1.89849849',
+        pooledRGP: fromValue,
+        pooledBNB: toValue,
         poolToken: '0.838383',
         poolShare: '0.00%',
       }
