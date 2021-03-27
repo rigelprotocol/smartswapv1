@@ -16,6 +16,7 @@ import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
+import { BUSDToken, rigelToken, router } from '../../utils/SwapConnect';
 import { LIQUIDITYTABS } from "./constants";
 
 export function LiquidityPage(props) {
@@ -93,7 +94,41 @@ export function LiquidityPage(props) {
       );
     }
   };
+
+   const removingLiquidity = async () => {
+    if (wallet.signer !== 'signer') {
+      const rout = await router();
+      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+      await rout.removeLiquidity(
+      
+        {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
    
+   useEffect(() => {
+    const getBalance = async () => {
+      if (wallet.signer !== 'signer') {
+        // console.log("wallet address", wallet.address)
+        // await checkUser();
+        await checkUser(wallet, setIsNewUser);
+        const bnb = await BUSDToken();
+        const rigel = await rigelToken();
+        setRGPBalance(await rigel.balanceOf(wallet.address));
+        setETHBalance(await rigel.balanceOf(wallet.address));
+        setBUSDBalance(
+          ethers.utils
+            .formatEther(await bnb.balanceOf(wallet.address))
+            .toString(),
+        );
+      }
+    };
+    getBalance();
+  }, [wallet]);
 
   console.log('state', wallet)
   const open = () => {
