@@ -36,7 +36,7 @@ const LiquidityFromBox = ({
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
-            From
+            Input
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             Balance: {` `}{' '}
