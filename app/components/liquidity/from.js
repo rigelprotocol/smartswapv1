@@ -5,9 +5,15 @@ import { Menu } from '@chakra-ui/menu';
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import CustomSelectInput from './customSelectInput';
-const Manual = ({ selectingToken, fromValue, setFromValue, selectedValue }) => {
+const LiquidityFromBox = ({
+  selectingToken,
+  fromValue,
+  setFromValue,
+  selectedValue,
+}) => {
   const [inputHeading1, setInputHeading1] = useState('From');
-  const [inputHeading2, setInputHeading2] = useState('2,632.34');
+  const [inputHeading2, setInputHeading2] = useState(selectingToken.balance);
+  console.log(selectingToken);
   useEffect(() => {
     if (selectedValue.id !== 0) {
       setInputHeading1('Input');
@@ -33,26 +39,25 @@ const Manual = ({ selectingToken, fromValue, setFromValue, selectedValue }) => {
             From
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-            Balance: {inputHeading2}
+            Balance: {` `}{' '}
+            {selectedValue.name == 'BNB'
+              ? selectedValue.balance
+              : selectedValue.name == 'ETH'
+                ? selectedValue.balance
+                : selectedValue.balance}
           </Text>
         </Flex>
         <Flex justifyContent="space-between">
-          {selectedValue.id === 0 ? (
-            <Text fontSize="lg" color=" rgba(255, 255, 255,0.25)">
-              0.0
-            </Text>
-          ) : (
-              <Input
-                type="number"
-                id="input__field"
-                placeholder="0.0"
-                value={fromValue}
-                border="1px solid rgba(255, 255, 255,0.25)"
-                fontSize="lg"
-                color="rgb(255, 255, 255)"
-                onChange={event => setFromValue(event.target.value)}
-              />
-            )}
+          <Input
+            type="number"
+            id="input__field"
+            placeholder="0.0"
+            value={fromValue}
+            border="1px solid rgba(255, 255, 255,0.25)"
+            fontSize="lg"
+            color="rgb(255, 255, 255)"
+            onChange={event => setFromValue(event.target.value)}
+          />
           <Flex alignItems="center">
             <Menu>
               <CustomSelectInput
@@ -67,11 +72,11 @@ const Manual = ({ selectingToken, fromValue, setFromValue, selectedValue }) => {
     </>
   );
 };
-Manual.propTypes = {
+LiquidityFromBox.propTypes = {
   selectingToken: PropTypes.array.isRequired,
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
   selectedValue: PropTypes.object.isRequired,
 };
 
-export default Manual;
+export default LiquidityFromBox;

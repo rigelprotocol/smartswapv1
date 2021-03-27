@@ -16,17 +16,16 @@ import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 import { LIQUIDITYTABS } from "./constants";
-import makeSelectLiquidityPage from './selectors';
 
-export function LiquidityPage() {
-
+export function LiquidityPage(props) {
+  const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
   const [selectingToken, setSelectingToken] = useState([
     { id: 0, name: 'Select a token', img: '' },
     { id: 1, name: 'BNB', img: 'bnb.svg' },
-    { id: 2, name: 'ETH', img: 'eth.svg' },
-    { id: 3, name: 'RGP', img: 'rgp.svg' },
+    { id: 2, name: 'ETH', img: 'eth.svg', balance: typeof wallet.signer !== 'object' ? 0 : wallet.balance },
+    { id: 3, name: 'RGP', img: 'rgp.svg', balance: wallet_props.length === 0 ? 0 : wallet_props[0].rgp },
   ]);
   const [selectedValue, setSelectedValue] = useState({
     id: 0,
@@ -66,7 +65,7 @@ export function LiquidityPage() {
       img: '',
     })
   }
-
+  console.log('state', wallet)
   const open = () => {
     modal1Disclosure.onOpen();
   };
@@ -198,21 +197,9 @@ export function LiquidityPage() {
   );
 }
 
-LiquidityPage.propTypes = {
-  // eslint-disable-next-line react/no-unused-prop-types
-  dispatch: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = ({ state }) => ({ state });
-
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
-}
-
+const mapStateToProps = ({ wallet }) => ({ wallet })
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(LiquidityPage);
