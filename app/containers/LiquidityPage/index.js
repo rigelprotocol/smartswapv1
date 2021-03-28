@@ -75,15 +75,15 @@ export function LiquidityPage(props) {
       await rout.addLiquidity(
         // for the tokens kindly note that they will be selected from the drop down.
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
-        tokenA,
-        tokenB,
+        setSelectingToken[2],
+        setSelectingToken[3],
         //amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
         // input amount from and input amount to
-        amountADesired,
-        amountBDesired,
+        10, //amountADesired,
+        10, //amountBDesired,
         // not to be shown in FE
-        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
-        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
+        0, //amountAMin, // inout amount of amountADesired / input amount of amountBDesired
+        0, //amountBMin, // inout amount of amountADesired / input amount of amountBDesired
         wallet.signer, //the recipient wallet address
         deadLine,
         {
