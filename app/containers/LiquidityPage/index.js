@@ -78,24 +78,28 @@ export function LiquidityPage(props) {
 
   const addingLiquidity = async () => {
     console.log("adding")
-    console.log(fromSelectedToken)
-    console.log(toSelectedToken)
     if (wallet.signer !== 'signer') {
       const rout = await router();
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+      let tokenA = Object.keys(TOKENS).filter(token => token === fromSelectedToken.name)[0]
+      let tokenB = Object.keys(TOKENS).filter(token => token === toSelectedToken.name)[0]
+      let amountADesired = parseInt(fromValue)
+      let amountBDesired = parseInt(toValue)
+      let amountAMin = parseInt(fromValue) / parseInt(toValue)
+      let amountBMin = parseInt(fromValue) / parseInt(toValue)
       await rout.addLiquidity(
         // for the tokens kindly note that they will be selected from the drop down.
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
-        tokenA = Object.keys(TOKENS).filter(token => token === fromSelectedToken.name)[0],
-        tokenB = Object.keys(TOKENS).filter(token => token === toSelectedToken.name)[0],
+        tokenA,
+        tokenB,
         //amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
         // input amount from and input amount to
-        amountADesired = parseInt(fromValue),
-        amountBDesired = parseInt(toValue),
+        amountADesired,
+        amountBDesired,
 
         // not to be shown in FE
-        amountAMin = parseInt(fromValue) / parseInt(toValue), // inout amount of amountADesired / input amount of amountBDesired
-        amountBMin = parseInt(fromValue) / parseInt(toValue), // inout amount of amountADesired / input amount of amountBDesired
+        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
+        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
         wallet.signer, //the recipient wallet address
         deadLine,
         {
@@ -154,7 +158,7 @@ export function LiquidityPage(props) {
     getBalance();
   }, [wallet]);
 
-  console.log('state', wallet)
+  // console.log('state', wallet)
   const open = () => {
     modal1Disclosure.onOpen();
   };
@@ -190,8 +194,8 @@ export function LiquidityPage(props) {
         imageTo: '<RGPImage/>',
         from: 'BNB',
         to: 'RGP',
-        pooledRGP: fromValue,
-        pooledBNB: toValue,
+        pooledRGP: 1,
+        pooledBNB: '1.89849849',
         poolToken: '0.838383',
         poolShare: '0.00%',
       }
