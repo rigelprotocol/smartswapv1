@@ -4,14 +4,59 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
+import { SMART_SWAP } from "../../utils/constants";
+import { rigelToken, MasterChefContract } from '../../utils/SwapConnect';
 
 export function FarmingPage({ farming }) {
+
+  // user to deposit to yield
+
+  const useDeposit = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.deposit("uint", "uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+  //withdrawal of funds
+  const useWithdrawal = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.withdraw("uint", "uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+  //Emmergency withdrawal of funds
+  const useEmmergency = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.emergencyWithdraw("uint", {
+        from: wallet.address,
+      });
+    }
+  };
+
+  //rgp approve masterchef
+  const rgpApproveMasterChef = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
+        from: wallet.address,
+      });
+    }
+  };
+
   return (
     <div>
       <Layout title="Farming Page">
@@ -47,7 +92,9 @@ export function FarmingPage({ farming }) {
                 <Text />
               </Flex>
               {farming.contents.map(content => (
-                <YieldFarm content={content} key={content.id} />
+                <YieldFarm
+                  content={content}
+                  key={content.id} />
               ))}
             </Box>
           </Box>

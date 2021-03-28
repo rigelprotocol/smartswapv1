@@ -10,6 +10,8 @@ const LiquidityFromBox = ({
   fromValue,
   setFromValue,
   selectedValue,
+  fromSelectedToken,
+  setFromSelectedToken,
 }) => {
   const [inputHeading1, setInputHeading1] = useState('From');
   const [inputHeading2, setInputHeading2] = useState(selectingToken.balance);
@@ -63,7 +65,8 @@ const LiquidityFromBox = ({
               <CustomSelectInput
                 selectingToken={selectingToken}
                 defaultSelect={3}
-                selectedToken={null}
+                selectedToken={() => '.'}
+                setSelectedToken={obj => setFromSelectedToken(obj)}
               />
             </Menu>
           </Flex>
@@ -77,6 +80,8 @@ LiquidityFromBox.propTypes = {
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
   selectedValue: PropTypes.object.isRequired,
+  fromSelectedToken: PropTypes.object.isRequired,
+  setFromSelectedToken: PropTypes.func.isRequired,
 };
 
 export default LiquidityFromBox;

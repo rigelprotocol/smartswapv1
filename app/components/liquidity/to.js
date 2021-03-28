@@ -6,7 +6,8 @@ import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
 import CustomSelectInput from './customSelectInput';
 
-const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
+const Manual = ({ selectingToken, selectedToken, toValue, selectedValue, toSelectedToken,
+  setToSelectedToken, }) => {
   const [inputHeading1, setInputHeading1] = useState('To');
   const [inputHeading2, setInputHeading2] = useState(selectingToken.balance);
   useEffect(() => {
@@ -42,8 +43,8 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
                   : selectedValue.balance}
             </Text>
           ) : (
-            <div />
-          )}
+              <div />
+            )}
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Input
@@ -63,6 +64,7 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue }) => {
                 selectingToken={selectingToken}
                 defaultSelect={0}
                 selectedToken={selectedToken}
+                setSelectedToken={obj => setToSelectedToken(obj)}
               />
             </Menu>
           </Flex>
@@ -77,5 +79,8 @@ Manual.propTypes = {
   toValue: PropTypes.number.isRequired,
   selectedToken: PropTypes.func.isRequired,
   selectedValue: PropTypes.object.isRequired,
+  toSelectedToken: PropTypes.object.isRequired,
+  setToSelectedToken: PropTypes.func.isRequired,
+
 };
 export default Manual;
