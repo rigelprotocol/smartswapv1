@@ -101,6 +101,7 @@ export function LiquidityPage(props) {
         amountBDesired,
 
         // not to be shown in FE
+        //checkOut
         amountAMin, // inout amount of amountADesired / input amount of amountBDesired
         amountBMin, // inout amount of amountADesired / input amount of amountBDesired
         wallet.address, //the recipient wallet address
