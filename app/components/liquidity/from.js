@@ -10,12 +10,10 @@ const LiquidityFromBox = ({
   fromValue,
   setFromValue,
   selectedValue,
-  fromSelectedToken,
   setFromSelectedToken,
 }) => {
   const [inputHeading1, setInputHeading1] = useState('From');
   const [inputHeading2, setInputHeading2] = useState(selectingToken.balance);
-  console.log(selectingToken);
   useEffect(() => {
     if (selectedValue.id !== 0) {
       setInputHeading1('Input');
@@ -80,7 +78,6 @@ LiquidityFromBox.propTypes = {
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
   selectedValue: PropTypes.object.isRequired,
-  fromSelectedToken: PropTypes.object.isRequired,
   setFromSelectedToken: PropTypes.func.isRequired,
 };
 
