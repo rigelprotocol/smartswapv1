@@ -82,13 +82,14 @@ export function LiquidityPage(props) {
     console.log("adding")
     if (wallet.signer !== 'signer') {
       const rout = await router();
+      console.log(wallet.address)
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
       // let tokenA = Object.keys(TOKENS_CONTRACT).filter(token => token === fromSelectedToken.name)[0]
       // let tokenB = Object.keys(TOKENS_CONTRACT).filter(token => token === toSelectedToken.name)[0]
-      // let amountADesired = Web3.utils.toWei(fromValue.toString()) //ethers.utils.parseUnits(fromValue).toString()
-      // let amountBDesired = Web3.utils.toWei(toValue.toString()) //ethers.utils.parseUnits(toValue).toString()
-      // let amountAMin = amountADesired / amountBDesired
-      // let amountBMin =amountBDesired / amountADesired
+      let amountADesired = ethers.utils.parseUnits(fromValue).toString()
+      let amountBDesired = ethers.utils.parseUnits(fromValue).toString()
+      let amountAMin = amountADesired / amountBDesired
+      let amountBMin =amountBDesired / amountADesired
       await rout.addLiquidity(
         // for the tokens kindly note that they will be selected from the drop down.
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
@@ -96,17 +97,17 @@ export function LiquidityPage(props) {
         '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4', //tokenB,
         //amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
         // input amount from and input amount to
-        10, //amountADesired,
-        10, //amountBDesired,
+        amountADesired,
+        amountBDesired,
 
         // not to be shown in FE
-        0, //amountAMin, // inout amount of amountADesired / input amount of amountBDesired
-        0, //amountBMin, // inout amount of amountADesired / input amount of amountBDesired
-        "0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E" , //the recipient wallet address
+        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
+        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
+        wallet.address, //the recipient wallet address
         deadLine,
         {
-          from: "0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E",
-          gasLimit: 150000,
+          from: wallet.address,
+          gasLimit: 450000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
 
