@@ -4,7 +4,7 @@
  *
  * WalletProvider actions
  *
- */
+*/
 
 import { NOTICE } from 'containers/NoticeProvider/constants';
 import {
@@ -21,6 +21,7 @@ import {
   WALLET_PROPS,
   LOADING_WALLET,
   CLOSE_LOADING_WALLET,
+  CLEAR_WALLET,
 } from './constants';
 
 export const reConnect = (wallet) => async dispatch => {
@@ -35,8 +36,8 @@ export const reConnect = (wallet) => async dispatch => {
         provider: ethProvider, signer: walletSigner, chainId, balance
       },
     })
-
-    dispatch({ type: WALLET_PROPS, payload: { rgp:  } });
+    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, RigelToken, walletSigner);
+    dispatch({ type: WALLET_PROPS, payload: { rgp: rgpBalance } });
     return dispatch({
       type: NOTICE, message: {
         title: 'Re-Connection Message',
@@ -62,7 +63,7 @@ export const connectWallet = () => async dispatch => {
     const ethProvider = await provider();
     const walletSigner = await signer()
     const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    connectMetaMask()
+    const res = await connectMetaMask();
     dispatch({
       type: NOTICE, message: {
         title: 'Success:',
@@ -124,4 +125,8 @@ export const getTokenBalance = async (tokens = []) => {
     // await getAddressTokenBalance('wallet_address', 'tokenAddress', 'TokenAbi', 'signer')
 
   }
+}
+
+export const disconnectWallet = () => dispatch => {
+  dispatch({ type: CLEAR_WALLET, payload: null });
 }

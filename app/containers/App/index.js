@@ -7,7 +7,7 @@
  * contain code that should be seen on all pages. (e.g. navigation bar)
  *
  */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { ThemeProvider, theme } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
@@ -22,7 +22,6 @@ import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Splash from 'components/splash/index';
 
 import '../../styles/globals.css';
-import { WalletContext } from '../../context';
 import Toast from '../../components/Toast';
 import { reConnect } from '../WalletProvider/actions';
 
@@ -47,14 +46,11 @@ const newTheme = {
 };
 
 const App = props => {
-  const [connected, setConnected] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [show, setShow] = useState(false);
   const { wallet } = props.state;
   useEffect(() => {
     listener(wallet, props);
     reConnector(props);
-  }, [props]);
+  }, [wallet]);
   return (
     <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
@@ -100,8 +96,7 @@ function listener(wallet, props) {
   ) {
     window.ethereum.on('accountsChanged', async accounts => {
       if (accounts.length === 0) {
-        // disconnectUser();
-        console.log('>>> are you leaving');
+        props.disconnectWallet();
       } else if (accounts[0] !== wallet.address) {
         return props.reConnect(window.ethereum);
       }

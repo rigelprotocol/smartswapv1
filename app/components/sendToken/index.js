@@ -17,7 +17,7 @@ import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
 import SwapSettings from "./SwapSettings";
-import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
+import { SMART_SWAP, tokenList, TOKENS_CONTRACT } from "../../utils/constants";
 import ShowMessageBox from './../Toast/ShowMessageBox';
 
 export const Manual = props => {
@@ -96,10 +96,10 @@ export const Manual = props => {
             gasPrice: ethers.utils.parseUnits('20', 'gwei'),
           },
         );
-        notify({ title: 'Transaction  Message', body: 'Swap was successful', type: 'success' })
+        props.notify({ title: 'Transaction  Message', body: 'Swap was successful', type: 'success' })
 
       } catch (e) {
-        notify({ title: 'Transaction Message', body: e.message, type: 'error' })
+        props.notify({ title: 'Transaction Message', body: e.message, type: 'error' })
       }
       console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
         "From: ", fromPath, "To: ", toPath, "Recipient: ", wallet.address,
@@ -109,12 +109,9 @@ export const Manual = props => {
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
-        // console.log("wallet address", wallet.address)
-        // await checkUser();
-        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address); 
         await checkUser(wallet, setIsNewUser);
         const bnb = await BUSDToken();
-        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : '0.0');
         setETHBalance(wallet ? wallet.balance : '0.0');
         setBUSDBalance(
           ethers.utils
@@ -133,6 +130,7 @@ export const Manual = props => {
       type: 'info'
     })
   }
+
   return (
     <div>
       <Box
@@ -250,16 +248,12 @@ function setPathObject(path, target) {
 }
 
 const checkUser = async (wallet, setIsNewUser) => {
-  const rgp = await rigelToken();
-  const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-   if (wallet.signer !== 'signer') {
-      if (checkAllow == setIsNewUser(true)) {
-        return setIsNewUser(true)
-      }
+  if (wallet.signer !== 'signer') {
+    const rgp = await rigelToken();
+    const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
+    if (ethers.utils.formatEther(checkAllow).toString() > 0) {
       return setIsNewUser(false)
-   }
-  if (ethers.utils.formatEther(checkAllow).toString() > 0) {
-    return setIsNewUser(false)
+    }
+    return setIsNewUser(true)
   }
-  return setIsNewUser(true)
 };

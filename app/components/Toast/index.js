@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 function Toast(props) {
   const { showNotice, message } = props.state.notice;
   const { toastManager } = props;
-  console.log(showNotice)
   useEffect(() => {
     if (showNotice) {
       const content = (
@@ -36,4 +35,7 @@ Toast.propTypes = {
   message: PropTypes.object,
 };
 
-export default connect(null, { offNotice })(withToastManager(Toast));
+export default connect(
+  null,
+  { offNotice },
+)(withToastManager(Toast));
