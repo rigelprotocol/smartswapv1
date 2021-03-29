@@ -89,9 +89,8 @@ export function LiquidityPage(props) {
       let amountADesired = ethers.utils.parseUnits(fromValue).toString()
       let amountBDesired = ethers.utils.parseUnits(fromValue).toString()
       let amountAMin = amountADesired / amountBDesired
-      let amountBMin =amountBDesired / amountADesired
-      console.log(tokenA)
-      console.log(tokenB)
+      let amountBMin = amountBDesired / amountADesired
+      console.log(tokenA, tokenB)
       await rout.addLiquidity(
         // for the tokens kindly note that they will be selected from the drop down.
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
@@ -240,9 +239,27 @@ export function LiquidityPage(props) {
       setButtonValue('Enter an Amount');
     }
   }
-  function calculateToValue() {
-    setToValue((fromValue * 10) - 4.637)
-  }
+  // function calculateToValue() {
+  //   let path = []
+  //   async function updateSendAmount(path, askAmount, setAmountIn, setFromAmount, field) {
+  //     const rout = await router(wallet.signer)
+  //     if (typeof path[1] != 'undefined') {
+  //       const [fromPath, toPath] = path
+  //       console.log(fromPath, toPath)
+  //       try {
+  //         const amount = await rout.getAmountsOut(
+  //           web3.utils.toWei(fromValue.toString()),
+  //           (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+  //         );
+  //         return (field != "to" ? setToValue(
+  //           ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString())
+  //       } catch (e) {
+  //         console.log(e)
+  //       }
+  //     }
+  //   }
+  // }
+
   function approveBNB() {
     setApproveBNBPopup(true);
     setTimeout(() => {
@@ -250,6 +267,7 @@ export function LiquidityPage(props) {
       setOpenSupplyButton(false);
     }, 3000);
   }
+
   return (
     <div>
       <Layout title="Liquidity Page">
@@ -294,12 +312,13 @@ export function LiquidityPage(props) {
             modal2Disclosure={modal2Disclosure}
             modal3Disclosure={modal3Disclosure}
           />}
-
+  
         </Flex>
       </Layout>
     </div>
   );
 }
+
 
 const mapStateToProps = ({ wallet }) => ({ wallet })
 
