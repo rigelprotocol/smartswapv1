@@ -9,18 +9,11 @@ const LiquidityFromBox = ({
   selectingToken,
   fromValue,
   setFromValue,
-  selectedValue,
+  fromSelectedToken,
   setFromSelectedToken,
 }) => {
   const [inputHeading1, setInputHeading1] = useState('From');
   const [inputHeading2, setInputHeading2] = useState(selectingToken.balance);
-  useEffect(() => {
-    if (selectedValue.id !== 0) {
-      setInputHeading1('Input');
-    } else {
-      setInputHeading1('From');
-    }
-  }, [selectedValue]);
   return (
     <>
       <Box
@@ -36,15 +29,15 @@ const LiquidityFromBox = ({
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
-            Input
+            From
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             Balance: {` `}{' '}
-            {selectedValue.name == 'BNB'
-              ? selectedValue.balance
-              : selectedValue.name == 'ETH'
-                ? selectedValue.balance
-                : selectedValue.balance}
+            {fromSelectedToken.name == 'BNB'
+              ? fromSelectedToken.balance
+              : fromSelectedToken.name == 'ETH'
+                ? fromSelectedToken.balance
+                : fromSelectedToken.balance}
           </Text>
         </Flex>
         <Flex justifyContent="space-between">
@@ -77,7 +70,7 @@ LiquidityFromBox.propTypes = {
   selectingToken: PropTypes.array.isRequired,
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
-  selectedValue: PropTypes.object.isRequired,
+  fromSelectedToken: PropTypes.object.isRequired,
   setFromSelectedToken: PropTypes.func.isRequired,
 };
 

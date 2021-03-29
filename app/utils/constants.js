@@ -34,12 +34,13 @@ export const SMART_SWAP = {
 };
 
 export const tokenList = [
+  { name: 'Select a token', img: '' },
   {
     balance: 0,
     symbol: 'RGP',
     abi: RigelToken,
     name: 'Rigel Protocol',
-    icon: '../../assets/rgp.svg',
+    img: '../../assets/rgp.svg',
     address: '0x80278a0cf536e568a76425b67fb3931dca21535c',
   },
   {
@@ -47,6 +48,7 @@ export const tokenList = [
     balance: 0,
     symbol: 'BUSD',
     name: 'Binance USD',
+    img: 'Binance USD',
     address: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
   },
   {
@@ -54,6 +56,7 @@ export const tokenList = [
     balance: 0,
     symbol: 'WETH',
     name: 'Ethereum Token',
+    img: 'Ethereum Token',
     address: '0x492Df17f202e36525151Ce7BcD49d5637Dc10659',
   },
 ];

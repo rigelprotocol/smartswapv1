@@ -1,5 +1,6 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
@@ -7,16 +8,9 @@ import PropTypes from 'prop-types';
 import CustomSelectInput from './customSelectInput';
 
 const Manual = ({ selectingToken, selectedToken, toValue, selectedValue, toSelectedToken,
-  setToSelectedToken, }) => {
-  const [inputHeading1, setInputHeading1] = useState('To');
-  const [inputHeading2, setInputHeading2] = useState(selectingToken.balance);
-  useEffect(() => {
-    if (selectedValue.id !== 0) {
-      setInputHeading1('Input');
-    } else {
-      setInputHeading1('To');
-    }
-  }, [selectedValue]);
+  setToSelectedToken }) => {
+  console.log(selectingToken, selectedToken, toValue, selectedValue, toSelectedToken,
+    setToSelectedToken)
   return (
     <>
       <Box
@@ -31,20 +25,20 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue, toSelec
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
-            {inputHeading1}
+            TO:
           </Text>
           {selectedValue.id !== 0 ? (
             <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
               Balance: {` `}{' '}
-              {selectedValue.name == 'BNB'
+              {selectedValue.name === 'BNB'
                 ? selectedValue.balance
-                : selectedValue.name == 'ETH'
+                : selectedValue.name === 'ETH'
                   ? selectedValue.balance
                   : selectedValue.balance}
             </Text>
           ) : (
-              <div />
-            )}
+            <div />
+          )}
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Input
@@ -81,6 +75,5 @@ Manual.propTypes = {
   selectedValue: PropTypes.object.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,
-
 };
 export default Manual;

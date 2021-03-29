@@ -18,7 +18,7 @@ import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 // import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 import { BUSDToken, rigelToken, router } from '../../utils/SwapConnect';
-import { TOKENS_CONTRACT } from '../../utils/constants';
+import { tokenList, TOKENS_CONTRACT } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
 
 export function LiquidityPage(props) {
@@ -67,7 +67,7 @@ export function LiquidityPage(props) {
     setFromValue(0)
     calculateToValue()
     setOpenSupplyButton(true)
-    setPopupText("Approve BNB")
+    setPopupText(`Approve`)
     setButtonValue("Invalid pair")
     setDisplayButton(false)
     setSelectedValue({
@@ -78,23 +78,18 @@ export function LiquidityPage(props) {
   }
 
   const addingLiquidity = async () => {
-    console.log("adding")
     if (wallet.signer !== 'signer') {
       const rout = await router();
-      console.log(wallet.address)
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
-      const tokenA = Object.keys(TOKENS_CONTRACT).filter(token => token === fromSelectedToken.name)[0]
-      const tokenB = Object.keys(TOKENS_CONTRACT).filter(token => token === toSelectedToken.name)[0]
-      const amountADesired = ethers.utils.parseUnits(fromValue).toString()
-      const amountBDesired = ethers.utils.parseUnits(fromValue).toString()
+      const tokenA = tokenList.filter((fields) => fields.symbol === fromSelectedToken.name);
+      const tokenB = tokenList.filter((fields) => fields.symbol === toSelectedToken.name);
+      const amountADesired = Web3.utils.toWei(fromValue.toString())
+      const amountBDesired = Web3.utils.toWei(fromValue.toString())
       const amountAMin = amountADesired / amountBDesired
       const amountBMin = amountBDesired / amountADesired
-      console.log(tokenA, tokenB)
       await rout.addLiquidity(
-        // for the tokens kindly note that they will be selected from the drop down.
-        // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
-        '0x80278a0cf536e568a76425b67fb3931dca21535c', // tokenA,
-        '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4', // tokenB,
+        tokenA.length > 0 ? tokenA[0].address : '', // tokenA,
+        tokenB.length > 0 ? tokenB[0].address : '', // tokenB,
         // amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
         // input amount from and input amount to
         amountADesired,
@@ -108,8 +103,6 @@ export function LiquidityPage(props) {
         deadLine,
         {
           from: wallet.address,
-          gasLimit: 450000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
 
       );
@@ -191,10 +184,6 @@ export function LiquidityPage(props) {
     }, 12000)
   };
   const confirmingSupply = () => {
-    // modal2Disclosure.onOpen();
-    // setTimeout(() => {
-    //   openModal3();
-    // }, 5000);
     addingLiquidity()
   };
   const back = () => {
@@ -222,24 +211,19 @@ export function LiquidityPage(props) {
       setButtonValue('Enter an Amount');
     }
   }
-  function calculateToValue() {
-    (async function updateSendAmount(path = [], askAmount, setAmountIn, setFromAmount, field) {
-      const rout = await router(wallet.signer)
-      if (typeof path[1] !== 'undefined') {
-        const [fromPath, toPath] = path
-        console.log(fromPath, toPath)
-        try {
-          const amount = await rout.getAmountsOut(
-            Web3.utils.toWei(fromValue.toString()),
-            (field !== 'to') ? [fromPath, toPath] : [toPath, fromPath]
-          );
-          return (field !== "to" ? setToValue(
-            ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString()))
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    })()
+  async function calculateToValue() {
+    const rout = await router(wallet.signer)
+    try {
+      //come back to this let set the Address on the state first
+      const amount = await rout.getAmountsOut(
+        Web3.utils.toWei(fromValue.toString()),
+        (field !== 'to') ? [fromPath, toPath] : [toPath, fromPath]
+      );
+      return (field !== "to" ? setToValue(
+        ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString()))
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   function approveBNB() {

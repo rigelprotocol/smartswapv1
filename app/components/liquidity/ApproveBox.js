@@ -12,6 +12,7 @@ function ApproveBox(props) {
       right="150px"
       top="150px"
       p="2"
+      zIndex="99999"
       border="1px solid rgba(255, 255, 255,0.25)"
     >
       <Flex>
@@ -22,9 +23,9 @@ function ApproveBox(props) {
         </Box>
         <Box>
           <Text color="white">{props.popupText}</Text>
-          <Text>
-            <a href="google.com">view on bscscan</a>
-          </Text>
+          <a href={`https://bscscan.com/${props.hash}`} target="_blank">
+            <Text color="#f0f0f0">View on BSCscan</Text>
+          </a>
         </Box>
       </Flex>
     </Box>
