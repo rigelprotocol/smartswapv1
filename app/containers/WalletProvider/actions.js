@@ -29,7 +29,6 @@ export const reConnect = (wallet) => async dispatch => {
     const ethProvider = await provider();
     const walletSigner = await signer();
     const balance = ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress)).toString();
-    dispatch({ type: WALLET_PROPS, payload: { rgp: await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, RigelToken, walletSigner) } });
     dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: selectedAddress,
@@ -37,6 +36,7 @@ export const reConnect = (wallet) => async dispatch => {
       },
     })
 
+    dispatch({ type: WALLET_PROPS, payload: { rgp:  } });
     return dispatch({
       type: NOTICE, message: {
         title: 'Re-Connection Message',
