@@ -84,17 +84,19 @@ export function LiquidityPage(props) {
       const rout = await router();
       console.log(wallet.address)
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
-      // let tokenA = Object.keys(TOKENS_CONTRACT).filter(token => token === fromSelectedToken.name)[0]
-      // let tokenB = Object.keys(TOKENS_CONTRACT).filter(token => token === toSelectedToken.name)[0]
+      let tokenA = Object.keys(TOKENS_CONTRACT).filter(token => token === fromSelectedToken.name)[0]
+      let tokenB = Object.keys(TOKENS_CONTRACT).filter(token => token === toSelectedToken.name)[0]
       let amountADesired = ethers.utils.parseUnits(fromValue).toString()
       let amountBDesired = ethers.utils.parseUnits(fromValue).toString()
       let amountAMin = amountADesired / amountBDesired
       let amountBMin =amountBDesired / amountADesired
+      console.log(tokenA)
+      console.log(tokenB)
       await rout.addLiquidity(
         // for the tokens kindly note that they will be selected from the drop down.
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
-        '0x80278a0cf536e568a76425b67fb3931dca21535c', //tokenA,
-        '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4', //tokenB,
+        tokenA, //'0x80278a0cf536e568a76425b67fb3931dca21535c', 
+        tokenB, //'0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
         //amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
         // input amount from and input amount to
         amountADesired,
