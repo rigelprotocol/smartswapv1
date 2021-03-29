@@ -84,12 +84,13 @@ export function LiquidityPage(props) {
       const rout = await router();
       console.log(wallet.address)
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
-      // let tokenA = Object.keys(TOKENS_CONTRACT).filter(token => token === fromSelectedToken.name)[0]
-      // let tokenB = Object.keys(TOKENS_CONTRACT).filter(token => token === toSelectedToken.name)[0]
+      let tokenA = Object.keys(TOKENS_CONTRACT).filter(token => token === fromSelectedToken.name)[0]
+      let tokenB = Object.keys(TOKENS_CONTRACT).filter(token => token === toSelectedToken.name)[0]
       let amountADesired = ethers.utils.parseUnits(fromValue).toString()
       let amountBDesired = ethers.utils.parseUnits(fromValue).toString()
       let amountAMin = amountADesired / amountBDesired
-      let amountBMin =amountBDesired / amountADesired
+      let amountBMin = amountBDesired / amountADesired
+      console.log(tokenA, tokenB)
       await rout.addLiquidity(
         // for the tokens kindly note that they will be selected from the drop down.
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
@@ -239,64 +240,82 @@ export function LiquidityPage(props) {
     }
   }
   function calculateToValue() {
-    setToValue((fromValue * 10) - 4.637)
+    let path = []
+    async function updateSendAmount(path, askAmount, setAmountIn, setFromAmount, field) {
+      const rout = await router(wallet.signer)
+      if (typeof path[1] != 'undefined') {
+        const [fromPath, toPath] = path
+        console.log(fromPath, toPath)
+        try {
+          const amount = await rout.getAmountsOut(
+            web3.utils.toWei(fromValue.toString()),
+            (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+          );
+          return (field != "to" ? setToValue(
+            ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString())
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    }
   }
-  function approveBNB() {
-    setApproveBNBPopup(true);
-    setTimeout(() => {
-      setApproveBNBPopup(false);
-      setOpenSupplyButton(false);
-    }, 3000);
-  }
-  return (
-    <div>
-      <Layout title="Liquidity Page">
-        <Flex
-          mx={5}
-          justifyContent="center"
-          alignItems="center"
-          minHeight="70vh"
-          rounded="lg"
-          mb={4}
-        >
-          {liquidityTab === LIQUIDITYTABS.INDEX && <Index
-            liquidities={liquidities}
-            addLiquidityPage={addLiquidityPage} />}
-          {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY && <AddLiquidity
-            fromValue={fromValue}
-            setFromValue={setFromValue}
-            toValue={toValue}
-            back={back}
-            selectingToken={selectingToken}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            fromSelectedToken={fromSelectedToken}
-            toSelectedToken={toSelectedToken}
-            setToSelectedToken={setToSelectedToken}
-            setFromSelectedToken={setFromSelectedToken}
-            displayBNBbutton={displayBNBbutton}
-            displayButton={displayButton}
-            setOpenSupplyButton={setOpenSupplyButton}
-            popupText={popupText}
-            confirmingSupply={confirmingSupply}
-            approveBNBPopup={approveBNBPopup}
-            approveBNB={approveBNB}
-            buttonValue={buttonValue}
-            openSupplyButton={openSupplyButton}
-            open={open}
-            openModal3={openModal3}
-            closeModal1={closeModal1}
-            closeModal2={closeModal2}
-            closeModal3={closeModal3}
-            modal1Disclosure={modal1Disclosure}
-            modal2Disclosure={modal2Disclosure}
-            modal3Disclosure={modal3Disclosure}
-          />}
+}
+function approveBNB() {
+  setApproveBNBPopup(true);
+  setTimeout(() => {
+    setApproveBNBPopup(false);
+    setOpenSupplyButton(false);
+  }, 3000);
+}
+return (
+  <div>
+    <Layout title="Liquidity Page">
+      <Flex
+        mx={5}
+        justifyContent="center"
+        alignItems="center"
+        minHeight="70vh"
+        rounded="lg"
+        mb={4}
+      >
+        {liquidityTab === LIQUIDITYTABS.INDEX && <Index
+          liquidities={liquidities}
+          addLiquidityPage={addLiquidityPage} />}
+        {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY && <AddLiquidity
+          fromValue={fromValue}
+          setFromValue={setFromValue}
+          toValue={toValue}
+          back={back}
+          selectingToken={selectingToken}
+          selectedValue={selectedValue}
+          setSelectedValue={setSelectedValue}
+          fromSelectedToken={fromSelectedToken}
+          toSelectedToken={toSelectedToken}
+          setToSelectedToken={setToSelectedToken}
+          setFromSelectedToken={setFromSelectedToken}
+          displayBNBbutton={displayBNBbutton}
+          displayButton={displayButton}
+          setOpenSupplyButton={setOpenSupplyButton}
+          popupText={popupText}
+          confirmingSupply={confirmingSupply}
+          approveBNBPopup={approveBNBPopup}
+          approveBNB={approveBNB}
+          buttonValue={buttonValue}
+          openSupplyButton={openSupplyButton}
+          open={open}
+          openModal3={openModal3}
+          closeModal1={closeModal1}
+          closeModal2={closeModal2}
+          closeModal3={closeModal3}
+          modal1Disclosure={modal1Disclosure}
+          modal2Disclosure={modal2Disclosure}
+          modal3Disclosure={modal3Disclosure}
+        />}
 
-        </Flex>
-      </Layout>
-    </div>
-  );
+      </Flex>
+    </Layout>
+  </div>
+);
 }
 
 const mapStateToProps = ({ wallet }) => ({ wallet })
