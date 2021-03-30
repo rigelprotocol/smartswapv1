@@ -89,7 +89,6 @@ const InputSelector = props => {
   }
   return (
     <>
-      <img src={tokenList[0].icon} alt="" />
       <Flex justifyContent="space-between">
         <Input
           placeholder="0.0"

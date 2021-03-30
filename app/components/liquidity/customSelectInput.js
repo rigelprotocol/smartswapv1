@@ -2,38 +2,32 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from 'react';
+import { Img } from '@chakra-ui/react';
 import { Flex } from '@chakra-ui/layout';
 import PropTypes from 'prop-types';
 import styles from '../../styles/custom-select-box.css';
-import BNBImage from '../../assets/bnb.svg';
-import ETHImage from '../../assets/eth.svg';
-import RGPImage from '../../assets/rgp.svg';
+import { tokenWhere } from '../../utils/constants';
 
 const CustomSelectInput = ({
   selectingToken,
   defaultSelect,
   selectedToken,
-  setSelectedToken
+  setSelectedToken,
 }) => {
   const [showSpinList, setShowSpinList] = useState(false);
   const [defaultSelectText, setDefaultSelectText] = useState(
     selectingToken[defaultSelect],
   );
-
   // This method handles the display of option list
   const handleListDisplay = () => {
     setShowSpinList(!showSpinList);
   };
   const handleOptionClick = e => {
-    const obj = selectingToken.filter(
-      // eslint-disable-next-line radix
-      val => val.id === parseInt(e.target.getAttribute('data-id')),
-    )[0];
-
+    const obj = tokenWhere(e.target.getAttribute('data-id'));
     setDefaultSelectText(obj);
     setShowSpinList(false);
     selectedToken(obj);
-    setSelectedToken(obj)
+    setSelectedToken(obj);
   };
   return (
     <>
@@ -48,31 +42,30 @@ const CustomSelectInput = ({
             role="button"
             onClick={handleListDisplay}
           >
-            {defaultSelectText.id === 0 ? (
-              defaultSelectText.name
-            ) : (
-                <div>
-                  {' '}
-                  {defaultSelectText.img === 'bnb.svg' && <BNBImage mr="3" />}
-                  {defaultSelectText.img === 'eth.svg' && <ETHImage mr="3" />}
-                  {defaultSelectText.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
-                  {defaultSelectText.name}
-                </div>
-              )}
+            <div>
+              {' '}
+              {defaultSelectText.img === 'bnb.svg' && <BNBImage mr="3" />}
+              {defaultSelectText.img === 'eth.svg' && <ETHImage mr="3" />}
+              {defaultSelectText.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
+              {!defaultSelectText.symbol
+                ? defaultSelectText.name
+                : defaultSelectText.symbol}
+            </div>
           </div>
           {showSpinList && (
             <ul className={styles.selectOptions}>
               {selectingToken.map(option => (
                 <li
                   className={styles.customSelectOption}
-                  data-id={option.id}
-                  key={option.id}
+                  data-id={option.symbol}
+                  key={option.symbol}
                   onClick={handleOptionClick}
                 >
-                  {option.img === 'bnb.svg' && <BNBImage mr="3" />}
-                  {option.img === 'eth.svg' && <ETHImage mr="3" />}
-                  {option.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
-                  {option.name}{' '} {option.balance}
+                  <Img src={option.img} alt={option.symbol} />
+                  {!option.symbol
+                    ? `${option.name}`
+                    : `${option.symbol}: `}{' '}
+                  {option.balance}
                 </li>
               ))}
             </ul>

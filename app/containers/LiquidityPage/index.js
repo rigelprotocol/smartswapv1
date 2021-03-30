@@ -17,29 +17,21 @@ import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 // import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
-import { BUSDToken, rigelToken, router } from '../../utils/SwapConnect';
-import { tokenList, TOKENS_CONTRACT } from '../../utils/constants';
+import { showErrorMessage } from 'containers/NoticeProvider/actions';
+import { router } from '../../utils/SwapConnect';
+import { tokenList, tokenWhere } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
-
+// 35,200
 export function LiquidityPage(props) {
   const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
-  const [selectingToken, setSelectingToken] = useState([
-    { id: 0, name: 'Select a token', img: '' },
-    { id: 1, name: 'BNB', img: 'bnb.svg', balance: wallet_props.length === 0 ? 0 : wallet_props[0].bnb },
-    { id: 2, name: 'ETH', img: 'eth.svg', balance: typeof wallet.signer !== 'object' ? 0 : wallet.balance },
-    { id: 3, name: 'RGP', img: 'rgp.svg', balance: wallet_props.length === 0 ? 0 : wallet_props[0].rgp },
-  ]);
-  const [fromSelectedToken, setFromSelectedToken] = useState({
-    id: 3,
-    name: 'RGP',
-    img: 'rgp.svg',
-    balance: wallet_props.length === 0 ? 0 : wallet_props[0].rgp
-  })
+  const [selectingToken, setSelectingToken] = useState(tokenList);
+  const [fromSelectedToken, setFromSelectedToken] = useState(tokenWhere('rgp'))
+  const [fromAddress, setFromAddress] = useState(fromSelectedToken.address)
+  const [toAddress, setToAddress] = useState('')
   const [toSelectedToken, setToSelectedToken] = useState({})
   const [selectedValue, setSelectedValue] = useState({
-    id: 0,
     name: 'Select a token',
     img: '',
   });
@@ -50,7 +42,6 @@ export function LiquidityPage(props) {
   const [approveBNBPopup, setApproveBNBPopup] = useState(false);
   const [buttonValue, setButtonValue] = useState('Invalid pair');
   const [openSupplyButton, setOpenSupplyButton] = useState(true);
-
   useEffect(() => {
     displayBNBbutton();
     calculateToValue();
@@ -71,7 +62,6 @@ export function LiquidityPage(props) {
     setButtonValue("Invalid pair")
     setDisplayButton(false)
     setSelectedValue({
-      id: 0,
       name: 'Select a token',
       img: '',
     })
@@ -135,11 +125,6 @@ export function LiquidityPage(props) {
     }
   };
 
-  useEffect(() => {
-
-  }, [wallet]);
-
-  // console.log('state', wallet)
   const open = () => {
     modal1Disclosure.onOpen();
   };
@@ -212,18 +197,22 @@ export function LiquidityPage(props) {
     }
   }
   async function calculateToValue() {
-    const rout = await router(wallet.signer)
-    try {
-      //come back to this let set the Address on the state first
-      const amount = await rout.getAmountsOut(
-        Web3.utils.toWei(fromValue.toString()),
-        (field !== 'to') ? [fromPath, toPath] : [toPath, fromPath]
-      );
-      return (field !== "to" ? setToValue(
-        ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString()))
-    } catch (e) {
-      console.log(e)
+    if (typeof wallet.signer !== 'string' && toAddress !== '' && fromValue > 0) {
+      try {
+        const rout = await router(wallet.signer)
+        const fromPath = ethers.utils.getAddress(fromAddress);
+        const toPath = ethers.utils.getAddress(toAddress);
+        const amount = await rout.getAmountsOut(
+          Web3.utils.toWei(fromValue.toString()),
+          [fromPath, toPath]
+        );
+        return setToValue(
+          ethers.utils.formatEther(amount[1]).toString())
+      } catch (e) {
+        props.showErrorMessage(e)
+      }
     }
+    return false;
   }
 
   function approveBNB() {
@@ -244,40 +233,47 @@ export function LiquidityPage(props) {
           rounded="lg"
           mb={4}
         >
-          {liquidityTab === LIQUIDITYTABS.INDEX && <Index
-            liquidities={liquidities}
-            addLiquidityPage={addLiquidityPage} />}
-          {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY && <AddLiquidity
-            fromValue={fromValue}
-            setFromValue={setFromValue}
-            toValue={toValue}
-            back={back}
-            selectingToken={selectingToken}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            fromSelectedToken={fromSelectedToken}
-            toSelectedToken={toSelectedToken}
-            setToSelectedToken={setToSelectedToken}
-            setFromSelectedToken={setFromSelectedToken}
-            displayBNBbutton={displayBNBbutton}
-            displayButton={displayButton}
-            setOpenSupplyButton={setOpenSupplyButton}
-            popupText={popupText}
-            confirmingSupply={confirmingSupply}
-            approveBNBPopup={approveBNBPopup}
-            approveBNB={approveBNB}
-            buttonValue={buttonValue}
-            openSupplyButton={openSupplyButton}
-            open={open}
-            openModal3={openModal3}
-            closeModal1={closeModal1}
-            closeModal2={closeModal2}
-            closeModal3={closeModal3}
-            modal1Disclosure={modal1Disclosure}
-            modal2Disclosure={modal2Disclosure}
-            modal3Disclosure={modal3Disclosure}
-          />}
-
+          {liquidityTab === LIQUIDITYTABS.INDEX &&
+            <Index
+              liquidities={liquidities}
+              addLiquidityPage={addLiquidityPage}
+            />
+          }
+          {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY &&
+            <AddLiquidity
+              back={back}
+              open={open}
+              wallet={wallet}
+              toValue={toValue}
+              fromValue={fromValue}
+              popupText={popupText}
+              approveBNB={approveBNB}
+              openModal3={openModal3}
+              closeModal1={closeModal1}
+              closeModal2={closeModal2}
+              closeModal3={closeModal3}
+              buttonValue={buttonValue}
+              setToAddress={setToAddress}
+              setFromValue={setFromValue}
+              displayButton={displayButton}
+              selectedValue={selectedValue}
+              setFromAddress={setFromAddress}
+              selectingToken={selectingToken}
+              toSelectedToken={toSelectedToken}
+              approveBNBPopup={approveBNBPopup}
+              displayBNBbutton={displayBNBbutton}
+              setSelectedValue={setSelectedValue}
+              modal1Disclosure={modal1Disclosure}
+              modal2Disclosure={modal2Disclosure}
+              modal3Disclosure={modal3Disclosure}
+              openSupplyButton={openSupplyButton}
+              confirmingSupply={confirmingSupply}
+              fromSelectedToken={fromSelectedToken}
+              setToSelectedToken={setToSelectedToken}
+              setOpenSupplyButton={setOpenSupplyButton}
+              setFromSelectedToken={setFromSelectedToken}
+            />
+          }
         </Flex>
       </Layout>
     </div>
@@ -288,5 +284,5 @@ const mapStateToProps = ({ wallet }) => ({ wallet })
 
 export default connect(
   mapStateToProps,
-  null,
+  { showErrorMessage },
 )(LiquidityPage);

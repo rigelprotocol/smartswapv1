@@ -1,16 +1,50 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Input } from '@chakra-ui/react';
+import { Input, Spinner } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
+import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
+import { ethers } from 'ethers';
+
+import { showErrorMessage } from 'containers/NoticeProvider/actions';
 import CustomSelectInput from './customSelectInput';
 
-const Manual = ({ selectingToken, selectedToken, toValue, selectedValue, toSelectedToken,
-  setToSelectedToken }) => {
-  console.log(selectingToken, selectedToken, toValue, selectedValue, toSelectedToken,
-    setToSelectedToken)
+const Manual = ({
+  wallet,
+  toValue,
+  setToAddress,
+  selectedToken,
+  selectedValue,
+  selectingToken,
+  toSelectedToken,
+  setToSelectedToken,
+}) => {
+  const [balance, setBalance] = useState('');
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    (async () => {
+      if (typeof selectedValue.abi !== 'undefined') {
+        try {
+          setLoading(true);
+          setBalance(
+            await getAddressTokenBalance(
+              wallet.address,
+              selectedValue.address,
+              selectedValue.abi,
+              wallet.signer,
+            ),
+          );
+          setLoading(false);
+        } catch (e) {
+          showErrorMessage(e);
+          setLoading(false);
+        }
+      }
+    })();
+  }, [selectedValue]);
   return (
     <>
       <Box
@@ -27,18 +61,20 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue, toSelec
           <Text fontSize="sm" color="#40BAD5">
             TO:
           </Text>
-          {selectedValue.id !== 0 ? (
-            <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-              Balance: {` `}{' '}
-              {selectedValue.name === 'BNB'
-                ? selectedValue.balance
-                : selectedValue.name === 'ETH'
-                  ? selectedValue.balance
-                  : selectedValue.balance}
-            </Text>
-          ) : (
-            <div />
-          )}
+          <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+            Balance: {` `}{' '}
+            {loading ? (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="sm"
+              />
+            ) : (
+              balance
+            )}
+          </Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Input
@@ -58,7 +94,10 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue, toSelec
                 selectingToken={selectingToken}
                 defaultSelect={0}
                 selectedToken={selectedToken}
-                setSelectedToken={obj => setToSelectedToken(obj)}
+                setSelectedToken={obj => {
+                  setToSelectedToken(obj);
+                  setToAddress(obj.address);
+                }}
               />
             </Menu>
           </Flex>
@@ -69,9 +108,11 @@ const Manual = ({ selectingToken, selectedToken, toValue, selectedValue, toSelec
 };
 
 Manual.propTypes = {
-  selectingToken: PropTypes.array.isRequired,
+  wallet: PropTypes.object,
   toValue: PropTypes.number.isRequired,
+  setToAddress: PropTypes.func.isRequired,
   selectedToken: PropTypes.func.isRequired,
+  selectingToken: PropTypes.array.isRequired,
   selectedValue: PropTypes.object.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,

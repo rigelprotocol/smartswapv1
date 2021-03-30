@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Flex } from '@chakra-ui/layout';
 import { Text } from '@chakra-ui/react';
 
-function LiquidityPriceBox({ selectedValue }) {
+function LiquidityPriceBox({ selectedValue, fromValue, toValue, fromSelectedToken }) {
   return (
     <Box
       color="#fff"
@@ -14,8 +14,8 @@ function LiquidityPriceBox({ selectedValue }) {
       mx={4}
       rounded="2xl"
     >
-      <Text fontSize="sm" color="gray.200" my={3}>
-        Prices and pool share
+      <Text align="center" fontSize="lg" color="gray.200" mx={3}>
+        PRICE POOL SHARE
       </Text>
       <Flex
         justifyContent="space-between"
@@ -25,18 +25,22 @@ function LiquidityPriceBox({ selectedValue }) {
       >
         <Box>
           <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
-            497.209
+            {fromValue > 0 && toValue > 0
+              ? (parseFloat(toValue) / parseFloat(fromValue)).toFixed(5)
+              : 0.0}
           </Text>
           <Text fontSize="sm" color="gray.500" my={3}>
-            RGP per {selectedValue.name}
+            {fromSelectedToken.symbol} per {selectedValue.symbol}
           </Text>
         </Box>
         <Box>
           <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
-            0.00201078
+            {fromValue > 0 && toValue > 0
+              ? (parseFloat(fromValue) / parseFloat(toValue)).toFixed(5)
+              : 0.0}
           </Text>
           <Text fontSize="sm" color="gray.500" my={3}>
-            ETH per DAI
+            {selectedValue.symbol} per {fromSelectedToken.symbol}
           </Text>
         </Box>
         <Box>
