@@ -25,11 +25,18 @@ import ETHImage from '../../assets/eth.svg';
 import RGPImage from '../../assets/rgp.svg';
 
 const AddLiquidity = ({
+  wallet,
   fromValue,
   setFromValue,
   toValue,
+  setFromAddress,
+  setToAddress,
   selectingToken,
   setSelectedValue,
+  fromSelectedToken,
+  toSelectedToken,
+  setFromSelectedToken,
+  setToSelectedToken,
   selectedValue,
   popupText,
   confirmingSupply,
@@ -61,22 +68,34 @@ const AddLiquidity = ({
     </Flex>
 
     <LiquidityFromBox
-      selectingToken={selectingToken}
+      wallet={wallet}
       fromValue={fromValue}
+      selectingToken={selectingToken}
+      setFromAddress={setFromAddress}
       setFromValue={e => setFromValue(e)}
-      selectedValue={selectedValue}
+      fromSelectedToken={fromSelectedToken}
+      setFromSelectedToken={setFromSelectedToken}
     />
     <Flex justifyContent="center" my={3}>
       <Plus />
     </Flex>
     <To
-      selectingToken={selectingToken}
-      selectedToken={val => setSelectedValue(val)}
+      wallet={wallet}
       toValue={toValue}
+      setToAddress={setToAddress}
       selectedValue={selectedValue}
+      selectingToken={selectingToken}
+      toSelectedToken={toSelectedToken}
+      setToSelectedToken={setToSelectedToken}
+      selectedToken={val => setSelectedValue(val)}
     />
-    {selectedValue.id !== 0 ? (
-      <LiquidityPriceBox selectedValue={selectedValue} />
+    {selectedValue.symbol && fromValue > 0 ? (
+      <LiquidityPriceBox
+        selectedValue={selectedValue}
+        fromValue={fromValue}
+        toValue={toValue}
+        fromSelectedToken={fromSelectedToken}
+      />
     ) : (
       <div />
     )}
@@ -99,7 +118,7 @@ const AddLiquidity = ({
           _active={{ outline: '#29235E', background: '#29235E' }}
           onClick={approveBNB}
         >
-          Approve BNB
+          Approve {selectedValue.symbol}
         </Button>
       ) : (
         <div />
@@ -258,9 +277,16 @@ const AddLiquidity = ({
   </Box>
 );
 AddLiquidity.propTypes = {
+  setFromAddress: PropTypes.func,
+  setToAddress: PropTypes.func,
+  wallet: PropTypes.object,
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
+  setFromSelectedToken: PropTypes.func.isRequired,
+  fromSelectedToken: PropTypes.object.isRequired,
   toValue: PropTypes.string.isRequired,
+  toSelectedToken: PropTypes.object.isRequired,
+  setToSelectedToken: PropTypes.func.isRequired,
   setSelectedValue: PropTypes.func.isRequired,
   back: PropTypes.func.isRequired,
   selectedValue: PropTypes.object.isRequired,

@@ -6,7 +6,7 @@ import { SMART_SWAP } from "../../utils/constants";
 import { rigelToken, MasterChefContract } from '../../utils/SwapConnect';
 
 
-const YieldFarm = ({ content }) => {
+const YieldFarm = ({ content, wallet }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
   // user to deposit to yield
@@ -30,8 +30,8 @@ const YieldFarm = ({ content }) => {
     }
   };
 
-   //Emmergency withdrawal of funds
-   const useEmmergency = async () => {
+  //Emmergency withdrawal of funds
+  const useEmmergency = async () => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.emergencyWithdraw("uint", {
@@ -140,7 +140,7 @@ const YieldFarm = ({ content }) => {
           </Button>
         </Box>
       </Flex>
-      {showYieldfarm && <ShowYieldFarmDetails content={content} />}
+      {showYieldfarm && <ShowYieldFarmDetails content={content} wallet={wallet} />}
     </>
   );
 };

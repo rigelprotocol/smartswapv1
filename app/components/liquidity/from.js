@@ -1,26 +1,43 @@
 /* eslint-disable no-unused-vars */
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Input } from '@chakra-ui/react';
+import { Input, Spinner } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
 import CustomSelectInput from './customSelectInput';
+
 const LiquidityFromBox = ({
+  wallet,
   selectingToken,
   fromValue,
   setFromValue,
-  selectedValue,
+  setFromAddress,
+  fromSelectedToken,
+  setFromSelectedToken,
 }) => {
-  const [inputHeading1, setInputHeading1] = useState('From');
-  const [inputHeading2, setInputHeading2] = useState(selectingToken.balance);
-  console.log(selectingToken);
+  const [balance, setBalance] = useState('');
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    if (selectedValue.id !== 0) {
-      setInputHeading1('Input');
-    } else {
-      setInputHeading1('From');
-    }
-  }, [selectedValue]);
+    (async () => {
+      if (typeof fromSelectedToken.abi !== 'undefined') {
+        try {
+          setLoading(true);
+          setBalance(
+            await getAddressTokenBalance(
+              wallet.address,
+              fromSelectedToken.address,
+              fromSelectedToken.abi,
+              wallet.signer,
+            ),
+          );
+          setLoading(false);
+        } catch (e) {
+          setLoading(false);
+        }
+      }
+    })();
+  }, [fromSelectedToken]);
   return (
     <>
       <Box
@@ -40,11 +57,17 @@ const LiquidityFromBox = ({
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             Balance: {` `}{' '}
-            {selectedValue.name == 'BNB'
-              ? selectedValue.balance
-              : selectedValue.name == 'ETH'
-                ? selectedValue.balance
-                : selectedValue.balance}
+            {loading ? (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="sm"
+              />
+            ) : (
+              balance
+            )}
           </Text>
         </Flex>
         <Flex justifyContent="space-between">
@@ -62,8 +85,12 @@ const LiquidityFromBox = ({
             <Menu>
               <CustomSelectInput
                 selectingToken={selectingToken}
-                defaultSelect={3}
-                selectedToken={null}
+                defaultSelect={1}
+                selectedToken={() => '.'}
+                setSelectedToken={obj => {
+                  setFromSelectedToken(obj);
+                  setFromAddress(obj.address);
+                }}
               />
             </Menu>
           </Flex>
@@ -73,10 +100,13 @@ const LiquidityFromBox = ({
   );
 };
 LiquidityFromBox.propTypes = {
+  wallet: PropTypes.object,
   selectingToken: PropTypes.array.isRequired,
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
-  selectedValue: PropTypes.object.isRequired,
+  fromSelectedToken: PropTypes.object.isRequired,
+  setFromAddress: PropTypes.func.isRequired,
+  setFromSelectedToken: PropTypes.func.isRequired,
 };
 
 export default LiquidityFromBox;

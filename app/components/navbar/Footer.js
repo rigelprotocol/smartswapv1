@@ -1,20 +1,21 @@
 import React from 'react';
-import styles from '../../styles/footer.css';
+import { connect } from 'react-redux';
 import ConnectWallet from './ConnectWallet';
 import Wallet from './Wallet';
 import SocialMedia from './SocialMedia';
-import { WalletContext } from '../../context';
-const Footer = () => {
+import styles from '../../styles/footer.css';
+
+const Footer = props => {
+  const { connected } = props.state.wallet;
   return (
-    <WalletContext.Consumer>
-      {({ connected }) => (
-        <div className={styles.footer}>
-          {connected ? <Wallet /> : <ConnectWallet />}
-          <SocialMedia />
-        </div>
-      )}
-    </WalletContext.Consumer>
+    <div className={styles.footer}>
+      {connected ? <Wallet /> : <ConnectWallet />}
+      <SocialMedia />
+    </div>
   );
 };
-
-export default Footer;
+const mapStateToProps = state => ({ state });
+export default connect(
+  mapStateToProps,
+  null,
+)(Footer);

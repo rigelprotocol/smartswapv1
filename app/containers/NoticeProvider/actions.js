@@ -4,7 +4,7 @@
  *
  */
 
-import { DEFAULT_ACTION, NOTICE } from './constants';
+import { DEFAULT_ACTION, NOTICE, OFF_NOTICE } from './constants';
 
 export function defaultAction() {
   return {
@@ -12,9 +12,63 @@ export function defaultAction() {
   };
 }
 
-export const notify = message => dispatch => {
-  return dispatch({
+export const notify = message => dispatch =>
+  dispatch({
     type: NOTICE,
     message,
   });
-}
+
+export const offNotice = () => dispatch => dispatch({ type: OFF_NOTICE });
+
+export const showErrorMessage = error => dispatch => {
+  switch (error.code) {
+    case 4001:
+      return dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body: 'You have rejected the request',
+        },
+      });
+    case -32602:
+      return dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body:
+            'Transaction execution reverted because of the parameters were invalid',
+        },
+      });
+    case 'UNPREDICTABLE_GAS_LIMIT' || -32603:
+      return dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body: 'Transaction execution reverted reason: IDENTICAL ADDRESSES',
+        },
+      });
+    case -32000:
+      return dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body:
+            'Transaction execution reverted because of UNPREDICTABLE GAS LIMIT',
+        },
+      });
+    default:
+      dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body:
+            'An unexpected error please try refreshing your browser  and click on the connect button',
+        },
+      });
+  }
+};
