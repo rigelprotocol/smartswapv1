@@ -18,7 +18,7 @@ import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 // import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 import { showErrorMessage } from 'containers/NoticeProvider/actions';
-import { router } from '../../utils/SwapConnect';
+import { router, rigelToken, BUSDToken } from '../../utils/SwapConnect';
 import { tokenList, tokenWhere } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
 // 35,200
@@ -78,18 +78,13 @@ export function LiquidityPage(props) {
       const amountAMin = amountADesired / amountBDesired
       const amountBMin = amountBDesired / amountADesired
       await rout.addLiquidity(
-        tokenA.length > 0 ? tokenA[0].address : '', // tokenA,
-        tokenB.length > 0 ? tokenB[0].address : '', // tokenB,
-        // amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
-        // input amount from and input amount to
+        tokenA.length > 0 ? tokenA[0].address : '',
+        tokenB.length > 0 ? tokenB[0].address : '',
         amountADesired,
         amountBDesired,
-
-        // not to be shown in FE
-        // checkOut
-        amountAMin, // input amount of amountADesired / input amount of amountBDesired
-        amountBMin, // input amount of amountADesired / input amount of amountBDesired
-        wallet.address, // the recipient wallet address
+        amountAMin,
+        amountBMin,
+        wallet.address,
         deadLine,
         {
           from: wallet.address,
@@ -99,6 +94,18 @@ export function LiquidityPage(props) {
       console.log(tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin)
     }
 
+  };
+
+  const rgpApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+      });
+    }
   };
 
   const removingLiquidity = async () => {
@@ -171,6 +178,7 @@ export function LiquidityPage(props) {
   const confirmingSupply = () => {
     addingLiquidity()
   };
+
   const back = () => {
     setLiquidityTab("INDEX")
   }
@@ -222,6 +230,7 @@ export function LiquidityPage(props) {
       setOpenSupplyButton(false);
     }, 3000);
   }
+
   return (
     <div>
       <Layout title="Liquidity Page">
@@ -279,6 +288,7 @@ export function LiquidityPage(props) {
     </div>
   );
 }
+
 
 const mapStateToProps = ({ wallet }) => ({ wallet })
 
