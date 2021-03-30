@@ -5,6 +5,7 @@ import RigelToken from 'utils/abis/RigelToken.json';
 import SmartSwapFactoryForSwap from 'utils/abis/SmartSwapFactoryForSwap.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 import WETH9 from 'utils/abis/WETH9.json';
+import masterChef from 'utils/abis/masterChef.json';
 import configureStore from 'configureStore';
 
 const store = configureStore();
@@ -21,6 +22,12 @@ if (typeof signer === 'string') {
 export const router = async walletSigner => {
   const SmartSwapAddress = '0x3175bfbc3e620FaF654309186f66908073cF9CBB';
   return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, signer);
+};
+
+// masterChef contract for farming...
+export const MasterChefContract = async walletSigner => {
+  const chefAddress = '0x801f01287Fb235B1a849725b867847676d9Ad8ED';
+  return new ethers.Contract(chefAddress, masterChef, signer);
 };
 
 //Factory smartContract for getting and creating pairs
@@ -47,16 +54,3 @@ export const WETH = async () => {
   return new ethers.Contract(WETH9Address, WETH9, signer);
 };
 
-// const busdBal = await busdToken.balanceOf(
-//   '0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E',
-// );
-// const bal = ethers.utils.formatEther(busdBal).toString();
-// console.log('BUSDBalance: ', bal);
-
-// const rigelBal = await rgpToken.balanceOf();
-// const balance = ethers.utils.formatEther(rigelBal).toString();
-
-// await WETH9Contract.totalSupply();
-// const WETHbal = ethers.utils.formatEther(WBal).toString();
-// console.log('WETH9 ABI: ', WETH9_ABI);
-// console.log('WETH9 Bal: ', WETHbal);

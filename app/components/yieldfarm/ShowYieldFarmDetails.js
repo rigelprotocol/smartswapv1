@@ -18,15 +18,12 @@ import {
   ModalBody,
   Tooltip,
 } from '@chakra-ui/react';
-import { ethers } from 'ethers';
-import Web3 from 'web3';
 import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 
 import styles from '../../styles/yieldFarmdetails.css';
 const ShowYieldFarmDetails = ({
   content,
-  wallet
 }) => {
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
@@ -61,19 +58,6 @@ const ShowYieldFarmDetails = ({
     setApproveButtonColor(!approveButtonColor)
     if (approveValue && deposit) {
       modal2Disclosure.onOpen();
-    }
-    console.log(wallet)
-    rgpApproval()
-  };
-  const rgpApproval = async () => {
-    if (wallet.signer !== 'signer') {
-      const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address);
-      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
-        from: wallet.address,
-        gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
-      });
     }
   };
   return (
@@ -111,11 +95,7 @@ const ShowYieldFarmDetails = ({
               mb="4"
               mr="6"
               cursor="pointer"
-<<<<<<< HEAD
-              _hover={approveButtonColor ? { color: '#423a85' } : { color: "white" }}
-=======
               _hover={approveButtonColor ? { color: '#423a85' } : { color: "white       " }}
->>>>>>> 330349dedbfdd1d2e9ba2bdea3e48e605b959310
               onClick={setApprove}
             >
               {approveValue ? 'unstake' : 'Approve'}
@@ -123,7 +103,7 @@ const ShowYieldFarmDetails = ({
             <Square
               size="40px"
               borderRadius="12px"
-              color="white"
+              color="white" 
               cursor="pointer"
               marginTop="5px"
               bg="rgba(64, 186, 213, 0.1);"
