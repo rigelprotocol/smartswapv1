@@ -4,7 +4,7 @@
  *
  * WalletProvider actions
  *
- */
+*/
 
 import { NOTICE } from 'containers/NoticeProvider/constants';
 import {
@@ -21,28 +21,49 @@ import {
   WALLET_PROPS,
   LOADING_WALLET,
   CLOSE_LOADING_WALLET,
+  CLEAR_WALLET,
 } from './constants';
 
 export const reConnect = (wallet) => async dispatch => {
-  const { selectedAddress, chainId } = wallet;
-  const ethProvider = await provider();
-  const walletSigner = await signer();
-  const balance = ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress)).toString();
-  dispatch({ type: WALLET_PROPS, payload: { rgp: await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, RigelToken, walletSigner) } });
-  return dispatch({
-    type: WALLET_CONNECTED, wallet: {
-      address: selectedAddress,
-      provider: ethProvider, signer: walletSigner, chainId, balance
-    },
-  })
+  try {
+    const { selectedAddress, chainId } = wallet;
+    const ethProvider = await provider();
+    const walletSigner = await signer();
+    const balance = ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress)).toString();
+    dispatch({
+      type: WALLET_CONNECTED, wallet: {
+        address: selectedAddress,
+        provider: ethProvider, signer: walletSigner, chainId, balance
+      },
+    })
+    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, RigelToken, walletSigner);
+    dispatch({ type: WALLET_PROPS, payload: { rgp: rgpBalance } });
+    return dispatch({
+      type: NOTICE, message: {
+        title: 'Re-Connection Message',
+        body: 'Connection was Successful',
+        type: 'success',
+      }
+    });
+  } catch (e) {
+    return dispatch({
+      type: NOTICE, message: {
+        title: 'Connection Error:',
+        body: e.message,
+        type: 'error',
+      }
+    });
+  }
+
 }
 
 export const connectWallet = () => async dispatch => {
-  dispatch({ type: LOADING_WALLET, payload: true });
-  const ethProvider = await provider();
-  const walletSigner = await signer()
-  const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-  connectMetaMask().then(async (res) => {
+  try {
+    dispatch({ type: LOADING_WALLET, payload: true });
+    const ethProvider = await provider();
+    const walletSigner = await signer()
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    const res = await connectMetaMask();
     dispatch({
       type: NOTICE, message: {
         title: 'Success:',
@@ -66,17 +87,17 @@ export const connectWallet = () => async dispatch => {
     });
     return dispatch({ type: WALLET_PROPS, payload: { rgp: await getAddressTokenBalance(res[0], TOKENS_CONTRACT.RGP, RigelToken, walletSigner) } });
 
-  })
-    .catch(e => {
-      dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
-      return dispatch({
-        type: NOTICE, message: {
-          title: 'Connection Error:',
-          body: e.message,
-          type: 'error',
-        }
-      });
-    })
+  } catch (e) {
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+    return dispatch({
+      type: NOTICE, message: {
+        title: 'Connection Error:',
+        body: e.message,
+        type: 'error',
+      }
+    });
+  }
+
 };
 
 export const setWalletProps = wallet => dispatch =>
@@ -104,4 +125,8 @@ export const getTokenBalance = async (tokens = []) => {
     // await getAddressTokenBalance('wallet_address', 'tokenAddress', 'TokenAbi', 'signer')
 
   }
+}
+
+export const disconnectWallet = () => dispatch => {
+  dispatch({ type: CLEAR_WALLET, payload: null });
 }

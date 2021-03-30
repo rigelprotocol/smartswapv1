@@ -10,8 +10,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
-import PropTypes from 'prop-types';
-import { useSelector, useDispatch, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { Flex } from '@chakra-ui/layout';
 import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
@@ -19,7 +18,7 @@ import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 // import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 import { BUSDToken, rigelToken, router } from '../../utils/SwapConnect';
-import { TOKENS, TOKENS_CONTRACT, SMART_SWAP } from '../../utils/constants';
+import { TOKENS_CONTRACT } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
 
 export function LiquidityPage(props) {
@@ -84,28 +83,28 @@ export function LiquidityPage(props) {
       const rout = await router();
       console.log(wallet.address)
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
-      let tokenA = Object.keys(TOKENS_CONTRACT).filter(token => token === fromSelectedToken.name)[0]
-      let tokenB = Object.keys(TOKENS_CONTRACT).filter(token => token === toSelectedToken.name)[0]
-      let amountADesired = ethers.utils.parseUnits(fromValue).toString()
-      let amountBDesired = ethers.utils.parseUnits(fromValue).toString()
-      let amountAMin = amountADesired / amountBDesired
-      let amountBMin = amountBDesired / amountADesired
+      const tokenA = Object.keys(TOKENS_CONTRACT).filter(token => token === fromSelectedToken.name)[0]
+      const tokenB = Object.keys(TOKENS_CONTRACT).filter(token => token === toSelectedToken.name)[0]
+      const amountADesired = ethers.utils.parseUnits(fromValue).toString()
+      const amountBDesired = ethers.utils.parseUnits(fromValue).toString()
+      const amountAMin = amountADesired / amountBDesired
+      const amountBMin = amountBDesired / amountADesired
       console.log(tokenA, tokenB)
       await rout.addLiquidity(
         // for the tokens kindly note that they will be selected from the drop down.
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
-        tokenA, //'0x80278a0cf536e568a76425b67fb3931dca21535c', 
-        tokenB, //'0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
-        //amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
+        '0x80278a0cf536e568a76425b67fb3931dca21535c', // tokenA,
+        '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4', // tokenB,
+        // amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
         // input amount from and input amount to
         amountADesired,
         amountBDesired,
 
         // not to be shown in FE
-        //checkOut
-        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
-        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
-        wallet.address, //the recipient wallet address
+        // checkOut
+        amountAMin, // input amount of amountADesired / input amount of amountBDesired
+        amountBMin, // input amount of amountADesired / input amount of amountBDesired
+        wallet.address, // the recipient wallet address
         deadLine,
         {
           from: wallet.address,
@@ -128,11 +127,11 @@ export function LiquidityPage(props) {
         // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
         tokenA,
         tokenB,
-        uintLiquidity, //input from max
+        uintLiquidity, // input from max
         // not to be shown in FE
         amountAMin, // inout amount of amountADesired / input amount of amountBDesired
         amountBMin, // inout amount of amountADesired / input amount of amountBDesired
-        wallet.signer, //the recipient wallet address
+        wallet.signer, // the recipient wallet address
         deadLine,
         {
           from: wallet.signer,
@@ -144,23 +143,7 @@ export function LiquidityPage(props) {
   };
 
   useEffect(() => {
-    const getBalance = async () => {
-      if (wallet.signer !== 'signer') {
-        // console.log("wallet address", wallet.address)
-        // await checkUser();
-        // await checkUser(wallet, setIsNewUser);
-        const bnb = await BUSDToken();
-        const rigel = await rigelToken();
-        setRGPBalance(await rigel.balanceOf(wallet.address));
-        setETHBalance(await rigel.balanceOf(wallet.address));
-        setBUSDBalance(
-          ethers.utils
-            .formatEther(await bnb.balanceOf(wallet.address))
-            .toString(),
-        );
-      }
-    };
-    getBalance();
+
   }, [wallet]);
 
   // console.log('state', wallet)
@@ -193,7 +176,7 @@ export function LiquidityPage(props) {
       setLiquidityTab("INDEX")
       // add transaction to liquidity array and fix all opened input
 
-      let data = {
+      const data = {
         id: 1,
         imageFrom: '<BNBImage/>',
         imageTo: '<RGPImage/>',
@@ -239,26 +222,34 @@ export function LiquidityPage(props) {
       setButtonValue('Enter an Amount');
     }
   }
-  // function calculateToValue() {
-  //   let path = []
-  //   async function updateSendAmount(path, askAmount, setAmountIn, setFromAmount, field) {
-  //     const rout = await router(wallet.signer)
-  //     if (typeof path[1] != 'undefined') {
-  //       const [fromPath, toPath] = path
-  //       console.log(fromPath, toPath)
-  //       try {
-  //         const amount = await rout.getAmountsOut(
-  //           web3.utils.toWei(fromValue.toString()),
-  //           (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
-  //         );
-  //         return (field != "to" ? setToValue(
-  //           ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString())
-  //       } catch (e) {
-  //         console.log(e)
-  //       }
-  //     }
-  //   }
-  // }
+  
+  function approveBNB() {
+    setApproveBNBPopup(true);
+    setTimeout(() => {
+      setApproveBNBPopup(false);
+      setOpenSupplyButton(false);
+    }, 3000);
+  }
+
+  function calculateToValue() {
+    (async function updateSendAmount(path = [], askAmount, setAmountIn, setFromAmount, field) {
+      const rout = await router(wallet.signer)
+      if (typeof path[1] !== 'undefined') {
+        const [fromPath, toPath] = path
+        console.log(fromPath, toPath)
+        try {
+          const amount = await rout.getAmountsOut(
+            Web3.utils.toWei(fromValue.toString()),
+            (field !== 'to') ? [fromPath, toPath] : [toPath, fromPath]
+          );
+          return (field !== "to" ? setToValue(
+            ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString()))
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    })()
+  }
 
   function approveBNB() {
     setApproveBNBPopup(true);
@@ -312,7 +303,6 @@ export function LiquidityPage(props) {
             modal2Disclosure={modal2Disclosure}
             modal3Disclosure={modal3Disclosure}
           />}
-  
         </Flex>
       </Layout>
     </div>

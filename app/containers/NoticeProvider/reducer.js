@@ -4,7 +4,7 @@
  *
  */
 import produce from 'immer';
-import { DEFAULT_ACTION, NOTICE } from './constants';
+import { OFF_NOTICE, DEFAULT_ACTION, NOTICE } from './constants';
 
 export const initialState = {
   message: { title: null, body: null, type: null },
@@ -18,10 +18,11 @@ const NoticeProviderReducer = (state = initialState, action) =>
       case DEFAULT_ACTION:
         break;
       case NOTICE:
-        console.log(action.message, state.showNotice)
         draft.message = action.message;
         draft.showNotice = true;
         break;
+      case OFF_NOTICE:
+        draft.showNotice = false;
     }
   });
 
