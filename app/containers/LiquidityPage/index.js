@@ -18,7 +18,7 @@ import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 // import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
 import { showErrorMessage } from 'containers/NoticeProvider/actions';
-import { router } from '../../utils/SwapConnect';
+import { router, rigelToken, BUSDToken } from '../../utils/SwapConnect';
 import { tokenList, tokenWhere } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
 // 35,200
@@ -96,6 +96,18 @@ export function LiquidityPage(props) {
 
   };
 
+  const rgpApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+      });
+    }
+  };
+
   const removingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
@@ -166,6 +178,7 @@ export function LiquidityPage(props) {
   const confirmingSupply = () => {
     addingLiquidity()
   };
+
   const back = () => {
     setLiquidityTab("INDEX")
   }
@@ -217,6 +230,7 @@ export function LiquidityPage(props) {
       setOpenSupplyButton(false);
     }, 3000);
   }
+
   return (
     <div>
       <Layout title="Liquidity Page">
@@ -274,6 +288,7 @@ export function LiquidityPage(props) {
     </div>
   );
 }
+
 
 const mapStateToProps = ({ wallet }) => ({ wallet })
 
