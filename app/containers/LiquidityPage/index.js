@@ -69,34 +69,29 @@ export function LiquidityPage(props) {
 
   const addingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
-      const rout = await router();
-      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
-      const tokenA = tokenList.filter((fields) => fields.symbol === fromSelectedToken.name);
-      const tokenB = tokenList.filter((fields) => fields.symbol === toSelectedToken.name);
-      const amountADesired = Web3.utils.toWei(fromValue.toString())
-      const amountBDesired = Web3.utils.toWei(fromValue.toString())
-      const amountAMin = amountADesired / amountBDesired
-      const amountBMin = amountBDesired / amountADesired
-      await rout.addLiquidity(
-        tokenA.length > 0 ? tokenA[0].address : '', // tokenA,
-        tokenB.length > 0 ? tokenB[0].address : '', // tokenB,
-        // amountADesired and amountBDesired = (The amount of tokenA to add as liquidity if the B/A price)
-        // input amount from and input amount to
-        amountADesired,
-        amountBDesired,
-
-        // not to be shown in FE
-        // checkOut
-        amountAMin, // input amount of amountADesired / input amount of amountBDesired
-        amountBMin, // input amount of amountADesired / input amount of amountBDesired
-        wallet.address, // the recipient wallet address
-        deadLine,
-        {
-          from: wallet.address,
-        },
-
-      );
-      console.log(tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin)
+      try {
+        const rout = await router();
+        const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+        const amountADesired = Web3.utils.toWei(fromValue.toString())
+        const amountBDesired = Web3.utils.toWei(toValue.toString())
+        const amountAMin = Web3.utils.toWei((amountADesired / amountBDesired).toString())
+        const amountBMin = Web3.utils.toWei((amountBDesired / amountADesired).toString())
+        await rout.addLiquidity(
+          fromAddress,
+          toAddress,
+          amountADesired,
+          amountBDesired,
+          amountAMin,
+          amountBMin,
+          wallet.address,
+          deadLine,
+          {
+            from: wallet.address,
+          },
+        );
+      } catch (e) {
+        props.showErrorMessage(e)
+      }
     }
 
   };
@@ -188,9 +183,9 @@ export function LiquidityPage(props) {
     }
   }
   function changeButtonValue() {
-    if (selectedValue.id === 0) {
+    if (!selectedValue.symbol) {
       setButtonValue('Invalid pair');
-    } else if (selectedValue.id && displayButton) {
+    } else if (selectedValue.symbol && fromValue > 0) {
       setButtonValue('Supply');
     } else {
       setButtonValue('Enter an Amount');
