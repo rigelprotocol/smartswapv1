@@ -19,3 +19,56 @@ export const notify = message => dispatch =>
   });
 
 export const offNotice = () => dispatch => dispatch({ type: OFF_NOTICE });
+
+export const showErrorMessage = error => dispatch => {
+  switch (error.code) {
+    case 4001:
+      return dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body: 'You have rejected the request',
+        },
+      });
+    case -32602:
+      return dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body:
+            'Transaction execution reverted because of the parameters were invalid',
+        },
+      });
+    case 'UNPREDICTABLE_GAS_LIMIT' || -32603:
+      return dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body: 'Transaction execution reverted reason: IDENTICAL ADDRESSES',
+        },
+      });
+    case -32000:
+      return dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body:
+            'Transaction execution reverted because of UNPREDICTABLE GAS LIMIT',
+        },
+      });
+    default:
+      dispatch({
+        type: NOTICE,
+        message: {
+          title: 'Error Response',
+          type: 'error',
+          body:
+            'An unexpected error please try refreshing your browser  and click on the connect button',
+        },
+      });
+  }
+};
