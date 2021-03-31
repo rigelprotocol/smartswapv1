@@ -4,25 +4,27 @@ import PropTypes from 'prop-types';
 import ShowYieldFarmDetails from './ShowYieldFarmDetails';
 import { SMART_SWAP } from "../../utils/constants";
 import { rigelToken, BUSDToken, MasterChefContract } from '../../utils/SwapConnect';
-
+import BNBImage from '../../assets/bnb.svg';
+import ETHImage from '../../assets/eth.svg';
+import RGPImage from '../../assets/rgp.svg';
 
 const YieldFarm = ({ content, wallet }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
   // user to deposit to yield
 
-    // kindly set onclick of confinm to call this function
+  // kindly set onclick of confinm to call this function
   const useDeposit = async () => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.deposit(
         "uint", // should be a state value of an array, we will revisit this.
-        "uint", // user input from onclick shoild be here... 
+        "uint", // user input from onclick shoild be here...
         {
           from: wallet.address,
           gasLimit: 150000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei')
-      });
+        });
     }
   };
 
@@ -120,7 +122,10 @@ const YieldFarm = ({ content, wallet }) => {
             Earn
           </Box>
           <Box marginTop="15px" align="left">
-            <img src="../../assets/rgp.svg" alt={content.img} /> {content.earn}
+
+            {content.img === 'bnb.svg' && <BNBImage mr="3" />}
+            {content.img === 'eth.svg' && <ETHImage mr="3" />}
+            {content.img === 'rgp.svg' && <RGPImage mr="3" />}{' '} {content.earn}
           </Box>
         </Flex>
         <Flex justifyContent="space-between">
