@@ -100,7 +100,7 @@ const AddLiquidity = ({
       <div />
     )}
     <Box mt={5} p={5}>
-      {displayButton ? (
+      {selectedValue.symbol && fromValue > 0 && toValue > 0 ? (
         <Button
           d="block"
           w="100%"
