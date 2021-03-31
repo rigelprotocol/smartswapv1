@@ -49,6 +49,20 @@ const ShowYieldFarmDetails = ({
         });
     }
   };
+  // kindly set user approve to call this function
+  //busd approve masterchef
+  const busdApproveMasterChef = async () => {
+    if (wallet.signer !== 'signer') {
+      const busd = await BUSDToken();
+      const walletBal = await busd.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+      });
+    }
+  };
+
   const open = () => {
     if (approveValue) {
       modal1Disclosure.onOpen();
@@ -75,6 +89,9 @@ const ShowYieldFarmDetails = ({
   const setApprove = () => {
     setApproveValue(!approveValue);
     setApproveButtonColor(!approveButtonColor)
+    if (!approveValue) {
+      busdApproveMasterChef()
+    }
     if (approveValue && deposit) {
       modal2Disclosure.onOpen();
     }
