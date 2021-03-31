@@ -21,7 +21,10 @@ import {
 import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
+import Web3 from 'web3';
 import styles from '../../styles/yieldFarmdetails.css';
+import { rigelToken, BUSDToken, MasterChefContract } from '../../utils/SwapConnect';
+import { SMART_SWAP } from "../../utils/constants";
 const ShowYieldFarmDetails = ({
   content,
   wallet
@@ -35,13 +38,16 @@ const ShowYieldFarmDetails = ({
   const modal2Disclosure = useDisclosure();
   const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(12345)
   const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(937839)
+
   // kindly set onclick of confinm to call this function
   const useDeposit = async (depositToken) => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
+      // const amount = Web3.utils.toWei(depositToken.toString());
+      // const depAmount = Web3.utils.toWei(depositToken.toStrings())
       await masterChef.deposit(
-        "uint", // should be a state value of an array, we will revisit this.
-        depositToken, // user input from onclick shoild be here...
+        1, // should be a state value of an array, we will revisit this.
+        ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
         {
           from: wallet.address,
           gasLimit: 150000,
@@ -55,10 +61,10 @@ const ShowYieldFarmDetails = ({
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
       const walletBal = await busd.balanceOf(wallet.address);
-      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
+      await busd.approve(SMART_SWAP.MasterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+        gasPrice: ethers.utils.parseUnits('2', 'gwei')
       });
     }
   };
