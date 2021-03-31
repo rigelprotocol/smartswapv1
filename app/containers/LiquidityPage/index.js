@@ -97,30 +97,6 @@ export function LiquidityPage(props) {
 
   };
 
-  const rgpApproval = async () => {
-    if (wallet.signer !== 'signer') {
-      const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address);
-      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
-        from: wallet.address,
-        gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
-      });
-    }
-  };
-
-  const busdApproval = async () => {
-    if (wallet.signer !== 'signer') {
-      const busd = await BUSDToken();
-      const walletBal = await busd.balanceOf(wallet.address);
-      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
-        from: wallet.address,
-        gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
-      });
-    }
-  };
-
   const removingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
@@ -239,9 +215,9 @@ export function LiquidityPage(props) {
   async function approveBNB() {
     setApproveBNBPopup(true);
     if (wallet.signer !== 'signer') {
-      const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address);
-      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+      const busd = await BUSDToken();
+      const walletBal = await busd.balanceOf(wallet.address);
+      await busd.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
       });
     }
