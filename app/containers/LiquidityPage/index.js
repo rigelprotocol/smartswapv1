@@ -21,6 +21,7 @@ import { showErrorMessage } from 'containers/NoticeProvider/actions';
 import { router, rigelToken, BUSDToken } from '../../utils/SwapConnect';
 import { tokenList, tokenWhere } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
+import { SMART_SWAP } from './../../utils/constants';
 // 35,200
 export function LiquidityPage(props) {
   const { wallet, wallet_props } = props.wallet;
@@ -37,7 +38,7 @@ export function LiquidityPage(props) {
   });
   const [liquidities, setLiquidities] = useState([])
   const [liquidityTab, setLiquidityTab] = useState("INDEX")
-  const [popupText, setPopupText] = useState('Approve BNB');
+  const [popupText, setPopupText] = useState('Approving Account');
   const [displayButton, setDisplayButton] = useState(false);
   const [approveBNBPopup, setApproveBNBPopup] = useState(false);
   const [buttonValue, setButtonValue] = useState('Invalid pair');
@@ -223,12 +224,17 @@ export function LiquidityPage(props) {
     return false;
   }
 
-  function approveBNB() {
+  async function approveBNB() {
     setApproveBNBPopup(true);
-    setTimeout(() => {
-      setApproveBNBPopup(false);
-      setOpenSupplyButton(false);
-    }, 3000);
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+        from: wallet.address,
+      });
+    }
+    setApproveBNBPopup(false);
+    setOpenSupplyButton(false);
   }
 
   return (
