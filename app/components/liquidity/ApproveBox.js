@@ -24,7 +24,7 @@ function ApproveBox(props) {
         <Box>
           <Text color="white">{props.popupText}</Text>
           <a href={`https://bscscan.com/${props.hash}`} target="_blank">
-            <Text color="#f0f0f0">View on BSCscan</Text>
+            <Text color="#f0f0f0">Confirm the Transaction on your wallet</Text>
           </a>
         </Box>
       </Flex>
