@@ -55,6 +55,23 @@ const ShowYieldFarmDetails = ({
         });
     }
   };
+
+  //withdrawal of funds
+  const useWithdrawal = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      await masterChef.withdraw(
+        "uint",
+        ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
+        {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+      });
+    }
+  };
+
+
   // kindly set user approve to call this function
   //busd approve masterchef
   const busdApproveMasterChef = async () => {
@@ -91,6 +108,7 @@ const ShowYieldFarmDetails = ({
   };
   const confirmUnstakeDeposit = () => {
     setUnstakeButtonValue('Pending Confirmation');
+    
   };
   const setApprove = () => {
     setApproveValue(!approveValue);
