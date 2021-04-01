@@ -26,7 +26,7 @@ export const router = async walletSigner => {
 
 // masterChef contract for farming...
 export const MasterChefContract = async walletSigner => {
-  const chefAddress = '0xfBeF04a74E64Fe347e3B200e4d50AC8323328fe0';
+  const chefAddress = '0xE8799aE44C7776032c38087D596267f1806E3D77';
   return new ethers.Contract(chefAddress, masterChef, signer);
 };
 
