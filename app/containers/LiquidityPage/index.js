@@ -33,7 +33,7 @@ export function LiquidityPage(props) {
   const [toAddress, setToAddress] = useState('')
   const [toSelectedToken, setToSelectedToken] = useState({})
   const [selectedValue, setSelectedValue] = useState({
-    name: 'Select a token',
+    name: 'Select Token',
     img: '',
   });
   const [liquidities, setLiquidities] = useState([])
