@@ -46,7 +46,7 @@ const ShowYieldFarmDetails = ({
       // const amount = Web3.utils.toWei(depositToken.toString());
       // const depAmount = Web3.utils.toWei(depositToken.toStrings())
       await masterChef.deposit(
-        1, // should be a state value of an array, we will revisit this.
+        0, // should be a state value of an array, we will revisit this.
         ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
         {
           from: wallet.address,
