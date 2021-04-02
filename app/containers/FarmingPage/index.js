@@ -4,15 +4,15 @@
  *
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
-
 export function FarmingPage(props) {
   const { wallet, wallet_props } = props.wallet;
+
   return (
     <div>
       <Layout title="Farming Page">

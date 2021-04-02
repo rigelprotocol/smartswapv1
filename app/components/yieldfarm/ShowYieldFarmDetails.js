@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -30,15 +30,38 @@ const ShowYieldFarmDetails = ({
   content,
   wallet
 }) => {
+  const [isNewUser, setIsNewUser] = useState(true)
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
   const [unstakeButtonValue, setUnstakeButtonValue] = useState('Confirm');
   const [approveValue, setApproveValue] = useState(false);
-  const [approveButtonColor, setApproveButtonColor] = useState(true);
+  const [approveButtonColor, setApproveButtonColor] = useState(false);
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(0)
   const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(0)
+
+  // useEffect
+  useEffect(() => {
+    const checkUser = async (wallet, setIsNewUser) => {
+      const rgp = await rigelToken();
+      const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
+      if (wallet.signer !== 'signer') {
+        if (checkAllow == setIsNewUser(true)) {
+          setApproveValue(true)
+          setApproveButtonColor(true)
+          console.log("show")
+        } else {
+          //do other
+          console.log("dont show")
+
+          setApproveValue(false)
+          setApproveButtonColor(false)
+        }
+      }
+    };
+    checkUser({ address: '0x3552b618dc1c3d5e53818c651bc41ae7a307f767' }, setIsNewUser)
+  }, [wallet])
 
   // kindly set onclick of confinm to call this function
   const useDeposit = async (depositToken) => {
@@ -64,7 +87,7 @@ const ShowYieldFarmDetails = ({
       const masterChef = await MasterChefContract();
       await masterChef.withdraw(
         "uint",
-        ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
+        ethers.utils.parseUnits(setUnstakeRGPBNBToken, 'gwei'), // user input from onclick shoild be here...
         {
           from: wallet.address,
           gasLimit: 150000,
@@ -105,8 +128,6 @@ const ShowYieldFarmDetails = ({
     useDeposit(depositRGPBNBToken)
     setDeposit(true)
     setTimeout(() => setDepositValue("Confirmed"), 5000)
-    // setApproveValue(true);
-    // setApproveButtonColor(true)
   };
   const confirmUnstakeDeposit = () => {
     setUnstakeButtonValue('Pending Confirmation');
@@ -116,8 +137,9 @@ const ShowYieldFarmDetails = ({
   };
   const setApprove = () => {
     setApproveValue(true);
-    setApproveButtonColor(false)
+    setApproveButtonColor(true)
     if (!approveValue) {
+      console.log("approve function")
       busdApproveMasterChef()
     }
     if (approveValue && deposit) {
@@ -153,8 +175,8 @@ const ShowYieldFarmDetails = ({
               w="60%"
               h="50px"
               borderRadius="12px"
-              bg={approveButtonColor ? 'rgba(64, 186, 213, 0.1)' : '#444159'}
-              color={approveButtonColor ? '#40BAD5' : 'rgba(190, 190, 190, 1)'}
+              bg={approveButtonColor ? '#444159' : 'rgba(64, 186, 213, 0.1)'}
+              color={approveButtonColor ? 'rgba(190, 190, 190, 1)' : '#40BAD5'}
               border="0"
               mb="4"
               mr="6"

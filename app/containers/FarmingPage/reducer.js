@@ -42,6 +42,7 @@ export const initialState = {
       availableToken: '3.747948393',
     },
   ],
+  loggedIn: false
 };
 
 /* eslint-disable default-case, no-param-reassign */
