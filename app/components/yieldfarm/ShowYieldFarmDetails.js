@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Flex,
@@ -30,38 +30,17 @@ const ShowYieldFarmDetails = ({
   content,
   wallet
 }) => {
-  const [isNewUser, setIsNewUser] = useState(true)
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
   const [unstakeButtonValue, setUnstakeButtonValue] = useState('Confirm');
   const [approveValue, setApproveValue] = useState(false);
-  const [approveButtonColor, setApproveButtonColor] = useState(false);
+  const [approveButtonColor, setApproveButtonColor] = useState(true);
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(0)
   const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(0)
-
-  // useEffect
-  useEffect(() => {
-    const checkUser = async (wallet, setIsNewUser) => {
-      const rgp = await rigelToken();
-      const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-      if (wallet.signer !== 'signer') {
-        if (checkAllow == setIsNewUser(true)) {
-          setApproveValue(true)
-          setApproveButtonColor(true)
-          console.log("show")
-        } else {
-          //do other
-          console.log("dont show")
-
-          setApproveValue(false)
-          setApproveButtonColor(false)
-        }
-      }
-    };
-    checkUser({ address: '0x3552b618dc1c3d5e53818c651bc41ae7a307f767' }, setIsNewUser)
-  }, [wallet])
+  const [stakedToken, setStakeToken] = useState("0.00")
+  const [rewards, setRewards] = useState("0.000")
 
   // kindly set onclick of confinm to call this function
   const useDeposit = async (depositToken) => {
@@ -83,9 +62,8 @@ const ShowYieldFarmDetails = ({
     console.log("opening usewithdrawal")
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
-      await masterChef.withdraw(
-        "uint",
-        ethers.utils.parseUnits(setUnstakeRGPBNBToken, 'gwei'), // user input from onclick shoild be here...
+      await masterChef.unStake(
+        ethers.utils.parseUnits(depositToken, 'ether'), // user input from onclick shoild be here...
         {
           from: wallet.address,
           gasLimit: 150000,
@@ -94,6 +72,40 @@ const ShowYieldFarmDetails = ({
     }
   };
 
+  useEffect(() => {
+    const outPut = async () => {
+      const checkInputData = async () => {
+        if (wallet.signer !== 'signer') {
+          const masterChef = await MasterChefContract();
+          setTotalStake(totalStake);
+          const seeTotalStaked = await masterChef.totalStaking().toString();
+          setTotalStake(seeTotalStaked);
+        }
+      };
+    }
+    outPut();
+  });
+
+
+  //USER RGP BALANCE
+  const rgpUserBalance = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      // setRGPBalance(rgpBalance);
+      // setBalance(walletBal);
+    }
+  }
+
+   //USER BUSD BALANCE
+   const busdUserBalance = async () => {
+    if (wallet.signer !== 'signer') {
+      const busd = await BUSDToken();
+      const walletBal = await busd.balanceOf(wallet.address);
+      // setRGPBalance(rgpBalance);
+      // setBalance(walletBal);
+    }
+  }
 
   // kindly set user approve to call this function
   //busd approve masterchef
@@ -101,6 +113,8 @@ const ShowYieldFarmDetails = ({
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
       const walletBal = await rgp.balanceOf(wallet.address);
+      setRGPBalance(rgpBalance);
+      setBalance(walletBal);
       await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -108,6 +122,36 @@ const ShowYieldFarmDetails = ({
       });
     }
   };
+
+  const checkUser = async (wallet, setIsNewUser) => {
+    const rgp = await rigelToken();
+    const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
+    if (wallet.signer !== 'signer') {
+      if (checkAllow == setIsNewUser(true)) {
+        // do sometin
+      } else {
+        //do other
+      }
+    }
+  };
+
+  // calculate reward
+  const tokenStaked = async () => {
+    const checkInputData = async () => {
+      if (wallet.signer !== 'signer') {
+        const masterChef = await MasterChefContract();
+        setStakeToken(stakedToken);
+        setRewards(rewards);
+        const userStakeToken = await masterChef.userDate(1).toString();
+        const calculateReward = await masterChef.calculateRewards(1);
+        setTotalStake(userStakeToken);
+        setRewards(calculateReward)
+      }
+    };
+  }
+
+
+
 
   const open = () => {
     if (approveValue) {
@@ -126,6 +170,8 @@ const ShowYieldFarmDetails = ({
     useDeposit(depositRGPBNBToken)
     setDeposit(true)
     setTimeout(() => setDepositValue("Confirmed"), 5000)
+    // setApproveValue(true);
+    // setApproveButtonColor(true)
   };
   const confirmUnstakeDeposit = () => {
     setUnstakeButtonValue('Pending Confirmation');
@@ -135,9 +181,8 @@ const ShowYieldFarmDetails = ({
   };
   const setApprove = () => {
     setApproveValue(true);
-    setApproveButtonColor(true)
+    setApproveButtonColor(false)
     if (!approveValue) {
-      console.log("approve function")
       busdApproveMasterChef()
     }
     if (approveValue && deposit) {
@@ -173,8 +218,8 @@ const ShowYieldFarmDetails = ({
               w="60%"
               h="50px"
               borderRadius="12px"
-              bg={approveButtonColor ? '#444159' : 'rgba(64, 186, 213, 0.1)'}
-              color={approveButtonColor ? 'rgba(190, 190, 190, 1)' : '#40BAD5'}
+              bg={approveButtonColor ? 'rgba(64, 186, 213, 0.1)' : '#444159'}
+              color={approveButtonColor ? '#40BAD5' : 'rgba(190, 190, 190, 1)'}
               border="0"
               mb="4"
               mr="6"
