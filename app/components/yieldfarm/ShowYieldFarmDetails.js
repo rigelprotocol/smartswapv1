@@ -43,10 +43,8 @@ const ShowYieldFarmDetails = ({
   const useDeposit = async (depositToken) => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
-      // const amount = Web3.utils.toWei(depositToken.toString());
-      // const depAmount = Web3.utils.toWei(depositToken.toStrings())
-      await masterChef.deposit(
-        0, // should be a state value of an array, we will revisit this.
+      await masterChef.stake(
+        // 0, // should be a state value of an array, we will revisit this.
         ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
         {
           from: wallet.address,
@@ -60,8 +58,7 @@ const ShowYieldFarmDetails = ({
   const useWithdrawal = async () => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
-      await masterChef.withdraw(
-        "uint",
+      await masterChef.unStake(
         ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
         {
         from: wallet.address,
