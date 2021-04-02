@@ -46,10 +46,10 @@ const ShowYieldFarmDetails = ({
       const masterChef = await MasterChefContract();
       await masterChef.stake(
         // 0, // should be a state value of an array, we will revisit this.
-        ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
+        ethers.utils.parseUnits(depositToken, 'ether'), // user input from onclick shoild be here...
         {
           from: wallet.address,
-          gasLimit: 150000,
+          gasLimit: 250000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei')
         });
     }
@@ -61,7 +61,7 @@ const ShowYieldFarmDetails = ({
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.unStake(
-        ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
+        ethers.utils.parseUnits(depositToken, 'ether'), // user input from onclick shoild be here...
         {
           from: wallet.address,
           gasLimit: 150000,
@@ -75,9 +75,9 @@ const ShowYieldFarmDetails = ({
   //busd approve masterchef
   const busdApproveMasterChef = async () => {
     if (wallet.signer !== 'signer') {
-      const busd = await BUSDToken();
-      const walletBal = await busd.balanceOf(wallet.address);
-      await busd.approve(SMART_SWAP.MasterChef, walletBal, {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('2', 'gwei')
