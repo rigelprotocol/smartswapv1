@@ -25,6 +25,7 @@ import Web3 from 'web3';
 import styles from '../../styles/yieldFarmdetails.css';
 import { rigelToken, BUSDToken, MasterChefContract } from '../../utils/SwapConnect';
 import { SMART_SWAP } from "../../utils/constants";
+import configureStore from 'configureStore';
 const ShowYieldFarmDetails = ({
   content,
   wallet
@@ -36,8 +37,8 @@ const ShowYieldFarmDetails = ({
   const [approveButtonColor, setApproveButtonColor] = useState(true);
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
-  const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(12345)
-  const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(937839)
+  const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(0)
+  const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(0)
 
   // kindly set onclick of confinm to call this function
   const useDeposit = async (depositToken) => {
@@ -56,15 +57,16 @@ const ShowYieldFarmDetails = ({
 
   //withdrawal of funds
   const useWithdrawal = async () => {
+    console.log("opening usewithdrawal")
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.unStake(
         ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
         {
-        from: wallet.address,
-        gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
-      });
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei')
+        });
     }
   };
 
@@ -97,19 +99,21 @@ const ShowYieldFarmDetails = ({
   };
   const confirmDeposit = () => {
     setDepositValue('Pending Confirmation');
-    alert("clnfirming deposit and calling the useDeposit function and passing it the depositRGPBNBToken state")
     useDeposit(depositRGPBNBToken)
     setDeposit(true)
-    setApproveValue(true);
-    setApproveButtonColor(true)
+    setTimeout(() => setDepositValue("Confirmed"), 5000)
+    // setApproveValue(true);
+    // setApproveButtonColor(true)
   };
   const confirmUnstakeDeposit = () => {
     setUnstakeButtonValue('Pending Confirmation');
-    
+    useWithdrawal()
+    setTimeout(() => setUnstakeButtonValue("confirmed"), 5000)
+
   };
   const setApprove = () => {
-    setApproveValue(!approveValue);
-    setApproveButtonColor(!approveButtonColor)
+    setApproveValue(true);
+    setApproveButtonColor(false)
     if (!approveValue) {
       busdApproveMasterChef()
     }
@@ -260,13 +264,13 @@ const ShowYieldFarmDetails = ({
                 my="2"
                 mx="auto"
                 color={
-                  depositValue === 'Confirm'
+                  depositValue === 'Confirm' || depositValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
-                  depositValue === 'Confirm'
+                  depositValue === 'Confirm' || depositValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
@@ -276,7 +280,7 @@ const ShowYieldFarmDetails = ({
                 padding="10px"
                 height="50px"
                 fontSize="16px"
-                _hover={depositValue === 'Confirm' ? { background: 'rgba(64, 186, 213, 0.15)' } : { background: '#444159' }}
+                _hover={depositValue === 'Confirm' || depositValue === 'Confirmed' ? { background: 'rgba(64, 186, 213, 0.15)' } : { background: '#444159' }}
                 onClick={confirmDeposit}
               >
                 {depositValue}
@@ -354,13 +358,13 @@ const ShowYieldFarmDetails = ({
                 my="2"
                 mx="auto"
                 color={
-                  unstakeButtonValue === 'Confirm'
+                  unstakeButtonValue === 'Confirm' || unstakeButtonValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
-                  unstakeButtonValue === 'Confirm'
+                  unstakeButtonValue === 'Confirm' || unstakeButtonValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
@@ -370,7 +374,7 @@ const ShowYieldFarmDetails = ({
                 padding="10px"
                 height="50px"
                 fontSize="16px"
-                _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
+                _hover={depositValue === 'Confirm' || depositValue === 'Confirmed' ? { background: 'rgba(64, 186, 213, 0.15)' } : { background: '#444159' }}
                 onClick={confirmUnstakeDeposit}
               >
                 {unstakeButtonValue}
