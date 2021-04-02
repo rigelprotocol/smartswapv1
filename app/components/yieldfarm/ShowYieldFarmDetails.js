@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -41,7 +41,7 @@ const ShowYieldFarmDetails = ({
   const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(0)
   const [stakedToken, setStakeToken] = useState("0.00")
   const [rewards, setRewards] = useState("0.000")
-
+  const [isNewUser, setIsNewUser] = useState(true)
   // kindly set onclick of confinm to call this function
   const useDeposit = async (depositToken) => {
     if (wallet.signer !== 'signer') {
@@ -73,18 +73,35 @@ const ShowYieldFarmDetails = ({
   };
 
   useEffect(() => {
+    const checkUser = async (wallet, setIsNewUser) => {
+      const rgp = await rigelToken();
+      const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
+      if (wallet.signer !== 'signer') {
+        console.log("you are signed on")
+        // if (checkAllow == setIsNewUser(true)) {
+        //   // do sometin
+        //   // checkInputData()
+        //   console.log("remove approve btn")
+        // } else {
+        //   //do other
+        //   console.log("add approve btn")
+        // }
+      } else {
+        console.log("youu are not signed in")
+      }
+    };
     const outPut = async () => {
-      const checkInputData = async () => {
-        if (wallet.signer !== 'signer') {
-          const masterChef = await MasterChefContract();
-          setTotalStake(totalStake);
-          const seeTotalStaked = await masterChef.totalStaking().toString();
-          setTotalStake(seeTotalStaked);
-        }
+      if (wallet.signer !== 'signer') {
+        const masterChef = await MasterChefContract();
+        setStakeToken(stakedToken);
+        const seeTotalStaked = await masterChef.totalStaking().toString();
+        setStakeToken(seeTotalStaked);
+        console.log(seeTotalStaked)
       };
     }
     outPut();
-  });
+    checkUser({ address: "0x3552b618dc1c3d5e53818c651bc41ae7a307f767" }, setIsNewUser)
+  }, [wallet]);
 
 
   //USER RGP BALANCE
@@ -97,8 +114,8 @@ const ShowYieldFarmDetails = ({
     }
   }
 
-   //USER BUSD BALANCE
-   const busdUserBalance = async () => {
+  //USER BUSD BALANCE
+  const busdUserBalance = async () => {
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
       const walletBal = await busd.balanceOf(wallet.address);
@@ -205,7 +222,7 @@ const ShowYieldFarmDetails = ({
         <Box width="90%" marginRight="30px">
           <Flex>
             <Text fontSize="30px" marginRight="30px">
-              {content.tokensStaked[1]}
+              {stakedToken}
             </Text>{' '}
             <Text color="gray.400" marginTop="40px">
               {' '}
