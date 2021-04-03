@@ -34,7 +34,7 @@ const ShowYieldFarmDetails = ({
   const [deposit, setDeposit] = useState(false);
   const [unstakeButtonValue, setUnstakeButtonValue] = useState('Confirm');
   const [approveValue, setApproveValue] = useState(false);
-  const [approveButtonColor, setApproveButtonColor] = useState(true);
+  const [approveButtonColor, setApproveButtonColor] = useState(false);
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(0)
@@ -56,7 +56,27 @@ const ShowYieldFarmDetails = ({
         });
     }
   };
+  // show max value
+  const showMaxValue = (earn, input) => {
+    if (input === "deposit") {
+      if (earn === 'BUSD') {
+        alert("setting max value for busd")
+        setDepositRGPBNBToken(9999999)
+      } else if (earn === 'RGP') {
+        alert("setting max value for RGP")
+        setDepositRGPBNBToken(1111111)
+      }
+    } else if (input === "unstake") {
+      if (earn === 'BUSD') {
+        alert("setting max value for busd")
+        setUnstakeRGPBNBToken(9999999)
+      } else if (earn === 'RGP') {
+        alert("setting max value for RGP")
+        setUnstakeRGPBNBToken(1111111)
+      }
+    }
 
+  }
   //withdrawal of funds
   const useWithdrawal = async () => {
     console.log("opening usewithdrawal")
@@ -78,14 +98,18 @@ const ShowYieldFarmDetails = ({
       const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
       if (wallet.signer !== 'signer') {
         console.log("you are signed on")
-        // if (checkAllow == setIsNewUser(true)) {
-        //   // do sometin
-        //   // checkInputData()
-        //   console.log("remove approve btn")
-        // } else {
-        //   //do other
-        //   console.log("add approve btn")
-        // }
+        if (checkAllow == setIsNewUser(true)) {
+          // do sometin
+          // checkInputData()
+          console.log("remove approve btn")
+          setApproveValue(false)
+          setApproveButtonColor(false)
+        } else {
+          //do other
+          console.log("add approve btn")
+          setApproveValue(true)
+          setApproveButtonColor(true)
+        }
       } else {
         console.log("youu are not signed in")
       }
@@ -187,8 +211,6 @@ const ShowYieldFarmDetails = ({
     useDeposit(depositRGPBNBToken)
     setDeposit(true)
     setTimeout(() => setDepositValue("Confirmed"), 5000)
-    // setApproveValue(true);
-    // setApproveButtonColor(true)
   };
   const confirmUnstakeDeposit = () => {
     setUnstakeButtonValue('Pending Confirmation');
@@ -198,7 +220,7 @@ const ShowYieldFarmDetails = ({
   };
   const setApprove = () => {
     setApproveValue(true);
-    setApproveButtonColor(false)
+    setApproveButtonColor(true)
     if (!approveValue) {
       busdApproveMasterChef()
     }
@@ -235,13 +257,13 @@ const ShowYieldFarmDetails = ({
               w="60%"
               h="50px"
               borderRadius="12px"
-              bg={approveButtonColor ? 'rgba(64, 186, 213, 0.1)' : '#444159'}
-              color={approveButtonColor ? '#40BAD5' : 'rgba(190, 190, 190, 1)'}
+              bg={approveButtonColor ? '#444159' : 'rgba(64, 186,213, 0.1)'}
+              color={approveButtonColor ? 'rgba(190, 190, 190, 1)' : '#40BAD5'}
               border="0"
               mb="4"
               mr="6"
               cursor="pointer"
-              _hover={approveButtonColor ? { color: '#423a85' } : { color: "white       " }}
+              _hover={approveButtonColor ? { color: "white       " } : { color: '#423a85' }}
               onClick={setApprove}
             >
               {approveValue ? 'unstake' : 'Approve'}
@@ -331,17 +353,21 @@ const ShowYieldFarmDetails = ({
                 border="0"
               />
               <InputRightElement marginRight="15px">
-                <Text
+                <Button
                   color="rgba(64, 186, 213, 1)"
                   border="none"
                   borderRadius="6px"
                   fontSize="13px"
                   bg="rgba(53, 44, 129, 0.3)"
                   p="1"
-                  mt="22px"
+                  mt="10px"
+                  height="20px"
+                  cursor="pointer"
+                  _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
+                  onClick={() => showMaxValue(content.earn, 'deposit')}
                 >
                   MAX
-                </Text>
+                </Button>
               </InputRightElement>
             </InputGroup>
             <Box mt={4}>
@@ -425,17 +451,21 @@ const ShowYieldFarmDetails = ({
                 border="0"
               />
               <InputRightElement marginRight="15px">
-                <Text
-                  color="#40BAD5"
+                <Button
+                  color="rgba(64, 186, 213, 1)"
                   border="none"
                   borderRadius="6px"
                   fontSize="13px"
-                  bg="#fff"
+                  bg="rgba(53, 44, 129, 0.3)"
                   p="1"
-                  mt="22px"
+                  mt="10px"
+                  height="20px"
+                  cursor="pointer"
+                  _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
+                  onClick={() => showMaxValue(content.earn, 'unstake')}
                 >
                   MAX
-                </Text>
+                </Button>
               </InputRightElement>
             </InputGroup>
             <Box mt={4}>
