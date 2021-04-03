@@ -18,6 +18,7 @@ const InputSelector = props => {
     max,
     onOpen,
     getToAmount,
+    showMaxValue
   } = props;
   tokenList.map((tokens, index) => {
     console.log(tokens);
@@ -45,21 +46,24 @@ const InputSelector = props => {
             alignItems="center"
           >
             {max ? (
-              <Text
-                bg="rgba(64, 186, 213,0.25)"
-                p="5px 10px"
-                rounded="lg"
-                mt="10px"
-                mr="15px"
-                fontSize="sm"
-                color="#72cfe4"
-                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+              <Button
+                color="rgba(64, 186, 213, 1)"
+                border="none"
+                borderRadius="6px"
+                fontSize="13px"
+                bg="rgba(53, 44, 129, 0.3)"
+                p="1"
+                height="20px"
+                cursor="pointer"
+                _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
+                onClick={() => showMaxValue(12111222)}
+                ml="-5"
               >
                 MAX
-              </Text>
+              </Button>
             ) : (
-              <></>
-            )}
+                <></>
+              )}
             <Flex>
               <Menu>
                 <Button
@@ -105,21 +109,24 @@ const InputSelector = props => {
       </Flex>
       <Flex cursor="pointer" justifyContent="space-between" alignItems="center">
         {max ? (
-          <Text
-            bg="rgba(64, 186, 213,0.25)"
-            p="5px 10px"
-            rounded="lg"
+          <Button
+            color="rgba(64, 186, 213, 1)"
+            border="none"
+            borderRadius="6px"
+            fontSize="13px"
+            bg="rgba(53, 44, 129, 0.3)"
+            p="1"
             mt="10px"
-            mr="15px"
-            fontSize="sm"
-            color="#72cfe4"
-            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+            height="20px"
+            cursor="pointer"
+            _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
+            onClick={() => showMaxValue(content.earn, 'deposit')}
           >
             MAX
-          </Text>
+          </Button>
         ) : (
-          <></>
-        )}
+            <></>
+          )}
         <Flex>
           <Menu>
             <Button

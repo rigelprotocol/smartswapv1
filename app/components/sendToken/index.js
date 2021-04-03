@@ -43,7 +43,9 @@ export const Manual = props => {
     setFromAmount(event.target.value)
     getToAmount(event.target.value, 'from');
   };
-
+  const showMaxValue = (val) => {
+    setFromAmount("111111111")
+  }
   const setPathArray = target => setPathObject(path, target);
   const setPathToArray = target => {
     const pathObject = path.find(value => value.hasOwnProperty('toPath'));
@@ -111,7 +113,7 @@ export const Manual = props => {
       if (wallet.signer !== 'signer') {
         // console.log("wallet address", wallet.address)
         // await checkUser();
-        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address); 
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
         await checkUser(wallet, setIsNewUser);
         const bnb = await BUSDToken();
         setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
@@ -144,6 +146,7 @@ export const Manual = props => {
       >
         <SwapSettings />
         <From
+          showMaxValue={showMaxValue}
           fromAmount={fromAmount}
           handleChangeFromAmount={handleChangeFromAmount}
           path={path}
@@ -253,12 +256,12 @@ function setPathObject(path, target) {
 const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-   if (wallet.signer !== 'signer') {
-      if (checkAllow == setIsNewUser(true)) {
-        return setIsNewUser(true)
-      }
-      return setIsNewUser(false)
-   }
+  if (wallet.signer !== 'signer') {
+    if (checkAllow == setIsNewUser(true)) {
+      return setIsNewUser(true)
+    }
+    return setIsNewUser(false)
+  }
   if (ethers.utils.formatEther(checkAllow).toString() > 0) {
     return setIsNewUser(false)
   }

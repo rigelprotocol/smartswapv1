@@ -7,6 +7,10 @@ import { Flex } from '@chakra-ui/layout';
 import PropTypes from 'prop-types';
 import styles from '../../styles/custom-select-box.css';
 import { tokenWhere } from '../../utils/constants';
+import BNBImage from '../../assets/bnb.svg';
+import ETHImage from '../../assets/eth.svg';
+import RGPImage from '../../assets/rgp.svg';
+
 
 const CustomSelectInput = ({
   selectingToken,
@@ -44,9 +48,9 @@ const CustomSelectInput = ({
           >
             <div>
               {' '}
-              {defaultSelectText.img === 'bnb.svg' && <BNBImage mr="3" />}
-              {defaultSelectText.img === 'eth.svg' && <ETHImage mr="3" />}
-              {defaultSelectText.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
+              {defaultSelectText.symbol === 'BUSD' && <BNBImage mr="3" />}
+              {defaultSelectText.symbol === 'WETH' && <ETHImage mr="3" />}
+              {defaultSelectText.symbol === 'RGP' && <RGPImage mr="3" />}{' '}
               {!defaultSelectText.symbol
                 ? defaultSelectText.name
                 : defaultSelectText.symbol}
@@ -61,7 +65,9 @@ const CustomSelectInput = ({
                   key={option.symbol}
                   onClick={handleOptionClick}
                 >
-                  <Img src={option.img} alt={option.symbol} />
+                  {option.symbol === 'BUSD' && <BNBImage mr="3" />}
+                  {option.symbol === 'WETH' && <ETHImage mr="3" />}
+                  {option.symbol === 'RGP' && <RGPImage mr="3" />}{' '}
                   {!option.symbol
                     ? `${option.name}`
                     : `${option.symbol}: `}{' '}
