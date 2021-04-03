@@ -42,13 +42,13 @@ const ShowYieldFarmDetails = ({
   const [stakedToken, setStakeToken] = useState("0.00")
   const [rewards, setRewards] = useState("0.000")
   const [isNewUser, setIsNewUser] = useState(true)
+  
   // kindly set onclick of confinm to call this function
   const useDeposit = async (depositToken) => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.stake(
-        // 0, // should be a state value of an array, we will revisit this.
-        ethers.utils.parseUnits(depositToken, 'ether'), // user input from onclick shoild be here...
+        ethers.utils.parseUnits(depositRGPBNBToken),
         {
           from: wallet.address,
           gasLimit: 250000,
@@ -57,22 +57,36 @@ const ShowYieldFarmDetails = ({
     }
   };
   // show max value
-  const showMaxValue = (earn, input) => {
+  const showMaxValue = async (earn, input) => {
     if (input === "deposit") {
       if (earn === 'BUSD') {
+        const busd = await BUSDToken();
+        const walletBal = await busd.balanceOf(wallet.address);
         alert("setting max value for busd")
-        setDepositRGPBNBToken(9999999)
+        const busdBal = ethers.utils.formatUnits(walletBal)
+        setDepositRGPBNBToken(busdBal)
+        // depositRGPBNBToken
       } else if (earn === 'RGP') {
+        const rgp = await rigelToken();
+        const walletBal = await rgp.balanceOf(wallet.address);
+        // depositRGPBNBToken
         alert("setting max value for RGP")
-        setDepositRGPBNBToken(1111111)
+        const rgpBal = ethers.utils.formatUnits(walletBal)
+        setDepositRGPBNBToken(rgpBal)
       }
     } else if (input === "unstake") {
       if (earn === 'BUSD') {
+        const busd = await BUSDToken();
+        const walletBal = await busd.balanceOf(wallet.address);
         alert("setting max value for busd")
-        setUnstakeRGPBNBToken(9999999)
+        const busdBal = ethers.utils.formatUnits(walletBal)
+        setUnstakeRGPBNBToken(busdBal)
       } else if (earn === 'RGP') {
+        const rgp = await rigelToken();
+        const walletBal = await rgp.balanceOf(wallet.address);
         alert("setting max value for RGP")
-        setUnstakeRGPBNBToken(1111111)
+        const rgpBal = ethers.utils.formatUnits(walletBal)
+        setUnstakeRGPBNBToken(rgpBal)
       }
     }
 
@@ -126,27 +140,6 @@ const ShowYieldFarmDetails = ({
     outPut();
     checkUser({ address: "0x3552b618dc1c3d5e53818c651bc41ae7a307f767" }, setIsNewUser)
   }, [wallet]);
-
-
-  //USER RGP BALANCE
-  const rgpUserBalance = async () => {
-    if (wallet.signer !== 'signer') {
-      const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address);
-      // setRGPBalance(rgpBalance);
-      // setBalance(walletBal);
-    }
-  }
-
-  //USER BUSD BALANCE
-  const busdUserBalance = async () => {
-    if (wallet.signer !== 'signer') {
-      const busd = await BUSDToken();
-      const walletBal = await busd.balanceOf(wallet.address);
-      // setRGPBalance(rgpBalance);
-      // setBalance(walletBal);
-    }
-  }
 
   // kindly set user approve to call this function
   //busd approve masterchef
