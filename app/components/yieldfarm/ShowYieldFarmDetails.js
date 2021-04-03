@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -63,7 +63,7 @@ const ShowYieldFarmDetails = ({
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.unStake(
-        ethers.utils.parseUnits(depositToken, 'ether'), // user input from onclick shoild be here...
+        ethers.utils.parseUnits(unstakeRGPBNBToken, 'ether'), // user input from onclick shoild be here...
         {
           from: wallet.address,
           gasLimit: 150000,
