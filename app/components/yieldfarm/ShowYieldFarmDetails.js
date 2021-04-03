@@ -94,9 +94,9 @@ const ShowYieldFarmDetails = ({
       if (wallet.signer !== 'signer') {
         const masterChef = await MasterChefContract();
         setStakeToken(stakedToken);
-        const seeTotalStaked = await masterChef.totalStaking().toString();
+        const seeTotalStaked = await masterChef.totalStaking({from: wallet.signer}).toString();
         setStakeToken(seeTotalStaked);
-        console.log(seeTotalStaked)
+        console.log("total staked token ",seeTotalStaked)
       };
     }
     outPut();
