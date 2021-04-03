@@ -60,6 +60,7 @@ const SendTo = props => {
           selectedToken={selectedToToken}
           onOpen={onOpen}
           getToAmount={getToAmount}
+          showMaxValue={() => console.log(123)}
         />
       </Box>
 

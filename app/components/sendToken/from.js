@@ -33,6 +33,7 @@ const From = ({
   userWallet,
   getToAmount,
   path,
+  showMaxValue
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -74,6 +75,7 @@ const From = ({
           onOpen={onOpen}
           getToAmount={getToAmount}
           selectedToken={selectedToken}
+          showMaxValue={showMaxValue}
         />
       </Box>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
