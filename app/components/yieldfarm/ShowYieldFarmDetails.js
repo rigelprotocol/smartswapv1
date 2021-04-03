@@ -48,7 +48,8 @@ const ShowYieldFarmDetails = ({
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.stake(
-        ethers.utils.parseUnits(depositRGPBNBToken),
+        Web3.utils.toWei(depositRGPBNBToken.toString()),
+        // ethers.utils.parseUnits(depositRGPBNBToken),
         {
           from: wallet.address,
           gasLimit: 250000,
@@ -97,6 +98,7 @@ const ShowYieldFarmDetails = ({
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.unStake(
+        // Web3.utils.toWei(unstakeRGPBNBToken.toString()),
         ethers.utils.parseUnits(unstakeRGPBNBToken, 'ether'), // user input from onclick shoild be here...
         {
           from: wallet.address,
@@ -132,7 +134,7 @@ const ShowYieldFarmDetails = ({
       if (wallet.signer !== 'signer') {
         const masterChef = await MasterChefContract();
         setStakeToken(stakedToken);
-        const seeTotalStaked = await masterChef.totalStaking({from: wallet.signer}).toString();
+        const seeTotalStaked = await masterChef.totalStaking({from: wallet.signer});
         setStakeToken(seeTotalStaked);
         console.log("total staked token ",seeTotalStaked)
       };
