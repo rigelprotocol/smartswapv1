@@ -7,22 +7,223 @@
  *
  */
 
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
+import Web3 from 'web3';
 import { connect } from 'react-redux';
-import { Box, Flex } from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/button';
-import { Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/layout';
+import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
+import Index from 'components/liquidity/index';
+import AddLiquidity from 'components/liquidity/addLiquidity';
+// import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
+import { showErrorMessage } from 'containers/NoticeProvider/actions';
+import { router, rigelToken, BUSDToken } from '../../utils/SwapConnect';
+import { tokenList, tokenWhere } from '../../utils/constants';
+import { LIQUIDITYTABS } from "./constants";
+import { SMART_SWAP } from './../../utils/constants';
+// 35,200
+export function LiquidityPage(props) {
+  const { wallet, wallet_props } = props.wallet;
+  const [fromValue, setFromValue] = useState('');
+  const [toValue, setToValue] = useState('');
+  const [selectingToken, setSelectingToken] = useState(tokenList);
+  const [fromSelectedToken, setFromSelectedToken] = useState(tokenWhere('rgp'))
+  const [fromAddress, setFromAddress] = useState(fromSelectedToken.address)
+  const [toAddress, setToAddress] = useState('')
+  const [toSelectedToken, setToSelectedToken] = useState({})
+  const [selectedValue, setSelectedValue] = useState({
+    name: 'Select Token',
+    img: '',
+  });
+  const [liquidities, setLiquidities] = useState([])
+  const [liquidityTab, setLiquidityTab] = useState("INDEX")
+  const [popupText, setPopupText] = useState('Approving Account');
+  const [displayButton, setDisplayButton] = useState(false);
+  const [approveBNBPopup, setApproveBNBPopup] = useState(false);
+  const [buttonValue, setButtonValue] = useState('Invalid pair');
+  const [openSupplyButton, setOpenSupplyButton] = useState(true);
+  useEffect(() => {
+    displayBNBbutton();
+    calculateToValue();
+    changeButtonValue();
+  }, [fromValue, selectedValue, liquidities]);
+  const modal1Disclosure = useDisclosure();
+  const modal2Disclosure = useDisclosure();
+  const modal3Disclosure = useDisclosure();
 
-import From from 'components/liquidity/from';
-import To from 'components/liquidity/to';
-import Question from '../../assets/question.svg';
-import Plus from '../../assets/plus-c.svg';
-import ArrowLeft from '../../assets/arrow-left.svg';
+  function addDataCloseInputs(data) {
+    setLiquidities([...liquidities, data])
+    // close all opened values
+    setApproveBNBPopup(false)
+    setFromValue(0)
+    calculateToValue()
+    setOpenSupplyButton(true)
+    setPopupText(`Approve`)
+    setButtonValue("Invalid pair")
+    setDisplayButton(false)
+    setSelectedValue({
+      name: 'Select a token',
+      img: '',
+    })
+  }
 
-export function LiquidityPage() {
-  const [liquidity, setLiquidity] = useState(true);
+  const addingLiquidity = async () => {
+    if (wallet.signer !== 'signer') {
+      try {
+        const rout = await router();
+        const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+        const amountADesired = Web3.utils.toWei(fromValue.toString())
+        const amountBDesired = Web3.utils.toWei(toValue.toString())
+        const amountAMin = Web3.utils.toWei((amountADesired / amountBDesired).toString())
+        const amountBMin = Web3.utils.toWei((amountBDesired / amountADesired).toString())
+        await rout.addLiquidity(
+          fromAddress,
+          toAddress,
+          amountADesired,
+          amountBDesired,
+          amountAMin,
+          amountBMin,
+          wallet.address,
+          deadLine,
+          {
+            from: wallet.address,
+          },
+        );
+      } catch (e) {
+        props.showErrorMessage(e)
+      }
+    }
+
+  };
+
+  const removingLiquidity = async () => {
+    if (wallet.signer !== 'signer') {
+      const rout = await router();
+      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+      await rout.removeLiquidity(
+        // for the tokens kindly note that they will be selected from the drop down.
+        // instance user select rgp for tokenA and bnb for tokenB so the token should be addressed to the listed token in TOKENS_CONTRACT
+        tokenA,
+        tokenB,
+        uintLiquidity, // input from max
+        // not to be shown in FE
+        amountAMin, // inout amount of amountADesired / input amount of amountBDesired
+        amountBMin, // inout amount of amountADesired / input amount of amountBDesired
+        wallet.signer, // the recipient wallet address
+        deadLine,
+        {
+          from: wallet.signer,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  const open = () => {
+    modal1Disclosure.onOpen();
+  };
+
+  const closeModal1 = () => {
+    modal1Disclosure.onClose();
+  };
+  const closeModal3 = () => {
+    modal3Disclosure.onClose();
+  };
+  // open the last modal
+  const openModal3 = () => {
+    modal3Disclosure.onOpen();
+    // close all modal one by one
+    setTimeout(() => {
+      closeModal3();
+    }, 5000);
+    setTimeout(() => {
+      closeModal2();
+    }, 6000);
+    setTimeout(() => {
+      closeModal1();
+      setPopupText(`Add ${fromValue} RGP and ${toValue} ${selectedValue.name}`);
+      setApproveBNBPopup(true);
+    }, 7000);
+    setTimeout(() => {
+      setLiquidityTab("INDEX")
+      // add transaction to liquidity array and fix all opened input
+
+      const data = {
+        id: 1,
+        imageFrom: '<BNBImage/>',
+        imageTo: '<RGPImage/>',
+        from: 'BNB',
+        to: 'RGP',
+        pooledRGP: 1,
+        pooledBNB: '1.89849849',
+        poolToken: '0.838383',
+        poolShare: '0.00%',
+      }
+      addDataCloseInputs(data)
+    }, 12000)
+  };
+  const confirmingSupply = () => {
+    addingLiquidity()
+  };
+
+  const back = () => {
+    setLiquidityTab("INDEX")
+  }
+  const addLiquidityPage = () => {
+    setLiquidityTab("ADDLIQUIDITY")
+  }
+  const closeModal2 = () => {
+    modal2Disclosure.onClose();
+  };
+  function displayBNBbutton() {
+    if (fromValue !== '' && selectedValue.id !== 0) {
+      setDisplayButton(true);
+    } else {
+      setDisplayButton(false);
+    }
+  }
+  function changeButtonValue() {
+    if (!selectedValue.symbol) {
+      setButtonValue('Invalid pair');
+    } else if (selectedValue.symbol && fromValue > 0) {
+      setButtonValue('Supply');
+    } else {
+      setButtonValue('Enter an Amount');
+    }
+  }
+  async function calculateToValue() {
+    if (typeof wallet.signer !== 'string' && toAddress !== '' && fromValue > 0) {
+      try {
+        const rout = await router(wallet.signer)
+        const fromPath = ethers.utils.getAddress(fromAddress);
+        const toPath = ethers.utils.getAddress(toAddress);
+        const amount = await rout.getAmountsOut(
+          Web3.utils.toWei(fromValue.toString()),
+          [fromPath, toPath]
+        );
+        return setToValue(
+          ethers.utils.formatEther(amount[1]).toString())
+      } catch (e) {
+        props.showErrorMessage(e)
+      }
+    }
+    return false;
+  }
+
+  async function approveBNB() {
+    setApproveBNBPopup(true);
+    if (wallet.signer !== 'signer') {
+      const busd = await BUSDToken();
+      const walletBal = await busd.balanceOf(wallet.address);
+      await busd.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+        from: wallet.address,
+      });
+    }
+    setApproveBNBPopup(false);
+    setOpenSupplyButton(false);
+  }
 
   return (
     <div>
@@ -35,208 +236,57 @@ export function LiquidityPage() {
           rounded="lg"
           mb={4}
         >
-          {liquidity ? (
-            <Box
-              bg="#120136"
-              minHeight="50vh"
-              w={['100%', '100%', '29.50%', '29.5%']}
-              rounded="lg"
-            >
-              <Box mt={5} p={5}>
-                <Button
-                  d="block"
-                  w="100%"
-                  h="50px"
-                  color="#40BAD5"
-                  border="none"
-                  fontWeight="regular"
-                  fontSize="lg"
-                  cursor="pointer"
-                  rounded="2xl"
-                  bg="rgba(64, 186, 213,0.25)"
-                  borderColor="#40BAD5"
-                  _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-                  _active={{ outline: '#29235E', background: '#29235E' }}
-                  onClick={() => setLiquidity(false)}
-                >
-                  Add Liquidity
-                </Button>
-              </Box>
-
-              <Flex
-                mx={5}
-                justifyContent="space-between"
-                alignItems="center"
-                rounded="lg"
-                my={4}
-              >
-                <Text color="gray.200" fontSize="md">
-                  Your liquidity
-                </Text>
-                <Question />
-              </Flex>
-
-              <Flex
-                color="#fff"
-                bg="#29235E"
-                h="100px"
-                mb="10px"
-                justifyContent="center"
-                alignItems="center"
-                px={4}
-                mx={5}
-                rounded="2xl"
-              >
-                <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-                  No Liquidity Found.
-                </Text>
-              </Flex>
-
-              <Flex justifyContent="center" mx={5} mb={4}>
-                <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-                  Don't see a pool you joined?
-                </Text>
-                <Text fontSize="sm" color="blue.300" ml={3} cursor="pointer">
-                  Import it
-                </Text>
-              </Flex>
-            </Box>
-          ) : (
-            <Box
-              bg="#120136"
-              minHeight="50vh"
-              w={['100%', '100%', '29.50%', '29.5%']}
-              rounded="lg"
-            >
-              <Flex justifyContent="space-between" alignItems="center" px={4}>
-                <ArrowLeft
-                  onClick={() => setLiquidity(true)}
-                  cursor="pointer"
-                />
-                <Text color="gray.200">Add Liquidity</Text>
-                <Question />
-              </Flex>
-
-              <From />
-              <Flex justifyContent="center" my={3}>
-                <Plus />
-              </Flex>
-              <To />
-
-              <Box
-                color="#fff"
-                bg="#29235E"
-                mt="10px"
-                justifyContent="space-between"
-                py={1}
-                px={4}
-                mx={4}
-                rounded="2xl"
-              >
-                <Text fontSize="sm" color="gray.200" my={3}>
-                  Prices and pool share
-                </Text>
-                <Flex justifyContent="space-between" px={2}>
-                  <Box>
-                    <Text
-                      fontSize="sm"
-                      color="gray.200"
-                      my={3}
-                      textAlign="center"
-                    >
-                      497.209
-                    </Text>
-                    <Text fontSize="sm" color="gray.500" my={3}>
-                      RGP per BNB
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Text
-                      fontSize="sm"
-                      color="gray.200"
-                      my={3}
-                      textAlign="center"
-                    >
-                      0.00201078
-                    </Text>
-                    <Text fontSize="sm" color="gray.500" my={3}>
-                      ETH per DAI
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Text
-                      fontSize="sm"
-                      color="gray.200"
-                      my={3}
-                      textAlign="center"
-                    >
-                      0%
-                    </Text>
-                    <Text fontSize="sm" color="gray.500" my={3}>
-                      Share of Pool
-                    </Text>
-                  </Box>
-                </Flex>
-              </Box>
-              <Box mt={5} p={5}>
-                {/* <Button */}
-                {/*    d="block" */}
-                {/*    w="100%" */}
-                {/*    h="50px" */}
-                {/*    color="#BEBEBE" */}
-                {/*    border="none" */}
-                {/*    fontWeight="regular" */}
-                {/*    fontSize="lg" */}
-                {/*    cursor="pointer" */}
-                {/*    rounded="2xl" */}
-                {/*    bg="#444159" */}
-                {/*    borderColor="#40BAD5" */}
-                {/*    _hover={{ background: 'rgba(64, 186, 213,0.35)' }} */}
-                {/*    _active={{ outline: '#29235E', background: '#29235E' }} */}
-                {/* > */}
-                {/*    Invalid Pair */}
-                {/* </Button> */}
-                <Button
-                  d="block"
-                  w="100%"
-                  h="50px"
-                  color="#BEBEBE"
-                  border="none"
-                  fontWeight="regular"
-                  fontSize="lg"
-                  cursor="pointer"
-                  rounded="2xl"
-                  bg="#444159"
-                  borderColor="#40BAD5"
-                  _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-                  _active={{ outline: '#29235E', background: '#29235E' }}
-                >
-                  Enter an amount
-                </Button>
-              </Box>
-            </Box>
-          )}
+          {liquidityTab === LIQUIDITYTABS.INDEX &&
+            <Index
+              liquidities={liquidities}
+              addLiquidityPage={addLiquidityPage}
+            />
+          }
+          {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY &&
+            <AddLiquidity
+              back={back}
+              open={open}
+              wallet={wallet}
+              toValue={toValue}
+              fromValue={fromValue}
+              popupText={popupText}
+              approveBNB={approveBNB}
+              openModal3={openModal3}
+              closeModal1={closeModal1}
+              closeModal2={closeModal2}
+              closeModal3={closeModal3}
+              buttonValue={buttonValue}
+              setToAddress={setToAddress}
+              setFromValue={setFromValue}
+              displayButton={displayButton}
+              selectedValue={selectedValue}
+              setFromAddress={setFromAddress}
+              selectingToken={selectingToken}
+              toSelectedToken={toSelectedToken}
+              approveBNBPopup={approveBNBPopup}
+              displayBNBbutton={displayBNBbutton}
+              setSelectedValue={setSelectedValue}
+              modal1Disclosure={modal1Disclosure}
+              modal2Disclosure={modal2Disclosure}
+              modal3Disclosure={modal3Disclosure}
+              openSupplyButton={openSupplyButton}
+              confirmingSupply={confirmingSupply}
+              fromSelectedToken={fromSelectedToken}
+              setToSelectedToken={setToSelectedToken}
+              setOpenSupplyButton={setOpenSupplyButton}
+              setFromSelectedToken={setFromSelectedToken}
+            />
+          }
         </Flex>
       </Layout>
     </div>
   );
 }
 
-LiquidityPage.propTypes = {
-  // eslint-disable-next-line react/no-unused-prop-types
-  dispatch: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = ({ state }) => ({ state });
-
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
-}
-
+const mapStateToProps = ({ wallet }) => ({ wallet })
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  { showErrorMessage },
 )(LiquidityPage);

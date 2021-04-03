@@ -11,7 +11,8 @@ import { Box, Flex, Text } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
 
-export function FarmingPage({ farming }) {
+export function FarmingPage(props) {
+  const { wallet, wallet_props } = props.wallet;
   return (
     <div>
       <Layout title="Farming Page">
@@ -46,8 +47,8 @@ export function FarmingPage({ farming }) {
                 <Text>Total Liquidity</Text>
                 <Text />
               </Flex>
-              {farming.contents.map(content => (
-                <YieldFarm content={content} key={content.id} />
+              {props.farming.contents.map(content => (
+                <YieldFarm content={content} key={content.id} wallet={wallet} />
               ))}
             </Box>
           </Box>
@@ -62,9 +63,10 @@ FarmingPage.propTypes = {
   farmingPage: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = ({ farming }) => {
+const mapStateToProps = ({ farming, wallet }) => {
   return {
     farming,
+    wallet
   };
 };
 

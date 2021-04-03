@@ -13,6 +13,7 @@ const { wallet } = store.getState().wallet;
 let { signer } = wallet;
 if (typeof signer === 'string') {
   if (window.ethereum && window.ethereum !== 'undefined') {
+    console.log(typeof signer, window.ethereum);
     signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
   }
 }
@@ -23,22 +24,22 @@ export const router = async walletSigner => {
   return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, signer);
 };
 
-// Factory smartContract for getting and creating pairs
+// masterChef contract for farming...
+export const MasterChefContract = async walletSigner => {
+  const chefAddress = '0x801f01287Fb235B1a849725b867847676d9Ad8ED';
+  return new ethers.Contract(chefAddress, masterChef, signer);
+};
+
+//Factory smartContract for getting and creating pairs
 export const SmartFactory = async () => {
   const SmartFactoryAddress = '0xc33b4cB9eAFE64BEa3c96e723bEBdB961d462288';
   return new ethers.Contract(SmartFactoryAddress, SmartSwapFactoryForSwap, signer);
-};
-
-export const MasterChefContract = async () => {
-  const MasterChefAddress = '0xc33b4cB9eAFE64BEa3c96e723bEBdB961d462288';
-  return new ethers.Contract(MasterChefAddress, masterChef, signer);
 };
 
 // rigel token
 export const rigelToken = async () => {
   const rgpContractAddress = '0x80278a0cf536e568a76425b67fb3931dca21535c';
   return new ethers.Contract(rgpContractAddress, RigelToken, signer);
-  // console.log("get my rgp bala: ", ethers.utils.formatEther(await rgpbab.balanceOf("0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E"))).toString();
 };
 
 // BUSD token
@@ -53,16 +54,3 @@ export const WETH = async () => {
   return new ethers.Contract(WETH9Address, WETH9, signer);
 };
 
-// const busdBal = await busdToken.balanceOf(
-//   '0x2289Bc372bc6a46DD3eBC070FC5B7b7A49597A4E',
-// );
-// const bal = ethers.utils.formatEther(busdBal).toString();
-// console.log('BUSDBalance: ', bal);
-
-// const rigelBal = await rgpToken.balanceOf();
-// const balance = ethers.utils.formatEther(rigelBal).toString();
-
-// await WETH9Contract.totalSupply();
-// const WETHbal = ethers.utils.formatEther(WBal).toString();
-// console.log('WETH9 ABI: ', WETH9_ABI);
-// console.log('WETH9 Bal: ', WETHbal);

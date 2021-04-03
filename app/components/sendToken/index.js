@@ -25,7 +25,7 @@ export const Manual = props => {
   const [fromAmount, setFromAmount] = useState('');
   const [path, setPath] = useState([]);
   const [showBox, setShowBox] = useState(false);
-  const [isNewUser, setIsNewuser] = useState(true)
+  const [isNewUser, setIsNewUser] = useState(true)
   const [amountIn, setAmountIn] = useState('0.0');
   const [boxMessage, setBoxMessage] = useState('');
   const [rgpBalance, setRGPBalance] = useState('0.0');
@@ -102,19 +102,18 @@ export const Manual = props => {
         notify({ title: 'Transaction Message', body: e.message, type: 'error' })
       }
       console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
-        "From: ", bnb, "To: ", rgp, "Recipient: ", wallet.address,
+        "From: ", fromPath, "To: ", toPath, "Recipient: ", wallet.address,
         'Deadline: ', deadL);
     }
   };
-
-  //get user balance
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
+        // console.log("wallet address", wallet.address)
         // await checkUser();
-        console.log("wallet address is: ",wallet.address)
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address); 
+        await checkUser(wallet, setIsNewUser);
         const bnb = await BUSDToken();
-        console.log(wallet.address)
         setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
         setETHBalance(wallet ? wallet.balance : '0.0');
         setBUSDBalance(
@@ -134,7 +133,6 @@ export const Manual = props => {
       type: 'info'
     })
   }
-
   return (
     <div>
       <Box
@@ -199,8 +197,8 @@ export const Manual = props => {
                     ? sendNotice('Select the designated token')
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? swapTokenForTokens() 
-                      : ''
+                      ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
+                      : null
 
             }}
           >
@@ -212,8 +210,9 @@ export const Manual = props => {
                   ? 'Click Select a Token'
                   : typeof wallet.signer === 'object' &&
                     fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                    ? 'swap Amount'
-                    : 'Swap Amount'}
+                    ? ((isNewUser) ? 'Approve Transaction' : 'Swap Tokens')
+                    : ''
+            }
           </Button>
         </Box>
       </Box>
@@ -236,7 +235,8 @@ async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox
         Web3.utils.toWei(askAmount.toString()),
         (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
       );
-      return (field != 'to') ? setAmountIn(ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+      return (field != 'to') ? setAmountIn(
+        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setShowBox(true);
       setBoxMessage(e.message);
@@ -250,12 +250,17 @@ function setPathObject(path, target) {
   else path.push({ fromPath: target });
 }
 
-//subjected
 const checkUser = async (wallet, setIsNewUser) => {
   const rgp = await rigelToken();
   const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-  if (checkAllow > 0) {
-    return setIsNewUser(true)
+   if (wallet.signer !== 'signer') {
+      if (checkAllow == setIsNewUser(true)) {
+        return setIsNewUser(true)
+      }
+      return setIsNewUser(false)
+   }
+  if (ethers.utils.formatEther(checkAllow).toString() > 0) {
+    return setIsNewUser(false)
   }
-  return setIsNewUser(false)
+  return setIsNewUser(true)
 };

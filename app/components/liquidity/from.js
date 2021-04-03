@@ -1,13 +1,43 @@
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import RGPImage from "../../assets/rgp.svg";
-import React from 'react'
-import { Menu } from "@chakra-ui/menu";
-import { Button } from "@chakra-ui/button";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+/* eslint-disable no-unused-vars */
+import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Input, Spinner } from '@chakra-ui/react';
+import { Menu } from '@chakra-ui/menu';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
+import CustomSelectInput from './customSelectInput';
 
-
-const Manual = () => {
-
+const LiquidityFromBox = ({
+  wallet,
+  selectingToken,
+  fromValue,
+  setFromValue,
+  setFromAddress,
+  fromSelectedToken,
+  setFromSelectedToken,
+}) => {
+  const [balance, setBalance] = useState('');
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    (async () => {
+      if (typeof fromSelectedToken.abi !== 'undefined') {
+        try {
+          setLoading(true);
+          setBalance(
+            await getAddressTokenBalance(
+              wallet.address,
+              fromSelectedToken.address,
+              fromSelectedToken.abi,
+              wallet.signer,
+            ),
+          );
+          setLoading(false);
+        } catch (e) {
+          setLoading(false);
+        }
+      }
+    })();
+  }, [fromSelectedToken]);
   return (
     <>
       <Box
@@ -26,47 +56,57 @@ const Manual = () => {
             From
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-            Balance: 2,632.34
-                    </Text>
+            Balance: {` `}{' '}
+            {loading ? (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="sm"
+              />
+            ) : (
+              balance
+            )}
+          </Text>
         </Flex>
         <Flex justifyContent="space-between">
-          <Text fontSize="lg" color=" rgba(255, 255, 255,0.25)">
-            0.0
-          </Text>
-          <Flex
-            cursor="pointer"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-
-            <Flex alignItems="center">
-              <RGPImage />
-              <Menu>
-                <Button
-
-                  border="0px"
-                  h="30px"
-                  fontWeight="regular"
-                  fontSize="16px"
-                  cursor="pointer"
-                  bg='#29235E'
-                  marginBottom="5px"
-                  color="white"
-                  _hover={{ background: '#72cfe4', color: '#29235E' }}
-                  rightIcon={<ChevronDownIcon />}
-                >
-                  RGP
-
-                </Button>
-              </Menu>
-            </Flex>
+          <Input
+            type="number"
+            id="input__field"
+            placeholder="0.0"
+            value={fromValue}
+            border="1px solid rgba(255, 255, 255,0.25)"
+            fontSize="lg"
+            color="rgb(255, 255, 255)"
+            onChange={event => setFromValue(event.target.value)}
+          />
+          <Flex alignItems="center">
+            <Menu>
+              <CustomSelectInput
+                selectingToken={selectingToken}
+                defaultSelect={1}
+                selectedToken={() => '.'}
+                setSelectedToken={obj => {
+                  setFromSelectedToken(obj);
+                  setFromAddress(obj.address);
+                }}
+              />
+            </Menu>
           </Flex>
         </Flex>
-
       </Box>
     </>
   );
-
+};
+LiquidityFromBox.propTypes = {
+  wallet: PropTypes.object,
+  selectingToken: PropTypes.array.isRequired,
+  fromValue: PropTypes.string.isRequired,
+  setFromValue: PropTypes.func.isRequired,
+  fromSelectedToken: PropTypes.object.isRequired,
+  setFromAddress: PropTypes.func.isRequired,
+  setFromSelectedToken: PropTypes.func.isRequired,
 };
 
-export default Manual;
+export default LiquidityFromBox;

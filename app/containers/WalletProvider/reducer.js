@@ -9,6 +9,7 @@ import {
   WALLET_CONNECTED,
   WALLET_PROPS,
   LOADING_WALLET,
+  CLEAR_WALLET,
   CLOSE_LOADING_WALLET,
 } from './constants';
 
@@ -43,6 +44,15 @@ const walletProviderReducer = (state = initialState, action) =>
         break;
       case WALLET_PROPS:
         draft.wallet_props.push(action.payload);
+        break;
+      case CLEAR_WALLET:
+        draft.wallet = {
+          balance: 0,
+          address: '0x',
+          provider: 'provider',
+          signer: 'signer',
+          chainId: 'chainId',
+        };
         break;
       default:
         return state;

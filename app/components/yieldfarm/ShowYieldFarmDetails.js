@@ -20,29 +20,85 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
-
+import { ethers } from 'ethers';
+import Web3 from 'web3';
 import styles from '../../styles/yieldFarmdetails.css';
-const ShowYieldFarmDetails = ({ content }) => {
-  const [buttonValue, setButtonValue] = useState('Confirm');
+import { rigelToken, BUSDToken, MasterChefContract } from '../../utils/SwapConnect';
+import { SMART_SWAP } from "../../utils/constants";
+const ShowYieldFarmDetails = ({
+  content,
+  wallet
+}) => {
+  const [depositValue, setDepositValue] = useState('Confirm');
+  const [deposit, setDeposit] = useState(false);
+  const [unstakeButtonValue, setUnstakeButtonValue] = useState('Confirm');
   const [approveValue, setApproveValue] = useState(false);
+  const [approveButtonColor, setApproveButtonColor] = useState(true);
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
+  const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(12345)
+  const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(937839)
+
+  // kindly set onclick of confinm to call this function
+  const useDeposit = async (depositToken) => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      // const amount = Web3.utils.toWei(depositToken.toString());
+      // const depAmount = Web3.utils.toWei(depositToken.toStrings())
+      await masterChef.deposit(
+        0, // should be a state value of an array, we will revisit this.
+        ethers.utils.parseUnits(depositToken, 'gwei'), // user input from onclick shoild be here...
+        {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei')
+        });
+    }
+  };
+  // kindly set user approve to call this function
+  //busd approve masterchef
+  const busdApproveMasterChef = async () => {
+    if (wallet.signer !== 'signer') {
+      const busd = await BUSDToken();
+      const walletBal = await busd.balanceOf(wallet.address);
+      await busd.approve(SMART_SWAP.MasterChef, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('2', 'gwei')
+      });
+    }
+  };
+
   const open = () => {
-    modal1Disclosure.onOpen();
+    if (approveValue) {
+      modal1Disclosure.onOpen();
+
+    }
   };
   const close = () => {
     modal1Disclosure.onClose();
-    setApproveValue(true);
   };
   const closeModal = () => {
     modal2Disclosure.onClose();
   };
   const confirmDeposit = () => {
-    setButtonValue('Pending Confirmation');
+    setDepositValue('Pending Confirmation');
+    alert("clnfirming deposit and calling the useDeposit function and passing it the depositRGPBNBToken state")
+    useDeposit(depositRGPBNBToken)
+    setDeposit(true)
+    setApproveValue(true);
+    setApproveButtonColor(true)
+  };
+  const confirmUnstakeDeposit = () => {
+    setUnstakeButtonValue('Pending Confirmation');
   };
   const setApprove = () => {
     setApproveValue(!approveValue);
-    if (approveValue === true) {
+    setApproveButtonColor(!approveButtonColor)
+    if (!approveValue) {
+      busdApproveMasterChef()
+    }
+    if (approveValue && deposit) {
       modal2Disclosure.onOpen();
     }
   };
@@ -75,16 +131,16 @@ const ShowYieldFarmDetails = ({ content }) => {
               w="60%"
               h="50px"
               borderRadius="12px"
-              bg={approveValue ? '#444159' : 'rgba(64, 186, 213, 0.1)'}
-              color={approveValue ? 'rgba(190, 190, 190, 1)' : '#40BAD5'}
+              bg={approveButtonColor ? 'rgba(64, 186, 213, 0.1)' : '#444159'}
+              color={approveButtonColor ? '#40BAD5' : 'rgba(190, 190, 190, 1)'}
               border="0"
               mb="4"
               mr="6"
               cursor="pointer"
-              _hover={{ color: '#423a85' }}
+              _hover={approveButtonColor ? { color: '#423a85' } : { color: "white       " }}
               onClick={setApprove}
             >
-              {approveValue === true ? 'Unstake' : 'Approve'}
+              {approveValue ? 'unstake' : 'Approve'}
             </Button>
             <Square
               size="40px"
@@ -94,7 +150,7 @@ const ShowYieldFarmDetails = ({ content }) => {
               marginTop="5px"
               bg="rgba(64, 186, 213, 0.1);"
             >
-              <AddIcon onClick={open} />
+              <AddIcon onClick={open} disabled={!approveValue} />
             </Square>
           </Flex>
         </Box>
@@ -162,12 +218,12 @@ const ShowYieldFarmDetails = ({ content }) => {
                 color="#fff"
                 placeholder="Available Token"
                 bg="#29235E"
-                disabled
                 opacity="0.5"
                 h="50px"
                 borderRadius="20px"
                 name="availableToken"
-                value={content.availableToken}
+                value={depositRGPBNBToken}
+                onChange={(e) => setDepositRGPBNBToken(e.target.value)}
                 border="0"
               />
               <InputRightElement marginRight="15px">
@@ -189,13 +245,13 @@ const ShowYieldFarmDetails = ({ content }) => {
                 my="2"
                 mx="auto"
                 color={
-                  buttonValue === 'Confirm'
+                  depositValue === 'Confirm'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
-                  buttonValue === 'Confirm'
+                  depositValue === 'Confirm'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
@@ -205,10 +261,10 @@ const ShowYieldFarmDetails = ({ content }) => {
                 padding="10px"
                 height="50px"
                 fontSize="16px"
-                _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
+                _hover={depositValue === 'Confirm' ? { background: 'rgba(64, 186, 213, 0.15)' } : { background: '#444159' }}
                 onClick={confirmDeposit}
               >
-                {buttonValue}
+                {depositValue}
               </Button>
               <Button
                 my="2"
@@ -256,12 +312,12 @@ const ShowYieldFarmDetails = ({ content }) => {
                 color="#fff"
                 placeholder="Available Token"
                 bg="#29235E"
-                disabled
                 opacity="0.5"
                 h="50px"
                 borderRadius="20px"
                 name="availableToken"
-                value={content.availableToken}
+                value={unstakeRGPBNBToken}
+                onChange={(e) => setUnstakeRGPBNBToken(e.target.value)}
                 border="0"
               />
               <InputRightElement marginRight="15px">
@@ -283,13 +339,13 @@ const ShowYieldFarmDetails = ({ content }) => {
                 my="2"
                 mx="auto"
                 color={
-                  buttonValue === 'Confirm'
+                  unstakeButtonValue === 'Confirm'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
-                  buttonValue === 'Confirm'
+                  unstakeButtonValue === 'Confirm'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
@@ -300,9 +356,9 @@ const ShowYieldFarmDetails = ({ content }) => {
                 height="50px"
                 fontSize="16px"
                 _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-                onClick={confirmDeposit}
+                onClick={confirmUnstakeDeposit}
               >
-                {buttonValue}
+                {unstakeButtonValue}
               </Button>
               <Button
                 my="2"

@@ -8,7 +8,7 @@ import { useMediaQuery } from '@chakra-ui/react';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ETHImage from '../../assets/eth.svg';
-import { TOKENS } from '../../utils/constants';
+import { tokenList, TOKENS } from '../../utils/constants';
 
 const InputSelector = props => {
   const {
@@ -19,10 +19,14 @@ const InputSelector = props => {
     onOpen,
     getToAmount,
   } = props;
+  tokenList.map((tokens, index) => {
+    console.log(tokens);
+  });
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   if (isMobileDevice) {
     return (
       <>
+        <img src={tokenList[0].icon} alt="" />
         <Flex justifyContent="space-between">
           <Input
             placeholder="0.0"
