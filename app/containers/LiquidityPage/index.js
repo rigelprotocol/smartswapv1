@@ -16,7 +16,7 @@ import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
-// import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
+import SwapSettings from "../../components/sendToken/SwapSettings"
 import { showErrorMessage } from 'containers/NoticeProvider/actions';
 import { router, rigelToken, BUSDToken } from '../../utils/SwapConnect';
 import { tokenList, tokenWhere } from '../../utils/constants';
@@ -43,6 +43,7 @@ export function LiquidityPage(props) {
   const [approveBNBPopup, setApproveBNBPopup] = useState(false);
   const [buttonValue, setButtonValue] = useState('Invalid pair');
   const [openSupplyButton, setOpenSupplyButton] = useState(true);
+  const [transactionDeadline, setTransactionDeadline] = useState("1234")
   useEffect(() => {
     displayBNBbutton();
     calculateToValue();
@@ -274,7 +275,12 @@ export function LiquidityPage(props) {
               setFromSelectedToken={setFromSelectedToken}
             />
           }
+
         </Flex>
+        <SwapSettings
+          transactionDeadline={transactionDeadline}
+          setTransactionDeadline={setTransactionDeadline}
+        />
       </Layout>
     </div>
   );

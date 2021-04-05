@@ -7,7 +7,7 @@
  * contain code that should be seen on all pages. (e.g. navigation bar)
  *
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { ThemeProvider, theme } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
@@ -20,7 +20,7 @@ import MarginTradingPage from 'containers/MarginTradingPage/Loadable';
 import LiquidityPage from 'containers/LiquidityPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Splash from 'components/splash/index';
-
+import { Context } from "../../context"
 import '../../styles/globals.css';
 import Toast from '../../components/Toast';
 import { reConnect } from '../WalletProvider/actions';
@@ -51,18 +51,25 @@ const App = props => {
     listener(wallet, props);
     reConnector(props);
   }, [wallet]);
+  const [connected, setConnected] = useState("hellow thus us");
   return (
     <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
         <Toast {...props} />
-        <Switch>
-          <Route exact path="/" component={Splash} />
-          <Route exact path="/farming" component={FarmingPage} />
-          <Route exact path="/liquidity" component={LiquidityPage} />
-          <Route exact path="/smart-swapping" component={HomePage} />
-          <Route exact path="/margin-trading" component={MarginTradingPage} />
-          <Route component={NotFoundPage} />
-        </Switch>
+        <Context.Provider value={{
+          connected,
+          setConnected
+        }}>
+          <Switch>
+            <Route exact path="/" component={Splash} />
+            <Route exact path="/farming" component={FarmingPage} />
+            <Route exact path="/liquidity" component={LiquidityPage} />
+            <Route exact path="/smart-swapping" component={HomePage} />
+            <Route exact path="/margin-trading" component={MarginTradingPage} />
+            <Route component={NotFoundPage} />
+          </Switch>
+
+        </Context.Provider>
       </ThemeProvider>
     </ToastProvider>
   );

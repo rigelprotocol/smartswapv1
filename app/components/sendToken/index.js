@@ -33,6 +33,7 @@ export const Manual = props => {
   const [busdBalance, setBUSDBalance] = useState('0.0');
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
+  const [transactionDeadline, setTransactionDeadline] = useState("1234")
 
   //handling change ev
   const handleChangeToAmount = (event) => {
@@ -144,7 +145,10 @@ export const Manual = props => {
         p={5}
         rounded="2xl"
       >
-        <SwapSettings />
+        <SwapSettings
+          transactionDeadline={transactionDeadline}
+          setTransactionDeadline={setTransactionDeadline}
+        />
         <From
           showMaxValue={showMaxValue}
           fromAmount={fromAmount}

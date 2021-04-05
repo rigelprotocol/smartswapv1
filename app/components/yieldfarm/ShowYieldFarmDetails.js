@@ -42,7 +42,7 @@ const ShowYieldFarmDetails = ({
   const [stakedToken, setStakeToken] = useState("0.00")
   const [rewards, setRewards] = useState("0.000")
   const [isNewUser, setIsNewUser] = useState(true)
-  
+
   // kindly set onclick of confinm to call this function
   const useDeposit = async (depositToken) => {
     if (wallet.signer !== 'signer') {
@@ -59,37 +59,42 @@ const ShowYieldFarmDetails = ({
   };
   // show max value
   const showMaxValue = async (earn, input) => {
-    if (input === "deposit") {
-      if (earn === 'BUSD') {
-        const busd = await BUSDToken();
-        const walletBal = await busd.balanceOf(wallet.address);
-        alert("setting max value for busd")
-        const busdBal = ethers.utils.formatUnits(walletBal)
-        setDepositRGPBNBToken(busdBal)
-        // depositRGPBNBToken
-      } else if (earn === 'RGP') {
-        const rgp = await rigelToken();
-        const walletBal = await rgp.balanceOf(wallet.address);
-        // depositRGPBNBToken
-        alert("setting max value for RGP")
-        const rgpBal = ethers.utils.formatUnits(walletBal)
-        setDepositRGPBNBToken(rgpBal)
+    try {
+      if (input === "deposit") {
+        if (earn === 'BUSD') {
+          const busd = await BUSDToken();
+          const walletBal = await busd.balanceOf(wallet.address);
+          alert("setting max value for busd")
+          const busdBal = ethers.utils.formatUnits(walletBal)
+          setDepositRGPBNBToken(busdBal)
+          // depositRGPBNBToken
+        } else if (earn === 'RGP') {
+          const rgp = await rigelToken();
+          const walletBal = await rgp.balanceOf(wallet.address);
+          // depositRGPBNBToken
+          alert("setting max value for RGP")
+          const rgpBal = ethers.utils.formatUnits(walletBal)
+          setDepositRGPBNBToken(rgpBal)
+        }
+      } else if (input === "unstake") {
+        if (earn === 'BUSD') {
+          const busd = await BUSDToken();
+          const walletBal = await busd.balanceOf(wallet.address);
+          alert("setting max value for busd")
+          const busdBal = ethers.utils.formatUnits(walletBal)
+          setUnstakeRGPBNBToken(busdBal)
+        } else if (earn === 'RGP') {
+          const rgp = await rigelToken();
+          const walletBal = await rgp.balanceOf(wallet.address);
+          alert("setting max value for RGP")
+          const rgpBal = ethers.utils.formatUnits(walletBal)
+          setUnstakeRGPBNBToken(rgpBal)
+        }
       }
-    } else if (input === "unstake") {
-      if (earn === 'BUSD') {
-        const busd = await BUSDToken();
-        const walletBal = await busd.balanceOf(wallet.address);
-        alert("setting max value for busd")
-        const busdBal = ethers.utils.formatUnits(walletBal)
-        setUnstakeRGPBNBToken(busdBal)
-      } else if (earn === 'RGP') {
-        const rgp = await rigelToken();
-        const walletBal = await rgp.balanceOf(wallet.address);
-        alert("setting max value for RGP")
-        const rgpBal = ethers.utils.formatUnits(walletBal)
-        setUnstakeRGPBNBToken(rgpBal)
-      }
+    } catch (e) {
+      alert("sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.")
     }
+
 
   }
   //withdrawal of funds
@@ -109,34 +114,30 @@ const ShowYieldFarmDetails = ({
   };
 
   useEffect(() => {
-    const checkUser = async (wallet, setIsNewUser) => {
-      const rgp = await rigelToken();
-      const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-      if (wallet.signer !== 'signer') {
-        console.log("you are signed on")
-        if (checkAllow == setIsNewUser(true)) {
-          // do sometin
-          // checkInputData()
-          console.log("remove approve btn")
-          setApproveValue(false)
-          setApproveButtonColor(false)
-        } else {
-          //do other
-          console.log("add approve btn")
-          setApproveValue(true)
-          setApproveButtonColor(true)
+
+    const checkUser = async () => {
+      try {
+        if (wallet.signer !== 'signer') {
+          const rgp = await rigelToken();
+          const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.MasterChef);
+          if (ethers.utils.formatEther(checkAllow).toString() > 0) {
+            // unstake button
+            setApproveValue(false)
+            setApproveButtonColor(false)
+          }
+          // return rgpApproveMasterChef
         }
-      } else {
-        console.log("youu are not signed in")
+      } catch (e) {
+        alert("sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.")
       }
     };
     const outPut = async () => {
       if (wallet.signer !== 'signer') {
         const masterChef = await MasterChefContract();
         setStakeToken(stakedToken);
-        const seeTotalStaked = await masterChef.totalStaking({from: wallet.signer});
+        const seeTotalStaked = await masterChef.totalStaking({ from: wallet.signer });
         setStakeToken(seeTotalStaked);
-        console.log("total staked token ",seeTotalStaked)
+        console.log("total staked token ", seeTotalStaked)
       };
     }
     outPut();
@@ -149,8 +150,8 @@ const ShowYieldFarmDetails = ({
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
       const walletBal = await rgp.balanceOf(wallet.address);
-      setRGPBalance(rgpBalance);
-      setBalance(walletBal);
+      // setRGPBalance(rgpBalance);
+      // setBalance(walletBal);
       await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -214,14 +215,29 @@ const ShowYieldFarmDetails = ({
 
   };
   const setApprove = () => {
-    setApproveValue(true);
-    setApproveButtonColor(true)
-    if (!approveValue) {
-      busdApproveMasterChef()
-    }
+    const checkUser = async () => {
+      console.log(1234588)
+      try {
+        if (wallet.signer !== 'signer') {
+          const rgp = await rigelToken();
+          const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.MasterChef);
+          if (ethers.utils.formatEther(checkAllow).toString() > 0) {
+            // unstake
+            setApproveValue(true);
+            setApproveButtonColor(true)
+          }
+          // return rgpApproveMasterChef
+          busdApproveMasterChef()
+        }
+      } catch (e) {
+        alert("sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.")
+      }
+    };
+
     if (approveValue && deposit) {
       modal2Disclosure.onOpen();
     }
+    checkUser({ address: "0x3552b618dc1c3d5e53818c651bc41ae7a307f767" }, setIsNewUser)
   };
   return (
     <>
