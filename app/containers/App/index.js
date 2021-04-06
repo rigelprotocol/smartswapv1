@@ -20,7 +20,6 @@ import MarginTradingPage from 'containers/MarginTradingPage/Loadable';
 import LiquidityPage from 'containers/LiquidityPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Splash from 'components/splash/index';
-import { Context } from "../../context"
 import '../../styles/globals.css';
 import Toast from '../../components/Toast';
 import { reConnect } from '../WalletProvider/actions';
@@ -51,25 +50,18 @@ const App = props => {
     listener(wallet, props);
     reConnector(props);
   }, [wallet]);
-  const [connected, setConnected] = useState("hellow thus us");
   return (
     <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
         <Toast {...props} />
-        <Context.Provider value={{
-          connected,
-          setConnected
-        }}>
-          <Switch>
-            <Route exact path="/" component={Splash} />
-            <Route exact path="/farming" component={FarmingPage} />
-            <Route exact path="/liquidity" component={LiquidityPage} />
-            <Route exact path="/smart-swapping" component={HomePage} />
-            <Route exact path="/margin-trading" component={MarginTradingPage} />
-            <Route component={NotFoundPage} />
-          </Switch>
-
-        </Context.Provider>
+        <Switch>
+          <Route exact path="/" component={Splash} />
+          <Route exact path="/farming" component={FarmingPage} />
+          <Route exact path="/liquidity" component={LiquidityPage} />
+          <Route exact path="/smart-swapping" component={HomePage} />
+          <Route exact path="/margin-trading" component={MarginTradingPage} />
+          <Route component={NotFoundPage} />
+        </Switch>
       </ThemeProvider>
     </ToastProvider>
   );

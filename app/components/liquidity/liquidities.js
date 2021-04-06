@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import BNBImage from '../../assets/bnb.svg';
 import RGPImage from '../../assets/rgp.svg';
 import LiquidityDetails from './liquidityDetails';
-const Liquidities = ({ value }) => {
+const Liquidities = ({ value, addLiquidity, removeLiquidity }) => {
   const [showDetails, setShowDetails] = useState(false);
   return (
     <>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Box, Flex } from '@chakra-ui/layout';
+import { Button } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import BNBImage from '../../assets/bnb.svg';
 import RGPImage from '../../assets/rgp.svg';
 
-const LiquidityDetails = ({ value }) => (
+const LiquidityDetails = ({ value, addLiquidity, removeLiquidity }) => (
   <Box
     color="#fff"
     bg="#29235E"
@@ -48,7 +49,7 @@ const LiquidityDetails = ({ value }) => (
         mr="6"
         cursor="pointer"
         _hover={{ color: '#423a85' }}
-        onClick={addLiquidity}
+        onClick={() => addLiquidity()}
       >
         Add
             </Button>
@@ -60,10 +61,9 @@ const LiquidityDetails = ({ value }) => (
         color='#40BAD5'
         border="0"
         mb="4"
-        mr="6"
         cursor="pointer"
         _hover={{ color: '#423a85' }}
-        onClick={removeLiquidity}
+        onClick={() => removeLiquidity()}
       >
         Remove
             </Button>
