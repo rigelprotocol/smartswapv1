@@ -22,14 +22,15 @@ import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
-import styles from '../../styles/yieldFarmdetails.css';
-import { rigelToken, BUSDToken, MasterChefContract } from '../../utils/SwapConnect';
-import { SMART_SWAP } from "../../utils/constants";
 import configureStore from 'configureStore';
-const ShowYieldFarmDetails = ({
-  content,
-  wallet
-}) => {
+import styles from '../../styles/yieldFarmdetails.css';
+import {
+  rigelToken,
+  BUSDToken,
+  MasterChefContract,
+} from '../../utils/SwapConnect';
+import { SMART_SWAP } from '../../utils/constants';
+const ShowYieldFarmDetails = ({ content, wallet }) => {
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
   const [unstakeButtonValue, setUnstakeButtonValue] = useState('Confirm');
@@ -37,14 +38,14 @@ const ShowYieldFarmDetails = ({
   const [approveButtonColor, setApproveButtonColor] = useState(false);
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
-  const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(0)
-  const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(0)
-  const [stakedToken, setStakeToken] = useState("0.00")
-  const [rewards, setRewards] = useState("0.000")
-  const [isNewUser, setIsNewUser] = useState(true)
+  const [depositRGPBNBToken, setDepositRGPBNBToken] = useState(0);
+  const [unstakeRGPBNBToken, setUnstakeRGPBNBToken] = useState(0);
+  const [stakedToken, setStakeToken] = useState('0.00');
+  const [rewards, setRewards] = useState('0.000');
+  const [isNewUser, setIsNewUser] = useState(true);
 
   // kindly set onclick of confinm to call this function
-  const useDeposit = async (depositToken) => {
+  const useDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.stake(
@@ -53,53 +54,54 @@ const ShowYieldFarmDetails = ({
         {
           from: wallet.address,
           gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei')
-        });
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
     }
   };
   // show max value
   const showMaxValue = async (earn, input) => {
     try {
-      if (input === "deposit") {
+      if (input === 'deposit') {
         if (earn === 'BUSD') {
           const busd = await BUSDToken();
           const walletBal = await busd.balanceOf(wallet.address);
-          alert("setting max value for busd")
-          const busdBal = ethers.utils.formatUnits(walletBal)
-          setDepositRGPBNBToken(busdBal)
+          alert('setting max value for busd');
+          const busdBal = ethers.utils.formatUnits(walletBal);
+          setDepositRGPBNBToken(busdBal);
           // depositRGPBNBToken
         } else if (earn === 'RGP') {
           const rgp = await rigelToken();
           const walletBal = await rgp.balanceOf(wallet.address);
           // depositRGPBNBToken
-          alert("setting max value for RGP")
-          const rgpBal = ethers.utils.formatUnits(walletBal)
-          setDepositRGPBNBToken(rgpBal)
+          alert('setting max value for RGP');
+          const rgpBal = ethers.utils.formatUnits(walletBal);
+          setDepositRGPBNBToken(rgpBal);
         }
-      } else if (input === "unstake") {
+      } else if (input === 'unstake') {
         if (earn === 'BUSD') {
           const busd = await BUSDToken();
           const walletBal = await busd.balanceOf(wallet.address);
-          alert("setting max value for busd")
-          const busdBal = ethers.utils.formatUnits(walletBal)
-          setUnstakeRGPBNBToken(busdBal)
+          alert('setting max value for busd');
+          const busdBal = ethers.utils.formatUnits(walletBal);
+          setUnstakeRGPBNBToken(busdBal);
         } else if (earn === 'RGP') {
           const rgp = await rigelToken();
           const walletBal = await rgp.balanceOf(wallet.address);
-          alert("setting max value for RGP")
-          const rgpBal = ethers.utils.formatUnits(walletBal)
-          setUnstakeRGPBNBToken(rgpBal)
+          alert('setting max value for RGP');
+          const rgpBal = ethers.utils.formatUnits(walletBal);
+          setUnstakeRGPBNBToken(rgpBal);
         }
       }
     } catch (e) {
-      alert("sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.")
+      alert(
+        'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
+      );
     }
-
-
-  }
-  //withdrawal of funds
+  };
+  // withdrawal of funds
   const useWithdrawal = async () => {
-    console.log("opening usewithdrawal")
+    console.log('opening usewithdrawal');
     if (wallet.signer !== 'signer') {
       const masterChef = await MasterChefContract();
       await masterChef.unStake(
@@ -108,26 +110,28 @@ const ShowYieldFarmDetails = ({
         {
           from: wallet.address,
           gasLimit: 150000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei')
-        });
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
     }
   };
 
   useEffect(() => {
-
     const outPut = async () => {
       if (wallet.signer !== 'signer') {
         const masterChef = await MasterChefContract();
         setStakeToken(stakedToken);
-        const seeTotalStaked = await masterChef.totalStaking({ from: wallet.signer });
+        const seeTotalStaked = await masterChef.totalStaking({
+          from: wallet.signer,
+        });
         setStakeToken(seeTotalStaked);
-        console.log("total staked token ", seeTotalStaked)
-      };
-    }
+        console.log('total staked token ', seeTotalStaked);
+      }
+    };
     outPut();
   }, [wallet]);
-  
-  //busd approve masterchef
+
+  // busd approve masterchef
   const busdApproveMasterChef = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
@@ -137,19 +141,22 @@ const ShowYieldFarmDetails = ({
       await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('2', 'gwei')
+        gasPrice: ethers.utils.parseUnits('2', 'gwei'),
       });
     }
   };
 
   const checkUser = async (wallet, setIsNewUser) => {
     const rgp = await rigelToken();
-    const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
+    const checkAllow = await rgp.allowance(
+      wallet.address,
+      SMART_SWAP.SMART_SWAPPING,
+    );
     if (wallet.signer !== 'signer') {
       if (checkAllow == setIsNewUser(true)) {
         // do sometin
       } else {
-        //do other
+        // do other
       }
     }
   };
@@ -164,18 +171,14 @@ const ShowYieldFarmDetails = ({
         const userStakeToken = await masterChef.userDate(1).toString();
         const calculateReward = await masterChef.calculateRewards(1);
         setTotalStake(userStakeToken);
-        setRewards(calculateReward)
+        setRewards(calculateReward);
       }
     };
-  }
-
-
-
+  };
 
   const open = () => {
     if (approveValue) {
       modal1Disclosure.onOpen();
-
     }
   };
   const close = () => {
@@ -186,47 +189,52 @@ const ShowYieldFarmDetails = ({
   };
   const confirmDeposit = () => {
     setDepositValue('Pending Confirmation');
-    useDeposit(depositRGPBNBToken)
-    setDeposit(true)
-    setTimeout(() => setDepositValue("Confirmed"), 5000)
+    useDeposit(depositRGPBNBToken);
+    setDeposit(true);
+    setTimeout(() => setDepositValue('Confirmed'), 5000);
   };
   const confirmUnstakeDeposit = () => {
     setUnstakeButtonValue('Pending Confirmation');
-    useWithdrawal()
-    setTimeout(() => setUnstakeButtonValue("confirmed"), 5000)
-
+    useWithdrawal();
+    setTimeout(() => setUnstakeButtonValue('confirmed'), 5000);
   };
+
+  //checkingS
   const setApprove = () => {
     const checkUser = async () => {
-      console.log(1234588)
+      console.log(1234588);
       try {
         if (wallet.signer !== 'signer') {
           const rgp = await rigelToken();
-          const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.MasterChef);
+          const checkAllow = await rgp.allowance(
+            wallet.address,
+            SMART_SWAP.MasterChef,
+          );
           if (ethers.utils.formatEther(checkAllow).toString() > 0) {
-            //result greater than zero
-            //remove approve btn to unstake
+            // result greater than zero
+            // remove approve btn to unstake
             setApproveValue(true);
-            setApproveButtonColor(true)
+            setApproveButtonColor(true);
           } else {
-            //result less than zero, call this function and change approve to unstake
+            // result less than zero, call this function and change approve to unstake
             // return rgpApproveMasterChef
-            busdApproveMasterChef()
+            busdApproveMasterChef();
 
             setApproveValue(true);
-            setApproveButtonColor(true)
+            setApproveButtonColor(true);
           }
-
         }
       } catch (e) {
-        alert("sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.")
+        alert(
+          'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
+        );
       }
     };
 
     if (approveValue && deposit) {
       modal2Disclosure.onOpen();
     }
-    checkUser()
+    checkUser();
   };
   return (
     <>
@@ -263,7 +271,11 @@ const ShowYieldFarmDetails = ({
               mb="4"
               mr="6"
               cursor="pointer"
-              _hover={approveButtonColor ? { color: "white       " } : { color: '#423a85' }}
+              _hover={
+                approveButtonColor
+                  ? { color: 'white       ' }
+                  : { color: '#423a85' }
+              }
               onClick={setApprove}
             >
               {approveValue ? 'unstake' : 'Approve'}
@@ -349,7 +361,7 @@ const ShowYieldFarmDetails = ({
                 borderRadius="20px"
                 name="availableToken"
                 value={depositRGPBNBToken}
-                onChange={(e) => setDepositRGPBNBToken(e.target.value)}
+                onChange={e => setDepositRGPBNBToken(e.target.value)}
                 border="0"
               />
               <InputRightElement marginRight="15px">
@@ -391,7 +403,11 @@ const ShowYieldFarmDetails = ({
                 padding="10px"
                 height="50px"
                 fontSize="16px"
-                _hover={depositValue === 'Confirm' || depositValue === 'Confirmed' ? { background: 'rgba(64, 186, 213, 0.15)' } : { background: '#444159' }}
+                _hover={
+                  depositValue === 'Confirm' || depositValue === 'Confirmed'
+                    ? { background: 'rgba(64, 186, 213, 0.15)' }
+                    : { background: '#444159' }
+                }
                 onClick={confirmDeposit}
               >
                 {depositValue}
@@ -447,7 +463,7 @@ const ShowYieldFarmDetails = ({
                 borderRadius="20px"
                 name="availableToken"
                 value={unstakeRGPBNBToken}
-                onChange={(e) => setUnstakeRGPBNBToken(e.target.value)}
+                onChange={e => setUnstakeRGPBNBToken(e.target.value)}
                 border="0"
               />
               <InputRightElement marginRight="15px">
@@ -473,13 +489,15 @@ const ShowYieldFarmDetails = ({
                 my="2"
                 mx="auto"
                 color={
-                  unstakeButtonValue === 'Confirm' || unstakeButtonValue === 'Confirmed'
+                  unstakeButtonValue === 'Confirm' ||
+                  unstakeButtonValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
-                  unstakeButtonValue === 'Confirm' || unstakeButtonValue === 'Confirmed'
+                  unstakeButtonValue === 'Confirm' ||
+                  unstakeButtonValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
@@ -489,7 +507,11 @@ const ShowYieldFarmDetails = ({
                 padding="10px"
                 height="50px"
                 fontSize="16px"
-                _hover={depositValue === 'Confirm' || depositValue === 'Confirmed' ? { background: 'rgba(64, 186, 213, 0.15)' } : { background: '#444159' }}
+                _hover={
+                  depositValue === 'Confirm' || depositValue === 'Confirmed'
+                    ? { background: 'rgba(64, 186, 213, 0.15)' }
+                    : { background: '#444159' }
+                }
                 onClick={confirmUnstakeDeposit}
               >
                 {unstakeButtonValue}
