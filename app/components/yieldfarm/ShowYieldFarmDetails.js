@@ -135,7 +135,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
   const busdApproveMasterChef = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
-      console.log("innnnn......................")
+      console.log('innnnn......................');
       const walletBal = await rgp.balanceOf(wallet.address);
       const rigelUserBall = Web3.utils.toWei(walletBal.toString());
       await rgp.approve(SMART_SWAP.MasterChef, rigelUserBall, {
@@ -199,7 +199,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
     setTimeout(() => setUnstakeButtonValue('confirmed'), 5000);
   };
 
-  //checkingS
+  // checkingS
   const setApprove = () => {
     const checkUser = async () => {
       console.log(1234588);
@@ -210,11 +210,11 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
             wallet.address,
             SMART_SWAP.MasterChef,
           );
-          console.log("checking")
+          console.log('checking');
           if (Web3.utils.toWei(checkAllow.toString()) > 0) {
             // result greater than zero
             // remove approve btn to unstake
-            console.log("checking")
+            console.log('checking');
             setApproveValue(false);
             setApproveButtonColor(true);
           } else {
