@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Question from '../../assets/question.svg';
 import Liquidities from './liquidities';
-const Index = ({ liquidities, addLiquidityPage }) => (
+const Index = ({ liquidities, addLiquidityPage, addLiquidity, removeLiquidity }) => (
   <>
     <Box
       bg="#120136"
@@ -63,12 +63,12 @@ const Index = ({ liquidities, addLiquidityPage }) => (
           </Text>
         </Flex>
       ) : (
-        <Box>
-          {liquidities.map(liquid => (
-            <Liquidities key={liquid.id} value={liquid} />
-          ))}
-        </Box>
-      )}
+          <Box>
+            {liquidities.map(liquid => (
+              <Liquidities key={liquid.id} value={liquid} addLiquidity={addLiquidity} removeLiquidity={removeLiquidity} />
+            ))}
+          </Box>
+        )}
 
       {/* LIQUIDITY */}
 

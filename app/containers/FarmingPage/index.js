@@ -60,7 +60,7 @@ export function FarmingPage(props) {
 
 FarmingPage.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
-  farmingPage: PropTypes.object.isRequired,
+  farmingPage: PropTypes.object,
 };
 
 const mapStateToProps = ({ farming, wallet }) => {
