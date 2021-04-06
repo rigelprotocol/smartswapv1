@@ -135,11 +135,10 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
   const busdApproveMasterChef = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
+      console.log('innnnn......................');
       const walletBal = await rgp.balanceOf(wallet.address);
-      // setRGPBalance(rgpBalance);
-      // setBalance(walletBal);
-      const rgpBal = ethers.utils.formatUnits(walletBal);
-      await rgp.approve(SMART_SWAP.MasterChef, rgpBal, {
+      const rigelUserBall = Web3.utils.toWei(walletBal.toString());
+      await rgp.approve(SMART_SWAP.MasterChef, rigelUserBall, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('2', 'gwei'),
@@ -147,35 +146,35 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
     }
   };
 
-  const checkUser = async (wallet, setIsNewUser) => {
-    const rgp = await rigelToken();
-    const checkAllow = await rgp.allowance(
-      wallet.address,
-      SMART_SWAP.SMART_SWAPPING,
-    );
-    if (wallet.signer !== 'signer') {
-      if (checkAllow == setIsNewUser(true)) {
-        // do sometin
-      } else {
-        // do other
-      }
-    }
-  };
+  // const checkUser = async (wallet, setIsNewUser) => {
+  //   const rgp = await rigelToken();
+  //   const checkAllow = await rgp.allowance(
+  //     wallet.address,
+  //     SMART_SWAP.SMART_SWAPPING,
+  //   );
+  //   if (wallet.signer !== 'signer') {
+  //     if (checkAllow == setIsNewUser(true)) {
+  //       // do sometin
+  //     } else {
+  //       // do other
+  //     }
+  //   }
+  // };
 
-  // calculate reward
-  const tokenStaked = async () => {
-    const checkInputData = async () => {
-      if (wallet.signer !== 'signer') {
-        const masterChef = await MasterChefContract();
-        setStakeToken(stakedToken);
-        setRewards(rewards);
-        const userStakeToken = await masterChef.userDate(1).toString();
-        const calculateReward = await masterChef.calculateRewards(1);
-        setTotalStake(userStakeToken);
-        setRewards(calculateReward);
-      }
-    };
-  };
+  // // calculate reward
+  // const tokenStaked = async () => {
+  //   const checkInputData = async () => {
+  //     if (wallet.signer !== 'signer') {
+  //       const masterChef = await MasterChefContract();
+  //       setStakeToken(stakedToken);
+  //       setRewards(rewards);
+  //       const userStakeToken = await masterChef.userDate(1).toString();
+  //       const calculateReward = await masterChef.calculateRewards(1);
+  //       setTotalStake(userStakeToken);
+  //       setRewards(calculateReward);
+  //     }
+  //   };
+  // };
 
   const open = () => {
     if (approveValue) {
@@ -200,7 +199,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
     setTimeout(() => setUnstakeButtonValue('confirmed'), 5000);
   };
 
-  //checkingS for approval.
+  // checkingS
   const setApprove = () => {
     const checkUser = async () => {
       console.log(1234588);
@@ -211,10 +210,12 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
             wallet.address,
             SMART_SWAP.MasterChef,
           );
-          if (ethers.utils.formatEther(checkAllow).toString() > 0) {
+          console.log('checking');
+          if (Web3.utils.toWei(checkAllow.toString()) > 0) {
             // result greater than zero
             // remove approve btn to unstake
-            setApproveValue(true);
+            console.log('checking');
+            setApproveValue(false);
             setApproveButtonColor(true);
           } else {
             // result less than zero, call this function and change approve to unstake
@@ -491,14 +492,14 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
                 mx="auto"
                 color={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
