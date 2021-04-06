@@ -27,7 +27,7 @@ import styles from '../../styles/yieldFarmdetails.css';
 import {
   rigelToken,
   BUSDToken,
-  MasterChefContract,
+  MasterChefContract
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
 const ShowYieldFarmDetails = ({ content, wallet }) => {
