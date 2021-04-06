@@ -126,8 +126,7 @@ const ShowYieldFarmDetails = ({
     }
     outPut();
   }, [wallet]);
-
-  // kindly set user approve to call this function
+  
   //busd approve masterchef
   const busdApproveMasterChef = async () => {
     if (wallet.signer !== 'signer') {
