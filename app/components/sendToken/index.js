@@ -44,8 +44,11 @@ export const Manual = props => {
     setFromAmount(event.target.value)
     getToAmount(event.target.value, 'from');
   };
-  const showMaxValue = (val) => {
-    setFromAmount("111111111")
+  const showMaxValue = async (val) => {
+    const rgp = await rigelToken();
+    const walletBal = await rgp.balanceOf(wallet.address);
+    const rgpBal = ethers.utils.formatUnits(walletBal);
+    setFromAmount(rgpBal)
   }
   const setPathArray = target => setPathObject(path, target);
   const setPathToArray = target => {
