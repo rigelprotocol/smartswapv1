@@ -138,7 +138,8 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
       const walletBal = await rgp.balanceOf(wallet.address);
       // setRGPBalance(rgpBalance);
       // setBalance(walletBal);
-      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
+      const rgpBal = ethers.utils.formatUnits(walletBal);
+      await rgp.approve(SMART_SWAP.MasterChef, rgpBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('2', 'gwei'),
