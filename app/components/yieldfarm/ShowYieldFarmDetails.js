@@ -199,7 +199,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
     setTimeout(() => setUnstakeButtonValue('confirmed'), 5000);
   };
 
-  //checkingS
+  //checkingS for approval.
   const setApprove = () => {
     const checkUser = async () => {
       console.log(1234588);
