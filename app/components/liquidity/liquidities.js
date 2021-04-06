@@ -29,7 +29,7 @@ const Liquidities = ({ value }) => {
           />
         </Box>
       </Flex>
-      {showDetails ? <LiquidityDetails value={value} /> : <div />}
+      {showDetails ? <LiquidityDetails value={value} addLiquidity={addLiquidity} removeLiquidity={removeLiquidity} /> : <div />}
     </>
   );
 };

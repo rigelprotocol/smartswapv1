@@ -36,6 +36,38 @@ const LiquidityDetails = ({ value }) => (
       <Box>Pool Share</Box>
       <Box>{value.poolShare}</Box>
     </Flex>
+    <Flex mb="10px" py={2} justifyContent="space-between">
+      <Button
+        w="60%"
+        h="50px"
+        borderRadius="12px"
+        bg='rgba(64, 186,213, 0.1)'
+        color='#40BAD5'
+        border="0"
+        mb="4"
+        mr="6"
+        cursor="pointer"
+        _hover={{ color: '#423a85' }}
+        onClick={addLiquidity}
+      >
+        Add
+            </Button>
+      <Button
+        w="60%"
+        h="50px"
+        borderRadius="12px"
+        bg='rgba(64, 186,213, 0.1)'
+        color='#40BAD5'
+        border="0"
+        mb="4"
+        mr="6"
+        cursor="pointer"
+        _hover={{ color: '#423a85' }}
+        onClick={removeLiquidity}
+      >
+        Remove
+            </Button>
+    </Flex>
   </Box>
 );
 

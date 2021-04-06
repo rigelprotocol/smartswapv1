@@ -36,7 +36,15 @@ export function LiquidityPage(props) {
     name: 'Select Token',
     img: '',
   });
-  const [liquidities, setLiquidities] = useState([])
+  const [liquidities, setLiquidities] = useState([{
+    img: 'rgp.svg',
+    pooledRGP: "839339",
+    pooledBNB: "939930",
+    poolToken: "939930",
+    poolShare: "939930",
+    from: 'rgbijr',
+    to: "ururiri"
+  }])
   const [liquidityTab, setLiquidityTab] = useState("INDEX")
   const [popupText, setPopupText] = useState('Approving Account');
   const [displayButton, setDisplayButton] = useState(false);
@@ -277,10 +285,10 @@ export function LiquidityPage(props) {
           }
 
         </Flex>
-        <SwapSettings
+        {/* <SwapSettings
           transactionDeadline={transactionDeadline}
           setTransactionDeadline={setTransactionDeadline}
-        />
+        /> */}
       </Layout>
     </div>
   );
