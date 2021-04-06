@@ -115,22 +115,6 @@ const ShowYieldFarmDetails = ({
 
   useEffect(() => {
 
-    const checkUser = async () => {
-      try {
-        if (wallet.signer !== 'signer') {
-          const rgp = await rigelToken();
-          const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.MasterChef);
-          if (ethers.utils.formatEther(checkAllow).toString() > 0) {
-            // unstake button
-            setApproveValue(false)
-            setApproveButtonColor(false)
-          }
-          // return rgpApproveMasterChef
-        }
-      } catch (e) {
-        alert("sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.")
-      }
-    };
     const outPut = async () => {
       if (wallet.signer !== 'signer') {
         const masterChef = await MasterChefContract();
@@ -141,7 +125,6 @@ const ShowYieldFarmDetails = ({
       };
     }
     outPut();
-    checkUser({ address: "0x3552b618dc1c3d5e53818c651bc41ae7a307f767" }, setIsNewUser)
   }, [wallet]);
 
   // kindly set user approve to call this function
@@ -222,12 +205,19 @@ const ShowYieldFarmDetails = ({
           const rgp = await rigelToken();
           const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.MasterChef);
           if (ethers.utils.formatEther(checkAllow).toString() > 0) {
-            // unstake
+            //result greater than zero
+            //remove approve btn to unstake
+            setApproveValue(true);
+            setApproveButtonColor(true)
+          } else {
+            //result less than zero, call this function and change approve to unstake
+            // return rgpApproveMasterChef
+            busdApproveMasterChef()
+
             setApproveValue(true);
             setApproveButtonColor(true)
           }
-          // return rgpApproveMasterChef
-          busdApproveMasterChef()
+
         }
       } catch (e) {
         alert("sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.")
@@ -237,7 +227,7 @@ const ShowYieldFarmDetails = ({
     if (approveValue && deposit) {
       modal2Disclosure.onOpen();
     }
-    checkUser({ address: "0x3552b618dc1c3d5e53818c651bc41ae7a307f767" }, setIsNewUser)
+    checkUser()
   };
   return (
     <>
