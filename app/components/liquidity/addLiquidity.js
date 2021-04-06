@@ -164,7 +164,7 @@ const AddLiquidity = ({
         </ModalHeader>
         <ModalBody>
           <h2>
-            0.1738839030{' '}
+            {toValue}
             {selectedValue.img === 'bnb.svg' && <BNBImage mr="3" />}
             {selectedValue.img === 'eth.svg' && <ETHImage mr="3" />}
             {selectedValue.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}

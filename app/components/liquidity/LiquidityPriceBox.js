@@ -45,7 +45,10 @@ function LiquidityPriceBox({ selectedValue, fromValue, toValue, fromSelectedToke
         </Box>
         <Box>
           <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
-            0%
+            {fromValue > 0 && toValue > 0
+              ? (parseFloat(fromValue) * 3 / 100)
+              : 0.0}
+              %
           </Text>
           <Text fontSize="sm" color="gray.500" my={3}>
             Share of Pool

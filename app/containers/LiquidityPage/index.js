@@ -110,9 +110,11 @@ export function LiquidityPage(props) {
     if (wallet.signer !== 'signer') {
       const rout = await router();
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+      const amountAMin = Web3.utils.toWei(fromValue.toString())
+      const amountBMin = Web3.utils.toWei(toValue.toString())
       await rout.removeLiquidity(
-        tokenA,
-        tokenB,
+        fromAddress,
+        toAddress,
         uintLiquidity,
         amountAMin,
         amountBMin,
