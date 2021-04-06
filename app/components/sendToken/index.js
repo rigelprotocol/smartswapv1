@@ -122,7 +122,7 @@ export const Manual = props => {
         setBUSDBalance(
           ethers.utils
             .formatEther(await bnb.balanceOf(wallet.address))
-            .toString().toPrecision(5),
+            .toString(),
         );
       }
     };
