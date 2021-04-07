@@ -65,7 +65,8 @@ export const Manual = props => {
   const setPathToArray = target => {
     const pathObject = path.find(value => value.hasOwnProperty('toPath'));
     if (pathObject) pathObject.toPath = target;
-    else path.push({ toPath: target });
+    else setPath(path => path.push({ toPath: target }))
+    // else path.push({ toPath: target });
   };
   /**
    * @describe this Function is suppose to get the
@@ -225,9 +226,11 @@ export const Manual = props => {
           setSelectedToken={setSelectedToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
+          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
           userWallet={props.wallet}
+          setPath={setPath}
         />
         <Box textAlign="center">
           <ArrowDownImage />
@@ -242,6 +245,7 @@ export const Manual = props => {
           setSelectedToToken={setSelectedToToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
+          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
         />
@@ -299,6 +303,8 @@ export default connect(
 )(Manual);
 
 async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
+  alert("this popups during calculations")
+  // console.log(path)
   const rout = await router(wallet.signer);
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];

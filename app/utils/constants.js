@@ -55,14 +55,14 @@ export const tokenList = [
     address: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
   },
   // WE CAN USE THIS
-  {
-    abi: BND,
-    balance: 0,
-    symbol: 'BNB',
-    name: 'Binance SmartChain USD',
-    img: '../../assets/bnb.svg',
-    address: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
-  },
+  // {
+  //   abi: BNB,
+  //   balance: 0,
+  //   symbol: 'BNB',
+  //   name: 'Binance SmartChain USD',
+  //   img: '../../assets/bnb.svg',
+  //   address: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
+  // },
   {
     abi: WETH9,
     balance: 0,

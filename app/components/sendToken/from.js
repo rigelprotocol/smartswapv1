@@ -17,6 +17,7 @@ import {
 import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
+import BUSDImage from '../../assets/busd.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
@@ -29,10 +30,12 @@ const From = ({
   setSelectedToken,
   rgpBalance,
   busdBalance,
+  bnbBalance,
   ETHBalance,
   userWallet,
   getToAmount,
   path,
+  setPath,
   showMaxValue
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -118,6 +121,10 @@ const From = ({
               onClick={() => {
                 setSelectedToken(TOKENS.BNB);
                 setPathArray(TOKENS_CONTRACT.BNB);
+                setPath(path => {
+                  path.shift()
+                  path.unshift({ fromPath: TOKENS_CONTRACT.BNB })
+                })
                 getToAmount();
                 onClose();
               }}
@@ -129,7 +136,7 @@ const From = ({
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                {busdBalance}
+                {bnbBalance}
               </Text>
             </Flex>
             <Flex
@@ -137,8 +144,38 @@ const From = ({
               mt={1}
               cursor="pointer"
               onClick={() => {
+                setSelectedToken(TOKENS.BUSD);
+                setPathArray(wallet.address);
+                setPath(path => {
+                  path.shift()
+                  path.unshift({ fromPath: TOKENS_CONTRACT.BUSD })
+                })
+                getToAmount();
+                onClose();
+              }}
+            >
+              <Flex alignItems="center">
+                <BUSDImage />
+                <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
+                  {TOKENS.BUSD}
+                </Text>
+              </Flex>
+              <Text fontSize="md" fontWeight="regular" color="#fff">
+                {busdBalance}
+              </Text>
+            </Flex>
+
+            <Flex
+              justifyContent="space-between"
+              mt={1}
+              cursor="pointer"
+              onClick={() => {
                 setSelectedToken(TOKENS.ETH);
                 setPathArray(wallet.address);
+                setPath(path => {
+                  path.shift()
+                  path.unshift({ fromPath: TOKENS_CONTRACT.ETH })
+                })
                 getToAmount();
                 onClose();
               }}
@@ -153,6 +190,7 @@ const From = ({
                 {ETHBalance}
               </Text>
             </Flex>
+
             <Flex
               justifyContent="space-between"
               mt={1}
@@ -160,6 +198,10 @@ const From = ({
               onClick={() => {
                 setSelectedToken(TOKENS.RGP);
                 setPathArray(TOKENS_CONTRACT.RGP);
+                setPath(path => {
+                  path.shift()
+                  path.unshift({ fromPath: TOKENS_CONTRACT.RGP })
+                })
                 getToAmount();
                 onClose();
               }}
