@@ -44,14 +44,20 @@ export function LiquidityPage(props) {
   const [approveBNBPopup, setApproveBNBPopup] = useState(false);
   const [buttonValue, setButtonValue] = useState('Invalid pair');
   const [openSupplyButton, setOpenSupplyButton] = useState(true);
+  const [approveTokenSpending, setApproveTokenSpending] = useState(false);
   const [transactionDeadline, setTransactionDeadline] = useState("1234")
   useEffect(() => {
+
     displayBNBbutton();
     calculateToValue();
     changeButtonValue();
+
+  }, [fromValue, selectedValue, liquidities]);
+  useEffect(() => {
     checkAllowance();
     checkUser();
-  }, [fromValue, selectedValue, liquidities]);
+  }, [])
+
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const modal3Disclosure = useDisclosure();
@@ -249,10 +255,16 @@ export function LiquidityPage(props) {
       if (allowAmount.toString() !== "0") {
         alert("you have approved")
         setIsNewUser(true)
+        setApproveTokenSpending(true)
       } else {
         alert("please approve first")
-        approveBNB()
-
+        await approveBNB()
+        if (allowAmount.toString() !== "0") {
+          setIsNewUser(true)
+          setApproveTokenSpending(true)
+        } else {
+          setApproveTokenSpending(false)
+        }
       }
     }
   }
@@ -299,6 +311,7 @@ export function LiquidityPage(props) {
               buttonValue={buttonValue}
               setToAddress={setToAddress}
               setFromValue={setFromValue}
+              approveTokenSpending={approveTokenSpending}
               displayButton={displayButton}
               selectedValue={selectedValue}
               setFromAddress={setFromAddress}
