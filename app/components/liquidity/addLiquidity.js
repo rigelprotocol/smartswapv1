@@ -42,6 +42,8 @@ const AddLiquidity = ({
   confirmingSupply,
   approveBNBPopup,
   approveBNB,
+  checkUser,
+  isNewUser,
   buttonValue,
   openSupplyButton,
   open,
@@ -60,7 +62,7 @@ const AddLiquidity = ({
     w={['100%', '100%', '29.50%', '29.5%']}
     rounded="lg"
   >
-    {approveBNBPopup ? <ApproveBox popupText={popupText} /> : <div />}
+    {isNewUser ? <ApproveBox popupText={popupText} /> : <div />}
     <Flex justifyContent="space-between" alignItems="center" px={4}>
       <ArrowLeft cursor="pointer" onClick={back} />
       <Text color="gray.200">Add Liquidity</Text>
@@ -100,29 +102,35 @@ const AddLiquidity = ({
       <div />
     )}
     <Box mt={5} p={5}>
-      {selectedValue.symbol && fromValue > 0 && toValue > 0 ? (
-        <Button
-          d="block"
-          w="100%"
-          h="50px"
-          color="rgba(64, 186, 213, 1)"
-          border="none"
-          fontWeight="regular"
-          fontSize="lg"
-          cursor="pointer"
-          rounded="2xl"
-          bg="rgba(64, 186, 213, 0.1)"
-          my="3"
-          borderColor="#40BAD5"
-          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-          _active={{ outline: '#29235E', background: '#29235E' }}
-          onClick={approveBNB}
-        >
-          Approve {selectedValue.symbol}
-        </Button>
+      {approveBNBPopup ? selectedValue.symbol && fromValue > 0 && toValue > 0 ? 
+      
+      <Button
+      d="block"
+      w="100%"
+      h="50px"
+      color="rgba(64, 186, 213, 1)"
+      border="none"
+      fontWeight="regular"
+      fontSize="lg"
+      cursor="pointer"
+      rounded="2xl"
+      bg="rgba(64, 186, 213, 0.1)"
+      my="3"
+      borderColor="#40BAD5"
+      _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+      _active={{ outline: '#29235E', background: '#29235E' }}
+      // onClick={approveBNB}
+      onClick = {checkUser}
+    >
+      Approve {selectedValue.symbol}
+    </Button>
+
+      : null : null }
+      {/* {selectedValue.symbol && fromValue > 0 && toValue > 0 ? (
+
       ) : (
         <div />
-      )}
+      )} */}
       <Button
         d="block"
         w="100%"
@@ -164,7 +172,7 @@ const AddLiquidity = ({
         </ModalHeader>
         <ModalBody>
           <h2>
-            {toValue}
+            {Number(toValue).toFixed(5)}
             {selectedValue.img === 'bnb.svg' && <BNBImage mr="3" />}
             {selectedValue.img === 'eth.svg' && <ETHImage mr="3" />}
             {selectedValue.img === 'rgp.svg' && <RGPImage mr="3" />}{' '}
@@ -197,7 +205,11 @@ const AddLiquidity = ({
             <Flex m="1" justifyContent="space-between">
               <Text> Share of Pool </Text>
               <Box>
-                <Text>0.004236%</Text>
+                <Text>{fromValue > 0 && toValue > 0
+                  ? (parseFloat(fromValue) * 3 / 100)
+                  : 0.0}
+                  %
+                </Text>
               </Box>
             </Flex>
           </Box>

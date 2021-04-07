@@ -27,6 +27,7 @@ export function LiquidityPage(props) {
   const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
+  const [isNewUser, setIsNewUser] = useState(true)
   const [selectingToken, setSelectingToken] = useState(tokenList);
   const [fromSelectedToken, setFromSelectedToken] = useState(tokenWhere('rgp'))
   const [fromAddress, setFromAddress] = useState(fromSelectedToken.address)
@@ -56,6 +57,8 @@ export function LiquidityPage(props) {
     displayBNBbutton();
     calculateToValue();
     changeButtonValue();
+    checkAllowance();
+    checkUser();
   }, [fromValue, selectedValue, liquidities]);
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
@@ -233,6 +236,31 @@ export function LiquidityPage(props) {
     setOpenSupplyButton(false);
   }
 
+  async function checkAllowance() {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      return await rgp.allowance(wallet.address, SMART_SWAP.MasterChef, {from: wallet.address});
+    }
+  }
+
+  async function checkUser() {
+    if (wallet.signer !== 'signer') {
+      const allowAmount = await checkAllowance();
+      console.log("the main val: ", allowAmount.toString());
+      if(allowAmount.toString() == 0) {
+        
+        approveBNB()
+        setIsNewUser(true)
+      }
+    }
+  }
+
+
+
+
+  
+
   return (
     <div>
       <Layout title="Liquidity Page">
@@ -259,6 +287,8 @@ export function LiquidityPage(props) {
               fromValue={fromValue}
               popupText={popupText}
               approveBNB={approveBNB}
+              checkUser = {checkUser}
+              isNewUser = {isNewUser}
               openModal3={openModal3}
               closeModal1={closeModal1}
               closeModal2={closeModal2}

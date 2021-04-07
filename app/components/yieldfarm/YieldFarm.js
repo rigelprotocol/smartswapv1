@@ -11,6 +11,7 @@ import RGPImage from '../../assets/rgp.svg';
 const YieldFarm = ({ content, wallet }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
+  
   return (
     <>
       <Flex

@@ -121,9 +121,9 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
       if (wallet.signer !== 'signer') {
         const masterChef = await MasterChefContract();
         // setStakeToken(stakedToken);
-        const seeTotalStaked = await masterChef.totalStaking();
-        const conToETH = 
-        setStakeToken(seeTotalStaked.toString()).toFixed(5);
+        const totalStakingBal = await masterChef.totalStaking();
+        const seeTotalStaked = await Web3.utils.fromWei(totalStakingBal.toString())
+        setStakeToken(seeTotalStaked.toString());
         console.log('total staked token ', seeTotalStaked.toString());
       }
     };
