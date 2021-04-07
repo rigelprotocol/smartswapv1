@@ -239,13 +239,20 @@ export function LiquidityPage(props) {
   //checking user status
   async function checkUser() {
     if (wallet.signer !== 'signer') {
+      console.log("checking user")
       const allowAmount = await checkAllowance();
-      setIsNewUser(true)
       console.log("the main val: ", allowAmount.toString());
-      if (allowAmount.toString() == 0) {
-
-        approveBNB()
+      console.log(allowAmount);
+      console.log(allowAmount.toString(), typeof allowAmount.toString());
+      console.log(typeof allowAmount);
+      console.log(allowAmount.toString() !== "0");
+      if (allowAmount.toString() !== "0") {
+        alert("you have approved")
         setIsNewUser(true)
+      } else {
+        alert("please approve first")
+        approveBNB()
+
       }
     }
   }
