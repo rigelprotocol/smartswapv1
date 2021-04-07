@@ -244,6 +244,7 @@ export function LiquidityPage(props) {
     }
   }
 
+    //checking user status
   async function checkUser() {
     if (wallet.signer !== 'signer') {
       const allowAmount = await checkAllowance();
