@@ -216,7 +216,7 @@ export function LiquidityPage(props) {
   }
 
   async function approveBNB() {
-    setApproveBNBPopup(true);
+    // setApproveBNBPopup(true);
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
       const walletBal = await busd.balanceOf(wallet.address);
@@ -240,12 +240,15 @@ export function LiquidityPage(props) {
   async function checkUser() {
     if (wallet.signer !== 'signer') {
       const allowAmount = await checkAllowance();
-      setIsNewUser(true)
+      setIsNewUser(false)
       console.log("the main val: ", allowAmount.toString());
       if (allowAmount.toString() == 0) {
-
+        // setIsNewUser(true)
         approveBNB()
-        setIsNewUser(true)
+      }
+      if (!(allowAmount.toString() == 0)) {
+        setIsNewUser(false)
+        // approveBNB()
       }
     }
   }
