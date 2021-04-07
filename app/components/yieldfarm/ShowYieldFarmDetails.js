@@ -27,7 +27,7 @@ import styles from '../../styles/yieldFarmdetails.css';
 import {
   rigelToken,
   BUSDToken,
-  MasterChefContract,
+  MasterChefContract
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
 const ShowYieldFarmDetails = ({ content, wallet }) => {
@@ -120,16 +120,41 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
     const outPut = async () => {
       if (wallet.signer !== 'signer') {
         const masterChef = await MasterChefContract();
-        setStakeToken(stakedToken);
-        const seeTotalStaked = await masterChef.totalStaking({
-          from: wallet.signer,
-        });
-        setStakeToken(seeTotalStaked);
-        console.log('total staked token ', seeTotalStaked);
+        // setStakeToken(stakedToken);
+        const totalStakingBal = await masterChef.totalStaking();
+        const seeTotalStaked = await Web3.utils.fromWei(totalStakingBal.toString())
+        setStakeToken(seeTotalStaked.toString());
+        console.log('total staked token ', seeTotalStaked.toString());
       }
     };
+
+    const checkStaked = async () => {
+      if (wallet.signer !== 'signer') {
+        // const masterChef = await MasterChefContract();
+        // setStakeToken(stakedToken);
+        // const seeTotalStaked = await masterChef.totalStaking({
+        //   from: wallet.signer,
+        // });
+        // setStakeToken(seeTotalStaked);
+        // console.log('total staked token ', seeTotalStaked);
+      }
+    };
+
+    checkStaked();
     outPut();
   }, [wallet]);
+
+  const outPut = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      // setStakeToken(stakedToken);
+      const seeTotalStaked = await masterChef.totalStaking({
+        from: wallet.signer,
+      });
+      // setStakeToken(seeTotalStaked);
+      console.log('total staked token ', seeTotalStaked.toString());
+    }
+  };
 
   // busd approve masterchef
   const busdApproveMasterChef = async () => {
@@ -137,44 +162,16 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
       const rgp = await rigelToken();
       console.log('innnnn......................');
       const walletBal = await rgp.balanceOf(wallet.address);
-      const rigelUserBall = Web3.utils.toWei(walletBal.toString());
-      await rgp.approve(SMART_SWAP.MasterChef, rigelUserBall, {
+      // setRGPBalance(rgpBalance);
+      // setBalance(walletBal);
+      // const rgpBal = ethers.utils.formatUnits(walletBal);
+      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('2', 'gwei'),
       });
     }
   };
-
-  // const checkUser = async (wallet, setIsNewUser) => {
-  //   const rgp = await rigelToken();
-  //   const checkAllow = await rgp.allowance(
-  //     wallet.address,
-  //     SMART_SWAP.SMART_SWAPPING,
-  //   );
-  //   if (wallet.signer !== 'signer') {
-  //     if (checkAllow == setIsNewUser(true)) {
-  //       // do sometin
-  //     } else {
-  //       // do other
-  //     }
-  //   }
-  // };
-
-  // // calculate reward
-  // const tokenStaked = async () => {
-  //   const checkInputData = async () => {
-  //     if (wallet.signer !== 'signer') {
-  //       const masterChef = await MasterChefContract();
-  //       setStakeToken(stakedToken);
-  //       setRewards(rewards);
-  //       const userStakeToken = await masterChef.userDate(1).toString();
-  //       const calculateReward = await masterChef.calculateRewards(1);
-  //       setTotalStake(userStakeToken);
-  //       setRewards(calculateReward);
-  //     }
-  //   };
-  // };
 
   const open = () => {
     if (approveValue) {
@@ -199,7 +196,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
     setTimeout(() => setUnstakeButtonValue('confirmed'), 5000);
   };
 
-  // checkingS
+  //checkingS for approval.
   const setApprove = () => {
     const checkUser = async () => {
       console.log(1234588);
@@ -214,10 +211,9 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
           if (Web3.utils.toWei(checkAllow.toString()) > 0) {
             // result greater than zero
             // remove approve btn to unstake
-            console.log('checking');
-            setApproveValue(false);
-            setApproveButtonColor(true);
-          } else {
+            setApproveValue(true);
+            setApproveButtonColor(false);
+          } else if (ethers.utils.formatEther(checkAllow).toString() == 0.0) {
             // result less than zero, call this function and change approve to unstake
             // return rgpApproveMasterChef
             busdApproveMasterChef();
