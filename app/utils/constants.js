@@ -56,7 +56,7 @@ export const tokenList = [
   },
   // WE CAN USE THIS
   {
-    abi: BND,
+    abi: BUSD,
     balance: 0,
     symbol: 'BNB',
     name: 'Binance SmartChain USD',
