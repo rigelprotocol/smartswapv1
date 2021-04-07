@@ -102,8 +102,8 @@ const AddLiquidity = ({
       <div />
     )}
     <Box mt={5} p={5}>
-      {approveBNBPopup ? selectedValue.symbol && fromValue > 0 && toValue > 0 ? 
-      
+      {
+      // approveBNBPopup ? selectedValue.symbol && fromValue > 0 && toValue > 0 ? 
       <Button
       d="block"
       w="100%"
@@ -125,7 +125,8 @@ const AddLiquidity = ({
       Approve {selectedValue.symbol}
     </Button>
 
-      : null : null }
+      // : null : null 
+      }
       {/* {selectedValue.symbol && fromValue > 0 && toValue > 0 ? (
 
       ) : (
