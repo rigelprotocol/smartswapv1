@@ -14,6 +14,7 @@ import {
 import { Input } from '@chakra-ui/input';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
+import BUSDImage from '../../assets/busd.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
@@ -28,6 +29,7 @@ const SendTo = props => {
     setSelectedToToken,
     rgpBalance,
     busdBalance,
+    bnbBalance,
     ETHBalance,
     userWallet,
     getToAmount,
@@ -102,7 +104,7 @@ const SendTo = props => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToToken(TOKENS.BNB);
-                setPathToArray(TOKENS_CONTRACT.BNB);
+                setPathToArray(TOKENS_CONTRACT.BNB, "BNB");
                 getToAmount();
                 onClose();
               }}
@@ -114,16 +116,39 @@ const SendTo = props => {
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
+                {bnbBalance}
+              </Text>
+            </Flex>
+
+            <Flex
+              justifyContent="space-between"
+              mt={3}
+              cursor="pointer"
+              onClick={() => {
+                setSelectedToToken(TOKENS.BUSD);
+                setPathToArray(wallet.address, "BUSD");
+                getToAmount();
+                onClose();
+              }}
+            >
+              <Flex alignItems="center">
+                <BUSDImage />
+                <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
+                  {TOKENS.BUSD}
+                </Text>
+              </Flex>
+              <Text fontSize="md" fontWeight="regular" color="#fff">
                 {busdBalance}
               </Text>
             </Flex>
+
             <Flex
               justifyContent="space-between"
               mt={1}
               cursor="pointer"
               onClick={() => {
                 setSelectedToToken(TOKENS.ETH);
-                setPathToArray(wallet.address);
+                setPathToArray(wallet.address, "ETH");
                 getToAmount();
                 onClose();
               }}
@@ -144,7 +169,7 @@ const SendTo = props => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToToken(TOKENS.RGP);
-                setPathToArray(TOKENS_CONTRACT.RGP);
+                setPathToArray(TOKENS_CONTRACT.RGP, "RGP");
                 getToAmount();
                 onClose();
               }}

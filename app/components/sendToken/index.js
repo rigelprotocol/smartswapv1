@@ -62,10 +62,13 @@ export const Manual = props => {
   }
 
   const setPathArray = target => setPathObject(path, target);
-  const setPathToArray = target => {
+  const setPathToArray = (target, token) => {
+    console.log(path)
     const pathObject = path.find(value => value.hasOwnProperty('toPath'));
     if (pathObject) pathObject.toPath = target;
-    else path.push({ toPath: target });
+    else setPath([...path, { toPath: target, token }])
+    // else path.push({ toPath: target });
+    console.log(path)
   };
   /**
    * @describe this Function is suppose to get the
@@ -196,6 +199,10 @@ export const Manual = props => {
     };
     getBalance();
   }, [wallet]);
+  useEffect(() => {
+    console.log("changing")
+    getToAmount("", "to")
+  }, [selectedToToken, selectedToken])
 
   const sendNotice = (message) => {
     props.notify({
@@ -227,9 +234,11 @@ export const Manual = props => {
           setSelectedToken={setSelectedToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
+          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
           userWallet={props.wallet}
+          setPath={setPath}
         />
         <Box textAlign="center">
           <ArrowDownImage />
@@ -244,6 +253,7 @@ export const Manual = props => {
           setSelectedToToken={setSelectedToToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
+          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
         />
@@ -301,22 +311,41 @@ export default connect(
 )(Manual);
 
 async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
+  alert("this popups during calculations")
+  console.log(path)
   const rout = await router(wallet.signer);
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
-    try {
-      const amount = await rout.getAmountsOut(
-        Web3.utils.toWei(askAmount.toString()),
-        (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
-      );
-      return (field != 'to') ? setAmountIn(
-        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-    } catch (e) {
-      setShowBox(true);
-      setBoxMessage(e.message);
+    if ((path[0].token === "ETH" && path[1].token === "RGP") || (path[0].token === "RGP" && path[1].token === "BUSD")) {
+      alert("correct token")
+      try {
+        const amount = await rout.getAmountsOut(
+          Web3.utils.toWei(askAmount.toString()),
+          (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+        );
+        return (field != 'to') ? setAmountIn(
+          ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+      } catch (e) {
+        setShowBox(true);
+        setBoxMessage(e.message);
+      }
+      try {
+        const amount = await rout.getAmountsOut(
+          Web3.utils.toWei(askAmount.toString()),
+          (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+        );
+        return (field != 'to') ? setAmountIn(
+          ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+      } catch (e) {
+        setShowBox(true);
+        setBoxMessage(e.message);
+      }
     }
+  } else {
+    alert("you selected wrong tokens")
   }
+
 }
 
 

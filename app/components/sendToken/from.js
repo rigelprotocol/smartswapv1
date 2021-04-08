@@ -17,6 +17,7 @@ import {
 import InputSelector from './InputSelector';
 import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
+import BUSDImage from '../../assets/busd.svg';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import ETHImage from '../../assets/eth.svg';
 import { TOKENS, TOKENS_CONTRACT } from '../../utils/constants';
@@ -29,10 +30,12 @@ const From = ({
   setSelectedToken,
   rgpBalance,
   busdBalance,
+  bnbBalance,
   ETHBalance,
   userWallet,
   getToAmount,
   path,
+  setPath,
   showMaxValue
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -40,7 +43,8 @@ const From = ({
   const { wallet } = userWallet;
   useEffect(() => {
     setSelectedToken(TOKENS.RGP);
-    path.push({ fromPath: TOKENS_CONTRACT.RGP });
+    // path.push({ fromPath: TOKENS_CONTRACT.RGP });
+    setPath([{ fromPath: TOKENS_CONTRACT.RGP, token: "RGP" }, ...path])
   }, []);
 
   return (
@@ -118,6 +122,8 @@ const From = ({
               onClick={() => {
                 setSelectedToken(TOKENS.BNB);
                 setPathArray(TOKENS_CONTRACT.BNB);
+                const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
+                setPath([{ fromPath: TOKENS_CONTRACT.BNB, token: "BNB" }, ...pathObject])
                 getToAmount();
                 onClose();
               }}
@@ -129,7 +135,7 @@ const From = ({
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                {busdBalance}
+                {bnbBalance}
               </Text>
             </Flex>
             <Flex
@@ -137,8 +143,34 @@ const From = ({
               mt={1}
               cursor="pointer"
               onClick={() => {
+                setSelectedToken(TOKENS.BUSD);
+                setPathArray(wallet.address);
+                const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
+                setPath([{ fromPath: TOKENS_CONTRACT.BUSD, token: "BUSD" }, ...pathObject])
+                getToAmount();
+                onClose();
+              }}
+            >
+              <Flex alignItems="center">
+                <BUSDImage />
+                <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
+                  {TOKENS.BUSD}
+                </Text>
+              </Flex>
+              <Text fontSize="md" fontWeight="regular" color="#fff">
+                {busdBalance}
+              </Text>
+            </Flex>
+
+            <Flex
+              justifyContent="space-between"
+              mt={1}
+              cursor="pointer"
+              onClick={() => {
                 setSelectedToken(TOKENS.ETH);
                 setPathArray(wallet.address);
+                const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
+                setPath([{ fromPath: TOKENS_CONTRACT.ETH, token: "ETH" }, ...pathObject])
                 getToAmount();
                 onClose();
               }}
@@ -153,6 +185,7 @@ const From = ({
                 {ETHBalance}
               </Text>
             </Flex>
+
             <Flex
               justifyContent="space-between"
               mt={1}
@@ -160,6 +193,8 @@ const From = ({
               onClick={() => {
                 setSelectedToken(TOKENS.RGP);
                 setPathArray(TOKENS_CONTRACT.RGP);
+                const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
+                setPath([{ fromPath: TOKENS_CONTRACT.RGP, token: "RGP" }, ...pathObject])
                 getToAmount();
                 onClose();
               }}
