@@ -4,6 +4,7 @@ import BUSD from 'utils/abis/BUSD.json';
 import RigelToken from 'utils/abis/RigelToken.json';
 import SmartSwapFactoryForSwap from 'utils/abis/SmartSwapFactoryForSwap.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
+import ETHRGPSMARTSWAPPAIR from 'utils/abis/ETHRGPSMARTSWAPPAIR.json';
 import WETH9 from 'utils/abis/WETH9.json';
 import masterChef from 'utils/abis/masterChef.json';
 import configureStore from 'configureStore';
@@ -36,6 +37,12 @@ export const SmartFactory = async () => {
   return new ethers.Contract(SmartFactoryAddress, SmartSwapFactoryForSwap, signer);
 };
 
+//Factory smartContract for getting and creating pairs for ETH and RGP
+export const SMARTSWAPPAIRETHRGP = async () => {
+  const ethrgpSmartSwapContractAddress = '0x339a18e637de287954840b04Ac5E10Cf009357bB';
+  return new ethers.Contract(ethrgpSmartSwapContractAddress, ETHRGPSMARTSWAPPAIR, signer);
+};
+
 // rigel token
 export const rigelToken = async () => {
   const rgpContractAddress = '0x80278a0cf536e568a76425b67fb3931dca21535c';
@@ -46,6 +53,13 @@ export const rigelToken = async () => {
 export const BUSDToken = async () => {
   const BUSDContractAddress = '0xD848eD7f625165D7fFa9e3B3b0661d6074902FD4';
   return new ethers.Contract(BUSDContractAddress, BUSD, signer);
+};
+
+// this can be used
+// BNB token
+export const BNBTOKEN = async () => {
+  const BNBContractAddress = '0xD848eD7f625165D7fFa9e3B3b0661d6074902FD4';
+  return new ethers.Contract(BNBContractAddress, BUSD, signer);
 };
 
 // WETH (ETH)

@@ -120,61 +120,57 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
     const outPut = async () => {
       if (wallet.signer !== 'signer') {
         const masterChef = await MasterChefContract();
-        setStakeToken(stakedToken);
-        const seeTotalStaked = await masterChef.totalStaking({
-          from: wallet.signer,
-        });
-        setStakeToken(seeTotalStaked);
-        console.log('total staked token ', seeTotalStaked);
+        // setStakeToken(stakedToken);
+        const totalStakingBal = await masterChef.totalStaking();
+        const seeTotalStaked = await Web3.utils.fromWei(totalStakingBal.toString())
+        setStakeToken(seeTotalStaked.toString());
+        console.log('total staked token ', seeTotalStaked.toString());
       }
     };
+
+    const checkStaked = async () => {
+      if (wallet.signer !== 'signer') {
+        // const masterChef = await MasterChefContract();
+        // setStakeToken(stakedToken);
+        // const seeTotalStaked = await masterChef.totalStaking({
+        //   from: wallet.signer,
+        // });
+        // setStakeToken(seeTotalStaked);
+        // console.log('total staked token ', seeTotalStaked);
+      }
+    };
+
+    checkStaked();
     outPut();
   }, [wallet]);
+
+  const outPut = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await MasterChefContract();
+      // setStakeToken(stakedToken);
+      const seeTotalStaked = await masterChef.totalStaking({
+        from: wallet.signer,
+      });
+      // setStakeToken(seeTotalStaked);
+      console.log('total staked token ', seeTotalStaked.toString());
+    }
+  };
 
   // busd approve masterchef
   const busdApproveMasterChef = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
+      console.log('innnnn......................');
       const walletBal = await rgp.balanceOf(wallet.address);
       // setRGPBalance(rgpBalance);
       // setBalance(walletBal);
-      const rgpBal = ethers.utils.formatUnits(walletBal);
-      await rgp.approve(SMART_SWAP.MasterChef, rgpBal, {
+      // const rgpBal = ethers.utils.formatUnits(walletBal);
+      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('2', 'gwei'),
       });
     }
-  };
-
-  const checkUser = async (wallet, setIsNewUser) => {
-    const rgp = await rigelToken();
-    const checkAllow = await rgp.allowance(
-      wallet.address,
-      SMART_SWAP.SMART_SWAPPING,
-    );
-    if (wallet.signer !== 'signer') {
-      if (checkAllow == setIsNewUser(true)) {
-        // do sometin
-      } else {
-        // do other
-      }
-    }
-  };
-
-  // calculate reward
-  const tokenStaked = async () => {
-    const checkInputData = async () => {
-      if (wallet.signer !== 'signer') {
-        const masterChef = await MasterChefContract();
-        setStakeToken(stakedToken);
-        setRewards(rewards);
-        const userStakeToken = await masterChef.userDate(1).toString();
-        const calculateReward = await masterChef.calculateRewards(1);
-        setTotalStake(userStakeToken);
-        setRewards(calculateReward);
-      }
-    };
   };
 
   const open = () => {
@@ -211,12 +207,13 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
             wallet.address,
             SMART_SWAP.MasterChef,
           );
-          if (ethers.utils.formatEther(checkAllow).toString() > 0) {
+          console.log('checking');
+          if (Web3.utils.toWei(checkAllow.toString()) > 0) {
             // result greater than zero
             // remove approve btn to unstake
             setApproveValue(true);
-            setApproveButtonColor(true);
-          } else {
+            setApproveButtonColor(false);
+          } else if (ethers.utils.formatEther(checkAllow).toString() == 0.0) {
             // result less than zero, call this function and change approve to unstake
             // return rgpApproveMasterChef
             busdApproveMasterChef();
@@ -491,14 +488,14 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
                 mx="auto"
                 color={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }

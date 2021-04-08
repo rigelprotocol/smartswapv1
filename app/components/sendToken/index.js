@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
 import Web3 from 'web3';
-import { BUSDToken, rigelToken, router } from '../../utils/SwapConnect';
+import { BUSDToken, rigelToken, BNBTOKEN, router, SMARTSWAPPAIRETHRGP } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
@@ -31,6 +31,7 @@ export const Manual = props => {
   const [rgpBalance, setRGPBalance] = useState('0.0');
   const [ETHBalance, setETHBalance] = useState('0.0');
   const [busdBalance, setBUSDBalance] = useState('0.0');
+  const [bnbBalance, setBNBBalance] = useState('0.0');
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
   const [transactionDeadline, setTransactionDeadline] = useState("1234")
@@ -44,17 +45,30 @@ export const Manual = props => {
     setFromAmount(event.target.value)
     getToAmount(event.target.value, 'from');
   };
+
+  //use this to fetch bnb balance of user
+  const showBNBMaxValue = async (val) => {
+    const bnb = await BNBTOKEN();
+    const walletBal = await bnb.balanceOf(wallet.address);
+    const bnbBalance = ethers.utils.formatUnits(walletBal);
+    setFromAmount(bnbBalance)
+  }
+
   const showMaxValue = async (val) => {
     const rgp = await rigelToken();
     const walletBal = await rgp.balanceOf(wallet.address);
     const rgpBal = ethers.utils.formatUnits(walletBal);
     setFromAmount(rgpBal)
   }
+
   const setPathArray = target => setPathObject(path, target);
-  const setPathToArray = target => {
+  const setPathToArray = (target, token) => {
+    console.log(path)
     const pathObject = path.find(value => value.hasOwnProperty('toPath'));
     if (pathObject) pathObject.toPath = target;
-    else path.push({ toPath: target });
+    else setPath([...path, { toPath: target, token }])
+    // else path.push({ toPath: target });
+    console.log(path)
   };
   /**
    * @describe this Function is suppose to get the
@@ -75,6 +89,19 @@ export const Manual = props => {
       const rgp = await rigelToken();
       const walletBal = await rgp.balanceOf(wallet.address);
       await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+      });
+    }
+  };
+
+  // Approval for BNB Tokens
+  const bnbApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const bnb = await BNBTOKEN();
+      const walletBal = await bnb.balanceOf(wallet.address);
+      await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('20', 'gwei')
@@ -112,6 +139,38 @@ export const Manual = props => {
         'Deadline: ', deadL);
     }
   };
+
+  const BNBRGPSwapTokenForTokens = async () => {
+    if (wallet.signer !== 'signer') {
+      const ETHRGP = await SMARTSWAPPAIRETHRGP();
+      const deadL = Math.floor(new Date().getTime() / 1000.0 + 600);
+      const fromPath = ethers.utils.getAddress(path[0].fromPath);
+      const toPath = ethers.utils.getAddress(path[1].toPath);
+      const passOutPut = amountIn;
+      try {
+        await ETHRGP.swapExactTokensForTokens(
+          Web3.utils.toWei(fromAmount.toString()),
+          Web3.utils.toWei(amountIn.toString()),
+          [fromPath, toPath],
+          wallet.address,
+          deadL,
+          {
+            from: wallet.address,
+            gasLimit: 150000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
+        notify({ title: 'Transaction  Message', body: 'Swap was successful', type: 'success' })
+
+      } catch (e) {
+        notify({ title: 'Transaction Message', body: e.message, type: 'error' })
+      }
+      console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
+        "From: ", fromPath, "To: ", toPath, "Recipient: ", wallet.address,
+        'Deadline: ', deadL);
+    }
+  };
+
   useEffect(() => {
     const getBalance = async () => {
       if (wallet.signer !== 'signer') {
@@ -119,10 +178,17 @@ export const Manual = props => {
         // await checkUser();
         setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
         await checkUser(wallet, setIsNewUser);
-        const bnb = await BUSDToken();
+        const busd = await BUSDToken();
+        const bnb = await BNBTOKEN(); // THIS SHOULD BE USED FOR bnb ON FE
         setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
         setETHBalance(wallet ? wallet.balance : '0.0');
         setBUSDBalance(
+          ethers.utils
+            .formatEther(await busd.balanceOf(wallet.address))
+            .toString(),
+        );
+        //cal this on UI for bnb balance
+        setBNBBalance(
           ethers.utils
             .formatEther(await bnb.balanceOf(wallet.address))
             .toString(),
@@ -131,6 +197,10 @@ export const Manual = props => {
     };
     getBalance();
   }, [wallet]);
+  useEffect(() => {
+    console.log("changing")
+    getToAmount("", "to")
+  }, [selectedToToken, selectedToken])
 
   const sendNotice = (message) => {
     props.notify({
@@ -162,9 +232,11 @@ export const Manual = props => {
           setSelectedToken={setSelectedToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
+          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
           userWallet={props.wallet}
+          setPath={setPath}
         />
         <Box textAlign="center">
           <ArrowDownImage />
@@ -179,6 +251,7 @@ export const Manual = props => {
           setSelectedToToken={setSelectedToToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
+          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
         />
@@ -236,22 +309,41 @@ export default connect(
 )(Manual);
 
 async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
+  alert("this popups during calculations")
+  console.log(path)
   const rout = await router(wallet.signer);
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
-    try {
-      const amount = await rout.getAmountsOut(
-        Web3.utils.toWei(askAmount.toString()),
-        (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
-      );
-      return (field != 'to') ? setAmountIn(
-        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-    } catch (e) {
-      setShowBox(true);
-      setBoxMessage(e.message);
+    if ((path[0].token === "ETH" && path[1].token === "RGP") || (path[0].token === "RGP" && path[1].token === "BUSD")) {
+      alert("correct token")
+      try {
+        const amount = await rout.getAmountsOut(
+          Web3.utils.toWei(askAmount.toString()),
+          (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+        );
+        return (field != 'to') ? setAmountIn(
+          ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+      } catch (e) {
+        setShowBox(true);
+        setBoxMessage(e.message);
+      }
+      try {
+        const amount = await rout.getAmountsOut(
+          Web3.utils.toWei(askAmount.toString()),
+          (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+        );
+        return (field != 'to') ? setAmountIn(
+          ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+      } catch (e) {
+        setShowBox(true);
+        setBoxMessage(e.message);
+      }
     }
+  } else {
+    alert("you selected wrong tokens")
   }
+
 }
 
 function setPathObject(path, target) {

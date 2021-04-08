@@ -27,6 +27,7 @@ export function LiquidityPage(props) {
   const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
+  const [isNewUser, setIsNewUser] = useState(false)
   const [selectingToken, setSelectingToken] = useState(tokenList);
   const [fromSelectedToken, setFromSelectedToken] = useState(tokenWhere('rgp'))
   const [fromAddress, setFromAddress] = useState(fromSelectedToken.address)
@@ -43,12 +44,20 @@ export function LiquidityPage(props) {
   const [approveBNBPopup, setApproveBNBPopup] = useState(false);
   const [buttonValue, setButtonValue] = useState('Invalid pair');
   const [openSupplyButton, setOpenSupplyButton] = useState(true);
+  const [approveTokenSpending, setApproveTokenSpending] = useState(false);
   const [transactionDeadline, setTransactionDeadline] = useState("1234")
   useEffect(() => {
+
     displayBNBbutton();
     calculateToValue();
     changeButtonValue();
+
   }, [fromValue, selectedValue, liquidities]);
+  useEffect(() => {
+    checkAllowance();
+    checkUser();
+  }, [])
+
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const modal3Disclosure = useDisclosure();
@@ -102,9 +111,11 @@ export function LiquidityPage(props) {
     if (wallet.signer !== 'signer') {
       const rout = await router();
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+      const amountAMin = Web3.utils.toWei(fromValue.toString())
+      const amountBMin = Web3.utils.toWei(toValue.toString())
       await rout.removeLiquidity(
-        tokenA,
-        tokenB,
+        fromAddress,
+        toAddress,
         uintLiquidity,
         amountAMin,
         amountBMin,
@@ -211,7 +222,7 @@ export function LiquidityPage(props) {
   }
 
   async function approveBNB() {
-    setApproveBNBPopup(true);
+    // setApproveBNBPopup(true);
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
       const walletBal = await busd.balanceOf(wallet.address);
@@ -222,6 +233,46 @@ export function LiquidityPage(props) {
     setApproveBNBPopup(false);
     setOpenSupplyButton(false);
   }
+
+  async function checkAllowance() {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      return await rgp.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
+    }
+  }
+
+  //checking user status
+  async function checkUser() {
+    if (wallet.signer !== 'signer') {
+      console.log("checking user")
+      const allowAmount = await checkAllowance();
+      console.log("the main val: ", allowAmount.toString());
+      console.log(allowAmount);
+      console.log(allowAmount.toString(), typeof allowAmount.toString());
+      console.log(typeof allowAmount);
+      console.log(allowAmount.toString() !== "0");
+      if (allowAmount.toString() !== "0") {
+        alert("you have approved")
+        setIsNewUser(true)
+        setApproveTokenSpending(true)
+      } else {
+        alert("please approve first")
+        await approveBNB()
+        if (allowAmount.toString() !== "0") {
+          setIsNewUser(true)
+          setApproveTokenSpending(true)
+        } else {
+          setApproveTokenSpending(false)
+        }
+      }
+    }
+  }
+
+
+
+
+
 
   return (
     <div>
@@ -251,6 +302,8 @@ export function LiquidityPage(props) {
               fromValue={fromValue}
               popupText={popupText}
               approveBNB={approveBNB}
+              checkUser={checkUser}
+              isNewUser={isNewUser}
               openModal3={openModal3}
               closeModal1={closeModal1}
               closeModal2={closeModal2}
@@ -258,6 +311,7 @@ export function LiquidityPage(props) {
               buttonValue={buttonValue}
               setToAddress={setToAddress}
               setFromValue={setFromValue}
+              approveTokenSpending={approveTokenSpending}
               displayButton={displayButton}
               selectedValue={selectedValue}
               setFromAddress={setFromAddress}

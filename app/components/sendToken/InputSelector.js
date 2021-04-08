@@ -20,9 +20,9 @@ const InputSelector = props => {
     getToAmount,
     showMaxValue
   } = props;
-  tokenList.map((tokens, index) => {
-    console.log(tokens);
-  });
+  // tokenList.map((tokens, index) => {
+  //   console.log(tokens);
+  // });
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   if (isMobileDevice) {
     return (
