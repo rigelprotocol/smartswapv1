@@ -98,7 +98,7 @@ const SendTo = props => {
               </Text>
               <ArrowDownImage />
             </Flex>
-            <Flex
+            {/* <Flex
               justifyContent="space-between"
               mt={3}
               cursor="pointer"
@@ -118,7 +118,7 @@ const SendTo = props => {
               <Text fontSize="md" fontWeight="regular" color="#fff">
                 {bnbBalance}
               </Text>
-            </Flex>
+            </Flex> */}
 
             <Flex
               justifyContent="space-between"

@@ -241,11 +241,6 @@ export function LiquidityPage(props) {
     if (wallet.signer !== 'signer') {
       console.log("checking user")
       const allowAmount = await RGPcheckAllowance();
-      console.log("you approve to spend your rgp: ", allowAmount.toString());
-      console.log(allowAmount.toString());
-      console.log(allowAmount.toString(), typeof allowAmount.toString());
-      console.log(typeof allowAmount.toString());
-      console.log(allowAmount.toString() !== "0");
       if (allowAmount.toString() !== "0") {
         alert("you have approved")
         setIsNewUser(true)

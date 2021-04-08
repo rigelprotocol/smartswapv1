@@ -23,7 +23,7 @@ import ShowMessageBox from './../Toast/ShowMessageBox';
 export const Manual = props => {
   const { wallet, wallet_props } = props.wallet;
   const [fromAmount, setFromAmount] = useState('');
-  const [path, setPath] = useState([]);
+  const [path, setPath] = useState([{ fromPath: TOKENS_CONTRACT.RGP, token: "RGP" }]);
   const [showBox, setShowBox] = useState(false);
   const [isNewUser, setIsNewUser] = useState(true)
   const [amountIn, setAmountIn] = useState('0.0');
@@ -35,6 +35,11 @@ export const Manual = props => {
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
   const [transactionDeadline, setTransactionDeadline] = useState("1234")
+
+  useEffect(() => {
+    console.log(path)
+    callTransformFunction()
+  }, [path])
 
   //handling change ev
   const handleChangeToAmount = (event) => {
@@ -61,14 +66,13 @@ export const Manual = props => {
     setFromAmount(rgpBal)
   }
 
-  const setPathArray = target => setPathObject(path, target);
+  const setPathArray = (target, token) => {
+    const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
+    setPath([{ fromPath: target, token }, ...pathObject])
+  };
   const setPathToArray = (target, token) => {
-    console.log(path)
-    const pathObject = path.find(value => value.hasOwnProperty('toPath'));
-    if (pathObject) pathObject.toPath = target;
-    else setPath([...path, { toPath: target, token }])
-    // else path.push({ toPath: target });
-    console.log(path)
+    const pathObject = path.filter(value => !value.hasOwnProperty('toPath'));
+    setPath([...pathObject, { toPath: target, token }])
   };
   /**
    * @describe this Function is suppose to get the
@@ -78,11 +82,23 @@ export const Manual = props => {
    */
 
   const getToAmount = async (fromQty, field) => {
-    const askAmount = (typeof fromQty == 'undefined') ? fromAmount : fromQty;
-    if (wallet.signer !== 'signer' && askAmount > 0) {
-      await updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field);
-    }
+    const askAmount = (typeof fromQty == "undefined") ? fromAmount : fromQty;
+    callTransformFunction(askAmount, field)
   };
+  const callTransformFunction = async (askAmount = fromAmount, field = "to") => {
+    if (wallet.signer !== 'signer' && askAmount > 0 && path[1]) {
+      if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
+        alert("call updateSendAmount")
+        await updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field);
+      } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
+        alert("call ETHRGPSwapTokenForTokens")
+        await ETHRGPSwapTokenForTokens()
+      } else {
+        alert("wrong token")
+      }
+
+    }
+  }
 
   const rgpApproval = async () => {
     if (wallet.signer !== 'signer') {
@@ -140,8 +156,8 @@ export const Manual = props => {
     }
   };
 
-// THIS FUNCTION SHOULD BE CALLED FOR ETH AND RGP SWAP
-// function to use to approval above and tho check output amount below.....
+  // THIS FUNCTION SHOULD BE CALLED FOR ETH AND RGP SWAP
+  // function to use to approval above and tho check output amount below.....
   const ETHRGPSwapTokenForTokens = async () => {
     if (wallet.signer !== 'signer') {
       const ETHRGP = await SMARTSWAPPAIRETHRGP();
@@ -199,10 +215,7 @@ export const Manual = props => {
     };
     getBalance();
   }, [wallet]);
-  useEffect(() => {
-    console.log("changing")
-    getToAmount("", "to")
-  }, [selectedToToken, selectedToken])
+
 
   const sendNotice = (message) => {
     props.notify({
@@ -311,41 +324,34 @@ export default connect(
 )(Manual);
 
 async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
-  alert("this popups during calculations")
   console.log(path)
   const rout = await router(wallet.signer);
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
-    if ((path[0].token === "ETH" && path[1].token === "RGP") || (path[0].token === "RGP" && path[1].token === "BUSD")) {
-      alert("correct token")
-      try {
-        const amount = await rout.getAmountsOut(
-          Web3.utils.toWei(askAmount.toString()),
-          (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
-        );
-        return (field != 'to') ? setAmountIn(
-          ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-      } catch (e) {
-        setShowBox(true);
-        setBoxMessage(e.message);
-      }
-      try {
-        const amount = await rout.getAmountsOut(
-          Web3.utils.toWei(askAmount.toString()),
-          (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
-        );
-        return (field != 'to') ? setAmountIn(
-          ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-      } catch (e) {
-        setShowBox(true);
-        setBoxMessage(e.message);
-      }
+    try {
+      const amount = await rout.getAmountsOut(
+        Web3.utils.toWei(askAmount.toString()),
+        (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+      );
+      return (field != 'to') ? setAmountIn(
+        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+    } catch (e) {
+      setShowBox(true);
+      setBoxMessage(e.message);
     }
-  } else {
-    alert("you selected wrong tokens")
+    // try {
+    //   const amount = await rout.getAmountsOut(
+    //     Web3.utils.toWei(askAmount.toString()),
+    //     (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+    //   );
+    //   return (field != 'to') ? setAmountIn(
+    //     ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+    // } catch (e) {
+    //   setShowBox(true);
+    //   setBoxMessage(e.message);
+    // }
   }
-
 }
 
 

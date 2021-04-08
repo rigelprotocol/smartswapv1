@@ -44,7 +44,6 @@ const From = ({
   useEffect(() => {
     setSelectedToken(TOKENS.RGP);
     // path.push({ fromPath: TOKENS_CONTRACT.RGP });
-    setPath([{ fromPath: TOKENS_CONTRACT.RGP, token: "RGP" }, ...path])
   }, []);
 
   return (
@@ -115,15 +114,13 @@ const From = ({
               </Text>
               <ArrowDownImage />
             </Flex>
-            <Flex
+            {/* <Flex
               justifyContent="space-between"
               mt={3}
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.BNB);
-                setPathArray(TOKENS_CONTRACT.BNB);
-                const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
-                setPath([{ fromPath: TOKENS_CONTRACT.BNB, token: "BNB" }, ...pathObject])
+                setPathArray(TOKENS_CONTRACT.BNB, "BNB");
                 getToAmount();
                 onClose();
               }}
@@ -138,15 +135,14 @@ const From = ({
                 {bnbBalance}
               </Text>
             </Flex>
+          */}
             <Flex
               justifyContent="space-between"
               mt={1}
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.BUSD);
-                setPathArray(wallet.address);
-                const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
-                setPath([{ fromPath: TOKENS_CONTRACT.BUSD, token: "BUSD" }, ...pathObject])
+                setPathArray(wallet.address, "BUSD");
                 getToAmount();
                 onClose();
               }}
@@ -168,9 +164,7 @@ const From = ({
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.ETH);
-                setPathArray(wallet.address);
-                const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
-                setPath([{ fromPath: TOKENS_CONTRACT.ETH, token: "ETH" }, ...pathObject])
+                setPathArray(wallet.address, "ETH");
                 getToAmount();
                 onClose();
               }}
@@ -192,9 +186,7 @@ const From = ({
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.RGP);
-                setPathArray(TOKENS_CONTRACT.RGP);
-                const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
-                setPath([{ fromPath: TOKENS_CONTRACT.RGP, token: "RGP" }, ...pathObject])
+                setPathArray(TOKENS_CONTRACT.RGP, "RGP");
                 getToAmount();
                 onClose();
               }}
