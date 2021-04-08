@@ -149,14 +149,8 @@ const AddLiquidity = ({
       Approve {selectedValue.symbol}
     </Button>
 
-<<<<<<< HEAD
-      // : null : null 
-      }
-      {/* {selectedValue.symbol && fromValue > 0 && toValue > 0 ? (
-=======
       : null : null } */}
         {/* {selectedValue.symbol && fromValue > 0 && toValue > 0 ? (
->>>>>>> 0ad8c31b74ec699112ea92b21b0a9a270b2b528b
 
       ) : (
         <div />

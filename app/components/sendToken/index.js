@@ -137,7 +137,9 @@ export const Manual = props => {
     }
   };
 
-  const BNBRGPSwapTokenForTokens = async () => {
+// THIS FUNCTION SHOULD BE CALLED FOR ETH AND RGP SWAP
+// function to use to approval above and tho check output amount below.....
+  const ETHRGPSwapTokenForTokens = async () => {
     if (wallet.signer !== 'signer') {
       const ETHRGP = await SMARTSWAPPAIRETHRGP();
       const deadL = Math.floor(new Date().getTime() / 1000.0 + 600);
@@ -300,6 +302,28 @@ export default connect(
 
 async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
   const rout = await router(wallet.signer);
+  if (typeof path[1] != 'undefined') {
+    const { fromPath } = path[0];
+    const { toPath } = path[1];
+    try {
+      const amount = await rout.getAmountsOut(
+        Web3.utils.toWei(askAmount.toString()),
+        (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+      );
+      return (field != 'to') ? setAmountIn(
+        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+    } catch (e) {
+      setShowBox(true);
+      setBoxMessage(e.message);
+    }
+  }
+}
+
+
+// TO UPDATE OUTPUT AND INPUT AMOUNT FOR RGP AND ETH IN BOTH FROM AND TO
+// USED THESAME STATE VALUE AS RGP/BUSD
+async function updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
+  const rout = await routSMARTSWAPPAIRETHRGPer(wallet.signer);
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
