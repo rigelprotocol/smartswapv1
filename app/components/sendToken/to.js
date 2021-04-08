@@ -104,7 +104,7 @@ const SendTo = props => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToToken(TOKENS.BNB);
-                setPathToArray(TOKENS_CONTRACT.BNB);
+                setPathToArray(TOKENS_CONTRACT.BNB, "BNB");
                 getToAmount();
                 onClose();
               }}
@@ -126,7 +126,7 @@ const SendTo = props => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToToken(TOKENS.BUSD);
-                setPathToArray(wallet.address);
+                setPathToArray(wallet.address, "BUSD");
                 getToAmount();
                 onClose();
               }}
@@ -148,7 +148,7 @@ const SendTo = props => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToToken(TOKENS.ETH);
-                setPathToArray(wallet.address);
+                setPathToArray(wallet.address, "ETH");
                 getToAmount();
                 onClose();
               }}
@@ -169,7 +169,7 @@ const SendTo = props => {
               cursor="pointer"
               onClick={() => {
                 setSelectedToToken(TOKENS.RGP);
-                setPathToArray(TOKENS_CONTRACT.RGP);
+                setPathToArray(TOKENS_CONTRACT.RGP, "RGP");
                 getToAmount();
                 onClose();
               }}
