@@ -37,7 +37,6 @@ export const Manual = props => {
   const [transactionDeadline, setTransactionDeadline] = useState("1234")
 
   useEffect(() => {
-    console.log(path)
     callTransformFunction()
   }, [path])
 
@@ -95,7 +94,7 @@ export const Manual = props => {
   };
   const callTransformFunction = async (askAmount = fromAmount, field = "to") => {
     console.log("calling callTransform")
-    // console.log(path)
+    console.log(path)
     if (wallet.signer !== 'signer' && askAmount > 0 && path[1]) {
       if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
         alert("call updateSendAmount")
@@ -338,8 +337,6 @@ async function updateSendAmount( path, askAmount, setAmountIn, setShowBox, setBo
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
-    // console.log(path[0].token)
-    // console.log(path[1].token)
     try {
       const amount = await rout.getAmountsOut(
         Web3.utils.toWei(askAmount.toString()),
@@ -370,8 +367,6 @@ async function updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setS
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
-    // console.log(path[0].token)
-    // console.log(path[1].token)
     try {
       const amount = await SMARTSWAPPAIRETHRGP.getAmountsOut(
         Web3.utils.toWei(askAmount.toString()),
