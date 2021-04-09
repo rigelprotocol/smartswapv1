@@ -35,10 +35,15 @@ export const Manual = props => {
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
   const [transactionDeadline, setTransactionDeadline] = useState("1234")
+  const [swapUserTokenBalance, setSwapUserTokenBalance] = useState("connect to wallet")
+  const [approveButton, setApproveButton] = useState(false)
+  const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
 
   useEffect(() => {
     callTransformFunction()
-  }, [path])
+    checkForAllVariables()
+    checkForApproval(path[0])
+  }, [path, selectedToken, selectedToToken, wallet])
 
   //handling change ev
   const handleChangeToAmount = (event) => {
@@ -87,7 +92,75 @@ export const Manual = props => {
    * @param {*} tokenAddress
    * @param {*} symbol
    */
+  const checkIfUserIsLoggedIn = () => {
+    if (wallet.signer === "signer") {
+      return false
+    } else {
+      return true
+    }
+  }
+  const checkForApproval = (value) => {
+    let res
+    if (value.token === "RGP") {
+      // res = await rgpApproval()
+      res = true
+    } else if (value.token === "BUSD") {
+      // res = await bnbApproval()
+      res = false
+    } else if (value.token === "ETH") {
+      // res = await rgpApproval()
+      res = true
+    }
+    return res
+  }
+  const changeUIBasedOnResult = (result) => {
+    console.log({ result })
+    if (result) {
+      // it means you have approve
+      setSwapUserTokenBalance("swap token")
+      console.log("true")
+      setDisableSwapTokenButton(false)
+      setApproveButton(false)
+    } else {
+      //you have not approve
+      setApproveButton(true)
+      setDisableSwapTokenButton(true)
+    }
+  }
+  const checkForAllVariables = () => {
 
+    if (checkIfUserIsLoggedIn()) {
+      setSwapUserTokenBalance("Enter amount")
+      if (fromAmount > 0 || amountIn > 0) {
+        setSwapUserTokenBalance("select a token")
+        if (selectedToToken !== 'Select a token') {
+          setSwapUserTokenBalance("select the correct pair")
+          if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
+            alert(`correct token ${path[0].token} and ${path[1].token}`)
+            let result = checkForApproval(path[0])
+            changeUIBasedOnResult(result)
+          } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
+            alert(`correct token ${path[0].token} and ${path[1].token}`)
+            let result = checkForApproval(path[0])
+
+            changeUIBasedOnResult(result)
+          } else {
+            sendNotice('Select the correct token pair')
+            setSwapUserTokenBalance("select the correct pair")
+          }
+        } else {
+          sendNotice('Select the designated token')
+          setSwapUserTokenBalance("select a token")
+        }
+      } else {
+        sendNotice('Enter the amount of token to exchange')
+        setSwapUserTokenBalance("Enter amount")
+      }
+    } else {
+      sendNotice('Please use the Connect button above')
+      setSwapUserTokenBalance("Connect to wallet")
+    }
+  }
   const getToAmount = async (fromQty, field) => {
     const askAmount = (typeof fromQty == "undefined") ? fromAmount : fromQty;
     callTransformFunction(askAmount, field)
@@ -108,7 +181,20 @@ export const Manual = props => {
 
     }
   }
+  const swapUserToken = () => {
+    checkForAllVariables()
+    // wallet.signer === 'signer' ?
+    //   sendNotice('Please use the Connect button above')
+    //   : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
+    //     ? sendNotice('Enter the amount of token to exchange')
+    //     : typeof wallet.signer === 'object' && fromAmount != parseFloat(0.0) && selectedToToken === 'Select a token'
+    //       ? sendNotice('Select the designated token')
+    //       : typeof wallet.signer === 'object' &&
+    //         fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
+    //         ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
+    //         : null
 
+  }
   const rgpApproval = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
@@ -119,6 +205,7 @@ export const Manual = props => {
         gasPrice: ethers.utils.parseUnits('20', 'gwei')
       });
     }
+    return true
   };
 
   // Approval for BNB Tokens
@@ -132,6 +219,7 @@ export const Manual = props => {
         gasPrice: ethers.utils.parseUnits('20', 'gwei')
       });
     }
+    return false
   };
 
   const swapTokenForTokens = async () => {
@@ -262,21 +350,10 @@ export const Manual = props => {
             borderColor="#40BAD5"
             _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
             _active={{ outline: '#29235E', background: '#29235E' }}
-            onClick={() => {
-              wallet.signer === 'signer' ?
-                sendNotice('Please use the Connect button above')
-                : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
-                  ? sendNotice('Enter the amount of token to exchange')
-                  : typeof wallet.signer === 'object' && fromAmount != parseFloat(0.0) && selectedToToken === 'Select a token'
-                    ? sendNotice('Select the designated token')
-                    : typeof wallet.signer === 'object' &&
-                      fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
-                      : null
-
-            }}
+            disabled={disableSwapTokenButton}
+            onClick={() => swapUserToken()}
           >
-            {wallet.signer === 'signer' ?
+            {/* {wallet.signer === 'signer' ?
               'connect to Wallet'
               : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
                 ? 'Enter Amount'
@@ -286,8 +363,33 @@ export const Manual = props => {
                     fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
                     ? ((isNewUser) ? 'Approve Transaction' : 'Swap Tokens')
                     : ''
-            }
+            } */}
+            {swapUserTokenBalance}
           </Button>
+        </Box>
+        <Box mt={6}>
+          {approveButton && <Button
+            d="block"
+            w="100%"
+            h="50px"
+            color="#40BAD5"
+            border="none"
+            fontWeight="regular"
+            fontSize="lg"
+            cursor="pointer"
+            rounded="2xl"
+            bg="rgba(64, 186, 213,0.25)"
+            borderColor="#40BAD5"
+            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+            _active={{ outline: '#29235E', background: '#29235E' }}
+            display={approveButton ? "block" : "none"}
+            onClick={() => alert("approving token....")}
+          >
+            Approve
+          </Button>
+
+
+          }
         </Box>
       </Box>
     </div>
