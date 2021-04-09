@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
 import Web3 from 'web3';
-import { BUSDToken, rigelToken, BNBTOKEN, router, SMARTSWAPPAIRETHRGP } from '../../utils/SwapConnect';
+import { BUSDToken, rigelToken, BNBTOKEN, router } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
@@ -151,39 +151,6 @@ export const Manual = props => {
           {
             from: wallet.address,
             gasLimit: 190000,
-            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-          },
-        );
-        notify({ title: 'Transaction  Message', body: 'Swap was successful', type: 'success' })
-
-      } catch (e) {
-        notify({ title: 'Transaction Message', body: e.message, type: 'error' })
-      }
-      console.log("Amount Input: ", amountIn, "OutputAmount: ", passOutPut,
-        "From: ", fromPath, "To: ", toPath, "Recipient: ", wallet.address,
-        'Deadline: ', deadL);
-    }
-  };
-
-  // THIS FUNCTION SHOULD BE CALLED FOR ETH AND RGP SWAP
-  // function to use to approval above and tho check output amount below.....
-  const ETHRGPSwapTokenForTokens = async () => {
-    if (wallet.signer !== 'signer') {
-      const ETHRGP = await SMARTSWAPPAIRETHRGP();
-      const deadL = Math.floor(new Date().getTime() / 1000.0 + 600);
-      const fromPath = ethers.utils.getAddress(path[0].fromPath);
-      const toPath = ethers.utils.getAddress(path[1].toPath);
-      const passOutPut = amountIn;
-      try {
-        await ETHRGP.swapExactTokensForTokens(
-          Web3.utils.toWei(fromAmount.toString()),
-          Web3.utils.toWei(amountIn.toString()),
-          [fromPath, toPath],
-          wallet.address,
-          deadL,
-          {
-            from: wallet.address,
-            gasLimit: 150000,
             gasPrice: ethers.utils.parseUnits('20', 'gwei'),
           },
         );
