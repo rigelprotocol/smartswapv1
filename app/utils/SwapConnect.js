@@ -25,11 +25,11 @@ export const router = async walletSigner => {
   return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, signer);
 };
 
-export const routerToProvider = async walletSigner => {
-  const SmartSwapAddress = '0x3175bfbc3e620FaF654309186f66908073cF9CBB';
-  const provider = new ethers.providers.Web3Provider()
-  return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, provider);
-};
+// export const routerToProvider = async walletSigner => {
+//   const SmartSwapAddress = '0x3175bfbc3e620FaF654309186f66908073cF9CBB';
+//   const provider = new ethers.providers.Web3Provider()
+//   return new ethers.Contract(SmartSwapAddress, SmartSwapRouter02, provider);
+// };
 
 // masterChef contract for farming...
 export const MasterChefContract = async walletSigner => {

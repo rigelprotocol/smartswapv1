@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
 import Web3 from 'web3';
-import { BUSDToken, rigelToken, BNBTOKEN, router, routerToProvider, SMARTSWAPPAIRETHRGP } from '../../utils/SwapConnect';
+import { BUSDToken, rigelToken, BNBTOKEN, router, SMARTSWAPPAIRETHRGP } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
@@ -332,8 +332,8 @@ export default connect(
   { notify },
 )(Manual);
 
-async function updateSendAmount( path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
-  const rout = await routerToProvider();
+async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
+  const rout = await router();
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
@@ -363,12 +363,12 @@ async function updateSendAmount( path, askAmount, setAmountIn, setShowBox, setBo
 }
 
 async function updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
-  const rout = await SMARTSWAPPAIRETHRGP();
+  const routRGPETH = await router();
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
     try {
-      const amount = await SMARTSWAPPAIRETHRGP.getAmountsOut(
+      const amount = await routRGPETH.getAmountsOut(
         Web3.utils.toWei(askAmount.toString()),
         (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
       );
