@@ -68,11 +68,19 @@ export const Manual = props => {
 
   const setPathArray = (target, token) => {
     const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
-    setPath([{ fromPath: target, token }, ...pathObject])
+    let newArray = [{ fromPath: target, token }, ...pathObject]
+    // console.log(newArray)
+    // callTransformFunction(newArray)
+    setPath(newArray)
+
   };
   const setPathToArray = (target, token) => {
     const pathObject = path.filter(value => !value.hasOwnProperty('toPath'));
-    setPath([...pathObject, { toPath: target, token }])
+    let newArray = [...pathObject, { toPath: target, token }]
+    // console.log(newArray)
+    // callTransformFunction(newArray)
+    setPath(newArray)
+
   };
   /**
    * @describe this Function is suppose to get the
@@ -86,13 +94,15 @@ export const Manual = props => {
     callTransformFunction(askAmount, field)
   };
   const callTransformFunction = async (askAmount = fromAmount, field = "to") => {
+    console.log("calling callTransform")
+    // console.log(path)
     if (wallet.signer !== 'signer' && askAmount > 0 && path[1]) {
       if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
         alert("call updateSendAmount")
         await updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field);
       } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-        alert("call ETHRGPSwapTokenForTokens")
-        await ETHRGPSwapTokenForTokens()
+        alert("call updateRGPETHSendAmount")
+        await updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field)
       } else {
         alert("wrong token")
       }
@@ -324,11 +334,12 @@ export default connect(
 )(Manual);
 
 async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
-  console.log(path)
   const rout = await router(wallet.signer);
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
+    // console.log(path[0].token)
+    // console.log(path[1].token)
     try {
       const amount = await rout.getAmountsOut(
         Web3.utils.toWei(askAmount.toString()),
@@ -358,12 +369,15 @@ async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox
 // TO UPDATE OUTPUT AND INPUT AMOUNT FOR RGP AND ETH IN BOTH FROM AND TO
 // USED THESAME STATE VALUE AS RGP/BUSD
 async function updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
-  const rout = await routSMARTSWAPPAIRETHRGPer(wallet.signer);
+
+  const rout = await SMARTSWAPPAIRETHRGP(wallet.signer);
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
+    // console.log(path[0].token)
+    // console.log(path[1].token)
     try {
-      const amount = await rout.getAmountsOut(
+      const amount = await SMARTSWAPPAIRETHRGP.getAmountsOut(
         Web3.utils.toWei(askAmount.toString()),
         (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
       );
@@ -373,9 +387,19 @@ async function updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setS
       setShowBox(true);
       setBoxMessage(e.message);
     }
+    // try {
+    //   const amount = await rout.getAmountsOut(
+    //     Web3.utils.toWei(askAmount.toString()),
+    //     (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+    //   );
+    //   return (field != 'to') ? setAmountIn(
+    //     ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+    // } catch (e) {
+    //   setShowBox(true);
+    //   setBoxMessage(e.message);
+    // }
   }
 }
-
 function setPathObject(path, target) {
   const pathObject = path.find(value => value.hasOwnProperty('fromPath'));
   if (pathObject) pathObject.fromPath = target;
