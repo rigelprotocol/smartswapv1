@@ -142,7 +142,7 @@ const From = ({
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.BUSD);
-                setPathArray(wallet.address, "BUSD");
+                setPathArray(TOKENS_CONTRACT.BUSD, "BUSD");
                 getToAmount();
                 onClose();
               }}
@@ -164,7 +164,7 @@ const From = ({
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.ETH);
-                setPathArray(wallet.address, "ETH");
+                setPathArray(TOKENS_CONTRACT, ETH, "ETH");
                 getToAmount();
                 onClose();
               }}
