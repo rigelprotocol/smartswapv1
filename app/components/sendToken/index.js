@@ -91,7 +91,7 @@ export const Manual = props => {
         alert("call updateSendAmount")
         await updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field);
       } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-        alert("call ETHRGPSwapTokenForTokens")
+        // alert("call ETHRGPSwapTokenForTokens")
         await ETHRGPSwapTokenForTokens()
       } else {
         alert("wrong token")
@@ -141,7 +141,7 @@ export const Manual = props => {
           deadL,
           {
             from: wallet.address,
-            gasLimit: 150000,
+            gasLimit: 190000,
             gasPrice: ethers.utils.parseUnits('20', 'gwei'),
           },
         );
@@ -354,11 +354,9 @@ async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox
   }
 }
 
-
-// TO UPDATE OUTPUT AND INPUT AMOUNT FOR RGP AND ETH IN BOTH FROM AND TO
-// USED THESAME STATE VALUE AS RGP/BUSD
 async function updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
-  const rout = await routSMARTSWAPPAIRETHRGPer(wallet.signer);
+  console.log(path)
+  const rout = await SMARTSWAPPAIRETHRGP(wallet.signer);
   if (typeof path[1] != 'undefined') {
     const { fromPath } = path[0];
     const { toPath } = path[1];
@@ -373,8 +371,21 @@ async function updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setS
       setShowBox(true);
       setBoxMessage(e.message);
     }
+    // try {
+    //   const amount = await rout.getAmountsOut(
+    //     Web3.utils.toWei(askAmount.toString()),
+    //     (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
+    //   );
+    //   return (field != 'to') ? setAmountIn(
+    //     ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+    // } catch (e) {
+    //   setShowBox(true);
+    //   setBoxMessage(e.message);
+    // }
   }
 }
+
+
 
 function setPathObject(path, target) {
   const pathObject = path.find(value => value.hasOwnProperty('fromPath'));
