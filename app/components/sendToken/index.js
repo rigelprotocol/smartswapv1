@@ -42,7 +42,6 @@ export const Manual = props => {
   useEffect(() => {
     callTransformFunction()
     checkForAllVariables()
-    checkForApproval(path[0])
   }, [path, selectedToken, selectedToToken, wallet])
 
   //handling change ev
@@ -73,16 +72,14 @@ export const Manual = props => {
   const setPathArray = (target, token) => {
     const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
     let newArray = [{ fromPath: target, token }, ...pathObject]
-    // console.log(newArray)
-    // callTransformFunction(newArray)
+
     setPath(newArray)
 
   };
   const setPathToArray = (target, token) => {
     const pathObject = path.filter(value => !value.hasOwnProperty('toPath'));
     let newArray = [...pathObject, { toPath: target, token }]
-    // console.log(newArray)
-    // callTransformFunction(newArray)
+
     setPath(newArray)
 
   };
@@ -99,66 +96,82 @@ export const Manual = props => {
       return true
     }
   }
-  const checkForApproval = (value) => {
-    let res
+  const checkForApproval = async (value) => {
     if (value.token === "RGP") {
-      // res = await rgpApproval()
-      res = true
+      let data = await RGPcheckAllowance()
+      return changeUIBasedOnResult(data.toString())
     } else if (value.token === "BUSD") {
       // res = await bnbApproval()
-      res = false
+      let data = await BUSDcheckAllowance()
+      return changeUIBasedOnResult(data.toString())
     } else if (value.token === "ETH") {
       // res = await rgpApproval()
-      res = true
+      let data = await ETHcheckAllowance()
+      return changeUIBasedOnResult(data.toString())
     }
-    return res
   }
+
+  const approveToken = async () => {
+    alert("you clicked on approvee token")
+    if (path[0].token === "RGP") {
+      await rgpApproval()
+      checkForApproval(path[0])
+    } else if (path[0].token === "BUSD") {
+      await bnbApproval()
+      checkForApproval(path[0])
+    } else if (path[0].token === "ETH") {
+      await ETHApproval()
+      checkForApproval(path[0])
+    }
+  }
+
   const changeUIBasedOnResult = (result) => {
-    console.log({ result })
-    if (result) {
+    if (result !== "0") {
       // it means you have approve
       setSwapUserTokenBalance("swap token")
-      console.log("true")
       setDisableSwapTokenButton(false)
       setApproveButton(false)
+      return true
     } else {
       //you have not approve
       setApproveButton(true)
       setDisableSwapTokenButton(true)
+      return false
     }
   }
-  const checkForAllVariables = () => {
+  const checkForAllVariables = async () => {
 
     if (checkIfUserIsLoggedIn()) {
       setSwapUserTokenBalance("Enter amount")
-      if (fromAmount > 0 || amountIn > 0) {
+      if (fromAmount != parseFloat(0.0)) {
         setSwapUserTokenBalance("select a token")
         if (selectedToToken !== 'Select a token') {
           setSwapUserTokenBalance("select the correct pair")
           if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
-            alert(`correct token ${path[0].token} and ${path[1].token}`)
-            let result = checkForApproval(path[0])
-            changeUIBasedOnResult(result)
+            let res = await checkForApproval(path[0])
+            return res
           } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-            alert(`correct token ${path[0].token} and ${path[1].token}`)
-            let result = checkForApproval(path[0])
-
-            changeUIBasedOnResult(result)
+            let res = await checkForApproval(path[0])
+            return res
           } else {
             sendNotice('Select the correct token pair')
             setSwapUserTokenBalance("select the correct pair")
+            setDisableSwapTokenButton(true)
           }
         } else {
           sendNotice('Select the designated token')
           setSwapUserTokenBalance("select a token")
+          setDisableSwapTokenButton(true)
         }
       } else {
         sendNotice('Enter the amount of token to exchange')
         setSwapUserTokenBalance("Enter amount")
+        setDisableSwapTokenButton(true)
       }
     } else {
       sendNotice('Please use the Connect button above')
       setSwapUserTokenBalance("Connect to wallet")
+      setDisableSwapTokenButton(true)
     }
   }
   const getToAmount = async (fromQty, field) => {
@@ -166,23 +179,30 @@ export const Manual = props => {
     callTransformFunction(askAmount, field)
   };
   const callTransformFunction = async (askAmount = fromAmount, field = "to") => {
-    console.log("calling callTransform")
-    console.log(path)
     if (wallet.signer !== 'signer' && askAmount > 0 && path[1]) {
       if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
-        alert("call updateSendAmount")
         await updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field);
       } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-        alert("call updateRGPETHSendAmount")
         await updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field)
       } else {
         alert("wrong token")
+        sendNotice('Wrong Token')
       }
 
     }
   }
-  const swapUserToken = () => {
-    checkForAllVariables()
+  const swapUserToken = async () => {
+    let res = await checkForAllVariables()
+    if (res) {
+      if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
+        swapTokenForTokens()
+      } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
+        ETHRGPSwapTokenForTokens()
+      }
+
+    } else {
+      alert("something went wrong cannot swap")
+    }
     // wallet.signer === 'signer' ?
     //   sendNotice('Please use the Connect button above')
     //   : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
@@ -195,17 +215,39 @@ export const Manual = props => {
     //         : null
 
   }
+  async function RGPcheckAllowance() {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      return await rgp.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
+    }
+  }
+
+  async function ETHcheckAllowance() {
+    if (wallet.signer !== 'signer') {
+      const eth = await WETH();
+      const walletBal = await eth.balanceOf(wallet.address);
+      return await eth.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
+    }
+  }
+
+  async function BUSDcheckAllowance() {
+    if (wallet.signer !== 'signer') {
+      const busd = await BUSDToken();
+      const walletBal = await busd.balanceOf(wallet.address);
+      return await busd.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
+    }
+  }
   const rgpApproval = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
       const walletBal = await rgp.balanceOf(wallet.address);
-      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+      let result = await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('20', 'gwei')
       });
     }
-    return true
   };
 
   // Approval for BNB Tokens
@@ -214,6 +256,18 @@ export const Manual = props => {
       const bnb = await BNBTOKEN();
       const walletBal = await bnb.balanceOf(wallet.address);
       await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+      });
+    }
+  };
+  // Approval for ETH Tokens
+  const ETHApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const eth = await WETH();
+      const walletBal = await eth.balanceOf(wallet.address);
+      await eth.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('20', 'gwei')
@@ -416,7 +470,7 @@ export const Manual = props => {
             _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
             _active={{ outline: '#29235E', background: '#29235E' }}
             display={approveButton ? "block" : "none"}
-            onClick={() => alert("approving token....")}
+            onClick={() => approveToken()}
           >
             Approve
           </Button>

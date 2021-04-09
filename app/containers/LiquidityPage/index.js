@@ -242,7 +242,6 @@ export function LiquidityPage(props) {
       console.log("checking user")
       const allowAmount = await RGPcheckAllowance();
       if (allowAmount.toString() !== "0") {
-        alert("you have approved")
         setIsNewUser(true)
       } else {
         alert("please approve first")
