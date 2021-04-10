@@ -121,11 +121,11 @@ export const Manual = props => {
         if (selectedToToken !== 'Select a token') {
           setSwapUserTokenBalance("select the correct pair")
           if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
-            // const result = await checkForApproval(path[0])
-            changeUIBasedOnResult(true)
+            const result = await checkForApproval(path[0])
+            changeUIBasedOnResult(result)
           } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-            // const result = await checkForApproval(path[0])
-            changeUIBasedOnResult(true)
+            const result = await checkForApproval(path[0])
+            changeUIBasedOnResult(result)
           } else {
             setSwapUserTokenBalance("select the correct pair")
             // return sendNotice('Select the correct token pair ')
@@ -159,12 +159,12 @@ export const Manual = props => {
     }
   }
   const swapUserToken = async () => {
-    const res = true;
+    const res = await checkForAllVariables()
     if (res) {
       if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
         await swapTokenForTokens()
       } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-        await swapTokenForTokens()
+        await ETHRGPSwapTokenForTokens()
       }
 
     } else {
