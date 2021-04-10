@@ -16,7 +16,6 @@ import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
-import SwapSettings from "../../components/sendToken/SwapSettings"
 import { showErrorMessage } from 'containers/NoticeProvider/actions';
 import { router, rigelToken, BUSDToken } from '../../utils/SwapConnect';
 import { tokenList, tokenWhere } from '../../utils/constants';
@@ -313,10 +312,6 @@ export function LiquidityPage(props) {
           }
 
         </Flex>
-        {/* <SwapSettings
-          transactionDeadline={transactionDeadline}
-          setTransactionDeadline={setTransactionDeadline}
-        /> */}
       </Layout>
     </div>
   );

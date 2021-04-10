@@ -178,7 +178,7 @@ export const Manual = props => {
     const askAmount = (typeof fromQty == "undefined") ? fromAmount : fromQty;
     callTransformFunction(askAmount, field)
   };
-  const callTransformFunction = async (askAmount = fromAmount, field = "to") => {
+  const callTransformFunction = async (askAmount = fromAmount, field = "from") => {
     if (wallet.signer !== 'signer' && askAmount > 0 && path[1]) {
       if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
         await updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field);
