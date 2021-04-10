@@ -164,7 +164,7 @@ export const Manual = props => {
       if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
         await swapTokenForTokens()
       } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-        await ETHRGPSwapTokenForTokens()
+        await swapTokenForTokens()
       }
 
     } else {
