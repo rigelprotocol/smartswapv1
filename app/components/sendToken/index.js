@@ -193,11 +193,15 @@ export const Manual = props => {
   }
   const swapUserToken = async () => {
     let res = await checkForAllVariables()
+    console.log("yes")
     if (res) {
+      console.log(path)
       if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
-        swapTokenForTokens()
+        console.log(res)
+        await swapTokenForTokens()
       } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-        ETHRGPSwapTokenForTokens()
+        console.log("eth")
+        await ETHRGPSwapTokenForTokens()
       }
 
     } else {
@@ -398,7 +402,6 @@ export const Manual = props => {
           setSelectedToken={setSelectedToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
-          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
           userWallet={props.wallet}
@@ -417,7 +420,6 @@ export const Manual = props => {
           setSelectedToToken={setSelectedToToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
-          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
         />

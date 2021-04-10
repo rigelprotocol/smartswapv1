@@ -37,7 +37,7 @@ export const SMART_SWAP = {
 };
 
 export const tokenList = [
-  { name: 'Select a token', img: '' },
+  { name: 'Select a token', symbol: 'Select a token', img: '' },
   {
     balance: 0,
     symbol: 'RGP',
