@@ -45,7 +45,6 @@ const From = ({
     setSelectedToken(TOKENS.RGP);
     // path.push({ fromPath: TOKENS_CONTRACT.RGP });
   }, []);
-
   return (
     <>
       <Box
@@ -64,7 +63,7 @@ const From = ({
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             {/* Balance: {tokenBalance} */}
             Balance:{' '}
-            {selectedToken == 'BNB'
+            {selectedToken == 'BUSD'
               ? busdBalance
               : selectedToken == 'ETH'
                 ? ETHBalance
