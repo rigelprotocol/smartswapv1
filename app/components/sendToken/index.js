@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
 import Web3 from 'web3';
-import { BUSDToken, rigelToken, BNBTOKEN, router } from '../../utils/SwapConnect';
+import { BUSDToken, rigelToken, BNBTOKEN, router, WETH } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
@@ -214,6 +214,20 @@ export const Manual = props => {
       const bnb = await BNBTOKEN();
       const walletBal = await bnb.balanceOf(wallet.address);
       await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+      });
+    }
+    return false
+  };
+
+  // Approval for BNB Tokens
+  const ETHApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const eth = await WETH();
+      const walletBal = await eth.balanceOf(wallet.address);
+      await eth.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('20', 'gwei')

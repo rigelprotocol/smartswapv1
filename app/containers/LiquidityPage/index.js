@@ -18,7 +18,7 @@ import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 import SwapSettings from "../../components/sendToken/SwapSettings"
 import { showErrorMessage } from 'containers/NoticeProvider/actions';
-import { router, rigelToken, BUSDToken } from '../../utils/SwapConnect';
+import { router, rigelToken, BUSDToken, SMARTFACTORYPAIRETHRGP } from '../../utils/SwapConnect';
 import { tokenList, tokenWhere } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
 import { SMART_SWAP } from './../../utils/constants';
@@ -100,6 +100,37 @@ export function LiquidityPage(props) {
     }
 
   };
+  
+  const addingLiquidityForETH = async () => {
+    if (wallet.signer !== 'signer') {
+      try {
+        const rout = await router();
+        const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+        const amountADesired = Web3.utils.toWei(fromValue.toString())
+        const amountBDesired = Web3.utils.toWei(toValue.toString())
+        const amountAMin = Web3.utils.toWei((amountADesired / amountBDesired).toString())
+        const amountBMin = Web3.utils.toWei((amountBDesired / amountADesired).toString())
+        await rout.addLiquidity(
+          fromAddress,
+          toAddress,
+          amountADesired,
+          amountBDesired,
+          amountAMin,
+          amountBMin,
+          wallet.address,
+          deadLine,
+          {
+            from: wallet.address,
+          },
+        );
+      } catch (e) {
+        props.showErrorMessage(e)
+      }
+    }
+
+  };
+
+  
 
   const removingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
