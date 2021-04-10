@@ -9,6 +9,7 @@ import RGPImage from '../../assets/rgp.svg';
 import BNBImage from '../../assets/bnb.svg';
 import ETHImage from '../../assets/eth.svg';
 import { tokenList, TOKENS } from '../../utils/constants';
+import { tokenWhere } from './../../utils/constants';
 
 const InputSelector = props => {
   const {
@@ -18,11 +19,10 @@ const InputSelector = props => {
     max,
     onOpen,
     getToAmount,
-    showMaxValue
   } = props;
-  // tokenList.map((tokens, index) => {
-  //   console.log(tokens);
-  // });
+  tokenList.map((tokens, index) => {
+    console.log(tokens);
+  });
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   if (isMobileDevice) {
     return (
@@ -46,24 +46,24 @@ const InputSelector = props => {
             alignItems="center"
           >
             {max ? (
-              <Button
-                color="rgba(64, 186, 213, 1)"
-                border="none"
-                borderRadius="6px"
-                fontSize="13px"
-                bg="rgba(53, 44, 129, 0.3)"
-                p="1"
-                height="20px"
-                cursor="pointer"
-                _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-                onClick={() => showMaxValue(12111222)}
-                ml="-5"
+              <Text
+                bg="rgba(64, 186, 213,0.25)"
+                p="5px 10px"
+                rounded="lg"
+                mt="10px"
+                mr="15px"
+                fontSize="sm"
+                color="#72cfe4"
+                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+                onClick={e => {
+                  setFromAmount(tokenWhere(selectedToken));
+                }}
               >
                 MAX
-              </Button>
+              </Text>
             ) : (
-                <></>
-              )}
+              <></>
+            )}
             <Flex>
               <Menu>
                 <Button
@@ -109,24 +109,22 @@ const InputSelector = props => {
       </Flex>
       <Flex cursor="pointer" justifyContent="space-between" alignItems="center">
         {max ? (
-          <Button
-            color="rgba(64, 186, 213, 1)"
-            border="none"
-            borderRadius="6px"
-            fontSize="13px"
-            bg="rgba(53, 44, 129, 0.3)"
-            p="1"
+          <Text
+            bg="rgba(64, 186, 213,0.25)"
+            p="5px 10px"
+            rounded="lg"
             mt="10px"
-            height="20px"
-            cursor="pointer"
-            _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-            onClick={() => showMaxValue(content.earn, 'deposit')}
+            mr="15px"
+            fontSize="sm"
+            color="#72cfe4"
+            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+            onClick={() => { }}
           >
             MAX
-          </Button>
+          </Text>
         ) : (
-            <></>
-          )}
+          <></>
+        )}
         <Flex>
           <Menu>
             <Button
