@@ -21,6 +21,9 @@ const Manual = ({
   selectingToken,
   toSelectedToken,
   setToSelectedToken,
+  RGPBalance,
+  BUSDBalance,
+  ETHBalance,
 }) => {
   const [balance, setBalance] = useState('');
   const [loading, setLoading] = useState(false);
@@ -72,8 +75,8 @@ const Manual = ({
                 size="sm"
               />
             ) : (
-              balance
-            )}
+                balance
+              )}
           </Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
@@ -98,6 +101,10 @@ const Manual = ({
                   setToSelectedToken(obj);
                   setToAddress(obj.address);
                 }}
+
+                RGPBalance={RGPBalance}
+                ETHBalance={ETHBalance}
+                BUSDBalance={BUSDBalance}
               />
             </Menu>
           </Flex>

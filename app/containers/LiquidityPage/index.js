@@ -16,7 +16,6 @@ import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
-import SwapSettings from "../../components/sendToken/SwapSettings"
 import { showErrorMessage } from 'containers/NoticeProvider/actions';
 import { router, rigelToken, BUSDToken, SMARTFACTORYPAIRETHRGP } from '../../utils/SwapConnect';
 import { tokenList, tokenWhere } from '../../utils/constants';
@@ -44,7 +43,10 @@ export function LiquidityPage(props) {
   const [approveBNBPopup, setApproveBNBPopup] = useState(false);
   const [buttonValue, setButtonValue] = useState('Invalid pair');
   const [openSupplyButton, setOpenSupplyButton] = useState(true);
-  const [transactionDeadline, setTransactionDeadline] = useState("1234")
+  const [RGPBalance, setRGPBalance] = useState('0.0')
+  const [BUSDBalance, setBUSDBalance] = useState('0.0')
+  const [BNBBalance, setBNBBalance] = useState('0.0')
+  const [ETHBalance, setETHBalance] = useState('0.0')
   useEffect(() => {
     displayBNBbutton();
     calculateToValue();
@@ -52,6 +54,33 @@ export function LiquidityPage(props) {
     RGPcheckAllowance();
     checkUser();
   }, [fromValue, selectedValue, liquidities]);
+
+  useEffect(() => {
+    const getBalance = async () => {
+      if (wallet.signer !== 'signer') {
+        // console.log("wallet address", wallet.address)
+        // await checkUser();
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
+        await checkUser(wallet, setIsNewUser);
+        const busd = await BUSDToken();
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
+        setETHBalance(wallet ? wallet.balance : '0.0');
+        setBUSDBalance(
+          ethers.utils
+            .formatEther(await busd.balanceOf(wallet.address))
+            .toString(),
+        );
+        //cal this on UI for bnb balance
+        // setBNBBalance(
+        //   ethers.utils
+        //     .formatEther(await bnb.balanceOf(wallet.address))
+        //     .toString(),
+        // );
+      }
+    };
+    getBalance();
+  }, [wallet]);
+
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const modal3Disclosure = useDisclosure();
@@ -340,14 +369,14 @@ export function LiquidityPage(props) {
               setToSelectedToken={setToSelectedToken}
               setOpenSupplyButton={setOpenSupplyButton}
               setFromSelectedToken={setFromSelectedToken}
+              RGPBalance={RGPBalance}
+              ETHBalance={ETHBalance}
+              BNBBalance={BNBBalance}
+              BUSDBalance={BUSDBalance}
             />
           }
 
         </Flex>
-        {/* <SwapSettings
-          transactionDeadline={transactionDeadline}
-          setTransactionDeadline={setTransactionDeadline}
-        /> */}
       </Layout>
     </div>
   );

@@ -55,6 +55,10 @@ const AddLiquidity = ({
   modal1Disclosure,
   modal2Disclosure,
   modal3Disclosure,
+  RGPBalance,
+  BUSDBalance,
+  BNBBalance,
+  ETHBalance,
 }) => (
     <Box
       bg="#120136"
@@ -73,6 +77,10 @@ const AddLiquidity = ({
         wallet={wallet}
         fromValue={fromValue}
         selectingToken={selectingToken}
+        RGPBalance={RGPBalance}
+        ETHBalance={ETHBalance}
+        BNBBalance={BNBBalance}
+        BUSDBalance={BUSDBalance}
         setFromAddress={setFromAddress}
         setFromValue={e => setFromValue(e)}
         fromSelectedToken={fromSelectedToken}
@@ -87,9 +95,18 @@ const AddLiquidity = ({
         setToAddress={setToAddress}
         selectedValue={selectedValue}
         selectingToken={selectingToken}
+        RGPBalance={RGPBalance}
+        ETHBalance={ETHBalance}
+        BNBBalance={BNBBalance}
+        BUSDBalance={BUSDBalance}
+        selectingToken={selectingToken}
+        selectingToken={selectingToken}
         toSelectedToken={toSelectedToken}
         setToSelectedToken={setToSelectedToken}
-        selectedToken={val => setSelectedValue(val)}
+        selectedToken={val => {
+          console.log(val)
+          setSelectedValue(val)
+        }}
       />
       {selectedValue.symbol && fromValue > 0 ? (
         <LiquidityPriceBox
@@ -341,6 +358,10 @@ AddLiquidity.propTypes = {
   modal1Disclosure: PropTypes.string,
   modal2Disclosure: PropTypes.string,
   modal3Disclosure: PropTypes.string,
+  BUSDBalance: PropTypes.string,
+  ETHBalance: PropTypes.string,
+  RGPBalance: PropTypes.string,
+  BNBBalance: PropTypes.string,
 };
 
 export default AddLiquidity;

@@ -18,8 +18,7 @@ import {
 import { Input } from '@chakra-ui/input';
 import { SettingsIcon } from '@chakra-ui/icons';
 
-const SwapSettings = ({ transactionDeadline, setTransactionDeadline }) => {
-  console.log(transactionDeadline)
+const SwapSettings = () => {
   return (
     <Flex
       style={{
@@ -76,7 +75,7 @@ const SwapSettings = ({ transactionDeadline, setTransactionDeadline }) => {
                 type="number"
                 size="sm"
                 width="30%"
-                value={transactionDeadline}
+              // value={transactionDeadline}
               />
             </Flex>
             <Text>

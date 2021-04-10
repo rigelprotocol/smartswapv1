@@ -165,7 +165,7 @@ export const Manual = props => {
     const askAmount = (typeof fromQty == "undefined") ? fromAmount : fromQty;
     callTransformFunction(askAmount, field)
   };
-  const callTransformFunction = async (askAmount = fromAmount, field = "to") => {
+  const callTransformFunction = async (askAmount = fromAmount, field = "from") => {
     console.log("calling callTransform")
     console.log(path)
     if (wallet.signer !== 'signer' && askAmount > 0 && path[1]) {
@@ -181,8 +181,24 @@ export const Manual = props => {
 
     }
   }
-  const swapUserToken = () => {
-    checkForAllVariables()
+  const swapUserToken = async () => {
+    let res = await checkForAllVariables()
+    console.log("yes")
+    if (res) {
+      console.log(path)
+      if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
+        console.log(res)
+        await swapTokenForTokens()
+      } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
+        console.log("eth")
+        await ETHRGPSwapTokenForTokens()
+      }
+
+    } else {
+      alert("something went wrong cannot swap")
+    }
+  const swapUserTokenOld = () => {
+    //checkForAllVariables()
     // wallet.signer === 'signer' ?
     //   sendNotice('Please use the Connect button above')
     //   : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
@@ -325,7 +341,6 @@ export const Manual = props => {
           setSelectedToken={setSelectedToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
-          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
           userWallet={props.wallet}
@@ -344,7 +359,6 @@ export const Manual = props => {
           setSelectedToToken={setSelectedToToken}
           rgpBalance={rgpBalance}
           busdBalance={busdBalance}
-          bnbBalance={bnbBalance}
           ETHBalance={ETHBalance}
           getToAmount={getToAmount}
         />
