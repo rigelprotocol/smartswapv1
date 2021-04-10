@@ -15,6 +15,9 @@ const LiquidityFromBox = ({
   setFromAddress,
   fromSelectedToken,
   setFromSelectedToken,
+  RGPBalance,
+  BUSDBalance,
+  ETHBalance,
 }) => {
   const [balance, setBalance] = useState('');
   const [loading, setLoading] = useState(false);
@@ -66,8 +69,8 @@ const LiquidityFromBox = ({
                 size="sm"
               />
             ) : (
-              balance
-            )}
+                balance
+              )}
           </Text>
         </Flex>
         <Flex justifyContent="space-between">
@@ -91,6 +94,9 @@ const LiquidityFromBox = ({
                   setFromSelectedToken(obj);
                   setFromAddress(obj.address);
                 }}
+                RGPBalance={RGPBalance}
+                ETHBalance={ETHBalance}
+                BUSDBalance={BUSDBalance}
               />
             </Menu>
           </Flex>

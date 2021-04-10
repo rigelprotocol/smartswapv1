@@ -16,9 +16,8 @@ import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
-import SwapSettings from "../../components/sendToken/SwapSettings"
 import { showErrorMessage } from 'containers/NoticeProvider/actions';
-import { router, rigelToken, BUSDToken } from '../../utils/SwapConnect';
+import { router, rigelToken, BUSDToken, SMARTFACTORYPAIRETHRGP } from '../../utils/SwapConnect';
 import { tokenList, tokenWhere } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
 import { SMART_SWAP } from './../../utils/constants';
@@ -44,7 +43,10 @@ export function LiquidityPage(props) {
   const [approveBNBPopup, setApproveBNBPopup] = useState(false);
   const [buttonValue, setButtonValue] = useState('Invalid pair');
   const [openSupplyButton, setOpenSupplyButton] = useState(true);
-  const [transactionDeadline, setTransactionDeadline] = useState("1234")
+  const [RGPBalance, setRGPBalance] = useState('0.0')
+  const [BUSDBalance, setBUSDBalance] = useState('0.0')
+  const [BNBBalance, setBNBBalance] = useState('0.0')
+  const [ETHBalance, setETHBalance] = useState('0.0')
   useEffect(() => {
     displayBNBbutton();
     calculateToValue();
@@ -52,6 +54,33 @@ export function LiquidityPage(props) {
     RGPcheckAllowance();
     checkUser();
   }, [fromValue, selectedValue, liquidities]);
+
+  useEffect(() => {
+    const getBalance = async () => {
+      if (wallet.signer !== 'signer') {
+        // console.log("wallet address", wallet.address)
+        // await checkUser();
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
+        await checkUser(wallet, setIsNewUser);
+        const busd = await BUSDToken();
+        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : wallet.address);
+        setETHBalance(wallet ? wallet.balance : '0.0');
+        setBUSDBalance(
+          ethers.utils
+            .formatEther(await busd.balanceOf(wallet.address))
+            .toString(),
+        );
+        //cal this on UI for bnb balance
+        // setBNBBalance(
+        //   ethers.utils
+        //     .formatEther(await bnb.balanceOf(wallet.address))
+        //     .toString(),
+        // );
+      }
+    };
+    getBalance();
+  }, [wallet]);
+
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const modal3Disclosure = useDisclosure();
@@ -100,6 +129,37 @@ export function LiquidityPage(props) {
     }
 
   };
+  
+  const addingLiquidityForETH = async () => {
+    if (wallet.signer !== 'signer') {
+      try {
+        const rout = await router();
+        const deadLine = Math.floor(new Date().getTime() / 1000.0 + 300);
+        const amountADesired = Web3.utils.toWei(fromValue.toString())
+        const amountBDesired = Web3.utils.toWei(toValue.toString())
+        const amountAMin = Web3.utils.toWei((amountADesired / amountBDesired).toString())
+        const amountBMin = Web3.utils.toWei((amountBDesired / amountADesired).toString())
+        await rout.addLiquidity(
+          fromAddress,
+          toAddress,
+          amountADesired,
+          amountBDesired,
+          amountAMin,
+          amountBMin,
+          wallet.address,
+          deadLine,
+          {
+            from: wallet.address,
+          },
+        );
+      } catch (e) {
+        props.showErrorMessage(e)
+      }
+    }
+
+  };
+
+  
 
   const removingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
@@ -242,7 +302,6 @@ export function LiquidityPage(props) {
       console.log("checking user")
       const allowAmount = await RGPcheckAllowance();
       if (allowAmount.toString() !== "0") {
-        alert("you have approved")
         setIsNewUser(true)
       } else {
         alert("please approve first")
@@ -310,14 +369,14 @@ export function LiquidityPage(props) {
               setToSelectedToken={setToSelectedToken}
               setOpenSupplyButton={setOpenSupplyButton}
               setFromSelectedToken={setFromSelectedToken}
+              RGPBalance={RGPBalance}
+              ETHBalance={ETHBalance}
+              BNBBalance={BNBBalance}
+              BUSDBalance={BUSDBalance}
             />
           }
 
         </Flex>
-        {/* <SwapSettings
-          transactionDeadline={transactionDeadline}
-          setTransactionDeadline={setTransactionDeadline}
-        /> */}
       </Layout>
     </div>
   );

@@ -164,7 +164,7 @@ const From = ({
               cursor="pointer"
               onClick={() => {
                 setSelectedToken(TOKENS.ETH);
-                setPathArray(TOKENS_CONTRACT, ETH, "ETH");
+                setPathArray(TOKENS_CONTRACT.ETH, "ETH");
                 getToAmount();
                 onClose();
               }}

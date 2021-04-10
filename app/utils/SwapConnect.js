@@ -44,7 +44,7 @@ export const SmartFactory = async () => {
 };
 
 //Factory smartContract for getting and creating pairs for ETH and RGP
-export const SMARTSWAPPAIRETHRGP = async () => {
+export const SMARTFACTORYPAIRETHRGP = async () => {
   const ethrgpSmartSwapContractAddress = '0x339a18e637de287954840b04Ac5E10Cf009357bB';
   return new ethers.Contract(ethrgpSmartSwapContractAddress, ETHRGPSMARTSWAPPAIR, signer);
 };
