@@ -32,7 +32,7 @@ export const router = async () =>
   new ethers.Contract(SMART_SWAP.SMART_SWAPPING, SmartSwapRouter02, signer);
 
 export const updateOutPutAmountForRouter = async () =>
-  new ethers.Contract(SMART_SWAP.SMART_SWAPPING, SmartSwapRouter02, provider);
+  new ethers.Contract(SMART_SWAP.SMART_SWAPPING, SmartSwapRouter02, signer);
 
 // router contract where trx is made for both liquidity and swap
 export const smartSwapLPToken = async () =>
