@@ -73,7 +73,7 @@ export const initialState = {
       img: 'busd.svg',
       //changed from
       // deposit: 'RGP-BUSD', to
-      deposit: "WETH-RGP",
+      deposit: "BNB-RGP",
       earn: 'BUSD',
       APY,
       totalLiquidity,
@@ -86,7 +86,7 @@ export const initialState = {
       img: 'busd.svg',
       //changed from
       // deposit: 'BNB-BUSD', to
-      deposit: "WETH-BUSD",
+      deposit: "BNB-BUSD",
       earn: 'BUSD',
       APY,
       totalLiquidity,

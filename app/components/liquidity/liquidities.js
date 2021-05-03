@@ -37,8 +37,8 @@ const Liquidities = ({
               <BUSDImage /> : value.path[1].token === "ETH" ?
                 <ETHImage /> : <BNBImage />
           }{' '}
-          {value.path[0].token == "WETH" ? 'ETH' : value.path[0].token} /{' '}
-          {value.path[1].token == "WETH" ? 'ETH' : value.path[1].token}
+          {value.path[0].token == "WBNB" ? 'BNB' : value.path[0].token} /{' '}
+          {value.path[1].token == "WBNB" ? 'BNB' : value.path[1].token}
         </Box>
         <Box>
           <ChevronDownIcon

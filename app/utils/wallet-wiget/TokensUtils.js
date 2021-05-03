@@ -14,14 +14,14 @@ export const getTokenListBalance = async (tokenList, account, checker) => {
     if (
       typeof token.address !== 'undefined' &&
       account.signer !== 'signer' &&
-      token.symbol === 'ETH'
+      token.symbol === 'BNB'
     ) {
       token.balance = account.balance;
     }
     if (
       typeof token.address !== 'undefined' &&
       account.signer !== 'signer' &&
-      token.symbol !== 'ETH'
+      token.symbol !== 'BNB'
     ) {
       try {
         token.balance = await getAddressTokenBalance(

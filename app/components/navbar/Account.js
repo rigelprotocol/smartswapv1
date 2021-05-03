@@ -33,7 +33,7 @@ const Account = ({ wallet, wallet_props }) => {
         ml={5}
       >
         <Text color="#fff" fontSize="sm" ml={2} mr={4}>
-          {balance} ETH
+          {balance} BNB
         </Text>
         <Button
           onClick={modal3Disclosure.onOpen}
