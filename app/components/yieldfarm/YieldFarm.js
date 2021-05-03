@@ -83,8 +83,8 @@ const YieldFarm = ({ content, wallet }) => {
             ${content.totalLiquidity}
           </Box>
         </Flex>
-        <Box align="right" mt={['4', '0']} ml="2">
-          <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+        <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+          <Box align="right" mt={['4', '0']} ml="2">
 
             <Button
               w={['100%', '100%', '146px']}
@@ -101,8 +101,8 @@ const YieldFarm = ({ content, wallet }) => {
             >
               Unlock
           </Button>
-          </Tooltip>
-        </Box>
+          </Box>
+        </Tooltip>
 
       </Flex>
       {showYieldfarm && (

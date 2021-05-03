@@ -34,20 +34,30 @@ const Nav = props => {
         >
           <Link to="/farming">Farming</Link>
         </Text>
-        <Text
-          cursor="pointer"
-          className={styles.nav__text}
-          _hover={{ color: 'blue.300' }}
-          color={
-            // @ts-ignore
-            window.location.pathname === '/margin-trading'
-              ? 'blue.300'
-              : 'white'
-          }
-        >
+        <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
 
-          <Link to="/margin-trading">Margin Trading</Link>
-        </Text>
+          <Text
+            cursor="not-allowed"
+            className={styles.nav__text}
+            _hover={{ color: 'blue.300' }}
+            color={
+              // @ts-ignore
+              window.location.pathname === '/margin-trading'
+                ? 'blue.300'
+                : 'white'
+            }
+          >
+
+            <Link
+              // to="/margin-trading"
+              cursor="not-allowed"
+            >
+
+              Margin Trading
+
+            </Link>
+          </Text>
+        </Tooltip>
 
       </div>
       <div className={styles.wallet__container}>
