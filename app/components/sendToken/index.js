@@ -537,7 +537,7 @@ async function updateSendAmount(path, selectedToken, selectedToToken, askAmount,
       );
       // if(field != 'to' && )
       return (field != 'to') ? setAmountIn(
-        ethers.utils.formatEther(amount[1]).toString() * calculateSlippage()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     }
     catch (e) {
       setAmountIn('');
