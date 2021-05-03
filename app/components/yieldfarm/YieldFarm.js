@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Flex, Button } from '@chakra-ui/react';
+import { Box, Flex, Button, Tooltip } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import ShowYieldFarmDetails from './ShowYieldFarmDetails';
 import BNBImage from '../../assets/bnb.svg';
@@ -84,21 +84,24 @@ const YieldFarm = ({ content, wallet }) => {
           </Box>
         </Flex>
         <Box align="right" mt={['4', '0']} ml="2">
-          <Button
-            w={['100%', '100%', '146px']}
-            h="40px"
-            borderRadius="12px"
-            bg="rgba(64, 186, 213, 0.1);"
-            color="#40BAD5"
-            border="0"
-            mb="4"
-            disabled
-            cursor="not-allowed"
-            _hover={{ color: '#423a85' }}
-          // onClick={() => setShowYieldFarm(!showYieldfarm)}
-          >
-            Unlock
+          <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+
+            <Button
+              w={['100%', '100%', '146px']}
+              h="40px"
+              borderRadius="12px"
+              bg="rgba(64, 186, 213, 0.1);"
+              color="#40BAD5"
+              border="0"
+              mb="4"
+              disabled
+              cursor="not-allowed"
+              _hover={{ color: '#423a85' }}
+            // onClick={() => setShowYieldFarm(!showYieldfarm)}
+            >
+              Unlock
           </Button>
+          </Tooltip>
         </Box>
 
       </Flex>
