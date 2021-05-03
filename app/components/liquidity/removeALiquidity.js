@@ -221,8 +221,8 @@ const removeALiquidity = ({
         <Flex justifyContent="space-between">
           <Text>Price:</Text>
           <Box>
-            <Text>1 {liquidityToRemove.path[0].token == "WBNB" ? 'BNB' : liquidityToRemove.path[0].token} : {fromValue} {liquidityToRemove.path[1].token == "WETH" ? 'ETH' : liquidityToRemove.path[1].token}</Text>
-            <Text>1 {liquidityToRemove.path[1].token == "WBNB" ? 'BNB' : liquidityToRemove.path[1].token} : {toValue} {liquidityToRemove.path[0].token == "WETH" ? 'ETH' : liquidityToRemove.path[0].token}</Text>
+            <Text>1 {liquidityToRemove.path[0].token == "WBNB" ? 'BNB' : liquidityToRemove.path[0].token} : {fromValue} {liquidityToRemove.path[1].token == "WBNB" ? 'BNB' : liquidityToRemove.path[1].token}</Text>
+            <Text>1 {liquidityToRemove.path[1].token == "WBNB" ? 'BNB' : liquidityToRemove.path[1].token} : {toValue} {liquidityToRemove.path[0].token == "WBNB" ? 'BNB' : liquidityToRemove.path[0].token}</Text>
           </Box>
         </Flex>
         <Flex justifyContent="space-between">
@@ -281,7 +281,7 @@ const removeALiquidity = ({
                     <ETHImage /> : <BNBImage />
               }
               <Text marginTop="0" marginLeft="7px">
-                {liquidityToRemove.path[0].token == "WBNB" ? "BNB" : liquidityToRemove.path[0].token} / {liquidityToRemove.path[1].token == "WETH" ? "ETH" : liquidityToRemove.path[1].token}
+                {liquidityToRemove.path[0].token == "WBNB" ? "BNB" : liquidityToRemove.path[0].token} / {liquidityToRemove.path[1].token == "WBNB" ? "BNB" : liquidityToRemove.path[1].token}
               </Text>
             </Flex>
             <Text marginTop="0">{liquidityToRemove.poolToken}</Text>
