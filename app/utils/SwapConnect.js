@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { ethers } from 'ethers';
 import BUSD from 'utils/abis/BUSD.json';
+import WBNB from 'utils/abis/WBNB.json';
 import LiquidityPairAbi from 'utils/abis/smartSwapLPToken.json';
 import RigelToken from 'utils/abis/RigelToken.json';
 import SmartSwapFactoryForSwap from 'utils/abis/SmartSwapFactoryForSwap.json';
@@ -24,7 +25,8 @@ if (typeof signer === 'string') {
   }
 }
 
-//
+// ----------------------------------------------------------------- LIVE DEPLOYMENT CONTRACT -----------------------------------------
+
 // router contract where trx is made for both liquidity and swap
 export const router = async () =>
   new ethers.Contract(SMART_SWAP.SMART_SWAPPING, SmartSwapRouter02, signer);
@@ -44,13 +46,35 @@ export const BNBRGPliquidityProviderTokensContract = async () =>
     signer,
   );
 
+// Factory smartContract for getting and creating pairs
+export const SmartFactory = async () =>
+  new ethers.Contract(SMART_SWAP.SmartFactory, SmartSwapFactoryForSwap, signer);
+
+  // rigel token
+export const rigelToken = async () =>
+new ethers.Contract(SMART_SWAP.RigelSmartContract, RigelToken, signer);
+
+// BUSD token
+export const BUSDToken = async () =>
+new ethers.Contract(SMART_SWAP.BUSD, BUSD, signer);
+
+// this can be used
+// BNB token
+export const BNBTOKEN = async () =>
+new ethers.Contract(SMART_SWAP.BUSD, WBNB, signer);
+
+// WETH (ETH)
+export const WETH = async () => {
+  const WETH9Address = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
+  return new ethers.Contract(WETH9Address, WETH9, signer);
+};
+
+//----------------------------------------------------------------- LIVE DEPLOYMENT CONTRACTS -------------------------------------------------------
+
 // contract for special pool
 export const RGPSpecialPool = async () =>
   new ethers.Contract(SMART_SWAP.specialPool, specialPool, signer);
 
-// Factory smartContract for getting and creating pairs
-export const SmartFactory = async () =>
-  new ethers.Contract(SMART_SWAP.SmartFactory, SmartSwapFactoryForSwap, signer);
 
 // Factory smartContract for getting and creating pairs for ETH and RGP
 export const SMARTFACTORYPAIRETHRGP = async () =>
@@ -60,24 +84,6 @@ export const SMARTFACTORYPAIRETHRGP = async () =>
     signer,
   );
 
-// rigel token
-export const rigelToken = async () =>
-  new ethers.Contract(SMART_SWAP.RigelSmartContract, RigelToken, signer);
-
-// BUSD token
-export const BUSDToken = async () =>
-  new ethers.Contract(SMART_SWAP.BUSD, BUSD, signer);
-
-// this can be used
-// BNB token
-export const BNBTOKEN = async () =>
-  new ethers.Contract(SMART_SWAP.BUSD, BUSD, signer);
-
-// WETH (ETH)
-export const WETH = async () => {
-  const WETH9Address = '0x492Df17f202e36525151Ce7BcD49d5637Dc10659';
-  return new ethers.Contract(WETH9Address, WETH9, signer);
-};
 
 // Creates LiquidityPair Contract instance
 export const LiquidityPairInstance = async (address) =>
