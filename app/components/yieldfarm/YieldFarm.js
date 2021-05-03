@@ -83,7 +83,7 @@ const YieldFarm = ({ content, wallet }) => {
             ${content.totalLiquidity}
           </Box>
         </Flex>
-        <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+        <Tooltip label="In few days" bg="#120136" aria-label="A tooltip">
           <Box align="right" mt={['4', '0']} ml="2">
 
             <Button
