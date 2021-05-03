@@ -4,8 +4,15 @@ import { Button } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import BNBImage from '../../assets/bnb.svg';
 import RGPImage from '../../assets/rgp.svg';
+import ETHImage from '../../assets/eth.svg';
+import BUSDImage from '../../assets/busd.svg';
 
-const LiquidityDetails = ({ value, addLiquidity, removeLiquidity }) => (
+const LiquidityDetails = ({
+  value,
+  addLiquidity,
+  removeLiquidity,
+  removeALiquidity,
+}) => (
   <Box
     color="#fff"
     bg="#29235E"
@@ -16,17 +23,26 @@ const LiquidityDetails = ({ value, addLiquidity, removeLiquidity }) => (
     justifyContent="space-between"
   >
     <Flex mb="10px" py={2} justifyContent="space-between">
-      <Box>Polled RGP</Box>
+      <Box>Pooled {value.path[0].token == "WETH" ? "ETH" : value.path[0].token}</Box>
       <Box>
-        <RGPImage pr={2} />
-        {value.pooledRGP}
+        {value.path[0].token === "RGP" ?
+          <RGPImage /> : value.path[0].token === "BUSD" ?
+            <BUSDImage /> : value.path[0].token === "ETH" ?
+              <ETHImage /> : <BNBImage />
+        }
+        {value.pooledToken0}
       </Box>
     </Flex>
     <Flex mb="10px" py={2} justifyContent="space-between">
-      <Box>Polled BNB</Box>
+
+      <Box>Pooled {value.path[1].token == "WETH" ? "ETH" : value.path[1].token}</Box>
       <Box>
-        <BNBImage pr={2} />
-        {value.pooledBNB}
+        {value.path[1].token === "RGP" ?
+          <RGPImage /> : value.path[1].token === "BUSD" ?
+            <BUSDImage /> : value.path[1].token === "ETH" ?
+              <ETHImage /> : <BNBImage />
+        }
+        {value.pooledToken1}
       </Box>
     </Flex>
     <Flex mb="10px" py={2} justifyContent="space-between">
@@ -42,8 +58,8 @@ const LiquidityDetails = ({ value, addLiquidity, removeLiquidity }) => (
         w="60%"
         h="50px"
         borderRadius="12px"
-        bg='rgba(64, 186,213, 0.1)'
-        color='#40BAD5'
+        bg="rgba(64, 186,213, 0.1)"
+        color="#40BAD5"
         border="0"
         mb="4"
         mr="6"
@@ -52,26 +68,30 @@ const LiquidityDetails = ({ value, addLiquidity, removeLiquidity }) => (
         onClick={() => addLiquidity()}
       >
         Add
-            </Button>
+      </Button>
       <Button
         w="60%"
         h="50px"
         borderRadius="12px"
-        bg='rgba(64, 186,213, 0.1)'
-        color='#40BAD5'
+        bg="rgba(64, 186,213, 0.1)"
+        color="#40BAD5"
         border="0"
         mb="4"
         cursor="pointer"
         _hover={{ color: '#423a85' }}
-        onClick={() => removeLiquidity()}
+        // onClick={() => removeLiquidity()}
+        onClick={() => removeALiquidity(value.pairAddress)}
       >
         Remove
-            </Button>
+      </Button>
     </Flex>
   </Box>
 );
 
 LiquidityDetails.propTypes = {
   value: PropTypes.object.isRequired,
+  removeALiquidity: PropTypes.func.isRequired,
+  removeLiquidity: PropTypes.func.isRequired,
+  addLiquidity: PropTypes.func.isRequired,
 };
 export default LiquidityDetails;

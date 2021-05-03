@@ -14,11 +14,11 @@ import { ToastProvider } from 'react-toast-notifications';
 import { connect } from 'react-redux';
 import WebFont from 'webfontloader';
 
-import HomePage from 'containers/HomePage/Loadable';
-import FarmingPage from 'containers/FarmingPage/Loadable';
-import MarginTradingPage from 'containers/MarginTradingPage/Loadable';
-import LiquidityPage from 'containers/LiquidityPage/Loadable';
-import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import HomePage from 'containers/HomePage/index';
+import FarmingPage from 'containers/FarmingPage/index';
+import MarginTradingPage from 'containers/MarginTradingPage/index';
+import LiquidityPage from 'containers/LiquidityPage/index';
+import NotFoundPage from 'containers/NotFoundPage/index';
 import Splash from 'components/splash/index';
 import '../../styles/globals.css';
 import Toast from '../../components/Toast';

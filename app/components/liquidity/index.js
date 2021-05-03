@@ -5,7 +5,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Question from '../../assets/question.svg';
 import Liquidities from './liquidities';
-const Index = ({ liquidities, addLiquidityPage, addLiquidity, removeLiquidity }) => (
+const Index = ({
+  liquidities,
+  addLiquidityPage,
+  addLiquidity,
+  removeLiquidity,
+  removeALiquidity,
+  liquidityLoading,
+}) => (
   <>
     <Box
       bg="#120136"
@@ -46,28 +53,53 @@ const Index = ({ liquidities, addLiquidityPage, addLiquidity, removeLiquidity })
         </Text>
         <Question />
       </Flex>
-      {liquidities.length === 0 ? (
-        <Flex
-          color="#fff"
-          bg="#29235E"
-          h="100px"
-          mb="10px"
-          justifyContent="center"
-          alignItems="center"
-          px={4}
-          mx={5}
-          rounded="2xl"
-        >
-          <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-            No Liquidity Found.
+      {liquidityLoading ? <Flex
+        color="#fff"
+        bg="#29235E"
+        h="100px"
+        mb="10px"
+        justifyContent="center"
+        alignItems="center"
+        px={4}
+        mx={5}
+        rounded="2xl"
+      >
+        <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+          Loading...
           </Text>
-        </Flex>
-      ) : (
+      </Flex> :
+
+
+
+        (liquidities.length === 0 ? (
+          <Flex
+            color="#fff"
+            bg="#29235E"
+            h="100px"
+            mb="10px"
+            justifyContent="center"
+            alignItems="center"
+            px={4}
+            mx={5}
+            rounded="2xl"
+          >
+            <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+              No Liquidity Found.
+          </Text>
+          </Flex>
+        ) : (
           <Box>
-            {liquidities.map(liquid => (
-              <Liquidities key={liquid.id} value={liquid} addLiquidity={addLiquidity} removeLiquidity={removeLiquidity} />
+            {liquidities.map((liquid, index) => (
+              <Liquidities
+                key={index + "key"}
+                value={liquid}
+                addLiquidity={addLiquidity}
+                removeLiquidity={removeLiquidity}
+                removeALiquidity={removeALiquidity}
+
+              />
             ))}
-          </Box>
+          </Box>)
         )}
 
       {/* LIQUIDITY */}
@@ -87,5 +119,8 @@ Index.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   liquidities: PropTypes.array,
   addLiquidityPage: PropTypes.func.isRequired,
+  removeALiquidity: PropTypes.func.isRequired,
+  removeLiquidity: PropTypes.func.isRequired,
+  addLiquidity: PropTypes.func.isRequired,
 };
 export default Index;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
 import ActiveOrder from 'components/order/ActiveOrder';
 import ShowDetails from 'components/detail/ShowDetails';
 import ChartGraph from 'components/charts/ShowChart';
@@ -47,28 +47,33 @@ export default function HomePage() {
                 >
                   Manual
                 </Text>
-                <Text
-                  cursor="pointer"
-                  className={
-                    tab === TABS.PRICE ? styles.active : styles.inactive
-                  }
-                  onClick={() => {
-                    setTab(TABS.PRICE);
-                  }}
-                >
-                  Set price
+                <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+                  <Text
+                    cursor="not-allowed"
+                    className={
+                      tab === TABS.PRICE ? styles.active : styles.inactive
+                    }
+                  // onClick={() => {
+                  //   setTab(TABS.PRICE);
+                  // }}
+                  >
+                    Set price
                 </Text>
-                <Text
-                  cursor="pointer"
-                  className={
-                    tab === TABS.AUTO_TIME ? styles.active : styles.inactive
-                  }
-                  onClick={() => {
-                    setTab(TABS.AUTO_TIME);
-                  }}
-                >
-                  Auto Time
+                </Tooltip>
+                <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+                  <Text
+                    cursor="not-allowed"
+                    className={
+                      tab === TABS.AUTO_TIME ? styles.active : styles.inactive
+                    }
+                  // onClick={() => {
+                  //   setTab(TABS.AUTO_TIME);
+                  // }}
+                  >
+                    Auto Time
                 </Text>
+                </Tooltip>
+
               </Flex>
             </Box>
             <ChartGraph />

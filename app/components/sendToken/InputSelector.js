@@ -1,30 +1,18 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { Menu } from '@chakra-ui/menu';
 import { Button } from '@chakra-ui/button';
 import { Input } from '@chakra-ui/input';
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { useMediaQuery } from '@chakra-ui/react';
-import RGPImage from '../../assets/rgp.svg';
-import BNBImage from '../../assets/bnb.svg';
-import ETHImage from '../../assets/eth.svg';
-import { tokenList, TOKENS } from '../../utils/constants';
-import { tokenWhere } from './../../utils/constants';
+import { useMediaQuery, Image } from '@chakra-ui/react';
+import { tokenList, tokenWhere } from '../../utils/constants';
 
-const InputSelector = props => {
-  const {
-    handleChange,
-    value,
-    selectedToken,
-    max,
-    onOpen,
-    getToAmount,
-  } = props;
+const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   if (isMobileDevice) {
     return (
       <>
-        <img src={tokenList[0].icon} alt="" />
         <Flex justifyContent="space-between">
           <Input
             placeholder="0.0"
@@ -53,7 +41,7 @@ const InputSelector = props => {
                 color="#72cfe4"
                 _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
                 onClick={e => {
-                  setFromAmount(tokenWhere(selectedToken));
+                  handleChange(e, tokenWhere(selectedToken.symbol).balance);
                 }}
               >
                 MAX
@@ -76,10 +64,15 @@ const InputSelector = props => {
                   _hover={{ background: '#72cfe4', color: '#29235E' }}
                   rightIcon={<ChevronDownIcon />}
                 >
-                  {selectedToken === TOKENS.BNB && <BNBImage />}
-                  {selectedToken === TOKENS.ETH && <ETHImage />}
-                  {selectedToken === TOKENS.RGP && <RGPImage />}
-                  <Text ml={4}>{selectedToken}</Text>
+                  {typeof selectedToken.symbol !== 'undefined' && (
+                    <>
+                      <Image src={selectedToken.img} />
+                      <span
+                        className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
+                      />
+                      <Text ml={4}>{selectedToken.symbol}</Text>
+                    </>
+                  )}
                 </Button>
               </Menu>
             </Flex>
@@ -100,7 +93,6 @@ const InputSelector = props => {
           type="number"
           onChange={e => {
             handleChange(e);
-            getToAmount(e.target.value);
           }}
         />
       </Flex>
@@ -115,7 +107,9 @@ const InputSelector = props => {
             fontSize="sm"
             color="#72cfe4"
             _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-            onClick={() => { }}
+            onClick={e => {
+              handleChange(e, tokenWhere(selectedToken.symbol).balance);
+            }}
           >
             MAX
           </Text>
@@ -137,10 +131,15 @@ const InputSelector = props => {
               _hover={{ background: '#72cfe4', color: '#29235E' }}
               rightIcon={<ChevronDownIcon />}
             >
-              {selectedToken === TOKENS.BNB && <BNBImage />}
-              {selectedToken === TOKENS.ETH && <ETHImage />}
-              {selectedToken === TOKENS.RGP && <RGPImage />}
-              <Text ml={4}>{selectedToken}</Text>
+              {typeof selectedToken.symbol !== 'undefined' && (
+                <>
+                  <Image src={selectedToken.img} />
+                  <span
+                    className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
+                  />
+                  <Text ml={4}>{selectedToken.symbol}</Text>
+                </>
+              )}
             </Button>
           </Menu>
         </Flex>

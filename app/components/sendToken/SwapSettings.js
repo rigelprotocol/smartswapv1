@@ -14,11 +14,31 @@ import {
   Switch,
   FormLabel,
   FormControl,
+  Button,
+  InputRightAddon,
+  InputGroup,
 } from '@chakra-ui/react';
 import { Input } from '@chakra-ui/input';
 import { SettingsIcon } from '@chakra-ui/icons';
-
-const SwapSettings = () => {
+import Web3 from 'web3';
+import { changeTransactionDeadline } from '../../utils/UtilFunc';
+const SwapSettings = ({
+  transactionDeadline,
+  setTransactionDeadline,
+  setActualTransactionDeadline,
+  setSlippageValue,
+  slippageValue,
+}) => {
+  const changeSlippageValue = val => {
+    console.log(val);
+    setSlippageValue(val);
+  };
+  const changeDeadline = (time, val) => {
+    setTransactionDeadline(val);
+    setActualTransactionDeadline(time);
+    console.log(val);
+    // setSlippageValue(val)
+  };
   return (
     <Flex
       style={{
@@ -53,7 +73,7 @@ const SwapSettings = () => {
         >
           <PopoverHeader fontWeight="semibold">
             Transaction Settings
-        </PopoverHeader>
+          </PopoverHeader>
           <PopoverArrow />
           <PopoverCloseButton />
           <PopoverBody>
@@ -64,19 +84,42 @@ const SwapSettings = () => {
                 aria-label="A tooltip"
               >
                 &#x1F6C8;
-            </Tooltip>
+              </Tooltip>
             </Text>
-            <Flex>
-              <Input
-                placeholder="0.0"
-                fontSize="lg"
-                color=" rgba(255, 255, 255,0.25)"
-                isRequired
-                type="number"
-                size="sm"
-                width="30%"
-              // value={transactionDeadline}
-              />
+            <Flex justifyContent="space-between">
+              {['0.1', '0.5', '1'].map(value => (
+                <Button
+                  border="0px"
+                  h="30px"
+                  fontWeight="regular"
+                  width="60px"
+                  mr={1}
+                  fontSize="16px"
+                  cursor="pointer"
+                  bg={slippageValue === value ? '#40BAD5' : '#120136'}
+                  marginBottom="5px"
+                  color="white"
+                  _hover={{ background: '#72cfe4', color: '#29235E' }}
+                  borderRadius="10px"
+                  onClick={() => changeSlippageValue(value)}
+                >
+                  {value} %
+                </Button>
+              ))}
+              <InputGroup>
+                <Input
+                  placeholder="0.0"
+                  fontSize="lg"
+                  color=" rgba(255, 255, 255,0.25)"
+                  isRequired
+                  size="sm"
+                  ml={2}
+                  width="40%"
+                  value={slippageValue}
+                  disabled
+                />
+                {/* <InputRightAddon children="%" w="10px" h="20px" /> */}
+              </InputGroup>
             </Flex>
             <Text>
               Transaction Deadline{' '}
@@ -85,7 +128,7 @@ const SwapSettings = () => {
                 aria-label="A tooltip"
               >
                 &#x1F6C8;
-            </Tooltip>
+              </Tooltip>
             </Text>
             <Flex>
               <Input
@@ -96,6 +139,13 @@ const SwapSettings = () => {
                 type="number"
                 size="sm"
                 width="30%"
+                value={transactionDeadline}
+                onChange={e =>
+                  changeDeadline(
+                    changeTransactionDeadline(e.target.value),
+                    e.target.value,
+                  )
+                }
               />
               <Text style={{ margin: '8px 10px 0px' }}> Minutes</Text>
             </Flex>
@@ -118,7 +168,7 @@ const SwapSettings = () => {
                     aria-label="A tooltip"
                   >
                     &#x1F6C8;
-                </Tooltip>
+                  </Tooltip>
                 </FormLabel>
                 <Switch id="expert_mode" />
               </FormControl>
@@ -140,7 +190,7 @@ const SwapSettings = () => {
                     aria-label="A tooltip"
                   >
                     &#x1F6C8;
-                </Tooltip>
+                  </Tooltip>
                 </FormLabel>
                 <Switch id="multihops" />
               </FormControl>
@@ -151,5 +201,5 @@ const SwapSettings = () => {
       </Popover>
     </Flex>
   );
-}
+};
 export default SwapSettings;

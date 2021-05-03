@@ -27,7 +27,8 @@ import styles from '../../styles/yieldFarmdetails.css';
 import {
   rigelToken,
   BUSDToken,
-  MasterChefContract
+  RGPSpecialPool,
+  BNBRGPliquidityProviderTokensContract,
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
 const ShowYieldFarmDetails = ({ content, wallet }) => {
@@ -44,88 +45,19 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
   const [rewards, setRewards] = useState('0.000');
   const [isNewUser, setIsNewUser] = useState(true);
 
-  // kindly set onclick of confinm to call this function
-  const useDeposit = async depositToken => {
-    if (wallet.signer !== 'signer') {
-      const masterChef = await MasterChefContract();
-      await masterChef.stake(
-        Web3.utils.toWei(depositRGPBNBToken.toString()),
-        // ethers.utils.parseUnits(depositRGPBNBToken),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-    }
-  };
-  // show max value
-  const showMaxValue = async (earn, input) => {
-    try {
-      if (input === 'deposit') {
-        if (earn === 'BUSD') {
-          const busd = await BUSDToken();
-          const walletBal = await busd.balanceOf(wallet.address);
-          alert('setting max value for busd');
-          const busdBal = ethers.utils.formatUnits(walletBal);
-          setDepositRGPBNBToken(busdBal);
-          // depositRGPBNBToken
-        } else if (earn === 'RGP') {
-          const rgp = await rigelToken();
-          const walletBal = await rgp.balanceOf(wallet.address);
-          // depositRGPBNBToken
-          alert('setting max value for RGP');
-          const rgpBal = ethers.utils.formatUnits(walletBal);
-          setDepositRGPBNBToken(rgpBal);
-        }
-      } else if (input === 'unstake') {
-        if (earn === 'BUSD') {
-          const busd = await BUSDToken();
-          const walletBal = await busd.balanceOf(wallet.address);
-          alert('setting max value for busd');
-          const busdBal = ethers.utils.formatUnits(walletBal);
-          setUnstakeRGPBNBToken(busdBal);
-        } else if (earn === 'RGP') {
-          const rgp = await rigelToken();
-          const walletBal = await rgp.balanceOf(wallet.address);
-          alert('setting max value for RGP');
-          const rgpBal = ethers.utils.formatUnits(walletBal);
-          setUnstakeRGPBNBToken(rgpBal);
-        }
-      }
-    } catch (e) {
-      alert(
-        'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
-      );
-    }
-  };
-  // withdrawal of funds
-  const useWithdrawal = async () => {
-    console.log('opening usewithdrawal');
-    if (wallet.signer !== 'signer') {
-      const masterChef = await MasterChefContract();
-      await masterChef.unStake(
-        // Web3.utils.toWei(unstakeRGPBNBToken.toString()),
-        ethers.utils.parseUnits(unstakeRGPBNBToken, 'ether'), // user input from onclick shoild be here...
-        {
-          from: wallet.address,
-          gasLimit: 150000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-    }
-  };
 
   useEffect(() => {
     const outPut = async () => {
       if (wallet.signer !== 'signer') {
-        const masterChef = await MasterChefContract();
+        const specialPool = await RGPSpecialPool();
         // setStakeToken(stakedToken);
-        const totalStakingBal = await masterChef.totalStaking();
+        const totalStakingBal = await specialPool.totalStaking();
         const seeTotalStaked = await Web3.utils.fromWei(totalStakingBal.toString())
         setStakeToken(seeTotalStaked.toString());
         console.log('total staked token ', seeTotalStaked.toString());
+
       }
+      // userHarvest();
     };
 
     const checkStaked = async () => {
@@ -140,36 +72,317 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
       }
     };
 
-    checkStaked();
+    // checkStaked();
     outPut();
+
   }, [wallet]);
 
-  const outPut = async () => {
+  // .......................................... START SPECAIL POOL CALLS..........................................
+  const RGPuseStake = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await MasterChefContract();
-      // setStakeToken(stakedToken);
-      const seeTotalStaked = await masterChef.totalStaking({
-        from: wallet.signer,
-      });
-      // setStakeToken(seeTotalStaked);
-      console.log('total staked token ', seeTotalStaked.toString());
+      const specialPool = await RGPSpecialPool();
+      await specialPool.stake(
+        Web3.utils.toWei(depositRGPBNBToken.toString()),
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
     }
   };
 
-  // busd approve masterchef
-  const busdApproveMasterChef = async () => {
+  // withdrawal of funds
+  const RGPUnstake = async () => {
+    console.log('opening usewithdrawal');
+    if (wallet.signer !== 'signer') {
+      const specialPool = await RGPSpecialPool();
+      await specialPool.unStake(
+        // Web3.utils.toWei(unstakeRGPBNBToken.toString()),
+        ethers.utils.parseUnits(unstakeRGPBNBToken, 'ether'), // user input from onclick shoild be here...
+        {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  // Approve specialPool......
+  const RGPSpecialPoolApproval = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
-      console.log('innnnn......................');
       const walletBal = await rgp.balanceOf(wallet.address);
-      // setRGPBalance(rgpBalance);
-      // setBalance(walletBal);
-      // const rgpBal = ethers.utils.formatUnits(walletBal);
-      await rgp.approve(SMART_SWAP.MasterChef, walletBal, {
+      await rgp.approve(SMART_SWAP.specialPool, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
         gasPrice: ethers.utils.parseUnits('2', 'gwei'),
       });
+    }
+  };
+  // ........................................ END SPECIAL POOL..................................
+
+  // .......................................... START LP FOR BNB-RGP TOKENS ...............................
+
+  //deposit for the Liquidity Provider tokens for
+  const BNBRGPlpDeposit = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract();
+      const pid = 0;
+      await lpTokens.deposit(
+        pid,
+        Web3.utils.toWei(depositRGPBNBToken.toString()),
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  //withdrawal for the Liquidity Provider tokens for
+  const BNBRGPlpTokensWithdrawal = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract()
+      const pid = 1;
+      await lpTokens.withdraw(
+        pid,
+        Web3.utils.toWei(depositRGPBNBToken.toString()), // amount passed in from user
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  const BNBRGPlpTokensAdd = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract()
+      const allocPoint = 1;
+      await lpTokens.add(
+        allocPoint,
+        SMART_SWAP.liquidityProviderTokensContractBNBRGP,
+        true,
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  const BNBRGPlpApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.liquidityProviderTokensContractBNBRGP, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('2', 'gwei'),
+      });
+    }
+  };
+  //............................................END LP FOR BNB-RGP TOKENS .........................................
+
+
+  // .......................................... START LP FOR RGP-BUSD TOKENS ...............................
+
+  //deposit for the Liquidity Provider tokens for
+  const RGPBUSDlpDeposit = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract();
+      const pid = 0;
+      await lpTokens.deposit(
+        pid,
+        Web3.utils.toWei(depositRGPBNBToken.toString()),
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  //withdrawal for the Liquidity Provider tokens for
+  const RGPBUSDlpTokensWithdrawal = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract()
+      const pid = 1;
+      await lpTokens.withdraw(
+        pid,
+        Web3.utils.toWei(depositRGPBNBToken.toString()), // amount passed in from user
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  const RGPBUSDlpTokensAdd = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract()
+      const allocPoint = 1;
+      await lpTokens.add(
+        allocPoint,
+        SMART_SWAP.liquidityProviderTokensContractBNBRGP,
+        true,
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  const RGPBUSDlpApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.liquidityProviderTokensContractBNBRGP, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('2', 'gwei'),
+      });
+    }
+  };
+
+  //............................................END LP FOR RGP-BUSD TOKENS .........................................
+
+
+  // .......................................... START LP FOR BNB-BUSD TOKENS ...............................
+
+  const BNBBUSDlpDeposit = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract();
+      const pid = 0;
+      await lpTokens.deposit(
+        pid,
+        Web3.utils.toWei(depositRGPBNBToken.toString()),
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  //withdrawal for the Liquidity Provider tokens for
+  const BNBBUSDlpTokensWithdrawal = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract()
+      const pid = 1;
+      await lpTokens.withdraw(
+        pid,
+        Web3.utils.toWei(depositRGPBNBToken.toString()), // amount passed in from user
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  const BNBBUSDlpTokensAdd = async depositToken => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await BNBRGPliquidityProviderTokensContract()
+      const allocPoint = 1;
+      await lpTokens.add(
+        allocPoint,
+        SMART_SWAP.liquidityProviderTokensContractBNBRGP,
+        true,
+        // ethers.utils.parseUnits(depositRGPBNBToken),
+        {
+          from: wallet.address,
+          gasLimit: 250000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        },
+      );
+    }
+  };
+
+  const BNBBUSDlpApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      const rgp = await rigelToken();
+      const walletBal = await rgp.balanceOf(wallet.address);
+      await rgp.approve(SMART_SWAP.liquidityProviderTokensContractBNBRGP, walletBal, {
+        from: wallet.address,
+        gasLimit: 150000,
+        gasPrice: ethers.utils.parseUnits('2', 'gwei'),
+      });
+    }
+  };
+
+  //............................................END LP FOR BNB-BUSD TOKENS .........................................
+
+  // show max value
+  const showMaxValue = async (earn, input) => {
+    try {
+      if (input === 'deposit') {
+        if (earn === 'BUSD') {
+          const busd = await BUSDToken();
+          const walletBal = await busd.balanceOf(wallet.address);
+          // alert('setting max value for busd');
+          const busdBal = ethers.utils.formatUnits(walletBal);
+          setDepositRGPBNBToken(busdBal);
+          // depositRGPBNBToken
+        } else if (earn === 'RGP') {
+          const rgp = await rigelToken();
+          const walletBal = await rgp.balanceOf(wallet.address);
+          // depositRGPBNBToken
+          // alert('setting max value for RGP');
+          const rgpBal = ethers.utils.formatUnits(walletBal);
+          setDepositRGPBNBToken(rgpBal);
+        }
+      } else if (input === 'unstake') {
+        if (earn === 'BUSD') {
+          const busd = await BUSDToken();
+          const walletBal = await busd.balanceOf(wallet.address);
+          // alert('setting max value for busd');
+          const busdBal = ethers.utils.formatUnits(walletBal);
+          setUnstakeRGPBNBToken(busdBal);
+        } else if (earn === 'RGP') {
+          const rgp = await rigelToken();
+          const walletBal = await rgp.balanceOf(wallet.address);
+          // alert('setting max value for RGP');
+          const rgpBal = ethers.utils.formatUnits(walletBal);
+          setUnstakeRGPBNBToken(rgpBal);
+        }
+      }
+    } catch (e) {
+      console.log(
+        'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
+      );
+    }
+  };
+
+
+  const outPut = async () => {
+    if (wallet.signer !== 'signer') {
+      const specialPool = await RGPSpecialPool();
+      // setStakeToken(stakedToken);
+      const seeTotalStaked = await specialPool.totalStaking();
+      // setStakeToken(seeTotalStaked);
+      console.log('total staked token ', seeTotalStaked.toString());
     }
   };
 
@@ -184,55 +397,106 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
   const closeModal = () => {
     modal2Disclosure.onClose();
   };
-  const confirmDeposit = () => {
+  const confirmDeposit = async (val) => {
+    console.log(val)
     setDepositValue('Pending Confirmation');
-    useDeposit(depositRGPBNBToken);
+    console.log(depositRGPBNBToken)
+
+    try {
+      if (wallet.signer !== 'signer') {
+        if (val === "RGP") {
+          await RGPuseStake(depositRGPBNBToken);
+        } else if (val === "RGP-BNB") {
+          await BNBRGPlpDeposit(depositRGPBNBToken)
+        } else if (val === "BNB-BUSD") {
+          await BNBBUSDlpDeposit(depositRGPBNBToken)
+        } else if (val === "RGP-BUSD") {
+          await RGPBUSDlpDeposit(depositRGPBNBToken)
+        } else {
+          await BNBRGPlpDeposit(depositRGPBNBToken)
+        }
+        setUnstakeButtonValue('confirmed')
+        setTimeout(() => closeModal(), 400)
+      }
+    } catch (e) {
+      console.log(
+        'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
+      );
+    }
     setDeposit(true);
-    setTimeout(() => setDepositValue('Confirmed'), 5000);
+    setDepositValue('Confirmed')
+    setTimeout(() => close(), 400)
+
   };
-  const confirmUnstakeDeposit = () => {
+  const confirmUnstakeDeposit = async (val) => {
     setUnstakeButtonValue('Pending Confirmation');
-    useWithdrawal();
-    setTimeout(() => setUnstakeButtonValue('confirmed'), 5000);
+    try {
+      if (wallet.signer !== 'signer') {
+        if (val === "RGP") {
+          await RGPUnstake();
+        } else if (val === "RGP-BNB") {
+          await BNBRGPlpTokensWithdrawal()
+        } else if (val === "BNB-BUSD") {
+          await BNBBUSDlpTokensWithdrawal()
+        } else if (val === "RGP-BUSD") {
+          await RGPBUSDlpTokensWithdrawal()
+        } else {
+          await BNBRGPlpTokensWithdrawal()
+        }
+        setUnstakeButtonValue('confirmed')
+        setTimeout(() => closeModal(), 400)
+      }
+    } catch (e) {
+      console.log(
+        'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
+      );
+    }
+
   };
 
   //checkingS for approval.
-  const setApprove = () => {
-    const checkUser = async () => {
-      console.log(1234588);
-      try {
-        if (wallet.signer !== 'signer') {
-          const rgp = await rigelToken();
-          const checkAllow = await rgp.allowance(
-            wallet.address,
-            SMART_SWAP.MasterChef,
-          );
-          console.log('checking');
-          if (Web3.utils.toWei(checkAllow.toString()) > 0) {
-            // result greater than zero
-            // remove approve btn to unstake
+  const setApprove = (val) => {
+    if (approveValue) {
+      modal2Disclosure.onOpen();
+    } else {
+      checkUser(val);
+    }
+  };
+  const checkUser = async (val) => {
+    console.log("1234588");
+    try {
+      if (wallet.signer !== 'signer') {
+        const rgp = await rigelToken();
+        const checkAllow = await rgp.allowance(
+          wallet.address,
+          SMART_SWAP.specialPool,
+        );
+        if (Web3.utils.toWei(checkAllow.toString()) > 0) {
+
+          if (val === "RGP-BNB") {
+            await BNBRGPlpApproval()
             setApproveValue(true);
             setApproveButtonColor(false);
-          } else if (ethers.utils.formatEther(checkAllow).toString() == 0.0) {
-            // result less than zero, call this function and change approve to unstake
-            // return rgpApproveMasterChef
-            busdApproveMasterChef();
-
+          } else if (val === "BNB-BUSD") {
+            await BNBBUSDlpApproval()
             setApproveValue(true);
-            setApproveButtonColor(true);
+            setApproveButtonColor(false);
+          } else if (val === "RGP-BUSD") {
+            await RGPBUSDlpApproval()
+            setApproveValue(true);
+            setApproveButtonColor(false);
           }
+        } else if (ethers.utils.formatEther(checkAllow).toString() == 0.0) {
+          await RGPSpecialPoolApproval();
+          setApproveValue(true);
+          setApproveButtonColor(true);
         }
-      } catch (e) {
-        alert(
-          'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
-        );
       }
-    };
-
-    if (approveValue && deposit) {
-      modal2Disclosure.onOpen();
+    } catch (e) {
+      console.log(
+        'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
+      );
     }
-    checkUser();
   };
   return (
     <>
@@ -249,12 +513,12 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
       >
         <Box width="90%" marginRight="30px">
           <Flex>
-            <Text fontSize="30px" marginRight="30px">
+            <Text fontSize="26px" marginRight="30px">
               {stakedToken}
             </Text>{' '}
-            <Text color="gray.400" marginTop="40px">
+            <Text color="gray.400" marginTop="34px">
               {' '}
-              {content.tokensStaked[0]} Tokens Staked
+              {content.earn} Tokens Staked
             </Text>
           </Flex>
 
@@ -274,7 +538,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
                   ? { color: 'white       ' }
                   : { color: '#423a85' }
               }
-              onClick={setApprove}
+              onClick={() => setApprove(content.tokensStaked[0])}
             >
               {approveValue ? 'unstake' : 'Approve'}
             </Button>
@@ -293,10 +557,10 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
         <Divider orientation="vertical" colorScheme="yellow" />
         <Box width="100%">
           <Flex>
-            <Text fontSize="30px" marginRight="30px">
+            <Text fontSize="26px" marginRight="30px">
               {content.RGPEarned}
             </Text>{' '}
-            <Text color="gray.400" marginTop="40px">
+            <Text color="gray.400" marginTop="34px">
               RGP Earned
             </Text>
           </Flex>
@@ -406,7 +670,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
                     ? { background: 'rgba(64, 186, 213, 0.15)' }
                     : { background: '#444159' }
                 }
-                onClick={confirmDeposit}
+                onClick={() => confirmDeposit(content.tokensStaked[0])}
               >
                 {depositValue}
               </Button>
@@ -510,7 +774,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
                     ? { background: 'rgba(64, 186, 213, 0.15)' }
                     : { background: '#444159' }
                 }
-                onClick={confirmUnstakeDeposit}
+                onClick={() => confirmUnstakeDeposit(content.tokensStaked[0])}
               >
                 {unstakeButtonValue}
               </Button>

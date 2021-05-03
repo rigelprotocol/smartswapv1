@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import ShowYieldFarmDetails from './ShowYieldFarmDetails';
-import { SMART_SWAP } from "../../utils/constants";
-import { rigelToken, BUSDToken, MasterChefContract } from '../../utils/SwapConnect';
 import BNBImage from '../../assets/bnb.svg';
 import ETHImage from '../../assets/eth.svg';
 import RGPImage from '../../assets/rgp.svg';
+import BUSDImage from '../../assets/busd.svg';
 
 const YieldFarm = ({ content, wallet }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
-  
   return (
     <>
       <Flex
@@ -28,10 +26,9 @@ const YieldFarm = ({ content, wallet }) => {
         paddingBottom="4px"
         marginTop="20px"
         borderRadius="10px"
-        width="95%"
-        align="left"
+        width={["95%", "100%"]}
       >
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" width="100%">
           <Box
             marginTop="15px"
             align="left"
@@ -44,7 +41,7 @@ const YieldFarm = ({ content, wallet }) => {
             {content.deposit}
           </Box>
         </Flex>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" width="100%">
           <Box
             marginTop="15px"
             align="left"
@@ -54,13 +51,13 @@ const YieldFarm = ({ content, wallet }) => {
             Earn
           </Box>
           <Box marginTop="15px" align="left">
-
             {content.img === 'bnb.svg' && <BNBImage mr="3" />}
             {content.img === 'eth.svg' && <ETHImage mr="3" />}
-            {content.img === 'rgp.svg' && <RGPImage mr="3" />}{' '} {content.earn}
+            {content.img === 'rgp.svg' && <RGPImage mr="3" />}
+            {content.img === 'busd.svg' && <BUSDImage mr="3" />} {content.earn}
           </Box>
         </Flex>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" width="100%">
           <Box
             marginTop="15px"
             align="left"
@@ -73,7 +70,7 @@ const YieldFarm = ({ content, wallet }) => {
             {content.APY}
           </Box>
         </Flex>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" width="100%">
           <Box
             marginTop="15px"
             align="left"
@@ -83,10 +80,10 @@ const YieldFarm = ({ content, wallet }) => {
             Total Liquidity
           </Box>
           <Box marginTop="15px" align="left">
-            {content.totalLiquidity}
+            ${content.totalLiquidity}
           </Box>
         </Flex>
-        <Box align="right" mt={['4', '0']}>
+        <Box align="right" mt={['4', '0']} ml="2">
           <Button
             w={['100%', '100%', '146px']}
             h="40px"
@@ -95,15 +92,19 @@ const YieldFarm = ({ content, wallet }) => {
             color="#40BAD5"
             border="0"
             mb="4"
-            cursor="pointer"
+            disabled
+            cursor="not-allowed"
             _hover={{ color: '#423a85' }}
-            onClick={() => setShowYieldFarm(!showYieldfarm)}
+          // onClick={() => setShowYieldFarm(!showYieldfarm)}
           >
             Unlock
           </Button>
         </Box>
+
       </Flex>
-      {showYieldfarm && <ShowYieldFarmDetails content={content} wallet={wallet} />}
+      {showYieldfarm && (
+        <ShowYieldFarmDetails content={content} wallet={wallet} />
+      )}
     </>
   );
 };

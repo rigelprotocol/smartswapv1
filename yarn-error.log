@@ -1,8 +1,8 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\ENCRYPTION.001\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add @web3-react/core @web3-react/injected-connector
+  C:\Program Files\nodejs\node.exe C:\Users\ENCRYPTION.001\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js install
 
 PATH: 
-  C:\Users\ENCRYP~1.001\AppData\Local\Temp\Rar$EXa5048.46756\vendor\bin;C:\Users\ENCRYP~1.001\AppData\Local\Temp\Rar$EXa5048.46756\vendor\conemu-maximus5\ConEmu\Scripts;C:\Users\ENCRYP~1.001\AppData\Local\Temp\Rar$EXa5048.46756\vendor\conemu-maximus5;C:\Users\ENCRYP~1.001\AppData\Local\Temp\Rar$EXa5048.46756\vendor\conemu-maximus5\ConEmu;C:\Program Files\WinRAR;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Users\ENCRYPTION.001\AppData\Local\Microsoft\WindowsApps;C:\Users\ENCRYPTION.001\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\ENCRYPTION.001\AppData\Roaming\npm;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\ENCRYP~1.001\AppData\Local\Temp\Rar$EXa5048.46756
+  C:\Users\ENCRYPTION.001\AppData\Local\Temp\Rar$EXa5048.46756\vendor\conemu-maximus5\ConEmu\Scripts;C:\Users\ENCRYPTION.001\AppData\Local\Temp\Rar$EXa5048.46756\vendor\conemu-maximus5;C:\Users\ENCRYPTION.001\AppData\Local\Temp\Rar$EXa5048.46756\vendor\conemu-maximus5\ConEmu;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Users\ENCRYPTION.001\AppData\Local\Microsoft\WindowsApps;C:\Users\ENCRYPTION.001\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\ENCRYPTION.001\AppData\Roaming\npm;
 
 Yarn version: 
   1.22.10
@@ -14,7 +14,8 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: EPERM: operation not permitted, unlink 'D:\Projects\RigelProtocol\hide\smartswapfront\node_modules\@babel\runtime\helpers\assertThisInitialized\index.js'
+  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:67:26)
 
 npm manifest: 
   {
@@ -89,6 +90,9 @@ npm manifest:
       "@emotion/core": "^11.0.0",
       "@emotion/react": "^11.1.5",
       "@emotion/styled": "^11.1.5",
+      "@metamask/detect-provider": "^1.2.0",
+      "@web3-react/core": "^6.1.9",
+      "@web3-react/injected-connector": "^6.0.7",
       "babel-plugin-inline-react-svg": "^1.1.2",
       "chalk": "^2.4.2",
       "chart.js": "^2.9.4",
@@ -120,6 +124,7 @@ npm manifest:
       "react-toast-notifications": "^2.4.3",
       "redux": "4.0.1",
       "redux-saga": "1.0.2",
+      "redux-thunk": "^2.3.0",
       "reselect": "4.0.0",
       "sanitize.css": "8.0.0",
       "styled-components": "4.2.0",

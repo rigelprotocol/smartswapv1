@@ -15,36 +15,32 @@ import {
 } from 'utils/wallet-wiget/connection';
 import { ethers } from 'ethers';
 import { TOKENS_CONTRACT } from 'utils/constants';
-import RigelToken from 'utils/abis/RigelToken.json';
+import { formatBalance } from 'utils/UtilFunc';
 import {
   WALLET_CONNECTED,
   WALLET_PROPS,
   LOADING_WALLET,
   CLOSE_LOADING_WALLET,
   CLEAR_WALLET,
+  CHANGE_DEADLINE
 } from './constants';
+import { assignRef } from '@chakra-ui/react';
 
 export const reConnect = (wallet) => async dispatch => {
   try {
     const { selectedAddress, chainId } = wallet;
     const ethProvider = await provider();
     const walletSigner = await signer();
-    const balance = ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress)).toString();
+    const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress))).toString();
+    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, walletSigner);
     dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: selectedAddress,
         provider: ethProvider, signer: walletSigner, chainId, balance
       },
     })
-    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, RigelToken, walletSigner);
-    dispatch({ type: WALLET_PROPS, payload: { rgp: rgpBalance } });
-    return dispatch({
-      type: NOTICE, message: {
-        title: 'Re-Connection Message',
-        body: 'Connection was Successful',
-        type: 'success',
-      }
-    });
+    dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
+
   } catch (e) {
     return dispatch({
       type: NOTICE, message: {
@@ -64,29 +60,23 @@ export const connectWallet = () => async dispatch => {
     const walletSigner = await signer()
     const chainId = await window.ethereum.request({ method: 'eth_chainId' });
     const res = await connectMetaMask();
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+    const balance = await ethProvider.getBalance(res[0]);
+    const rgpBalance = await getAddressTokenBalance(res[0], TOKENS_CONTRACT.RGP, walletSigner);
     dispatch({
+      type: WALLET_CONNECTED, wallet: {
+        address: res[0], balance: formatBalance(ethers.utils.formatEther(balance)),
+        provider: ethProvider, signer: walletSigner, chainId,
+      },
+    });
+    dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
+    return dispatch({
       type: NOTICE, message: {
         title: 'Success:',
         body: 'Connection was successful',
         type: 'success',
       }
     })
-    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
-    dispatch({
-      type: WALLET_CONNECTED, wallet: {
-        address: res[0],
-        provider: ethProvider, signer: walletSigner, chainId,
-      },
-    })
-    const balance = await ethProvider.getBalance(res[0]);
-    dispatch({
-      type: WALLET_CONNECTED, wallet: {
-        address: res[0], balance: ethers.utils.formatEther(balance).toString(),
-        provider: ethProvider, signer: walletSigner, chainId,
-      },
-    });
-    return dispatch({ type: WALLET_PROPS, payload: { rgp: await getAddressTokenBalance(res[0], TOKENS_CONTRACT.RGP, RigelToken, walletSigner) } });
-
   } catch (e) {
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
     return dispatch({
@@ -115,18 +105,9 @@ export function connectingWallet(option) {
   };
 }
 
-/**
- *
- * @param {*} tokens
- */
-export const getTokenBalance = async (tokens = []) => {
-  for (let index = 0; index < tokens.length; index++) {
-    const element = tokens[index];
-    // await getAddressTokenBalance('wallet_address', 'tokenAddress', 'TokenAbi', 'signer')
-
-  }
-}
-
 export const disconnectWallet = () => dispatch => {
   dispatch({ type: CLEAR_WALLET, payload: null });
+}
+export const changeDeadlineValue = value => dispatch => {
+  dispatch({ type: CHANGE_DEADLINE, payload: value })
 }

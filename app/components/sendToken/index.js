@@ -1,3 +1,5 @@
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable consistent-return */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable eqeqeq */
@@ -5,307 +7,405 @@
 /* eslint-disable camelcase */
 /* eslint-disable react/prop-types */
 // @ts-nocheck
+
+/**
+ * @TODO
+ * @Balance_Checker
+ * @description => User can't type more than what is in their balance return the user
+ * balance
+ *
+*/
 import React, { useState, useEffect } from 'react';
-import { Box } from '@chakra-ui/layout';
+import { useDisclosure, Spinner } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
 import Web3 from 'web3';
-import { BUSDToken, rigelToken, BNBTOKEN, router, WETH } from '../../utils/SwapConnect';
+import { approveToken, runApproveCheck } from 'utils/wallet-wiget/TokensUtils';
+import { getPriceForToken } from 'containers/HomePage/service/swapServices';
+
+import { router, WETH, updateOutPutAmountForRouter } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
 import SwapSettings from "./SwapSettings";
-import { SMART_SWAP, TOKENS_CONTRACT } from "../../utils/constants";
-import ShowMessageBox from './../Toast/ShowMessageBox';
+import { tokenAddressWhere } from "../../utils/constants";
+import ShowMessageBox from "../Toast/ShowMessageBox";
+import ConfirmSwapBox from './ConfirmSwapBox';
+import { changeDeadlineValue } from '../../containers/WalletProvider/actions';
 
 export const Manual = props => {
-  const { wallet, wallet_props } = props.wallet;
+  const { wallet } = props.wallet;
   const [fromAmount, setFromAmount] = useState('');
-  const [path, setPath] = useState([{ fromPath: TOKENS_CONTRACT.RGP, token: "RGP" }]);
+  const [path, setPath] = useState([{ fromPath: tokenAddressWhere('RGP'), token: "RGP" }]);
   const [showBox, setShowBox] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(true)
-  const [amountIn, setAmountIn] = useState('0.0');
+  const [amountIn, setAmountIn] = useState('');
+  const [tokenPrice, setTokenPrice] = useState('')
   const [boxMessage, setBoxMessage] = useState('');
-  const [rgpBalance, setRGPBalance] = useState('0.0');
-  const [ETHBalance, setETHBalance] = useState('0.0');
-  const [busdBalance, setBUSDBalance] = useState('0.0');
-  const [bnbBalance, setBNBBalance] = useState('0.0');
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
-  const [transactionDeadline, setTransactionDeadline] = useState("1234")
-  const [swapUserTokenBalance, setSwapUserTokenBalance] = useState("connect to wallet")
-  const [approveButton, setApproveButton] = useState(false)
+  const [isSendingTransaction, setIsSendingTransaction] = useState(false);
+  const [userHasApproveToken, setUserHasApproveToken] = useState(false)
+  const [transactionDeadline, setTransactionDeadline] = useState("")
+  const [actualTransactionDeadline, setActualTransactionDeadline] = useState(Math.floor(new Date().getTime() / 1000.0 + 1200))
+  const [slippageValue, setSlippageValue] = useState("0.5")
+  const [tokenAllowance, setTokenAllowance] = useState('');
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
 
   useEffect(() => {
-    callTransformFunction()
+    (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
-    // checkForApproval(path[0])
-  }, [path, selectedToken, selectedToToken, wallet])
+  }, [path, selectedToken, selectedToToken, wallet, slippageValue])
+
+  useEffect(() => {
+    props.changeDeadlineValue({ actualTransactionDeadline, slippageValue })
+  }, [transactionDeadline, slippageValue])
+
+
+  useEffect(async () => {
+    if (wallet.signer !== 'signer') {
+      if (selectedToken.symbol === 'ETH') {
+        return setUserHasApproveToken(true)
+      }
+      const allowance = await runApproveCheck(selectedToken, wallet.address, wallet.signer);
+      setTokenAllowance(allowance);
+      return allowance > 0 ? setUserHasApproveToken(true) : setUserHasApproveToken(false);
+    }
+  }, [selectedToken, wallet]);
+
+  useEffect(() => {
+    if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
+      setFromAmount(selectedToken.balance)
+    }
+    if (tokenAllowance < fromAmount) {
+      setUserHasApproveToken(false)
+    }
+  }, [fromAmount, amountIn]);
+
+  const modal1Disclosure = useDisclosure();
+  const modal2Disclosure = useDisclosure();
+  const modal3Disclosure = useDisclosure();
+  const modal4Disclosure = useDisclosure();
 
   // handling change ev
   const handleChangeToAmount = (event) => {
-    setAmountIn(event.target.value);
+    setAmountIn(event.target.value * calculateSlippage());
     getToAmount(event.target.value, 'to');
   };
-  const handleChangeFromAmount = event => {
-    setFromAmount(event.target.value)
-    getToAmount(event.target.value, 'from');
+
+  const handleChangeFromAmount = (event, balance) => {
+    const { value } = event.target;
+    setFromAmount(value || balance)
+    getToAmount(value || balance, 'from');
   };
-
-  // use this to fetch bnb balance of user
-  const showBNBMaxValue = async (val) => {
-    const bnb = await BNBTOKEN();
-    const walletBal = await bnb.balanceOf(wallet.address);
-    const bnbBalance = ethers.utils.formatUnits(walletBal);
-    setFromAmount(bnbBalance)
-  }
-
-  const showMaxValue = async (val) => {
-    const rgp = await rigelToken();
-    const walletBal = await rgp.balanceOf(wallet.address);
-    const rgpBal = ethers.utils.formatUnits(walletBal);
-    setFromAmount(rgpBal)
-  }
 
   const setPathArray = (target, token) => {
     const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
     const newArray = [{ fromPath: target, token }, ...pathObject]
     setPath(newArray)
-
   };
+
   const setPathToArray = (target, token) => {
     const pathObject = path.filter(value => !value.hasOwnProperty('toPath'));
     const newArray = [...pathObject, { toPath: target, token }]
     setPath(newArray)
-
   };
-  /**
-   * @describe this Function is suppose to get the
-   * amount of token for the ToField
-   * @param {*} tokenAddress
-   * @param {*} symbol
-   */
-  const checkIfUserIsLoggedIn = () => {
+
+  const isLoggedIn = () => {
     if (wallet.signer === "signer") {
       return false
     }
     return true
+
+  }
+  const calculateSlippage = () => parseFloat(slippageValue) / 100
+
+  const checkForAllVariables = () => {
+    if (isLoggedIn() && fromAmount > 0 && selectedToToken.name !== 'Select a token') {
+      setDisableSwapTokenButton(false)
+      return true;
+    }
+    setDisableSwapTokenButton(true)
+    return false;
   }
 
-  const checkForApproval = async (value) => {
-    const rgp = await rgpApproval()
-    const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.SMART_SWAPPING);
-    const res = ethers.utils.formatEther(checkAllow).toString() > 0;
-    console.log(res)
-    return res
-  }
-  const changeUIBasedOnResult = (result) => {
-    console.log({ result })
-    if (result) {
-      setSwapUserTokenBalance("swap token")
+  const getToAmount = async (fromQty, field) => {
+    const askAmount = (!fromQty && !field) ? fromAmount : fromQty;
+    callTransformFunction(askAmount, field)
+  };
+
+  const callTransformFunction = async (askAmount = '', field = "from") => {
+    if (wallet.signer !== 'signer' && askAmount.length > 0 && path[1]) {
+      if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "BUSD") || (selectedToken.symbol === "BUSD" && selectedToToken.symbol === "RGP")) {
+        await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage);
+        setDisableSwapTokenButton(false);
+      } else if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "ETH") || (selectedToken.symbol === "ETH" && selectedToToken.symbol === "RGP")) {
+        await update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage)
+        setDisableSwapTokenButton(false);
+      } else if ((selectedToken.symbol === "WETH" && selectedToToken.symbol === "ETH") || (selectedToken.symbol === "ETH" && selectedToToken.symbol === "WETH")) {
+        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field, calculateSlippage);
+        setDisableSwapTokenButton(false);
+      } else {
+        await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage);
+        setDisableSwapTokenButton(false)
+      }
       setDisableSwapTokenButton(false)
-      setApproveButton(false)
+
     } else {
-      setApproveButton(true)
+      setAmountIn('')
       setDisableSwapTokenButton(true)
     }
   }
-  const checkForAllVariables = async () => {
-    if (checkIfUserIsLoggedIn()) {
-      setSwapUserTokenBalance("Enter amount")
-      if (fromAmount > 0 || amountIn > 0) {
-        setSwapUserTokenBalance("select a token")
-        if (selectedToToken !== 'Select a token') {
-          setSwapUserTokenBalance("select the correct pair")
-          if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
-            const result = await checkForApproval(path[0])
-            changeUIBasedOnResult(result)
-          } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-            const result = await checkForApproval(path[0])
-            changeUIBasedOnResult(result)
-          } else {
-            setSwapUserTokenBalance("select the correct pair")
-            // return sendNotice('Select the correct token pair ')
-          }
-        } else {
-          setSwapUserTokenBalance("select a token")
-          // return sendNotice('Select the designated token')
-        }
-      } else {
-        setSwapUserTokenBalance("Enter amount")
-        // return sendNotice('Enter the amount of token to exchange')
-      }
-    } else {
-      setSwapUserTokenBalance("Connect to wallet")
-      // return sendNotice('Please use the Connect button above')
-    }
-  }
-  const getToAmount = async (fromQty, field) => {
-    const askAmount = (typeof fromQty == "undefined") ? fromAmount : fromQty;
-    callTransformFunction(askAmount, field)
-  };
-  const callTransformFunction = async (askAmount = fromAmount, field = "from") => {
-    if (wallet.signer !== 'signer' && askAmount > 0 && path[1]) {
-      if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
-        await updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field);
-      } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-        await updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field)
-      } else {
-        sendNotice("Sorry you can't swap the same tokens")
-      }
-    }
-  }
+
   const swapUserToken = async () => {
-    const res = await checkForAllVariables()
-    if (res) {
-      if ((path[0].token === "RGP" && path[1].token === "BUSD") || (path[0].token === "BUSD" && path[1].token === "RGP")) {
-        await swapTokenForTokens()
-      } else if ((path[0].token === "RGP" && path[1].token === "ETH") || (path[0].token === "ETH" && path[1].token === "RGP")) {
-        await ETHRGPSwapTokenForTokens()
-      }
-
+    if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "BUSD") || (selectedToken.symbol === "BUSD" && selectedToToken.symbol === "RGP")) {
+      await swapTokenForTokens()
+    } else if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "WETH") || (selectedToken.symbol === "WETH" && selectedToToken.symbol === "RGP")) {
+      await swapTokenForTokens()
+    } else if (selectedToken.symbol === "ETH" && selectedToToken.symbol === "WETH") {
+      await deposit()
+    } else if (selectedToken.symbol === "WETH" && selectedToToken.symbol === "ETH") {
+      await withdraw()
+    }
+    else if (
+      (selectedToken.symbol === "ETH" && selectedToToken.symbol === "RGP") ||
+      (selectedToken.symbol === "ETH" && selectedToToken.symbol === "BUSD")
+    ) {
+      await swapETHForExactToken()
+    } else if (
+      (selectedToken.symbol === "RGP" && selectedToToken.symbol === "ETH") ||
+      (selectedToken.symbol === "BUSD" && selectedToToken.symbol === "ETH")
+    ) {
+      await swapExactTokenForETH()
     } else {
-      sendNotice("something went wrong cannot swap")
+      await swapTokenForTokens();
     }
   }
-  const swapUserTokenOld = () => {
-    //checkForAllVariables()
-    // wallet.signer === 'signer' ?
-    //   sendNotice('Please use the Connect button above')
-    //   : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
-    //     ? sendNotice('Enter the amount of token to exchange')
-    //     : typeof wallet.signer === 'object' && fromAmount != parseFloat(0.0) && selectedToToken === 'Select a token'
-    //       ? sendNotice('Select the designated token')
-    //       : typeof wallet.signer === 'object' &&
-    //         fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-    //         ? ((isNewUser) ? rgpApproval() : swapTokenForTokens())
-    //         : null
 
+  const triggerAccountCheck = async () => {
+    if (checkForAllVariables()) {
+      if (userHasApproveToken) {
+        return openModal1()
+      }
+      setIsSendingTransaction(true);
+      const sendTransaction = await approveToken(wallet.address, selectedToken.address, wallet.signer)
+      const { confirmations, status } = await sendTransaction.wait(3);
+      if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
+        setIsSendingTransaction(false);
+        return setUserHasApproveToken(true);
+      }
+    }
   }
-  const rgpApproval = async () => {
-    if (wallet.signer !== 'signer') {
-      const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address);
-      await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
-        from: wallet.address,
-        gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
-      });
-    }
-    return true
-  };
 
-  // Approval for BNB Tokens
-  const bnbApproval = async () => {
-    if (wallet.signer !== 'signer') {
-      const bnb = await BNBTOKEN();
-      const walletBal = await bnb.balanceOf(wallet.address);
-      await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
-        from: wallet.address,
-        gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
-      });
-    }
-    return false
-  };
-
-  // // Approval for BNB Tokens
-  // const ETHApproval = async () => {
-  //   if (wallet.signer !== 'signer') {
-  //     const eth = await WETH();
-  //     const walletBal = await eth.balanceOf(wallet.address);
-  //     await eth.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
-  //       from: wallet.address,
-  //       gasLimit: 150000,
-  //       gasPrice: ethers.utils.parseUnits('20', 'gwei')
-  //     });
-  //   }
-  //   return false
-  // };
-
+  const openLoadingSpinnerAndSwap = async () => {
+    await swapUserToken()
+  }
   const swapTokenForTokens = async () => {
     if (wallet.signer !== 'signer') {
+      openModal2()
       const rout = await router();
-      const deadL = Math.floor(new Date().getTime() / 1000.0 + 300);
-      const fromPath = ethers.utils.getAddress(path[0].fromPath);
-      const toPath = ethers.utils.getAddress(path[1].toPath);
-      const passOutPut = amountIn;
+      const deadL = actualTransactionDeadline;
+      const fromPath = ethers.utils.getAddress(selectedToken.address);
+      const toPath = ethers.utils.getAddress(selectedToToken.address);
       try {
-        await rout.swapExactTokensForTokens(
+        setIsSendingTransaction(true)
+        const sendTransaction = await rout.swapExactTokensForTokens(
           Web3.utils.toWei(fromAmount.toString()),
-          Web3.utils.toWei(amountIn.toString()),
+          Web3.utils.toWei(amountIn.toFixed(8).toString()),
           [fromPath, toPath],
           wallet.address,
           deadL,
           {
             from: wallet.address,
-            gasLimit: 190000,
+            gasLimit: 1900000,
             gasPrice: ethers.utils.parseUnits('20', 'gwei'),
           },
         );
-        notify({ title: 'Transaction  Message', body: 'Swap was successful', type: 'success' })
-
+        props.notify({ title: 'Transaction  Message', body: 'Swap Execution in progress', type: 'success' })
+        setTimeout(() => openModal3(), 1000);
+        const { confirmations, status } = await sendTransaction.wait(3);
+        if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
+          setIsSendingTransaction(false);
+          props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+        }
       } catch (e) {
-        notify({ title: 'Transaction Message', body: e.message, type: 'error' })
+        setIsSendingTransaction(false);
+        setTimeout(() => openModal4(), 1000)
+        props.notify({ title: 'Transaction Message', body: e.message, type: 'error' })
       }
     }
   };
-  const approveSelectedToken = async () => {
-    let res
-    if (selectedToToken.token === "RGP") {
-      res = await rgpApproval()
-      setApproveButton(false)
-      console.log(res)
-      res = true
-    } else if (selectedToToken.token === "BUSD") {
-      res = await bnbApproval()
-      setApproveButton(false)
-      console.log(res)
-      res = false
-    } else if (selectedToToken.token === "ETH") {
-      res = await rgpApproval()
-      setApproveButton(false)
-      console.log(res)
-      res = true
+
+  const swapETHForExactToken = async () => {
+    if (wallet.signer !== 'signer') {
+      openModal2()
+      const rout = await router();
+      const deadL = actualTransactionDeadline;
+      const fromPath = ethers.utils.getAddress(selectedToken.address);
+      const toPath = ethers.utils.getAddress(selectedToToken.address);
+      const inputAmount = Web3.utils.toWei(amountIn.toString());
+      setIsSendingTransaction(true);
+      try {
+        const sendTransaction = await rout.swapETHForExactTokens(
+          inputAmount.toString(),
+          [fromPath, toPath],
+          wallet.address,
+          deadL,
+          {
+            value: Web3.utils.toWei(fromAmount.toString()),
+          },
+        );
+        props.notify({ title: 'Transaction  Message', body: 'Swap execution in process', type: 'success' })
+        setTimeout(() => openModal3(), 1000);
+        const { confirmations, status } = await sendTransaction.wait(3);
+        if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
+          setIsSendingTransaction(false);
+          props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+        }
+      } catch (e) {
+        setIsSendingTransaction(false);
+        setTimeout(() => openModal4(), 1000)
+        props.notify({ title: 'Transaction Message', body: e.message, type: 'error' })
+      }
     }
-    return res
+  };
+
+  const swapExactTokenForETH = async () => {
+    if (wallet.signer !== 'signer') {
+      openModal2()
+      const rout = await router();
+      const deadL = actualTransactionDeadline;
+      const fromPath = ethers.utils.getAddress(selectedToken.address);
+      const toPath = ethers.utils.getAddress(selectedToToken.address);
+      const inputAmount = Web3.utils.toWei(amountIn.toString());
+      setIsSendingTransaction(true);
+      try {
+        const sendTransaction = await rout.swapExactTokensForETH(
+          Web3.utils.toWei(fromAmount.toString()),
+          inputAmount,
+          [fromPath, toPath],
+          wallet.address,
+          deadL,
+        );
+        props.notify({ title: 'Transaction  Message', body: 'Swap Execution in progress', type: 'success' });
+        setTimeout(() => openModal3(), 1000);
+        const { confirmations, status } = await sendTransaction.wait(3);
+        if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
+          setIsSendingTransaction(false);
+          props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' });
+        }
+      } catch (e) {
+        setIsSendingTransaction(false);
+        setTimeout(() => openModal4(), 1000)
+        props.notify({ title: 'Transaction Message', body: e.message, type: 'error' })
+      }
+    }
+  };
+
+  const deposit = async () => {
+    if (wallet.signer !== 'signer') {
+      openModal2()
+      const weth = await WETH();
+      setIsSendingTransaction(true);
+      try {
+        const sendTransaction = await weth.deposit(
+          {
+            value: Web3.utils.toWei(fromAmount.toString()),
+          },
+        );
+        props.notify({ title: 'Transaction  Message', body: 'Swap Execution in progress', type: 'success' })
+        setTimeout(() => openModal3(), 1000);
+        const { confirmations, status } = await sendTransaction.wait(3);
+        if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
+          setIsSendingTransaction(false);
+          props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+        }
+      } catch (e) {
+        setIsSendingTransaction(false);
+        setTimeout(() => openModal4(), 1000)
+        props.notify({ title: 'Transaction Message', body: e.message, type: 'error' })
+      }
+    }
+  };
+
+  const withdraw = async () => {
+    if (wallet.signer !== 'signer') {
+      openModal2()
+      const weth = await WETH();
+      setIsSendingTransaction(true);
+      try {
+        const sendTransaction = await weth.withdraw(Web3.utils.toWei(fromAmount.toString()));
+        props.notify({ title: 'Transaction  Message', body: 'Swap Execution in progress', type: 'success' })
+        setTimeout(() => openModal3(), 1000);
+        const { confirmations, status } = await sendTransaction.wait(3);
+        if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
+          setIsSendingTransaction(false);
+          props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+        }
+      } catch (e) {
+        setTimeout(() => openModal4(), 1000)
+        props.notify({ title: 'Transaction Message', body: e.message, type: 'error' })
+      }
+    }
+  };
+
+  const resetAllField = () => {
+    setFromAmount('')
+    setAmountIn('')
+    // setSelectedToken(tokenWhere('rgp'));
+    // setSelectedToToken(tokenWhere('SELECT A TOKEN'));
+    // setPath([{ fromPath: tokenAddressWhere('RGP'), token: "RGP" }, { toPath: '', token: '' }])
   }
 
-  useEffect(() => {
-    const getBalance = async () => {
-      if (wallet.signer !== 'signer') {
-        setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : '0.0');
-        try {
-          // await checkUser(wallet, setIsNewUser);
-          const busd = await BUSDToken();
-          setRGPBalance(wallet_props[0] ? wallet_props[0].rgp : '0.0');
-          setETHBalance(wallet ? wallet.balance : '0.0');
-          setBUSDBalance(
-            ethers.utils
-              .formatEther(await busd.balanceOf(wallet.address))
-              .toString(),
-          );
-        } catch (e) {
-          return props.notify({
-            'title': 'Server Error',
-            'message': 'Something Went Wrong',
-            'type': 'info',
-          })
-        }
-      }
-    };
-    getBalance();
-  }, [wallet]);
+  const sendNotice = (message) => props.notify({
+    title: 'Site Information',
+    body: message,
+    type: 'info'
+  })
 
-  const sendNotice = (message) => {
-    return props.notify({
-      title: 'Site Information',
-      body: message,
-      type: 'info'
-    })
+  // open First Modal
+  const openModal1 = async () => {
+    const data = await getPriceForToken(wallet, selectedToken, selectedToToken)
+    const convertPriceToEther = Web3.utils.fromWei(data.split(",")[1])
+    setTokenPrice(convertPriceToEther)
+    modal1Disclosure.onOpen();
+  }
+
+  const closeModal1 = () => {
+    modal1Disclosure.onClose();
+  };
+  // open second Modal
+  const openModal2 = () => {
+    modal2Disclosure.onOpen();
+  }
+
+  const closeModal2 = () => {
+    modal2Disclosure.onClose();
+  };
+  // open third Modal
+  const openModal3 = () => {
+    modal3Disclosure.onOpen();
+  }
+
+  const closeModal3 = () => {
+    modal3Disclosure.onClose();
+    closeAllModals()
+  };
+
+  const openModal4 = () => {
+    modal4Disclosure.onOpen();
+  }
+
+  const closeModal4 = () => {
+    modal4Disclosure.onClose();
+    closeAllModals()
+  };
+  const closeAllModals = () => {
+    setTimeout(() => closeModal2(), 500)
+    setTimeout(() => closeModal1(), 1200)
+    setTimeout(() => resetAllField(), 1800)
   }
   return (
     <div>
@@ -319,18 +419,17 @@ export const Manual = props => {
         <SwapSettings
           transactionDeadline={transactionDeadline}
           setTransactionDeadline={setTransactionDeadline}
+          setActualTransactionDeadline={setActualTransactionDeadline}
+          slippageValue={slippageValue}
+          setSlippageValue={setSlippageValue}
         />
         <From
-          showMaxValue={showMaxValue}
           fromAmount={fromAmount}
           handleChangeFromAmount={handleChangeFromAmount}
           path={path}
           setPathArray={setPathArray}
           selectedToken={selectedToken}
           setSelectedToken={setSelectedToken}
-          rgpBalance={rgpBalance}
-          busdBalance={busdBalance}
-          ETHBalance={ETHBalance}
           getToAmount={getToAmount}
           userWallet={props.wallet}
           setPath={setPath}
@@ -346,14 +445,15 @@ export const Manual = props => {
           setAmountIn={setAmountIn}
           selectedToToken={selectedToToken}
           setSelectedToToken={setSelectedToToken}
-          rgpBalance={rgpBalance}
-          busdBalance={busdBalance}
-          ETHBalance={ETHBalance}
           getToAmount={getToAmount}
         />
+        {/* approveSelectedToken() */}
         {showBox && <ShowMessageBox boxMessage={boxMessage} />}
         <Box mt={14}>
-          {!approveButton &&
+          {isSendingTransaction ?
+            <Stack direction="row" spacing={4}>
+              <Spinner size="xs" color="red.500" />
+            </Stack> :
             <Button
               d="block"
               w="100%"
@@ -369,47 +469,50 @@ export const Manual = props => {
               _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
               _active={{ outline: '#29235E', background: '#29235E' }}
               disabled={disableSwapTokenButton}
-              onClick={() => swapUserToken()}
+              onClick={() =>
+                wallet.signer === 'signer' ?
+                  sendNotice('Please use the Connect button above')
+                  : (typeof wallet.signer === 'object' && fromAmount === undefined) || fromAmount.length == parseFloat(0.0)
+                    ? sendNotice('Enter the amount of token to exchange')
+                    : typeof wallet.signer === 'object' && fromAmount > parseFloat(0) && selectedToToken.name === 'Select a token'
+                      ? sendNotice('Select the designated token')
+                      : typeof wallet.signer === 'object' &&
+                        fromAmount != parseFloat(0.0) && selectedToToken.name !== 'Select a token'
+                        ? selectedToken.symbol == selectedToToken.symbol ? sendNotice('Improper token selection, you selected the same token') : triggerAccountCheck() : null
+              }
             >
-              {/* {wallet.signer === 'signer' ?
+              {wallet.signer === 'signer' ?
                 'connect to Wallet'
-                : typeof wallet.signer === 'object' && fromAmount == parseFloat(0.0)
+                : (typeof wallet.signer === 'object' && fromAmount === undefined) || fromAmount.length == parseFloat(0.0)
                   ? 'Enter Amount'
-                  : typeof wallet.signer === 'object' && fromAmount != parseFloat(0.0) && selectedToToken === 'Select a token'
+                  : typeof wallet.signer === 'object' && fromAmount != parseFloat(0.0) && selectedToToken.name === 'Select a token'
                     ? 'Click Select a Token'
                     : typeof wallet.signer === 'object' &&
-                      fromAmount != parseFloat(0.0) && selectedToToken !== 'Select a token'
-                      ? ((isNewUser) ? 'Approve Transaction' : 'Swap Tokens')
+                      fromAmount != parseFloat(0.0) && selectedToToken.name !== 'Select a token'
+                      ? (selectedToken.symbol == selectedToToken.symbol ? 'Improper token selection' :
+                        (!userHasApproveToken) ? 'Approve Transaction' : 'Swap Tokens')
                       : ''
-              } */}
-              {swapUserTokenBalance}
+              }
             </Button>
           }
         </Box>
-        <Box mt={6}>
-          {approveButton && disableSwapTokenButton && <Button
-            d="block"
-            w="100%"
-            h="50px"
-            color="#40BAD5"
-            border="none"
-            fontWeight="regular"
-            fontSize="lg"
-            cursor="pointer"
-            rounded="2xl"
-            bg="rgba(64, 186, 213,0.25)"
-            borderColor="#40BAD5"
-            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-            _active={{ outline: '#29235E', background: '#29235E' }}
-            display={approveButton ? "block" : "none"}
-            onClick={() => approveSelectedToken()}
-          >
-            Approve
-          </Button>
-
-
-          }
-        </Box>
+        <ConfirmSwapBox
+          path={path}
+          amountIn={amountIn}
+          fromAmount={fromAmount}
+          closeModal1={closeModal1}
+          closeModal2={closeModal2}
+          closeModal3={closeModal3}
+          closeModal4={closeModal4}
+          tokenPrice={tokenPrice}
+          selectedToken={selectedToken}
+          selectedToToken={selectedToToken}
+          modal1Disclosure={modal1Disclosure}
+          modal2Disclosure={modal2Disclosure}
+          modal3Disclosure={modal3Disclosure}
+          modal4Disclosure={modal4Disclosure}
+          openLoadingSpinnerAndSwap={openLoadingSpinnerAndSwap}
+        />
       </Box>
     </div>
   );
@@ -417,87 +520,60 @@ export const Manual = props => {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 export default connect(
   mapStateToProps,
-  { notify },
+  { notify, changeDeadlineValue },
 )(Manual);
 
-async function updateSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
-  const rout = await router();
+async function updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage) {
+  const rout = await updateOutPutAmountForRouter();
   if (typeof path[1] != 'undefined') {
-    const { fromPath } = path[0];
-    const { toPath } = path[1];
+    const fromPath = selectedToken.address;
+    const toPath = selectedToToken.address;
     try {
+      setShowBox(false);
+      setBoxMessage('...');
       const amount = await rout.getAmountsOut(
         Web3.utils.toWei(askAmount.toString()),
         (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
       );
+      // if(field != 'to' && )
       return (field != 'to') ? setAmountIn(
-        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-    } catch (e) {
+        ethers.utils.formatEther(amount[1]).toString() * calculateSlippage()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+    }
+    catch (e) {
+      setAmountIn('');
+      setBoxMessage("Please check your token selection");
       setShowBox(true);
-      setBoxMessage(e.message);
     }
   }
 }
 
-async function updateRGPETHSendAmount(wallet, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field) {
-  const routRGPETH = await router();
+async function update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage) {
+  const routRGPETH = await updateOutPutAmountForRouter();
   if (typeof path[1] != 'undefined') {
-    const { fromPath } = path[0];
-    const { toPath } = path[1];
+    const fromPath = selectedToken.address
+    const toPath = selectedToToken.address
     try {
+      setShowBox(false);
+      setBoxMessage('...');
       const amount = await routRGPETH.getAmountsOut(
         Web3.utils.toWei(askAmount.toString()),
         (field != 'to') ? [fromPath, toPath] : [toPath, fromPath]
       );
+      // * calculateSlippage()
       return (field != 'to') ? setAmountIn(
         ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
+      setAmountIn('');
+      setBoxMessage("Please check your token selection");
       setShowBox(true);
-      setBoxMessage(e.message);
     }
   }
 }
-function setPathObject(path, target) {
-  const pathObject = path.find(value => value.hasOwnProperty('fromPath'));
-  if (pathObject) pathObject.fromPath = target;
-  else path.push({ fromPath: target });
-}
+async function update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field) {
+  if (field === 'to') {
+    setFromAmount(amountIn)
+  } else if (field === 'from') {
+    setAmountIn(askAmount)
+  }
 
-async function RGPCheckAllowance() {
-  if (wallet.signer !== 'signer') {
-    const rgp = await rigelToken();
-    const walletBal = await rgp.balanceOf(wallet.address);
-    return await rgp.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
-  }
-}
-
-async function ETHCheckAllowance() {
-  if (wallet.signer !== 'signer') {
-    const eth = await WETH();
-    const walletBal = await eth.balanceOf(wallet.address);
-    return await eth.allowance(wallet.address, SMART_SWAP.router, { from: wallet.address });
-  }
-}
-
-async function BUSDCheckAllowance() {
-  if (wallet.signer !== 'signer') {
-    const busd = await BUSDToken();
-    const walletBal = await busd.balanceOf(wallet.address);
-    return await busd.allowance(wallet.address, SMART_SWAP.router, { from: wallet.address });
-  }
-}
-
-const checkUser = async (wallet, setIsNewUser) => {
-  const rgp = await rigelToken();
-  if (wallet.signer !== 'signer') {
-    const checkAllow = await rgp.allowance(wallet.address, SMART_SWAP.MasterChef);
-    if (checkAllow == setIsNewUser(true)) {
-      return setIsNewUser(true)
-    }
-    return setIsNewUser(false)
-  }
-  if (ethers.utils.formatEther(checkAllow).toString() > 0) {
-    return setIsNewUser(false)
-  }
-  return setIsNewUser(true)
 }

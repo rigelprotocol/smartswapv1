@@ -1,53 +1,24 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Input, Spinner } from '@chakra-ui/react';
+import { Input, Button } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
-import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
-import { ethers } from 'ethers';
 
-import { showErrorMessage } from 'containers/NoticeProvider/actions';
-import CustomSelectInput from './customSelectInput';
+import { useDisclosure } from '@chakra-ui/hooks';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import TokenListBox from 'components/TokenListBox';
 
 const Manual = ({
-  wallet,
   toValue,
   setToAddress,
-  selectedToken,
-  selectedValue,
-  selectingToken,
   toSelectedToken,
   setToSelectedToken,
-  RGPBalance,
-  BUSDBalance,
-  ETHBalance,
+  label,
 }) => {
-  const [balance, setBalance] = useState('');
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    (async () => {
-      if (typeof selectedValue.abi !== 'undefined') {
-        try {
-          setLoading(true);
-          setBalance(
-            await getAddressTokenBalance(
-              wallet.address,
-              selectedValue.address,
-              selectedValue.abi,
-              wallet.signer,
-            ),
-          );
-          setLoading(false);
-        } catch (e) {
-          showErrorMessage(e);
-          setLoading(false);
-        }
-      }
-    })();
-  }, [selectedValue]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
       <Box
@@ -62,21 +33,11 @@ const Manual = ({
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
-            TO:
+            {label || 'TO:'}
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-            Balance: {` `}{' '}
-            {loading ? (
-              <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                size="sm"
-              />
-            ) : (
-                balance
-              )}
+            Balance: {` `}
+            {toSelectedToken.balance}
           </Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
@@ -93,18 +54,29 @@ const Manual = ({
           />
           <Flex alignItems="center">
             <Menu>
-              <CustomSelectInput
-                selectingToken={selectingToken}
-                defaultSelect={0}
-                selectedToken={selectedToken}
-                setSelectedToken={obj => {
-                  setToSelectedToken(obj);
-                  setToAddress(obj.address);
-                }}
-
-                RGPBalance={RGPBalance}
-                ETHBalance={ETHBalance}
-                BUSDBalance={BUSDBalance}
+              <Button
+                onClick={onOpen}
+                border="0px"
+                h="30px"
+                fontWeight="regular"
+                fontSize="16px"
+                cursor="pointer"
+                bg={toSelectedToken.name ? 'none' : '#40BAD5'}
+                marginBottom="5px"
+                color="white"
+                _hover={{ background: '#72cfe4', color: '#29235E' }}
+                rightIcon={<ChevronDownIcon />}
+              >
+                <span
+                  className={`icon icon-${toSelectedToken.symbol.toLowerCase()}`}
+                />
+                <Text ml={4}>{toSelectedToken.symbol}</Text>
+              </Button>
+              <TokenListBox
+                setSelectedToken={setToSelectedToken}
+                setPathArray={setToAddress}
+                isOpen={isOpen}
+                onClose={onClose}
               />
             </Menu>
           </Flex>
@@ -115,13 +87,10 @@ const Manual = ({
 };
 
 Manual.propTypes = {
-  wallet: PropTypes.object,
   toValue: PropTypes.number.isRequired,
   setToAddress: PropTypes.func.isRequired,
-  selectedToken: PropTypes.func.isRequired,
-  selectingToken: PropTypes.array.isRequired,
-  selectedValue: PropTypes.object.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,
+  label: PropTypes.string,
 };
 export default Manual;

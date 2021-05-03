@@ -2,7 +2,12 @@ import React from 'react';
 import { Box, Flex } from '@chakra-ui/layout';
 import { Text } from '@chakra-ui/react';
 
-function LiquidityPriceBox({ selectedValue, fromValue, toValue, fromSelectedToken }) {
+function LiquidityPriceBox({
+  toSelectedToken,
+  fromValue,
+  toValue,
+  fromSelectedToken,
+}) {
   return (
     <Box
       color="#fff"
@@ -30,25 +35,33 @@ function LiquidityPriceBox({ selectedValue, fromValue, toValue, fromSelectedToke
               : 0.0}
           </Text>
           <Text fontSize="sm" color="gray.500" my={3}>
-            {fromSelectedToken.symbol} per {selectedValue.symbol}
+            {fromSelectedToken.symbol} per {toSelectedToken.symbol}
           </Text>
         </Box>
         <Box>
+          {/* <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
+            {fromValue > 0 && toValue > 0
+              ? (parseFloat(toValue) / parseFloat(fromValue)).toFixed(5)
+              : 0.0}
+          </Text>
+          <Text fontSize="sm" color="gray.500" my={3}>
+            {toSelectedToken.symbol} per {fromSelectedToken.symbol}
+          </Text> */}
           <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
             {fromValue > 0 && toValue > 0
               ? (parseFloat(toValue) / parseFloat(fromValue)).toFixed(5)
               : 0.0}
           </Text>
           <Text fontSize="sm" color="gray.500" my={3}>
-            {selectedValue.symbol} per {fromSelectedToken.symbol}
+            {toSelectedToken.symbol} per {fromSelectedToken.symbol}
           </Text>
         </Box>
         <Box>
           <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
             {fromValue > 0 && toValue > 0
-              ? (parseFloat(fromValue) * 3 / 100).toFixed(4)
+              ? ((parseFloat(fromValue) * 3) / 100).toFixed(4)
               : 0.0}
-              %
+            %
           </Text>
           <Text fontSize="sm" color="gray.500" my={3}>
             Share of Pool
