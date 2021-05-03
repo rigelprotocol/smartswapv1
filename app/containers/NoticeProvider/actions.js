@@ -47,7 +47,7 @@ export const showErrorMessage = error => dispatch => {
         message: {
           title: 'Error Response',
           type: 'error',
-          body: 'Transaction execution reverted reason: IDENTICAL ADDRESSES',
+          body: error.message,
         },
       });
     case -32000:
@@ -66,8 +66,7 @@ export const showErrorMessage = error => dispatch => {
         message: {
           title: 'Error Response',
           type: 'error',
-          body:
-            'An unexpected error please try refreshing your browser  and click on the connect button',
+          body: error.message,
         },
       });
   }

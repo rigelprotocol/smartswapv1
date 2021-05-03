@@ -48,55 +48,9 @@ const CustomSelectInput = ({
     selectedToken(obj);
     setSelectedToken(obj);
   };
-  console.log(BUSDBalance, ETHBalance, RGPBalance)
+  // console.log(BUSDBalance, ETHBalance, RGPBalance, selectingToken)
   return (
     <>
-      {/* <Flex alignItems="center">
-        <div classsymbol={styles.customSelectContainer}>
-          <div
-            className={
-              showSpinList
-                ? `${styles.selectedText} ${styles.active}`
-                : `${styles.selectedText}`
-            }
-            role="button"
-            onClick={handleListDisplay}
-          >
-            <div>
-              {' '}
-              {defaultSelectText.symbol === 'BUSD' && <BNBImage mr="3" />}
-              {defaultSelectText.symbol === 'WETH' && <ETHImage mr="3" />}
-              {defaultSelectText.symbol === 'RGP' && <RGPImage mr="3" />}{' '}
-              {!defaultSelectText.symbol
-                ? defaultSelectText.name
-                : defaultSelectText.symbol}
-            </div>
-          </div>
-          {showSpinList && (
-            <ul className={styles.selectOptions}>
-              {selectingToken.map(option => (
-                <li
-                  className={styles.customSelectOption}
-                  data-id={option.symbol}
-                  key={option.symbol}
-                  onClick={handleOptionClick}
-                >
-                  {option.symbol === 'BUSD' && <BNBImage mr="3" />}
-                  {option.symbol === 'WETH' && <ETHImage mr="3" />}
-                  {option.symbol === 'RGP' && <RGPImage mr="3" />}{' '}
-                  {!option.symbol
-                    ? `${option.name}`
-                    : `${option.symbol}: `}{' '}
-                  {option.symbol === 'BUSD' && BUSDBalance}
-                  {option.symbol === 'WETH' && ETHBalance}
-                  {option.symbol === 'RGP' && RGPBalance}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </Flex>
-    */}
       <Button
         onClick={onOpen}
         border="0px"
@@ -110,7 +64,7 @@ const CustomSelectInput = ({
         _hover={{ background: '#72cfe4', color: '#29235E' }}
         rightIcon={<ChevronDownIcon />}
       >
-        {defaultSelectText.symbol === "BNB" && <BNBImage />}
+        {defaultSelectText.symbol === "BNB" && <BUSDImage />}
         {defaultSelectText.symbol === "ETH" && <ETHImage />}
         {defaultSelectText.symbol === "RGP" && <RGPImage />}
         <Text ml={4}>{defaultSelectText.symbol}</Text>
@@ -148,28 +102,6 @@ const CustomSelectInput = ({
               </Text>
               <ArrowDownImage />
             </Flex>
-            {/* <Flex
-              justifyContent="space-between"
-              mt={3}
-              cursor="pointer"
-              onClick={() => {
-                setSelectedToken(TOKENS.BNB);
-                setPathArray(TOKENS_CONTRACT.BNB, "BNB");
-                getToAmount();
-                onClose();
-              }}
-            >
-              <Flex alignItems="center">
-                <BNBImage />
-                <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
-                  {TOKENS.BNB}
-                </Text>
-              </Flex>
-              <Text fontSize="md" fontWeight="regular" color="#fff">
-                {bnbBalance}
-              </Text>
-            </Flex>
-          */}
             <Flex
               justifyContent="space-between"
               mt={1}
@@ -177,18 +109,18 @@ const CustomSelectInput = ({
               onClick={() => {
                 selectedToken(selectingToken[1]);
                 setSelectedToken(selectingToken[1]);
-                setDefaultSelectText(selectingToken[1])
+                setDefaultSelectText(selectingToken[1]);
                 onClose();
               }}
             >
               <Flex alignItems="center">
-                <BUSDImage />
+                <RGPImage />
                 <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
                   {selectingToken[1].symbol}
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                {BUSDBalance}
+                {RGPBalance}
               </Text>
             </Flex>
 
@@ -204,13 +136,13 @@ const CustomSelectInput = ({
               }}
             >
               <Flex alignItems="center">
-                <ETHImage />
+                <BUSDImage />
                 <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
                   {selectingToken[2].symbol}
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                {ETHBalance}
+                {BUSDBalance}
               </Text>
             </Flex>
 
@@ -226,13 +158,13 @@ const CustomSelectInput = ({
               }}
             >
               <Flex alignItems="center">
-                <RGPImage />
+                <ETHImage />
                 <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
                   {selectingToken[3].symbol}
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                {RGPBalance}
+                {ETHBalance}
               </Text>
             </Flex>
           </ModalBody>

@@ -18,7 +18,7 @@ const Detail = () => (
           Circulating supply:
         </Text>
         <Text fontSize="14px" color="white">
-          14,320,420
+          625,000 RGP
         </Text>
       </Flex>
       <Flex flexDirection="column" mb={2}>

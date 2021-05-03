@@ -1,18 +1,18 @@
 // import { SmartFactory } from './SwapConnect';
-// // list all transactions here
+// list all transactions here
 // export default async function Tokens() {
-//   // const tokens = {
-//   //     tokens: [
-//   //         'BNB',
-//   //         'ETH',
-//   //         'RGP',
-//   //     ],
-//   //     listTokens: ''
-//   // }
+   // const tokens = {
+   //     tokens: [
+   //         'BNB',
+   //         'ETH',
+   //         'RGP',
+   //     ],
+   //     listTokens: ''
+   // }
 
 //   const swap = async e => {
 //     const { SmartSwapContractAddress } = await SmartFactory();
-//     // adding liquidity
+     // adding liquidity
 
 //     const addLiquid = await SmartSwapContractAddress.addLiquidity(
 //       tokenA,

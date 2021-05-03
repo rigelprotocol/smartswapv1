@@ -3,6 +3,8 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import { notify } from 'containers/NoticeProvider/actions';
 import configureStore from 'configureStore';
 import { WALLET_CONNECTED } from 'containers/WalletProvider/constants';
+import { formatBalance } from 'utils/UtilFunc';
+import { balanceAbi } from '../constants';
 const store = configureStore();
 
 export const provider = async () => {
@@ -32,27 +34,28 @@ export const connectMetaMask = async () =>
 export const getAddressTokenBalance = async (
   address,
   tokenAddress,
-  ABI,
   walletSigner,
 ) =>
-  ethers.utils
-    .formatEther(
-      await new ethers.Contract(tokenAddress, ABI, walletSigner).balanceOf(
-        address,
-      ),
-    )
-    .toString();
-
+  formatBalance(
+    ethers.utils.formatEther(
+      await new ethers.Contract(
+        tokenAddress,
+        balanceAbi,
+        walletSigner,
+      ).balanceOf(address),
+    ),
+  );
 /**
  *
  * @param {*} wallet
  * @returns {*} dispatch
  */
 export const connectionEventListener = wallet => dispatch => {
-  console.log('eee')
-  if (window.ethereum.isConnected() &&
+  if (
+    window.ethereum.isConnected() &&
     window.ethereum.selectedAddress &&
-    window.ethereum.isMetaMask) {
+    window.ethereum.isMetaMask
+  ) {
     const reduxWallet = store.getStore().wallet;
     window.ethereum.on('connect', (...args) => {
       console.log('Hello>>> ', args);

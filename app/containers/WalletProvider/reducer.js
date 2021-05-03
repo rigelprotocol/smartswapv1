@@ -11,6 +11,7 @@ import {
   LOADING_WALLET,
   CLEAR_WALLET,
   CLOSE_LOADING_WALLET,
+  CHANGE_DEADLINE,
 } from './constants';
 
 export const initialState = {
@@ -21,9 +22,11 @@ export const initialState = {
     signer: 'signer',
     chainId: 'chainId',
   },
-  wallet_props: [],
+  wallet_props: '0.0000',
   connected: false,
   loading: false,
+  transactionDeadLine: '1378747',
+  slippageValue: '383993939993',
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -43,7 +46,7 @@ const walletProviderReducer = (state = initialState, action) =>
         draft.connected = true;
         break;
       case WALLET_PROPS:
-        draft.wallet_props.push(action.payload);
+        draft.wallet_props = action.payload.rgpBalance;
         break;
       case CLEAR_WALLET:
         draft.wallet = {
@@ -53,6 +56,10 @@ const walletProviderReducer = (state = initialState, action) =>
           signer: 'signer',
           chainId: 'chainId',
         };
+      case CHANGE_DEADLINE:
+        console.log(action.payload);
+        draft.transactionDeadLine = action.payload.actualTransactionDeadline;
+        draft.slippageValue = action.payload.slippageValue;
         break;
       default:
         return state;

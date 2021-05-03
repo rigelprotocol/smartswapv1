@@ -23,6 +23,7 @@ const NoticeProviderReducer = (state = initialState, action) =>
         break;
       case OFF_NOTICE:
         draft.showNotice = false;
+        draft.message = { title: null, body: null, type: null };
     }
   });
 

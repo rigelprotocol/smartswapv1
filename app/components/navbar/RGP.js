@@ -1,5 +1,7 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
+import { PropTypes } from 'prop-types';
 import {
   ModalOverlay,
   Button,
@@ -10,9 +12,10 @@ import {
   Modal,
   useDisclosure,
 } from '@chakra-ui/react';
+import { connect } from 'react-redux';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
 import RGPImage from '../../assets/rgp.svg';
-import { connect } from 'react-redux';
+
 const RGP = ({ wallet_props }) => {
   const modal2Disclosure = useDisclosure();
   return (
@@ -32,12 +35,12 @@ const RGP = ({ wallet_props }) => {
             'linear-gradient(to right, rgb(64,186,213),rgb(3,90,166))',
         }}
       >
-        {wallet_props[0] ? wallet_props[0].rgp : '...'} RGP
+        {wallet_props} RGP
       </Button>
       <Modal
         isOpen={modal2Disclosure.isOpen}
         onClose={modal2Disclosure.onClose}
-        isCentered="true"
+        isCentered
       >
         <ModalOverlay />
         <ModalContent
@@ -48,11 +51,11 @@ const RGP = ({ wallet_props }) => {
           w="89vw"
         >
           <ModalCloseButton
-            bg={'none'}
+            bg="none"
             cursor="pointer"
             border="0"
             mt="15px"
-            color={'#fff'}
+            color="#fff"
             _focus={{ outline: 'none' }}
           />
           <ModalHeader mt="15px" fontWeight="light" fontSize="lg">
@@ -74,7 +77,7 @@ const RGP = ({ wallet_props }) => {
             >
               <RGPImage />
               <Text zIndex="10" color="#fff" fontSize="4xl" fontWeight="bold">
-                {wallet_props[0] ? wallet_props[0].rgp : '...'} RGP
+                {wallet_props} RGP
               </Text>
             </Flex>
             <Flex justifyContent="space-between" mb={2}>
@@ -90,12 +93,12 @@ const RGP = ({ wallet_props }) => {
                 RGP in circulation:
               </Text>
               <Text fontSize="16px" color="gray.200">
-                32,506,204
+                625,000 RGP
               </Text>
             </Flex>
             <Flex justifyContent="space-between" mb={2}>
               <Text fontSize="16px" color="rgba(255, 255, 255,0.5)">
-                RGP in circulation:
+                Total RGP chain maximum supply:
               </Text>
               <Text fontSize="16px" color="gray.200">
                 20,000,000
@@ -107,6 +110,11 @@ const RGP = ({ wallet_props }) => {
     </>
   );
 };
+
+RGP.propTypes = {
+  wallet_props: PropTypes.string,
+};
+
 const mapStateToProps = ({ wallet }) => wallet;
 export default connect(
   mapStateToProps,
