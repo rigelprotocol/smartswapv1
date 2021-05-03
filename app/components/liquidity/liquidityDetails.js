@@ -23,7 +23,7 @@ const LiquidityDetails = ({
     justifyContent="space-between"
   >
     <Flex mb="10px" py={2} justifyContent="space-between">
-      <Box>Pooled {value.path[0].token == "WETH" ? "ETH" : value.path[0].token}</Box>
+      <Box>Pooled {value.path[0].token == "WBNB" ? "BNB" : value.path[0].token}</Box>
       <Box>
         {value.path[0].token === "RGP" ?
           <RGPImage /> : value.path[0].token === "BUSD" ?
@@ -35,7 +35,7 @@ const LiquidityDetails = ({
     </Flex>
     <Flex mb="10px" py={2} justifyContent="space-between">
 
-      <Box>Pooled {value.path[1].token == "WETH" ? "ETH" : value.path[1].token}</Box>
+      <Box>Pooled {value.path[1].token == "WBNB" ? "BNB" : value.path[1].token}</Box>
       <Box>
         {value.path[1].token === "RGP" ?
           <RGPImage /> : value.path[1].token === "BUSD" ?

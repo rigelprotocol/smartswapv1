@@ -35,7 +35,7 @@ export const SMART_SWAP = {
   // -------------------------------------------------------------- PAIR USED FOR BSC MAINNET-----------------------------------
   SmartFactory: '0x655333A1cD74232C404049AF9d2d6cF1244E71F6',
   SMART_SWAPPING: '0xf78234E21f1F34c4D8f65faF1BC82bfc0fa24920',
-  ETHRGPSMARTSWAPPAIR: '0x9218BFB996A9385C3b9633f87e9D68304Ef5a1e5',  
+  ETHRGPSMARTSWAPPAIR: '0x9218BFB996A9385C3b9633f87e9D68304Ef5a1e5',
   SmartSwap_LP_Token: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
   RigelSmartContract: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
   BNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
@@ -73,15 +73,15 @@ export const tokenList = [
   // },
   {
     abi: WETH9,
-    symbol: 'WETH',
-    name: 'Ethereum Token',
+    symbol: 'WBNB',
+    name: 'Wrapped BNB',
     img: '../../assets/eth.svg',
     address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   },
   {
     abi: WETH9,
-    symbol: 'ETH',
-    name: 'Ethereum',
+    symbol: 'BNB',
+    name: 'BNB',
 
     img: '../../assets/eth.svg',
     address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
