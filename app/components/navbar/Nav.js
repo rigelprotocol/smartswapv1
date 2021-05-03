@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { Text } from '@chakra-ui/layout';
+import { Box, Flex, Button, Tooltip } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styles from '../../styles/navbar.css';
@@ -44,8 +45,10 @@ const Nav = props => {
               : 'white'
           }
         >
+
           <Link to="/margin-trading">Margin Trading</Link>
         </Text>
+
       </div>
       <div className={styles.wallet__container}>
         {connected ? <Wallet /> : <ConnectWallet />}
