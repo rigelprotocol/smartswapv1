@@ -15,7 +15,7 @@ import configureStore from 'configureStore';
 import { SMART_SWAP } from './constants';
 
 const store = configureStore();
-const provider = new ethers.providers.Web3Provider(window.ethereum)
+const provider = new ethers.providers.Web3Provider(window.ethereum);
 
 const { wallet } = store.getState().wallet;
 let { signer } = wallet;
@@ -50,31 +50,24 @@ export const BNBRGPliquidityProviderTokensContract = async () =>
 export const SmartFactory = async () =>
   new ethers.Contract(SMART_SWAP.SmartFactory, SmartSwapFactoryForSwap, signer);
 
-  // rigel token
+// rigel token
 export const rigelToken = async () =>
-new ethers.Contract(SMART_SWAP.RigelSmartContract, RigelToken, signer);
+  new ethers.Contract(SMART_SWAP.RigelSmartContract, RigelToken, signer);
 
 // BUSD token
 export const BUSDToken = async () =>
-new ethers.Contract(SMART_SWAP.BUSD, BUSD, signer);
+  new ethers.Contract(SMART_SWAP.BUSD, BUSD, signer);
 
 // this can be used
 // BNB token
 export const BNBTOKEN = async () =>
-new ethers.Contract(SMART_SWAP.BUSD, WBNB, signer);
+  new ethers.Contract(SMART_SWAP.BUSD, WBNB, signer);
 
 // WETH (ETH)
 export const WETH = async () => {
   const WETH9Address = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
   return new ethers.Contract(WETH9Address, WETH9, signer);
 };
-
-//----------------------------------------------------------------- LIVE DEPLOYMENT CONTRACTS -------------------------------------------------------
-
-// contract for special pool
-export const RGPSpecialPool = async () =>
-  new ethers.Contract(SMART_SWAP.specialPool, specialPool, signer);
-
 
 // Factory smartContract for getting and creating pairs for ETH and RGP
 export const SMARTFACTORYPAIRETHRGP = async () =>
@@ -84,17 +77,22 @@ export const SMARTFACTORYPAIRETHRGP = async () =>
     signer,
   );
 
+// ----------------------------------------------------------------- LIVE DEPLOYMENT CONTRACTS -------------------------------------------------------
+
+// contract for special pool
+export const RGPSpecialPool = async () =>
+  new ethers.Contract(SMART_SWAP.specialPool, specialPool, signer);
+
+
 
 // Creates LiquidityPair Contract instance
-export const LiquidityPairInstance = async (address) =>
+export const LiquidityPairInstance = async address =>
   new ethers.Contract(address, LiquidityPairAbi, signer);
 
-
 // Create instance for interacting with any ERC20 TOKEN
-export const erc20Token = async (address) =>
+export const erc20Token = async address =>
   new ethers.Contract(address, RigelToken, signer);
 
-
 // Creates an instance of any LPToken contract given an address
-export const LPTokenContract = async (lpTokenAddress) =>
+export const LPTokenContract = async lpTokenAddress =>
   new ethers.Contract(lpTokenAddress, SmartSwapLPToken, signer);

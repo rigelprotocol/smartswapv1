@@ -27,27 +27,26 @@ export const TOKENS = {
 export const TOKENS_CONTRACT = {
   BNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   BUSD: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', // This can be use
-  ETH: '0x492Df17f202e36525151Ce7BcD49d5637Dc10659',
+  ETH: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
 };
 
 export const SMART_SWAP = {
+  // -------------------------------------------------------------- PAIR USED FOR BSC MAINNET-----------------------------------
   SmartFactory: '0x655333A1cD74232C404049AF9d2d6cF1244E71F6',
   SMART_SWAPPING: '0xf78234E21f1F34c4D8f65faF1BC82bfc0fa24920',
-  ETHRGPSMARTSWAPPAIR: '0xf78234E21f1F34c4D8f65faF1BC82bfc0fa24920',
-
-  specialPool: '0x932b4b0d6c10f8D49547444f4fC3D218f5D1C5Eb',
-  SmartSwap_LP_Token: '0xf9b61d972d199175c07298Dcf26f71dB3BB934F5',
-  liquidityProviderTokensContractBNBRGP:
-    '0x6Fe0c20a219546720258cb2c1B0c0b9E2882C608',
-
+  ETHRGPSMARTSWAPPAIR: '0x9218BFB996A9385C3b9633f87e9D68304Ef5a1e5',  
+  SmartSwap_LP_Token: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
   RigelSmartContract: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
   BNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   BUSD: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', // This can be use
 
-  ETH: '0x492Df17f202e36525151Ce7BcD49d5637Dc10659',
+  // ----------------------------------------------------------- PAIR USED -----------------------------------------------
+  ETH: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 };
 
+
+//-------------------------------------------------------------------PAIR USED -----------------------------------------------------
 export const tokenList = [
   { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '' },
   {
@@ -83,7 +82,7 @@ export const tokenList = [
     abi: WETH9,
     symbol: 'ETH',
     name: 'Ethereum',
-    
+
     img: '../../assets/eth.svg',
     address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   },
