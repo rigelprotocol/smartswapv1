@@ -66,7 +66,7 @@ export const Manual = props => {
 
   useEffect(async () => {
     if (wallet.signer !== 'signer') {
-      if (selectedToken.symbol === 'ETH') {
+      if (selectedToken.symbol === 'BNB') {
         return setUserHasApproveToken(true)
       }
       const allowance = await runApproveCheck(selectedToken, wallet.address, wallet.signer);
@@ -141,10 +141,10 @@ export const Manual = props => {
       if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "BUSD") || (selectedToken.symbol === "BUSD" && selectedToToken.symbol === "RGP")) {
         await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage);
         setDisableSwapTokenButton(false);
-      } else if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "ETH") || (selectedToken.symbol === "ETH" && selectedToToken.symbol === "RGP")) {
+      } else if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "BNB") || (selectedToken.symbol === "BNB" && selectedToToken.symbol === "RGP")) {
         await update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage)
         setDisableSwapTokenButton(false);
-      } else if ((selectedToken.symbol === "WETH" && selectedToToken.symbol === "ETH") || (selectedToken.symbol === "ETH" && selectedToToken.symbol === "WETH")) {
+      } else if ((selectedToken.symbol === "WBNB" && selectedToToken.symbol === "BNB") || (selectedToken.symbol === "BNB" && selectedToToken.symbol === "WBNB")) {
         await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field, calculateSlippage);
         setDisableSwapTokenButton(false);
       } else {
@@ -162,21 +162,21 @@ export const Manual = props => {
   const swapUserToken = async () => {
     if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "BUSD") || (selectedToken.symbol === "BUSD" && selectedToToken.symbol === "RGP")) {
       await swapTokenForTokens()
-    } else if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "WETH") || (selectedToken.symbol === "WETH" && selectedToToken.symbol === "RGP")) {
+    } else if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "WBNB") || (selectedToken.symbol === "WBNB" && selectedToToken.symbol === "RGP")) {
       await swapTokenForTokens()
-    } else if (selectedToken.symbol === "ETH" && selectedToToken.symbol === "WETH") {
+    } else if (selectedToken.symbol === "BNB" && selectedToToken.symbol === "WBNB") {
       await deposit()
-    } else if (selectedToken.symbol === "WETH" && selectedToToken.symbol === "ETH") {
+    } else if (selectedToken.symbol === "WBNB" && selectedToToken.symbol === "BNB") {
       await withdraw()
     }
     else if (
-      (selectedToken.symbol === "ETH" && selectedToToken.symbol === "RGP") ||
-      (selectedToken.symbol === "ETH" && selectedToToken.symbol === "BUSD")
+      (selectedToken.symbol === "BNB" && selectedToToken.symbol === "RGP") ||
+      (selectedToken.symbol === "BNB" && selectedToToken.symbol === "BUSD")
     ) {
       await swapETHForExactToken()
     } else if (
-      (selectedToken.symbol === "RGP" && selectedToToken.symbol === "ETH") ||
-      (selectedToken.symbol === "BUSD" && selectedToToken.symbol === "ETH")
+      (selectedToken.symbol === "RGP" && selectedToToken.symbol === "BNB") ||
+      (selectedToken.symbol === "BUSD" && selectedToToken.symbol === "BNB")
     ) {
       await swapExactTokenForETH()
     } else {
