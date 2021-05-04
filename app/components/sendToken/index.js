@@ -213,7 +213,7 @@ export const Manual = props => {
         setIsSendingTransaction(true)
         const sendTransaction = await rout.swapExactTokensForTokens(
           Web3.utils.toWei(fromAmount.toString()),
-          Web3.utils.toWei(amountIn.toFixed(8).toString()),
+          Web3.utils.toWei(amountIn.toString()),
           [fromPath, toPath],
           wallet.address,
           deadL,
