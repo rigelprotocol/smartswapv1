@@ -61,7 +61,7 @@ export const BUSDToken = async () =>
 // this can be used
 // BNB token
 export const BNBTOKEN = async () =>
-  new ethers.Contract(SMART_SWAP.BUSD, WBNB, signer);
+  new ethers.Contract(SMART_SWAP.BNB, BUSD, signer);
 
 // WETH (ETH)
 export const WETH = async () => {
