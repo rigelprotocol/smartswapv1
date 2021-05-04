@@ -305,8 +305,8 @@ export function LiquidityPage(props) {
   const addingLiquidityForETH = async () => {
     if (wallet.signer !== 'signer') {
       try {
-        const EthValue = fromSelectedToken.symbol === "ETH" ? fromValue : toValue;
-        const tokenSelected = fromSelectedToken.symbol === "ETH" ? toAddress : fromAddress;
+        const EthValue = fromSelectedToken.symbol === "BNB" ? fromValue : toValue;
+        const tokenSelected = fromSelectedToken.symbol === "BNB" ? toAddress : fromAddress;
         const rout = await router();
         const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
         closeModal1()
@@ -495,10 +495,10 @@ export function LiquidityPage(props) {
   }
 
   const confirmingSupply = () => {
-    if ((fromSelectedToken.symbol !== "ETH" && toSelectedToken.symbol === "ETH") || (fromSelectedToken.symbol === "ETH" && toSelectedToken.symbol !== "ETH")
+    if ((fromSelectedToken.symbol !== "BNB" && toSelectedToken.symbol === "BNB") || (fromSelectedToken.symbol === "BNB" && toSelectedToken.symbol !== "BNB")
     ) {
       addingLiquidityForETH()
-    } else if ((fromSelectedToken.symbol === "RGP" && toSelectedToken.symbol !== "RGP") || (fromSelectedToken.symbol === "RGP" && toSelectedToken.symbol === "WETH")) {
+    } else if ((fromSelectedToken.symbol === "RGP" && toSelectedToken.symbol !== "RGP") || (fromSelectedToken.symbol === "RGP" && toSelectedToken.symbol === "WBNB")) {
       addingLiquidity()
     } else {
       addingLiquidity()
@@ -666,7 +666,7 @@ export function LiquidityPage(props) {
       checkUser()
       await bnbApproval()
       // checkUser()
-    } else if (fromSelectedToken.symbol === "WETH") {
+    } else if (fromSelectedToken.symbol === "WBNB") {
       checkUser()
       await ETHApproval()
       // checkUser()
@@ -697,7 +697,7 @@ export function LiquidityPage(props) {
           setOpenSupplyButton(true)
           setApproveTokenSpending(false)
         }
-      } else if (fromSelectedToken.symbol === "WETH") {
+      } else if (fromSelectedToken.symbol === "WBNB") {
         const allowAmount = await ETHcheckAllowance();
         if (allowAmount.toString() !== "0") {
           setIsNewUser(true)
