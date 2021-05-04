@@ -288,6 +288,11 @@ export const Manual = props => {
           [fromPath, toPath],
           wallet.address,
           deadL,
+          {
+            // form:wallet.address,
+            gasLimit: 1900000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          }
         );
         props.notify({ title: 'Transaction  Message', body: 'Swap Execution in progress', type: 'success' });
         setTimeout(() => openModal3(), 1000);
