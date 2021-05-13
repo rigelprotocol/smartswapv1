@@ -28,10 +28,16 @@ const SwapSettings = ({
   setActualTransactionDeadline,
   setSlippageValue,
   slippageValue,
+  setShowErrorMessage,
+  showErrorMessage,
 }) => {
   const changeSlippageValue = val => {
-    console.log(val);
     setSlippageValue(val);
+    if (val < 0.5) {
+      setShowErrorMessage(true)
+    } else {
+      setShowErrorMessage(false)
+    }
   };
   const changeDeadline = (time, val) => {
     setTransactionDeadline(val);
@@ -121,6 +127,7 @@ const SwapSettings = ({
                 {/* <InputRightAddon children="%" w="10px" h="20px" /> */}
               </InputGroup>
             </Flex>
+            {showErrorMessage ? <Text color="red">Your transaction might fail</Text> : ""}
             <Text>
               Transaction Deadline{' '}
               <Tooltip
@@ -150,7 +157,7 @@ const SwapSettings = ({
               <Text style={{ margin: '8px 10px 0px' }}> Minutes</Text>
             </Flex>
             {/* Interface  */}
-            <Text>Interface Settings </Text>
+            {/* <Text>Interface Settings </Text>
             <Flex>
               <FormControl
                 display="flex"
@@ -195,6 +202,7 @@ const SwapSettings = ({
                 <Switch id="multihops" />
               </FormControl>
             </Flex>
+          */}
           </PopoverBody>
           <PopoverFooter d="flex" justifyContent="flex-end" />
         </PopoverContent>

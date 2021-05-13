@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import React, { useState } from 'react';
-import { Menu, MenuButton, MenuList, Button } from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, Button, Link } from '@chakra-ui/react';
 import Telegram from '../../assets/social/telegram.svg';
 import Twitter from '../../assets/social/twitter.svg';
 import Facebook from '../../assets/social/facebook.svg';
@@ -50,7 +50,11 @@ const Nav = () => {
               cursor="pointer"
             >
               <Telegram />
-              <Text ml={4}>Telegram</Text>
+              <Text ml={4}>
+                <Link href="https://www.t.me/rigelprotocol" isExternal>
+                  Telegram
+                </Link>
+              </Text>
             </Flex>
             <Flex
               _hover={{ background: '#29235E' }}
@@ -68,26 +72,13 @@ const Nav = () => {
               cursor="pointer"
             >
               <Twitter />
-              <Text ml={4}>Twitter</Text>
+              <Text ml={4}>
+                <Link href="https://twitter.com/rigelprotocol" isExternal>
+                  Twitter
+                </Link>
+              </Text>
             </Flex>
-            <Flex
-              _hover={{ background: '#29235E' }}
-              _focus={{ outline: 0, background: '#29235E' }}
-              cursor="pointer"
-              fontSize="14px"
-              rounded="xl"
-              h="60px"
-              p="0px 10px"
-              alignItems="center"
-              mb={2}
-              cursor="pointer"
-              alignItems="center"
-              mb={2}
-              cursor="pointer"
-            >
-              <Facebook />
-              <Text ml={4}>Facebook</Text>
-            </Flex>
+
             <Flex
               _hover={{ background: '#29235E' }}
               _focus={{ outline: 0, background: '#29235E' }}
@@ -104,7 +95,11 @@ const Nav = () => {
               cursor="pointer"
             >
               <LinkedIn />
-              <Text ml={4}>Linkedin</Text>
+              <Text ml={4}>
+                <Link href="https://www.linkedin.com/company/rigelprotocol/about/" isExternal>
+                  LinkedIn
+                </Link>
+              </Text>
             </Flex>
             <Flex
               _hover={{ background: '#29235E' }}
@@ -122,7 +117,11 @@ const Nav = () => {
               cursor="pointer"
             >
               <Github />
-              <Text ml={4}>Github</Text>
+              <Text ml={4}>
+                <Link href="https://github.com/rigelprotocol" isExternal>
+                  Github
+                </Link>
+              </Text>
             </Flex>
             <Flex
               _hover={{ background: '#29235E' }}
@@ -140,7 +139,11 @@ const Nav = () => {
               cursor="pointer"
             >
               <Medium />
-              <Text ml={4}>Medium</Text>
+              <Text ml={4}>
+                <Link href="https://medium.com/rigelprotocol" isExternal>
+                  Medium
+                </Link>
+              </Text>
             </Flex>
           </MenuList>
         )}
