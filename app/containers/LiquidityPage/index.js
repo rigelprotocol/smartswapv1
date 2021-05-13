@@ -58,18 +58,55 @@ export function LiquidityPage(props) {
   const [fromTokenAllowance, setFromTokenAllowance] = useState('')
   const [toTokenAllowance, setToTokenAllowance] = useState('')
   const [liquidityLoading, setLiquidityLoading] = useState(false)
+  const [liquidityPairRatio, setLiquidityPairRatio] = useState(0)
   let timer1
   useEffect(() => (
     clearTimeout(timer1)
   ), [liquidityTab])
   useEffect(() => {
     displayBNBbutton();
-    calculateToValue()
+    // calculateToValue()
     changeButtonValue();
   }, [toSelectedToken, liquidities]);
   const handleFromAmount = (value) => {
-    calculateToValue(value, 'from');
+    setToValue(value * liquidityPairRatio);
+    // calculateToValue(value, 'from');
   }
+
+
+  useEffect(() => {
+    if (fromAddress && toAddress) {
+      console.log("done")
+      getLiquidityPairRatio();
+
+    }
+
+  }, [fromSelectedToken, toSelectedToken])
+
+  const getLiquidityPairRatio = async () => {
+    try {
+      const factory = await SmartFactory();
+      const fromPath = ethers.utils.getAddress(fromAddress);
+      const toPath = ethers.utils.getAddress(toAddress);
+      const LPAddress = await factory.getPair(toPath, fromPath);
+      console.log(LPAddress);
+      const LPcontract = await LPTokenContract(LPAddress)
+      const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
+      const token0 = await LPcontract.token0();
+      let liquidityRatio;
+      if (token0.toString() == fromPath.toString()) {
+        liquidityRatio = tokenBreserve.toString() / tokenAReserve.toString();
+      } else {
+        liquidityRatio = tokenAReserve.toString() / tokenBreserve.toString();
+      }
+      setLiquidityPairRatio(liquidityRatio);
+    } catch (error) {
+      console.error(error)
+    }
+
+  }
+
+
   useEffect(() => {
     const checkData = async () => {
       if (wallet.signer !== 'signer') {
@@ -80,12 +117,17 @@ export function LiquidityPage(props) {
   }, [fromAddress])
 
   useEffect(async () => {
+
     if (!isNotEmpty(fromSelectedToken)) {
       const tokenAllowance = await runApproveCheck(fromSelectedToken, wallet.address, wallet.signer);
       setFromTokenAllowance(tokenAllowance);
-      if (tokenAllowance > 0) {
+      if (tokenAllowance.toString() > fromValue) {
         setHasAllowedFromToken(true);
         setShowApprovalBox(false);
+        setOpenSupplyButton(false);
+      } else {
+        setHasAllowedFromToken(false);
+        setShowApprovalBox(true);
         setOpenSupplyButton(false);
       }
 
@@ -93,21 +135,25 @@ export function LiquidityPage(props) {
     if (!isNotEmpty(toSelectedToken)) {
       const tokenAllowance = await runApproveCheck(toSelectedToken, wallet.address, wallet.signer);
       setToTokenAllowance(tokenAllowance);
-      if (tokenAllowance > 0) {
+      if (tokenAllowance.toString() > toValue) {
         setHasAllowedToToken(true)
         setShowApprovalBox(false);
+        setOpenSupplyButton(false);
+      } else {
+        setHasAllowedFromToken(false);
+        setShowApprovalBox(true);
         setOpenSupplyButton(false);
       }
     }
   }, [fromSelectedToken, toSelectedToken])
   useEffect(() => {
-    if (fromSelectedToken.balance !== undefined && parseFloat(fromValue) > parseFloat(fromSelectedToken.balance)) {
-      setFromValue(fromSelectedToken.balance)
-    }
-    if (toSelectedToken.balance !== undefined && parseFloat(toValue) > parseFloat(toSelectedToken.balance)) {
-      setToValue(toSelectedToken.balance)
-      calculateToValue(toSelectedToken.balance, 'to')
-    }
+    // if (fromSelectedToken.balance !== undefined && parseFloat(fromValue) > parseFloat(fromSelectedToken.balance)) {
+    //   setFromValue(fromSelectedToken.balance)
+    // }
+    // if (toSelectedToken.balance !== undefined && parseFloat(toValue) > parseFloat(toSelectedToken.balance)) {
+    //   setToValue(toSelectedToken.balance)
+    //   calculateToValue(toSelectedToken.balance, 'to')
+    // }
     if (fromTokenAllowance < fromValue) {
       setHasAllowedFromToken(false);
       setShowApprovalBox(true);
@@ -151,7 +197,7 @@ export function LiquidityPage(props) {
         const liquidityValue = liquidities.length && (liquidities[0].path[0].fromPath);
         const convertValue = ethers.utils.formatEther(liquidityValue, 'ether');
         const stateValue = Number((convertValue.toString() * percentValue) / 100) / 1e+18;
-        let value = (checkWalletBal.toString() * percentValue) / 100;
+        const value = (checkWalletBal.toString() * percentValue) / 100;
         setSmartSwapLPBalance(stateValue)
       }
     }
@@ -167,12 +213,12 @@ export function LiquidityPage(props) {
   const getAllLiquidities = async () => {
     setLiquidityLoading(true);
     try {
-      let pairs = []
+      const pairs = []
       const smartFactory = await SmartFactory();
       const allLiquidityPairs = await smartFactory.allPairsLength();
       for (let i = 0; i < allLiquidityPairs.toString(); i++) {
         const pairAddress = await smartFactory.allPairs(i);
-        let liquidity = await LiquidityPairInstance(pairAddress);
+        const liquidity = await LiquidityPairInstance(pairAddress);
         const balance = await liquidity.balanceOf(wallet.address);
         const totalSupply = await liquidity.totalSupply();
         const reserves = await liquidity.getReserves()
@@ -184,7 +230,7 @@ export function LiquidityPage(props) {
         const erc20Token1 = await erc20Token(token1)
         const symbol0 = await erc20Token0.symbol()
         const symbol1 = await erc20Token1.symbol()
-        let liquidityObject = {
+        const liquidityObject = {
           pairAddress: Web3.utils.toChecksumAddress(pairAddress),
           poolToken: Web3.utils.fromWei(balance.toString(), 'ether'),
           totalSupply: totalSupply.toString(),
@@ -261,24 +307,24 @@ export function LiquidityPage(props) {
         const rout = await router();
         const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
-        const amountBDesired = Web3.utils.toWei(toValue.toString())
-        const amountAMin = amountADesired / 2
-        const amountBMin = amountBDesired / 2
+        const amountBDesired = Web3.utils.toWei(toValue.toFixed(4).toString())
+        const amountAMin = (amountADesired / 2)
+        const amountBMin = (amountBDesired / 2)
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidity(
           fromAddress,
           toAddress,
-          amountADesired,
-          amountBDesired,
+          amountADesired.toString(),
+          amountBDesired.toString(),
           amountAMin.toString(),
           amountBMin.toString(),
           wallet.address,
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 1500000,
-            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+            gasLimit: 290000,
+            gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
         setTrxHashed(data)
@@ -320,8 +366,8 @@ export function LiquidityPage(props) {
           deadLine,
           {
             value: Web3.utils.toWei(EthValue.toString()),
-            gasLimit: 1500000,
-            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+            gasLimit: 1000000,
+            gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           }
         );
         setTrxHashed(data)
@@ -337,7 +383,6 @@ export function LiquidityPage(props) {
 
   const removingLiquidity = async (liquidity, tokenA, tokenB) => {
     if (wallet.signer !== 'signer') {
-
       const rout = await router();
       const checking = ethers.utils.parseEther(liquidity.toString(), 'ether');
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
@@ -352,40 +397,14 @@ export function LiquidityPage(props) {
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 1500000,
-            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+            gasLimit: 290000,
+            gasPrice: ethers.utils.parseUnits('5', 'gwei'),
           },
         );
       } catch (error) {
       }
     }
-  };
-
-  const removingLiquidityETH = async () => {
-    if (wallet.signer !== 'signer') {
-      const rout = await router();
-      const value = 2;
-      const checking = ethers.utils.parseEther(value.toString(), 'ether');
-      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
-      try {
-        await rout.removeLiquidity(
-          toAddress,
-          checking.toString(),
-          0,
-          0,
-          wallet.address,
-          deadLine,
-          {
-            from: wallet.address,
-            gasLimit: 150000,
-            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-          },
-        );
-      } catch (error) {
-      }
-    }
-  };
-
+  }
 
   async function approveSmartSwapLPTokens(LPTokenAddress) {
     if (wallet.signer !== 'signer') {
@@ -448,7 +467,7 @@ export function LiquidityPage(props) {
 
     console.log(fromSelectedToken, toSelectedToken)
     // let liquid = liquidities.filter(liquid => liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol)[0]
-    let liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
+    const liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
     console.log(liquid)
     timer1 = setTimeout(() => {
       closeInput()
@@ -556,11 +575,22 @@ export function LiquidityPage(props) {
           Web3.utils.toWei(inputAmount.toString()),
           (field !== 'to') ? [fromPath, toPath] : [toPath, fromPath]
         );
+
+        const factory = await SmartFactory();
+
+        const LPAddress = await factory.getPair(toPath, fromPath);
+        console.log(LPAddress);
+        const LPcontract = await LPTokenContract(LPAddress)
+        const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
+        const liqidityRatio = tokenAReserve.toString() / tokenBreserve.toString();
+
         if (field !== 'to' && toTokenAllowance < amount[1]) {
           setHasAllowedToToken(false);
           setShowApprovalBox(true);
           setOpenSupplyButton(true);
         }
+
+
         if (field === 'to' && toTokenAllowance < inputAmount) {
           setHasAllowedToToken(false);
           setShowApprovalBox(true);
@@ -570,8 +600,8 @@ export function LiquidityPage(props) {
           setShowApprovalBox(false);
           setOpenSupplyButton(false);
         }
-        return (field !== 'to') ? setToValue(
-          ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString())
+        // return (field !== 'to') ? setToValue(
+        //   ethers.utils.formatEther(amount[1]).toString()) : setFromValue(ethers.utils.formatEther(amount[1]).toString())
       } catch (e) {
         props.showErrorMessage(e)
       }
@@ -602,7 +632,6 @@ export function LiquidityPage(props) {
   async function ETHcheckAllowance() {
     if (wallet.signer !== 'signer') {
       try {
-
         const eth = await WETH();
         const walletBal = await eth.balanceOf(wallet.address);
         return await eth.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
@@ -627,7 +656,7 @@ export function LiquidityPage(props) {
       const result = await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+        gasPrice: ethers.utils.parseUnits('5', 'gwei')
       });
     }
   };
@@ -639,7 +668,7 @@ export function LiquidityPage(props) {
       await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+        gasPrice: ethers.utils.parseUnits('5', 'gwei')
       });
     }
   };
@@ -651,7 +680,7 @@ export function LiquidityPage(props) {
       await eth.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
-        gasPrice: ethers.utils.parseUnits('20', 'gwei')
+        gasPrice: ethers.utils.parseUnits('5', 'gwei')
       });
     }
     return false

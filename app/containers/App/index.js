@@ -24,6 +24,7 @@ import '../../styles/globals.css';
 import Toast from '../../components/Toast';
 import { reConnect } from '../WalletProvider/actions';
 
+
 const breakpoints = ['360px', '768px', '1024px', '1440px'];
 breakpoints.sm = breakpoints[0];
 breakpoints.md = breakpoints[1];
@@ -46,6 +47,14 @@ const newTheme = {
 
 const App = props => {
   const { wallet } = props.state;
+
+
+  if (window.ethereum) {
+    ethereum.on('chainChanged', (chainId) => {
+      window.location.reload()
+    });
+  }
+
   useEffect(() => {
     listener(wallet, props);
     reConnector(props);

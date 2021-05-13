@@ -73,8 +73,8 @@ const removeALiquidity = ({
         deadLine,
         {
           from: wallet.address,
-          gasLimit: 1500000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          gasLimit: 290000,
+          gasPrice: ethers.utils.parseUnits('5', 'gwei'),
         }
       );
     } catch (error) {

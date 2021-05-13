@@ -540,7 +540,7 @@ const ShowYieldFarmDetails = ({ content, wallet }) => {
               }
               onClick={() => setApprove(content.tokensStaked[0])}
             >
-              {approveValue ? 'unstake' : 'Approve'}
+              {approveValue ? 'Stake' : 'Approve'}
             </Button>
             <Square
               size="40px"

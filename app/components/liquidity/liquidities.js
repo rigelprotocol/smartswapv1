@@ -56,8 +56,8 @@ const Liquidities = ({
           removeALiquidity={removeALiquidity}
         />
       ) : (
-        <div />
-      )}
+          <div />
+        )}
     </>
   );
 };

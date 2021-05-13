@@ -46,6 +46,7 @@ export const Manual = props => {
   const [boxMessage, setBoxMessage] = useState('');
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedToToken, setSelectedToToken] = useState('');
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
   const [isSendingTransaction, setIsSendingTransaction] = useState(false);
   const [userHasApproveToken, setUserHasApproveToken] = useState(false)
   const [transactionDeadline, setTransactionDeadline] = useState("")
@@ -91,7 +92,7 @@ export const Manual = props => {
 
   // handling change ev
   const handleChangeToAmount = (event) => {
-    setAmountIn(event.target.value * calculateSlippage());
+    setAmountIn(event.target.value);
     getToAmount(event.target.value, 'to');
   };
 
@@ -120,7 +121,17 @@ export const Manual = props => {
     return true
 
   }
-  const calculateSlippage = () => parseFloat(slippageValue) / 100
+  const calculateSlippage = (amountIn) => {
+    let calculatedVal
+    if (slippageValue === "1") {
+      calculatedVal = amountIn + (amountIn * parseInt(slippageValue) / 100)
+    } else if (slippageValue === "0.1") {
+      calculatedVal = amountIn - (amountIn * parseFloat(slippageValue) / 100)
+    } else if (slippageValue === "0.5") {
+      calculatedVal = amountIn
+    }
+    return calculatedVal.toString()
+  }
 
   const checkForAllVariables = () => {
     if (isLoggedIn() && fromAmount > 0 && selectedToToken.name !== 'Select a token') {
@@ -219,8 +230,8 @@ export const Manual = props => {
           deadL,
           {
             from: wallet.address,
-            gasLimit: 1900000,
-            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+            gasLimit: 290000,
+            gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
         props.notify({ title: 'Transaction  Message', body: 'Swap Execution in progress', type: 'success' })
@@ -288,11 +299,6 @@ export const Manual = props => {
           [fromPath, toPath],
           wallet.address,
           deadL,
-          {
-            // form:wallet.address,
-            gasLimit: 1900000,
-            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-          }
         );
         props.notify({ title: 'Transaction  Message', body: 'Swap Execution in progress', type: 'success' });
         setTimeout(() => openModal3(), 1000);
@@ -308,6 +314,7 @@ export const Manual = props => {
       }
     }
   };
+
 
   const deposit = async () => {
     if (wallet.signer !== 'signer') {
@@ -427,6 +434,8 @@ export const Manual = props => {
           setActualTransactionDeadline={setActualTransactionDeadline}
           slippageValue={slippageValue}
           setSlippageValue={setSlippageValue}
+          showErrorMessage={showErrorMessage}
+          setShowErrorMessage={setShowErrorMessage}
         />
         <From
           fromAmount={fromAmount}
@@ -542,7 +551,7 @@ async function updateSendAmount(path, selectedToken, selectedToToken, askAmount,
       );
       // if(field != 'to' && )
       return (field != 'to') ? setAmountIn(
-        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+        ethers.utils.formatEther(calculateSlippage(amount[1].toString()))) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     }
     catch (e) {
       setAmountIn('');
@@ -566,7 +575,7 @@ async function update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, a
       );
       // * calculateSlippage()
       return (field != 'to') ? setAmountIn(
-        ethers.utils.formatEther(amount[1]).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+        ethers.utils.formatEther(calculateSlippage(amount[1].toString())).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
       setBoxMessage("Please check your token selection");
