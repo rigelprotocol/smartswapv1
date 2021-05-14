@@ -319,7 +319,7 @@ export function LiquidityPage(props) {
           toAddress,
           amountADesired.toString(),
           amountBDesired.toString(),
-          ethers.utils.parseEther(amountAMin.toString()),
+          amountAMin.toString(),
           ethers.utils.parseEther(amountBMin.toString()),
           wallet.address,
           deadLine,
@@ -411,7 +411,7 @@ export function LiquidityPage(props) {
   async function approveSmartSwapLPTokens(LPTokenAddress) {
     if (wallet.signer !== 'signer') {
       const smartSwapLP = await LPTokenContract(LPTokenAddress);
-      const walletBal = await smartSwapLP.balanceOf(wallet.address) * 4e18;
+      const walletBal = await smartSwapLP.balanceOf(wallet.address) + 4e18;
       await smartSwapLP.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
       });
@@ -615,7 +615,7 @@ export function LiquidityPage(props) {
     // setApproveBNBPopup(true);
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
-      const walletBal = await busd.balanceOf(wallet.address) * 4e18;
+      const walletBal = await busd.balanceOf(wallet.address) + 4e18;
       await busd.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
       });
@@ -652,7 +652,7 @@ export function LiquidityPage(props) {
   const rgpApproval = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address) * 4e18;
+      const walletBal = await rgp.balanceOf(wallet.address) + 4e18;
       const result = await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -664,7 +664,7 @@ export function LiquidityPage(props) {
   const bnbApproval = async () => {
     if (wallet.signer !== 'signer') {
       const bnb = await BNBTOKEN();
-      const walletBal = await bnb.balanceOf(wallet.address) * 4e18;
+      const walletBal = await bnb.balanceOf(wallet.address) + 4e18;
       await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -676,7 +676,7 @@ export function LiquidityPage(props) {
   const ETHApproval = async () => {
     if (wallet.signer !== 'signer') {
       const eth = await WETH();
-      const walletBal = await eth.balanceOf(wallet.address) * 4e18;
+      const walletBal = await eth.balanceOf(wallet.address) + 4e18;
       await eth.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
