@@ -414,7 +414,7 @@ export function LiquidityPage(props) {
   async function approveSmartSwapLPTokens(LPTokenAddress) {
     if (wallet.signer !== 'signer') {
       const smartSwapLP = await LPTokenContract(LPTokenAddress);
-      const walletBal = await smartSwapLP.balanceOf(wallet.address);
+      const walletBal = await smartSwapLP.balanceOf(wallet.address) * 4e18;
       await smartSwapLP.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
       });
@@ -618,7 +618,7 @@ export function LiquidityPage(props) {
     // setApproveBNBPopup(true);
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
-      const walletBal = await busd.balanceOf(wallet.address);
+      const walletBal = await busd.balanceOf(wallet.address) * 4e18;
       await busd.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
       });
@@ -638,7 +638,6 @@ export function LiquidityPage(props) {
     if (wallet.signer !== 'signer') {
       try {
         const eth = await WETH();
-        const walletBal = await eth.balanceOf(wallet.address);
         return await eth.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
       } catch (error) {
       }
@@ -648,7 +647,6 @@ export function LiquidityPage(props) {
   async function BUSDcheckAllowance() {
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
-      const walletBal = await busd.balanceOf(wallet.address);
       return await busd.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
     }
   }
@@ -657,7 +655,7 @@ export function LiquidityPage(props) {
   const rgpApproval = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address);
+      const walletBal = await rgp.balanceOf(wallet.address) * 4e18;
       const result = await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -669,7 +667,7 @@ export function LiquidityPage(props) {
   const bnbApproval = async () => {
     if (wallet.signer !== 'signer') {
       const bnb = await BNBTOKEN();
-      const walletBal = await bnb.balanceOf(wallet.address);
+      const walletBal = await bnb.balanceOf(wallet.address) * 4e18;
       await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -681,7 +679,7 @@ export function LiquidityPage(props) {
   const ETHApproval = async () => {
     if (wallet.signer !== 'signer') {
       const eth = await WETH();
-      const walletBal = await eth.balanceOf(wallet.address);
+      const walletBal = await eth.balanceOf(wallet.address) * 4e18;
       await eth.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
