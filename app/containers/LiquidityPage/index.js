@@ -308,13 +308,10 @@ export function LiquidityPage(props) {
         const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toFixed(4).toString())
-        // const amountAMin = Number((amountADesired / 2)).toFixed(4)
-        // const amountBMin = Number((amountBDesired / 2)).toFixed(4)
 
-        var amountAMin = (Math.round((amountADesired + Number.EPSILON) * 100) / 100) / 2; 
-        var amountBMin = (Math.round((amountBDesired + Number.EPSILON) * 100) / 100) / 3; 
-
-        console.log("AMOUNT A", amountAMin , "amount B", amountBMin)
+        const amountAMin = (Math.round((amountADesired + Number.EPSILON) * 100) / 100) / 2; 
+        const amountBMin = (Math.round((amountBDesired + Number.EPSILON) * 100) / 100) / 3;
+        
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidity(
@@ -322,7 +319,7 @@ export function LiquidityPage(props) {
           toAddress,
           amountADesired.toString(),
           amountBDesired.toString(),
-          amountAMin.toString(),
+          ethers.utils.parseEther(amountAMin.toString()),
           ethers.utils.parseEther(amountBMin.toString()),
           wallet.address,
           deadLine,
