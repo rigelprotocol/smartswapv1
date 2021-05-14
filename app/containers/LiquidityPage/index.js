@@ -322,8 +322,8 @@ export function LiquidityPage(props) {
           toAddress,
           amountADesired.toString(),
           amountBDesired.toString(),
-          ethers.utils.parseEther(amountAMin.toString(), 'ether'),
-          ethers.utils.parseEther(amountBMin.toString(), 'ether'),
+          amountAMin.toString(),
+          ethers.utils.parseEther(amountBMin.toString()),
           wallet.address,
           deadLine,
           {
