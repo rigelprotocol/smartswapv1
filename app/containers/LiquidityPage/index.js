@@ -402,8 +402,8 @@ export function LiquidityPage(props) {
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 290000,
-            gasPrice: ethers.utils.parseUnits('5', 'gwei'),
+            gasLimit: 390000,
+            gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
       } catch (error) {
