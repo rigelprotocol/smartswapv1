@@ -20,6 +20,7 @@ import BUSDImage from '../../assets/busd.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import ArrowDown from '../../assets/arrow-down.svg';
 import { SettingsIcon } from '@chakra-ui/icons';
+import { LPTokenContract } from '../../utils/SwapConnect';
 const removeALiquidity = ({
   back,
   approveSmartSwapLPTokens,
@@ -74,7 +75,7 @@ const removeALiquidity = ({
         {
           from: wallet.address,
           gasLimit: 290000,
-          gasPrice: ethers.utils.parseUnits('5', 'gwei'),
+          gasPrice: ethers.utils.parseUnits('21', 'gwei'),
         }
       );
     } catch (error) {
@@ -82,8 +83,11 @@ const removeALiquidity = ({
     }
 
   }
-  const removeThisLiquidity = () => {
-    const liquidityAmount = liquidityToRemove.poolToken * (selectedValue / 100);
+  const removeThisLiquidity = async () => {
+    const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
+    const walletBal = await smartSwapLP.balanceOf(wallet.address);
+    const liquidityAmount = ethers.utils.formatEther(walletBal.mul(selectedValue).div(100))
+
 
     if (liquidityToRemove.path[0].token === "WBNB") {
       return removeLiquidityForETH(liquidityToRemove.path[1].toPath, liquidityAmount)
