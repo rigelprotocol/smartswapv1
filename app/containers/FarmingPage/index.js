@@ -6,192 +6,365 @@
 
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { ethers } from 'ethers';
 import { connect } from 'react-redux';
 import Web3 from 'web3';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
-import { BNBRGPliquidityProviderTokensContract, router, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
-import { changeFarmingContent } from "./actions"
+import { tokenList } from "../../utils/constants"
+import {
+  masterChefContract,
+  rigelToken,
+  router,
+  erc20Token,
+  SmartFactory,
+  LiquidityPairInstance,
+  RGPSpecialPool,
+  smartSwapLPTokenPoolOne,
+  smartSwapLPTokenPoolTwo,
+  smartSwapLPTokenPoolThree,
+} from 'utils/SwapConnect';
+import {
+  changeFarmingContent,
+  changeFarmingContentToken,
+  changeRGPFarmingFee,
+  updateTotalLiquidity,
+  updateTokenStaked,
+  updateFarmBalances
+} from "./actions"
+// import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
   const { wallet, wallet_props } = props.wallet;
+  const refresh = props.farming.refresh
   const [RGPTotalTokStake, setRGPTotalTokStake] = useState("")
   const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState("")
   const [BNBTotalTokStake, setBNBTotalTokStake] = useState("")
   const [ETHTotalTokStake, setETHTotalTokStake] = useState("")
+  const [farmingData, setFarmingData] = useState([]);
 
   useEffect(() => {
-    // Total RGP earn
-    const RGPTotalTokeStake = async () => {
-      if (wallet.signer !== 'signer') {
-        const specialPool = await RGPSpecialPool();
-        console.log("ABI special pool", specialPool);
-        const value = 1;
-        const myStaked = await specialPool.calculateRewards(value,
-          { from: wallet.address }
-        );
-        const userStakedBal = Web3.utils.fromWei(myStaked.toString());
-        setRGPTotalTokStake(userStakedBal)
-        console.log("token earned: ", userStakedBal)
-        // userStakedBal should be toFixed(4)
-        props.changeTokenEarned({ deposit: "RGP", tokenEarned: userStakedBal })
-      }
-    };
-    const BNBTotalTokeStake = async () => {
-      if (wallet.signer !== 'signer') {
-        let userStakedBal = "123"
-        console.log("setBNBTotalTokStake(userStakedBal)", userStakedBal)
-        setBNBTotalTokStake(userStakedBal)
-        // userStakedBal should be toFixed(4)
-      }
-    };
-    const BUSDTotalTokeStake = async () => {
-      if (wallet.signer !== 'signer') {
-        let userStakedBal = "123"
-        console.log("setBUSDTotalTokStake(userStakedBal)", userStakedBal)
-        setBUSDTotalTokStake(userStakedBal)
-        // userStakedBal should be toFixed(4)
-      }
-    };
-    const ETHTotalTokeStake = async () => {
-      if (wallet.signer !== 'signer') {
-        let userStakedBal = "123"
-        console.log("setETHTotalTokStake(userStakedBal)", userStakedBal)
-        setETHTotalTokStake(userStakedBal)
-        // userStakedBal should be toFixed(4)
-      }
-    };
-    const LPmultiplyier = async () => {
-      const liquidityProviderDetails = await BNBRGPliquidityProviderTokensContract();
-      const getMultiplier = await liquidityProviderDetails.BONUS_MULTIPLIER();
-      const getTotalAlloc = await liquidityProviderDetails.totalAllocPoint();
-      const getrigelPerBlock = await liquidityProviderDetails.rigelPerBlock();
-      const getStartBlock = await liquidityProviderDetails.startBlock();
-      console.log("multiplier", getMultiplier.toString(),
-        "total Allocation", getTotalAlloc.toString(),
-        "rigel token perBlock", getrigelPerBlock.toString(),
-        "start Block", getStartBlock.toString(), "..................."
-      )
-      let data = {
-        getTotalAlloc: getTotalAlloc.toString(),
-        multipler: getMultiplier.toString(),
-        getrigelPerBlock: getrigelPerBlock.toString(),
-        getStartBlock: getStartBlock.toString()
-      }
-      getAllLiquidities()
+    getYieldFarmingData();
+    getTokenStaked();
+    getFarmTokenBalance();
+  }, [wallet, refresh])
 
+  const getYieldFarmingData = async () => {
+    try {
+      const masterChef = await masterChefContract();
+      const poolLength = await masterChef.poolLength();
+      let poolsData = [];
+      const rgpAddress = await masterChef.poolInfo(0);
+      const rgpContract = await LiquidityPairInstance(rgpAddress[0]);
+      // const rgpSpecialPool = await RGPSpecialPool();
+      const totalStaking = ethers.BigNumber.from('200000000000000000000000')
+      const rgpSpecial = {
+        poolAddress: "",
+        poolSymbol: 'RGP',
+        specialPool: true,
+        token0: {
+          address: rgpAddress,
+          symbol: "RGP",
+          amount: 1000
+        },
+      }
+      poolsData = [...poolsData, rgpSpecial];
+      let RGPprice, BNBprice;
+      for (let i = 1; i < poolLength; i++) {
+        const poolInfo = await masterChef.poolInfo(i);
+        const poolContract = await LiquidityPairInstance(poolInfo[0]);
+        const poolReserves = await poolContract.getReserves();
+        const token0Address = await poolContract.token0();
+        const token1Address = await poolContract.token1();
+        const erc20Token0 = await erc20Token(token0Address)
+        const erc20Token1 = await erc20Token(token1Address)
+        const token0Symbol = await erc20Token0.symbol()
+        const token1Symbol = await erc20Token1.symbol()
+        const pools = {
+          poolInfo,
+          poolAddress: poolInfo[0],
+          specialPool: false,
+          poolSymbol: `${token0Symbol}-${token1Symbol}`,
+          token0: {
+            address: token0Address,
+            symbol: token0Symbol,
+            amount: poolReserves[0]
+          },
+          token1: {
+            address: token1Address,
+            symbol: token1Symbol,
+            amount: poolReserves[1]
+          }
+        }
+        if (i === 1) {
+          const RGPpriceDecimals = poolReserves[0].mul(1000).div(poolReserves[1])
+          RGPprice = ethers.utils.formatUnits(RGPpriceDecimals, 3);
+        }
+        if (i === 3) {
+          const BNBpriceDecimals = poolReserves[0].mul(1000).div(poolReserves[1])
+          BNBprice = ethers.utils.formatUnits(BNBpriceDecimals, 3);
+        }
+        poolsData = [...poolsData, pools];
+      }
+      console.log(poolsData, BNBprice)
+      setFarmingData(poolsData);
+      const RGPLiquidity = ethers.utils.formatUnits(totalStaking.mul(1000 * RGPprice), 21).toString();
+      const BUSD_RGPLiquidity = ethers.utils.formatEther(poolsData[1].token0.amount.mul(2), { commify: true }).toString()
+      const RGP_BNBLiquidity = ethers.utils.formatUnits((poolsData[2].token0.amount).mul(BNBprice * 1000 * 2), 21).toString();
+      const BUSD_BNBLiquidity = ethers.utils.formatEther(poolsData[3].token0.amount.mul(2), { commify: true }).toString()
+      props.updateTotalLiquidity([
+        { liquidity: RGPLiquidity, apy: calculateApy(RGPprice, RGPLiquidity) },
+        { liquidity: RGP_BNBLiquidity, apy: calculateApy(RGPprice, RGP_BNBLiquidity, 3333.33) },
+        { liquidity: BUSD_RGPLiquidity, apy: calculateApy(RGPprice, BUSD_RGPLiquidity) },
+        { liquidity: BUSD_BNBLiquidity, apy: calculateApy(RGPprice, BUSD_BNBLiquidity) }])
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getTokenStaked = async () => {
+    try {
+
+      if (wallet.address != "0x") {
+        // const specialPool = await RGPSpecialPool();
+        const masterChef = await masterChefContract();
+        const poolOneEarned = await masterChef.pendingRigel(1, wallet.address)
+        const poolTwoEarned = await masterChef.pendingRigel(2, wallet.address)
+        const poolThreeEarned = await masterChef.pendingRigel(3, wallet.address)
+        const poolOneStaked = await masterChef.userInfo(1, wallet.address);
+        const poolTwoStaked = await masterChef.userInfo(2, wallet.address);
+        const poolThreeStaked = await masterChef.userInfo(3, wallet.address);
+
+        props.updateTokenStaked([
+          { staked: 0.00, earned: 0.00 },
+          { staked: formatBigNumber(poolTwoStaked.amount), earned: formatBigNumber(poolTwoEarned) },
+          { staked: formatBigNumber(poolOneStaked.amount), earned: formatBigNumber(poolOneEarned) },
+          { staked: formatBigNumber(poolThreeStaked.amount), earned: formatBigNumber(poolThreeEarned) }])
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
+  }
+
+  const formatBigNumber = (bigNumber) => {
+    return Number.parseFloat(ethers.utils.formatEther(bigNumber)).toFixed(3);
+  }
+
+  const calculateApy = (rgpPrice, totalLiquidity, inflation = 1333.333333) => {
+    return ((rgpPrice * inflation * 365 * 100) / totalLiquidity);
+  }
+
+  const getFarmTokenBalance = async () => {
+    if (wallet.address != '0x') {
+      try {
+        const RGPToken = await rigelToken()
+        const poolOne = await smartSwapLPTokenPoolOne()
+        const poolTwo = await smartSwapLPTokenPoolTwo()
+        const poolThree = await smartSwapLPTokenPoolThree()
+        const RGPbalance = await RGPToken.balanceOf(wallet.address)
+        const poolOneBalance = await poolOne.balanceOf(wallet.address)
+        const poolTwoBalance = await poolTwo.balanceOf(wallet.address)
+        const poolThreeBalance = await poolThree.balanceOf(wallet.address)
+
+        props.updateFarmBalances([
+          formatBigNumber(RGPbalance),
+          formatBigNumber(poolTwoBalance),
+          formatBigNumber(poolOneBalance),
+          formatBigNumber(poolThreeBalance),
+        ])
+      } catch (error) {
+        console.error(error)
+      }
     }
 
 
-    LPmultiplyier();
-    RGPTotalTokeStake()
+  }
 
+  useEffect(() => {
+    const RGPfarmingFee = async () => {
+      if (wallet.signer !== 'signer') {
+        const masterChef = await masterChefContract()
+        const minFarmingFee = await masterChef.farmingFee()
+        const fee = Web3.utils.fromWei(minFarmingFee.toString());
+        props.changeRGPFarmingFee({
+          fee
+        })
+      }
+    }
+    RGPfarmingFee()
   }, [wallet]);
 
-  const getPriceForToken = async () => {
-    const path = [toSelectedToken, fromSelectedToken]
+  const getRGPPrice = async () => {
+    let rgpBalance = await getAddressTokenBalance(wallet.address, tokenList[1].address, wallet.signer)
+    return rgpBalance
+  }
+  // for the first pool
+  const specialPoolUserData = async () => {
+    console.log('opening usewithdrawal');
+    if (wallet.signer !== 'signer') {
+      const specialPool = await RGPSpecialPool();
+      let pool = await specialPool.userData(0);
+      return pool.tokenQuantity.toString()
+    }
+  };
+  const specialPoolClaimReward = async () => {
+    if (wallet.signer !== 'signer') {
+      const specialPool = await RGPSpecialPool();
+      const poolID = 0;
+      let pool = specialPool.calculateRewards(0);
+      return 0
+    }
+  };
+
+  // changeTokenUserInfo
+  const changeTokenUserInfo = async (val) => {
+    if (wallet.signer !== 'signer') {
+      const lpTokens = await masterChefContract();
+      const pid = val;
+
+      return await lpTokens.userInfo(
+        pid,
+        wallet.address
+      );
+    }
+  }
+
+  // Total RGP earn
+  const getPriceForRGPToken = async () => {
     if (wallet.signer !== 'signer') {
       const rout = await router();
-      const fromPath = ethers.utils.getAddress(path[0].address);
-      const toPath = ethers.utils.getAddress(path[1].address);
       const valueToCheck = 1;
       const checkPriceOfOne = Web3.utils.toWei(valueToCheck.toString());
       const getValue = await rout.getAmountsOut(
         checkPriceOfOne,
-        [fromPath, toPath]
+        [tokenList[1].address, tokenList[2].address]
       )
-      const getToken2Value = await rout.getAmountsOut(
-        checkPriceOfOne,
-        [toPath, fromPath]
-      )
-      console.log("currrent price  of ", fromPath, "to ", toPath, "is:", getValue.toString(), getToken2Value.toString())
-      // const value1 = Web3.utils.fromWei(getValue.toString().split(",")[1])
-      // const value2 = Web3.utils.fromWei(getToken2Value.toString().split(",")[1])
-      // setTokenFromValue(value1)
-      // setTokenToValue(value2)
+      const value1 = (getValue.toString().split(",")[1])
+      console.log("price................: ", value1);
+      return value1
     }
   }
 
-  // const getAllLiquidities = async () => {
-  //   // setLiquidityLoading(true);
-  //   try {
-  //     let pairs = []
-  //     const smartFactory = await SmartFactory();
-  //     const allLiquidityPairs = await smartFactory.allPairsLength();
-  //     for (let i = 0; i < allLiquidityPairs.toString(); i++) {
-  //       const pairAddress = await smartFactory.allPairs(i);
-  //       let liquidity = await LiquidityPairInstance(pairAddress);
-  //       const balance = await liquidity.balanceOf(wallet.address);
-  //       const totalSupply = await liquidity.totalSupply();
-  //       const reserves = await liquidity.getReserves()
-  //       console.log("get the reserve 0: ", reserves[0].toString());
-  //       console.log("get the reserve 1: ", reserves[1].toString());
-  //       console.log("get the reserve 2: ", reserves[2].toString());
-  //       const pooledToken0 = ((balance / totalSupply) * reserves[0]) / 1e+18;
-  //       const pooledToken1 = ((balance / totalSupply) * reserves[1]) / 1e+18;
-  //       const token0 = await liquidity.token0();
-  //       const token1 = await liquidity.token1();
-  //       const erc20Token0 = await erc20Token(token0)
-  //       const erc20Token1 = await erc20Token(token1)
-  //       const symbol0 = await erc20Token0.symbol()
-  //       const symbol1 = await erc20Token1.symbol()
-  //       console.log('token0: ', token0, symbol0)
-  //       console.log('token1: ', token1, symbol1)
-  //       let liquidityObject = {
-  //         pairAddress: Web3.utils.toChecksumAddress(pairAddress),
-  //         poolToken: Web3.utils.fromWei(balance.toString(), 'ether'),
-  //         totalSupply: totalSupply.toString(),
-  //         poolShare: balance.toString() / totalSupply,
-  //         path: [
-  //           { fromPath: token0, token: symbol0, amount: pooledToken0 },
-  //           { toPath: token1, token: symbol1, amount: pooledToken1 }
-  //         ],
-  //         pooledToken0,
-  //         pooledToken1
-  //       }
-  //       props.changeFarmingContent({ reserves0: reserves[0].toString(), reserves1: reserves[1].toString(), symbol0, symbol1 })
-  //       if (liquidityObject.poolToken != 0) {
-  //         pairs.push(liquidityObject);
-  //       }
-  //     }
-  //     // setLiquidities([...pairs])
-  //     console.log(pairs)
-  //   } catch (error) {
-  //     console.error(error)
-  //   } finally {
-  //     // setLiquidityLoading(false)
-  //   }
+  const BNBBUSDUserBalance = async () => {
+    if (wallet.signer !== 'signer') {
+      const poolThree = await smartSwapLPTokenPoolThree();
+      const walletBal = await poolThree.balanceOf(wallet.address);
+      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(4)
+    }
+  };
 
-  // }
+  const BNBRGPUserBalance = async () => {
+    if (wallet.signer !== 'signer') {
+      const slpOne = await smartSwapLPTokenPoolOne();
+      const walletBal = await slpOne.balanceOf(wallet.address);
+      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(4)
+    }
+  };
 
-  useEffect(() => {
-    const LPmultiplyier = async () => {
-      const liquidityProviderDetails = await BNBRGPliquidityProviderTokensContract();
-      const getMultiplier = await liquidityProviderDetails.BONUS_MULTIPLIER();
-      const getTotalAlloc = await liquidityProviderDetails.totalAllocPoint();
-      const getrigelPerBlock = await liquidityProviderDetails.rigelPerBlock();
-      const getStartBlock = await liquidityProviderDetails.startBlock();
-      console.log("multiplier", getMultiplier.toString(),
-        "total Allocation", getTotalAlloc.toString(),
-        "rigel token perBlock", getrigelPerBlock.toString(),
-        "start Block", getStartBlock.toString(), "..................."
-      )
-      let data = {
-        getTotalAlloc: getTotalAlloc.toString(),
-        multipler: getMultiplier.toString(),
-        getrigelPerBlock: getrigelPerBlock.toString(),
-        getStartBlock: getStartBlock.toString()
-      }
-      getAllLiquidities()
+  const RGPBUSDUserBalance = async () => {
+    if (wallet.signer !== 'signer') {
+      const poolTwo = await smartSwapLPTokenPoolTwo();
+      const walletBal = await poolTwo.balanceOf(wallet.address);
+      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(4)
+    }
+  };
+
+  const poolInForAlloc = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await masterChefContract();
+      const rigelAllocPoint = await masterChef.poolInfo(0);
+      return rigelAllocPoint.allocPoint.toString();
+    }
+  }
+
+  const poolInForAllocPoolTwo = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await masterChefContract();
+      const rigelAllocPoint = await masterChef.poolInfo(1);
+      return rigelAllocPoint.allocPoint.toString();
+    }
+  }
+
+  const poolInForAllocPoolThree = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await masterChefContract()
+      const rigelAllocPoint = await masterChef.poolInfo(2)
+      return rigelAllocPoint.allocPoint;
+    }
+  }
+
+  const poolInForAllocPoolFour = async () => {
+    if (wallet.signer !== 'signer') {
+      const masterChef = await masterChefContract()
+      const rigelAllocPoint = await masterChef.poolInfo(3)
+      return rigelAllocPoint.allocPoint;
+    }
+  }
+
+  const changeRGPInflationPerDay = async () => {
+    if (wallet.signer !== 'signer') {
+      return 200000 / 30
+    }
+  }
+
+  const calInflationForPoolRGP = async () => {
+    if (wallet.signer !== 'signer') {
+      const inflation = await changeRGPInflationPerDay()
+      const pool = await poolInForAlloc();
+      const check = inflation * (pool / 100);
+      return check;
+    }
+  }
+
+  const calInflationForPoolRGPBUSD = async () => {
+    if (wallet.signer !== 'signer') {
+      const inflation = await changeRGPInflationPerDay()
+      const pool = await poolInForAllocPoolTwo();
+      const check = inflation * (pool / 100);
+      return check;
+    }
+  }
+
+  const calInflationForPoolRGPBNB = async () => {
+    if (wallet.signer !== 'signer') {
+      const inflation = await changeRGPInflationPerDay()
+      const pool = await poolInForAllocPoolThree();
+      const check = inflation * (pool / 100);
+      return check;
+    }
+  }
+
+  const calInflationForPoolBNB = async () => {
+    if (wallet.signer !== 'signer') {
+      const inflation = await changeRGPInflationPerDay()
+      const pool = await poolInForAllocPoolFour();
+      const check = inflation * (pool / 100);
+      return check;
+    }
+  }
+
+  const changeTotalVolumePerPool = () => {
+    if (wallet.signer !== 'signer') {
+      return 2433.3382
+    }
+  }
+
+  const RGPTotalTokeStake = async () => {
+    if (wallet.signer !== 'signer') {
+      //  const specialPool = await RGPSpecialPool();
+      //  console.log("special pool:",specialPool)
+      //  const value = 1;
+      //  const myStaked = await specialPool.calculateRewards(0);
+      //  const userStakedBal = Web3.utils.fromWei(myStaked.toString());
+      //  setRGPTotalTokStake(userStakedBal)
+      //  return userStakedBal
+      // userStakedBal should be toFixed(4)
 
     }
-    LPmultiplyier();
-  }, [wallet]);
-  console.log(props.farming.data);
-
+  };
 
   const getAllLiquidities = async () => {
-    // setLiquidityLoading(true);
     try {
       let pairs = []
       const smartFactory = await SmartFactory();
@@ -202,19 +375,14 @@ export function FarmingPage(props) {
         const balance = await liquidity.balanceOf(wallet.address);
         const totalSupply = await liquidity.totalSupply();
         const reserves = await liquidity.getReserves()
-        console.log("get the reserve 0: ", reserves[0].toString());
-        console.log("get the reserve 1: ", reserves[1].toString());
-        console.log("get the reserve 2: ", reserves[2].toString());
-        const pooledToken0 = ((balance / totalSupply) * reserves[0]) / 1e+18;
-        const pooledToken1 = ((balance / totalSupply) * reserves[1]) / 1e+18;
+        const pooledToken0 = ((balance.toString() / totalSupply) * reserves[0]) / 1e+18;
+        const pooledToken1 = ((balance.toString() / totalSupply) * reserves[1]) / 1e+18;
         const token0 = await liquidity.token0();
         const token1 = await liquidity.token1();
         const erc20Token0 = await erc20Token(token0)
         const erc20Token1 = await erc20Token(token1)
         const symbol0 = await erc20Token0.symbol()
         const symbol1 = await erc20Token1.symbol()
-        console.log('token0: ', token0, symbol0)
-        console.log('token1: ', token1, symbol1)
         let liquidityObject = {
           pairAddress: Web3.utils.toChecksumAddress(pairAddress),
           poolToken: Web3.utils.fromWei(balance.toString(), 'ether'),
@@ -227,20 +395,18 @@ export function FarmingPage(props) {
           pooledToken0,
           pooledToken1
         }
-        props.changeFarmingContent({ reserves0: reserves[0].toString(), reserves1: reserves[1].toString(), symbol0, symbol1 })
         if (liquidityObject.poolToken != 0) {
           pairs.push(liquidityObject);
+          console.log(liquidityObject)
         }
+        props.changeFarmingContent({ reserves0: reserves[0].toString(), reserves1: reserves[1].toString(), symbol0, symbol1 })
       }
-      // setLiquidities([...pairs])
-      console.log(pairs)
+      setLiquidities([...pairs])
     } catch (error) {
-      console.error(error)
-    } finally {
-      // setLiquidityLoading(false)
     }
 
   }
+
 
   return (
     <div>
@@ -308,5 +474,14 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(
   mapStateToProps,
-  { changeFarmingContent }
+  {
+    changeFarmingContent,
+    changeFarmingContentToken,
+    changeRGPFarmingFee,
+    updateTotalLiquidity,
+    updateTokenStaked,
+    updateFarmBalances
+  }
 )(FarmingPage);
+
+

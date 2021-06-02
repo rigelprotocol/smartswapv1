@@ -15,7 +15,7 @@
  * balance
  *
 */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDisclosure, Spinner } from '@chakra-ui/react';
 import { Box, Stack } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
@@ -25,13 +25,13 @@ import { notify } from 'containers/NoticeProvider/actions';
 import Web3 from 'web3';
 import { approveToken, runApproveCheck } from 'utils/wallet-wiget/TokensUtils';
 import { getPriceForToken } from 'containers/HomePage/service/swapServices';
-
+import { tokenWhere, tokenAddressWhere } from 'utils/constants';
 import { router, WETH, updateOutPutAmountForRouter } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
 import SwapSettings from "./SwapSettings";
-import { tokenAddressWhere } from "../../utils/constants";
+
 import ShowMessageBox from "../Toast/ShowMessageBox";
 import ConfirmSwapBox from './ConfirmSwapBox';
 import { changeDeadlineValue } from '../../containers/WalletProvider/actions';
@@ -44,9 +44,9 @@ export const Manual = props => {
   const [amountIn, setAmountIn] = useState('');
   const [tokenPrice, setTokenPrice] = useState('')
   const [boxMessage, setBoxMessage] = useState('');
-  const [selectedToken, setSelectedToken] = useState('');
-  const [selectedToToken, setSelectedToToken] = useState('');
-  const [showErrorMessage, setShowErrorMessage] = useState(false)
+  const [selectedToken, setSelectedToken] = useState(tokenWhere('rgp'));
+  const [selectedToToken, setSelectedToToken] = useState(tokenWhere('SELECT A TOKEN'));
+  const [errorMessage, setErrorMessage] = useState("")
   const [isSendingTransaction, setIsSendingTransaction] = useState(false);
   const [userHasApproveToken, setUserHasApproveToken] = useState(false)
   const [transactionDeadline, setTransactionDeadline] = useState("")
@@ -61,7 +61,7 @@ export const Manual = props => {
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])
 
   useEffect(() => {
-    props.changeDeadlineValue({ actualTransactionDeadline, slippageValue })
+    changeData()
   }, [transactionDeadline, slippageValue])
 
 
@@ -97,11 +97,14 @@ export const Manual = props => {
   };
 
   const handleChangeFromAmount = (event, balance) => {
+
     const { value } = event.target;
     setFromAmount(value || balance)
     getToAmount(value || balance, 'from');
   };
-
+  const changeData = () => {
+    props.changeDeadlineValue({ actualTransactionDeadline, slippageValue })
+  }
   const setPathArray = (target, token) => {
     const pathObject = path.filter(value => !value.hasOwnProperty('fromPath'));
     const newArray = [{ fromPath: target, token }, ...pathObject]
@@ -434,8 +437,8 @@ export const Manual = props => {
           setActualTransactionDeadline={setActualTransactionDeadline}
           slippageValue={slippageValue}
           setSlippageValue={setSlippageValue}
-          showErrorMessage={showErrorMessage}
-          setShowErrorMessage={setShowErrorMessage}
+          setErrorMessage={setErrorMessage}
+          errorMessage={errorMessage}
         />
         <From
           fromAmount={fromAmount}

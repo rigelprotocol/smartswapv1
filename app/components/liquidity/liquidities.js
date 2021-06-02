@@ -13,7 +13,6 @@ const Liquidities = ({
   removeLiquidity,
   removeALiquidity,
 }) => {
-  console.log(value);
   const [showDetails, setShowDetails] = useState(false);
   return (
     <>
@@ -45,6 +44,7 @@ const Liquidities = ({
             h={4}
             w={4}
             onClick={() => setShowDetails(!showDetails)}
+            cursor="pointer"
           />
         </Box>
       </Flex>
@@ -56,8 +56,8 @@ const Liquidities = ({
           removeALiquidity={removeALiquidity}
         />
       ) : (
-          <div />
-        )}
+        <div />
+      )}
     </>
   );
 };

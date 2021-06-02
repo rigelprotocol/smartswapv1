@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-empty */
 /* eslint-disable prettier/prettier */
 /* eslint-disable indent */
 // @ts-nocheck
@@ -12,24 +14,23 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { connect } from 'react-redux';
 import { Flex } from '@chakra-ui/layout';
-import { useDisclosure, AlertTitle } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react';
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
 import RemoveALiquidity from 'components/liquidity/removeALiquidity';
-import { showErrorMessage } from 'containers/NoticeProvider/actions';
+import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
-import BigNumber from "bignumber.js";
-import { tokenList, tokenWhere, SMART_SWAP, TOKENS_CONTRACT } from '../../utils/constants';
+import { tokenList, tokenWhere, SMART_SWAP } from '../../utils/constants';
 import { LIQUIDITYTABS } from "./constants";
 import { isNotEmpty } from "../../utils/UtilFunc";
 
 // 35,200
 export function LiquidityPage(props) {
   const { wallet, wallet_props } = props.wallet;
-  const [fromValue, setFromValue] = useState(0);
-  const [toValue, setToValue] = useState(0);
+  const [fromValue, setFromValue] = useState('0');
+  const [toValue, setToValue] = useState('0');
   const [isNewUser, setIsNewUser] = useState(false)
   const [selectingToken, setSelectingToken] = useState(tokenList);
   const [fromSelectedToken, setFromSelectedToken] = useState(tokenWhere('rgp'))
@@ -59,6 +60,8 @@ export function LiquidityPage(props) {
   const [toTokenAllowance, setToTokenAllowance] = useState('')
   const [liquidityLoading, setLiquidityLoading] = useState(false)
   const [liquidityPairRatio, setLiquidityPairRatio] = useState(0)
+  const [hasApprovedLPTokens, setHasApprovedLPTokens] = useState(false)
+  const [approving, setApproving] = useState(false)
 
   let timer1
   useEffect(() => (
@@ -296,8 +299,6 @@ export function LiquidityPage(props) {
         const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toFixed(4).toString())
-        // const amountAMin = (amountADesired / 2)
-        // const amountBMin = (amountBDesired / 2)
         const amountAMin = Web3.utils.toWei((fromValue * 0.8).toString())
         const amountBMin = Web3.utils.toWei((toValue * 0.8).toString())
 
@@ -309,7 +310,7 @@ export function LiquidityPage(props) {
           amountADesired.toString(),
           amountBDesired.toString(),
           amountAMin.toString(),
-          amountBMin.toString(),
+          amountBMin,
           wallet.address,
           deadLine,
           {
@@ -330,9 +331,6 @@ export function LiquidityPage(props) {
   };
 
   const fetchTransactionData = async (sendTransaction) => {
-    // let res = await fetch(`https://api.etherscan.io/api?module=transaction&action=getstatus&txhash=${hash}&apikey=BPPBU4V7U79BM8NESWJ4AXQWM68AQVPQ35`)
-    // let data = await res.json()
-    // return data
     modal6Disclosure.onOpen();
     const { confirmations, status } = await sendTransaction.wait(1);
 
@@ -342,17 +340,25 @@ export function LiquidityPage(props) {
   const addingLiquidityForETH = async () => {
     if (wallet.signer !== 'signer') {
       try {
-        const EthValue = fromSelectedToken.symbol === "BNB" ? fromValue : toValue;
-        const tokenSelected = fromSelectedToken.symbol === "BNB" ? toAddress : fromAddress;
+        let EthValue, amountTokenDesired, tokenSelected;
+        if (fromSelectedToken.symbol === "BNB") {
+          EthValue = fromValue;
+          amountTokenDesired = toValue;
+          tokenSelected = toAddress;
+        } else {
+          EthValue = toValue;
+          amountTokenDesired = fromValue;
+          tokenSelected = fromAddress;
+        }
         const rout = await router();
         const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidityETH(
           tokenSelected,
-          ethers.utils.parseEther(fromValue.toString(), 'ether'),
-          ethers.utils.parseEther(toValue.toString(), 'ether'),
-          0,
+          ethers.utils.parseEther(amountTokenDesired.toString(), 'ether'),
+          ethers.utils.parseEther((amountTokenDesired * 0.8).toString(), 'ether'),
+          ethers.utils.parseEther((EthValue * 0.8).toString(), 'ether'),
           wallet.address.toString(),
           deadLine,
           {
@@ -379,7 +385,8 @@ export function LiquidityPage(props) {
 
       const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
       try {
-        await rout.removeLiquidity(
+        setApproving(true);
+        const hasRemovedLiquidity = await rout.removeLiquidity(
           tokenA,
           tokenB,
           checking.toString(),
@@ -393,18 +400,39 @@ export function LiquidityPage(props) {
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
+        const { confirmations, status } = await hasRemovedLiquidity.wait(2);
+        if (typeof hasRemovedLiquidity.hash !== 'undefined' && confirmations >= 2 && status) {
+          setApproving(false);
+          props.notify({
+            title: 'Process Completed',
+            body: 'You have successfully remove the liquidity',
+            type: 'success'
+          });
+          back('ADDLIQUIDITY');
+        }
       } catch (error) {
+        props.showErrorMessage('Oops we encountered an error please try again later');
       }
     }
   }
 
   async function approveSmartSwapLPTokens(LPTokenAddress) {
     if (wallet.signer !== 'signer') {
-      const smartSwapLP = await LPTokenContract(LPTokenAddress);
-      const walletBal = await smartSwapLP.balanceOf(wallet.address);
-      await smartSwapLP.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
-        from: wallet.address,
-      });
+      try {
+        setApproving(true);
+        const smartSwapLP = await LPTokenContract(LPTokenAddress);
+        const walletBal = await smartSwapLP.balanceOf(wallet.address) + 4e18;
+        const approveTransaction = await smartSwapLP.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
+          from: wallet.address,
+        });
+        const { confirmations, status } = await approveTransaction.wait(2);
+        if (typeof approveTransaction.hash !== 'undefined' && confirmations >= 2 && status) {
+          setHasApprovedLPTokens(true);
+          setApproving(false);
+        }
+      } catch (e) {
+        props.showErrorMessage('Oops we encountered an error please try again later')
+      }
     }
   }
 
@@ -458,7 +486,6 @@ export function LiquidityPage(props) {
     console.log(liquidities)
 
     console.log(fromSelectedToken, toSelectedToken)
-    // let liquid = liquidities.filter(liquid => liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol)[0]
     const liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
     console.log(liquid)
     timer1 = setTimeout(() => {
@@ -605,7 +632,7 @@ export function LiquidityPage(props) {
     // setApproveBNBPopup(true);
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
-      const walletBal = await busd.balanceOf(wallet.address);
+      const walletBal = await busd.balanceOf(wallet.address) + 4e18;
       await busd.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
       });
@@ -625,7 +652,6 @@ export function LiquidityPage(props) {
     if (wallet.signer !== 'signer') {
       try {
         const eth = await WETH();
-        const walletBal = await eth.balanceOf(wallet.address);
         return await eth.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
       } catch (error) {
       }
@@ -635,7 +661,6 @@ export function LiquidityPage(props) {
   async function BUSDcheckAllowance() {
     if (wallet.signer !== 'signer') {
       const busd = await BUSDToken();
-      const walletBal = await busd.balanceOf(wallet.address);
       return await busd.allowance(wallet.address, SMART_SWAP.MasterChef, { from: wallet.address });
     }
   }
@@ -644,7 +669,7 @@ export function LiquidityPage(props) {
   const rgpApproval = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address);
+      const walletBal = await rgp.balanceOf(wallet.address) + 4e18;
       const result = await rgp.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -656,7 +681,7 @@ export function LiquidityPage(props) {
   const bnbApproval = async () => {
     if (wallet.signer !== 'signer') {
       const bnb = await BNBTOKEN();
-      const walletBal = await bnb.balanceOf(wallet.address);
+      const walletBal = await bnb.balanceOf(wallet.address) + 4e18;
       await bnb.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -668,7 +693,7 @@ export function LiquidityPage(props) {
   const ETHApproval = async () => {
     if (wallet.signer !== 'signer') {
       const eth = await WETH();
-      const walletBal = await eth.balanceOf(wallet.address);
+      const walletBal = await eth.balanceOf(wallet.address) + 4e18;
       await eth.approve(SMART_SWAP.SMART_SWAPPING, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -759,11 +784,13 @@ export function LiquidityPage(props) {
           {liquidityTab === LIQUIDITYTABS.REMOVEALIQUIDITY &&
             <RemoveALiquidity
               back={back}
+              approving={approving}
               approveSmartSwapLPTokens={approveSmartSwapLPTokens}
               removingLiquidity={removingLiquidity}
               setPercentValue={setPercentValue}
               wallet={wallet}
               liquidityToRemove={liquidityToRemove}
+              hasApprovedLPTokens={hasApprovedLPTokens}
             />
           }
           {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY &&
@@ -833,5 +860,5 @@ const mapStateToProps = ({ wallet }) => ({ wallet })
 
 export default connect(
   mapStateToProps,
-  { showErrorMessage },
+  { showErrorMessage, notify },
 )(LiquidityPage);

@@ -11,16 +11,12 @@ import {
   PopoverCloseButton,
   Tooltip,
   Text,
-  Switch,
-  FormLabel,
-  FormControl,
   Button,
-  InputRightAddon,
   InputGroup,
 } from '@chakra-ui/react';
 import { Input } from '@chakra-ui/input';
 import { SettingsIcon } from '@chakra-ui/icons';
-import Web3 from 'web3';
+
 import { changeTransactionDeadline } from '../../utils/UtilFunc';
 const SwapSettings = ({
   transactionDeadline,
@@ -28,22 +24,24 @@ const SwapSettings = ({
   setActualTransactionDeadline,
   setSlippageValue,
   slippageValue,
-  setShowErrorMessage,
-  showErrorMessage,
+  errorMessage,
+  setErrorMessage
 }) => {
   const changeSlippageValue = val => {
     setSlippageValue(val);
     if (val < 0.5) {
-      setShowErrorMessage(true)
+      setErrorMessage("Your transaction might fail")
+    } else if(val>5 && val<49.9){
+     setErrorMessage("Your transaction may be frontrun")
+    }else if(val>50 ){
+ setErrorMessage("Enter a valid slippage percentage")
     } else {
-      setShowErrorMessage(false)
+      setErrorMessage("")
     }
   };
   const changeDeadline = (time, val) => {
     setTransactionDeadline(val);
     setActualTransactionDeadline(time);
-    console.log(val);
-    // setSlippageValue(val)
   };
   return (
     <Flex
@@ -93,7 +91,7 @@ const SwapSettings = ({
               </Tooltip>
             </Text>
             <Flex justifyContent="space-between">
-              {['0.1', '0.5', '1'].map(value => (
+              {['0.1', '0.5', '1'].map((value,index) => (
                 <Button
                   border="0px"
                   h="30px"
@@ -108,6 +106,7 @@ const SwapSettings = ({
                   _hover={{ background: '#72cfe4', color: '#29235E' }}
                   borderRadius="10px"
                   onClick={() => changeSlippageValue(value)}
+                  key={index}
                 >
                   {value} %
                 </Button>
@@ -120,14 +119,14 @@ const SwapSettings = ({
                   isRequired
                   size="sm"
                   ml={2}
-                  width="40%"
+                  width="50%"
                   value={slippageValue}
-                  disabled
+                  onChange={(e)=>changeSlippageValue(e.target.value)}
                 />
                 {/* <InputRightAddon children="%" w="10px" h="20px" /> */}
               </InputGroup>
             </Flex>
-            {showErrorMessage ? <Text color="red">Your transaction might fail</Text> : ""}
+           <Text color="red">{errorMessage}</Text>
             <Text>
               Transaction Deadline{' '}
               <Tooltip

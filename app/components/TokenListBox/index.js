@@ -95,7 +95,7 @@ function TokenListBox({
             </Text>
             <ArrowDownImage />
           </Flex>
-          {list.map(token => (
+          {list.map((token,index) => (
             <Flex
               justifyContent="space-between"
               mt={1}
@@ -110,6 +110,7 @@ function TokenListBox({
                 isFunc(getToAmount) && getToAmount();
                 isFunc(onClose) && onClose();
               }}
+              key={index}
             >
               <Flex alignItems="center">
                 <span className={`icon icon-${token.symbol.toLowerCase()}`} />
