@@ -25,7 +25,6 @@ import BreakdownBg from '../../assets/breakdown-bg.svg';
 
 
 const AddLiquidity = ({
-  wallet,
   fromValue,
   setFromValue,
   toValue,
@@ -33,16 +32,12 @@ const AddLiquidity = ({
   setToAddress,
   approveToToken,
   approveFromToken,
-  selectingToken,
   fromSelectedToken,
   toSelectedToken,
   setFromSelectedToken,
   setToSelectedToken,
   popupText,
   confirmingSupply,
-  approveTokenSpending,
-  approveToken,
-  checkUser,
   isNewUser,
   buttonValue,
   openSupplyButton,
@@ -191,7 +186,7 @@ const AddLiquidity = ({
         // onClick={open}
         />
         <ModalHeader fontSize="18px" fontWeight="regular" align="center">
-          You will recieve
+          You are providing liquidity of
         </ModalHeader>
         <ModalBody>
           <h2>
@@ -439,7 +434,6 @@ AddLiquidity.propTypes = {
   approveToToken: PropTypes.func,
   approveFromToken: PropTypes.func,
   setToAddress: PropTypes.func,
-  wallet: PropTypes.object,
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
   setFromSelectedToken: PropTypes.func.isRequired,
@@ -448,12 +442,10 @@ AddLiquidity.propTypes = {
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,
   back: PropTypes.func.isRequired,
-  selectingToken: PropTypes.object.isRequired,
   popupText: PropTypes.string.isRequired,
-  confirmingSupply: PropTypes.string.isRequired,
-  approveTokenSpending: PropTypes.bool.isRequired,
+  confirmingSupply: PropTypes.func.isRequired,
   buttonValue: PropTypes.string.isRequired,
-  openSupplyButton: PropTypes.string.isRequired,
+  openSupplyButton: PropTypes.bool.isRequired,
   open: PropTypes.func.isRequired,
   closeModal1: PropTypes.func.isRequired,
   closeModal2: PropTypes.func.isRequired,

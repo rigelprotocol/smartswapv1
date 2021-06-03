@@ -7,7 +7,7 @@ import { tokenWhere } from 'utils/constants';
 import { connect } from 'react-redux';
 import InputSelector from './InputSelector';
 
-const SendTo = props => {
+const SendTo = (props) => {
   const {
     amountIn,
     handleChangeToAmount,
@@ -17,9 +17,10 @@ const SendTo = props => {
     wallet,
   } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  useEffect(() => {
-    setSelectedToToken(tokenWhere('SELECT A TOKEN'));
-  }, [wallet]);
+  // move this to the actually state created
+  // useEffect(() => {
+  //   setSelectedToToken(tokenWhere('SELECT A TOKEN'));
+  // }, [wallet]);
   return (
     <>
       <Box

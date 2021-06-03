@@ -46,7 +46,7 @@ export const reConnect = (wallet) => async dispatch => {
     return dispatch({
       type: NOTICE, message: {
         title: 'Connection Error:',
-        body: e.message,
+        body: 'Please reload this page and reconnect',
         type: 'error',
       }
     });
@@ -83,7 +83,7 @@ export const connectWallet = () => async dispatch => {
     return dispatch({
       type: NOTICE, message: {
         title: 'Connection Error:',
-        body: e.message,
+        body: 'Please reload this page and reconnect',
         type: 'error',
       }
     });
