@@ -101,8 +101,11 @@ export function FarmingPage(props) {
           RGPprice = ethers.utils.formatUnits(RGPpriceDecimals, 3);
         }
         if (i === 3) {
-          const BNBpriceDecimals = poolReserves[0].mul(1000).div(poolReserves[1])
-          BNBprice = ethers.utils.formatUnits(BNBpriceDecimals, 3);
+          if (token0Symbol === 'BUSD') {
+            BNBprice = ethers.utils.formatUnits(poolReserves[0].mul(1000).div(poolReserves[1]), 3);
+          } else {
+            BNBprice = ethers.utils.formatUnits(poolReserves[1].mul(1000).div(poolReserves[0]), 3);
+          }
         }
         poolsData = [...poolsData, pools];
       }
@@ -111,7 +114,13 @@ export function FarmingPage(props) {
       const RGPLiquidity = ethers.utils.formatUnits(totalStaking.mul(1000 * RGPprice), 21).toString();
       const BUSD_RGPLiquidity = ethers.utils.formatEther(poolsData[1].token0.amount.mul(2), { commify: true }).toString()
       const RGP_BNBLiquidity = ethers.utils.formatUnits((poolsData[2].token0.amount).mul(BNBprice * 1000 * 2), 21).toString();
-      const BUSD_BNBLiquidity = ethers.utils.formatEther(poolsData[3].token0.amount.mul(2), { commify: true }).toString()
+      let BUSD_BNBLiquidity;
+      if (poolsData[3].token0.symbol === 'BUSD') {
+        BUSD_BNBLiquidity = ethers.utils.formatEther(poolsData[3].token0.amount.mul(2), { commify: true }).toString()
+      } else {
+        BUSD_BNBLiquidity = ethers.utils.formatEther(poolsData[3].token1.amount.mul(2), { commify: true }).toString()
+      }
+
       props.updateTotalLiquidity([
         { liquidity: RGPLiquidity, apy: calculateApy(RGPprice, RGPLiquidity) },
         { liquidity: RGP_BNBLiquidity, apy: calculateApy(RGPprice, RGP_BNBLiquidity, 3333.33) },
