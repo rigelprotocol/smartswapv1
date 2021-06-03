@@ -122,10 +122,10 @@ export function FarmingPage(props) {
       }
 
       props.updateTotalLiquidity([
-        { liquidity: RGPLiquidity, apy: calculateApy(RGPprice, RGPLiquidity) },
+        { liquidity: RGPLiquidity, apy: calculateApy(RGPprice, RGPLiquidity, 1333.33) },
         { liquidity: RGP_BNBLiquidity, apy: calculateApy(RGPprice, RGP_BNBLiquidity, 3333.33) },
-        { liquidity: BUSD_RGPLiquidity, apy: calculateApy(RGPprice, BUSD_RGPLiquidity) },
-        { liquidity: BUSD_BNBLiquidity, apy: calculateApy(RGPprice, BUSD_BNBLiquidity) }])
+        { liquidity: BUSD_RGPLiquidity, apy: calculateApy(RGPprice, BUSD_RGPLiquidity, 2000) },
+        { liquidity: BUSD_BNBLiquidity, apy: calculateApy(RGPprice, BUSD_BNBLiquidity, 1333.33) }])
     } catch (error) {
       console.log(error)
     }
@@ -160,7 +160,7 @@ export function FarmingPage(props) {
     return Number.parseFloat(ethers.utils.formatEther(bigNumber)).toFixed(3);
   }
 
-  const calculateApy = (rgpPrice, totalLiquidity, inflation = 1333.333333) => {
+  const calculateApy = (rgpPrice, totalLiquidity, inflation) => {
     return ((rgpPrice * inflation * 365 * 100) / totalLiquidity);
   }
 
