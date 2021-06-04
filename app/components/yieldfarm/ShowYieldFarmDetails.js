@@ -35,14 +35,16 @@ import {
   smartSwapLPTokenPoolThree,
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
-import { refreshFarm } from "../../containers/FarmingPage/actions"
+import { refreshFarm } from '../../containers/FarmingPage/actions';
 
 const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
   const [unstakeButtonValue, setUnstakeButtonValue] = useState('Confirm');
   const [approveValueForRGP, setApproveValueForRGP] = useState(false);
-  const [approveValueForOtherToken, setApproveValueForOtherToken] = useState(false);
+  const [approveValueForOtherToken, setApproveValueForOtherToken] = useState(
+    false,
+  );
 
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
@@ -52,7 +54,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
   const [rewards, setRewards] = useState('0.000');
   const [isNewUser, setIsNewUser] = useState(true);
   const [allowanceApproval, setAllowanceApproval] = useState(false);
-  const [isPoolRGP, setIsPoolRGP] = useState(false)
+  const [isPoolRGP, setIsPoolRGP] = useState(false);
 
   useEffect(() => {
     const outPut = async () => {
@@ -60,109 +62,121 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
         const specialPool = await RGPSpecialPool();
         // setStakeToken(stakedToken);
         const totalStakingBal = await specialPool.totalStaking();
-        const seeTotalStaked = await Web3.utils.fromWei(totalStakingBal.toString())
+        const seeTotalStaked = await Web3.utils.fromWei(
+          totalStakingBal.toString(),
+        );
         setStakeToken(Number(seeTotalStaked.toString()).toFixed(3));
       }
       // userHarvest();
     };
 
     // check for once approve
-    //check for rgp once approve
+    // check for rgp once approve
     const specailPoolAllowance = async () => {
       if (wallet.signer !== 'signer') {
         if (wallet.signer !== 'signer') {
           const rgp = await rigelToken();
-          let rgpApproval = await rgp.allowance(wallet.address, SMART_SWAP.specialPool);
-          return (rgpApproval.toString() <= 0) ? false : true
+          const rgpApproval = await rgp.allowance(
+            wallet.address,
+            SMART_SWAP.specialPool,
+          );
+          return !(rgpApproval.toString() <= 0);
         }
-
       }
-    }
+    };
 
     const rgpAllowancePool = async () => {
       if (wallet.signer !== 'signer') {
         if (wallet.signer !== 'signer') {
           const rgp = await rigelToken();
-          let rgpApproval = await rgp.allowance(wallet.address, SMART_SWAP.masterChef);
-          return (rgpApproval.toString() <= 0) ? false : true
-
+          const rgpApproval = await rgp.allowance(
+            wallet.address,
+            SMART_SWAP.masterChef,
+          );
+          return !(rgpApproval.toString() <= 0);
         }
-
       }
-    }
+    };
 
     const BNBRGPAllowance = async () => {
       if (wallet.signer !== 'signer') {
         const poolTwo = await smartSwapLPTokenPoolTwo();
-        let rgpApproval = await poolTwo.allowance(wallet.address, SMART_SWAP.masterChef);
-        return (rgpApproval.toString() <= 0) ? false : true
-
+        const rgpApproval = await poolTwo.allowance(
+          wallet.address,
+          SMART_SWAP.masterChef,
+        );
+        return !(rgpApproval.toString() <= 0);
       }
-    }
+    };
     const BUSDRGPAllowance = async () => {
       if (wallet.signer !== 'signer') {
         const poolOne = await smartSwapLPTokenPoolOne();
-        let rgpApproval = await poolOne.allowance(wallet.address, SMART_SWAP.masterChef);
-        return (rgpApproval.toString() <= 0) ? false : true
+        const rgpApproval = await poolOne.allowance(
+          wallet.address,
+          SMART_SWAP.masterChef,
+        );
+        return !(rgpApproval.toString() <= 0);
       }
-    }
+    };
     const BNBBUSDAllowance = async () => {
       if (wallet.signer !== 'signer') {
         const poolThree = await smartSwapLPTokenPoolThree();
-        let rgpApproval = await poolThree.allowance(wallet.address, SMART_SWAP.masterChef);
-        return (rgpApproval.toString() <= 0) ? false : true
+        const rgpApproval = await poolThree.allowance(
+          wallet.address,
+          SMART_SWAP.masterChef,
+        );
+        return !(rgpApproval.toString() <= 0);
       }
-    }
+    };
     const checkForApproval = async () => {
-      if (content.deposit === "RGP") {
-        setIsPoolRGP(true)
-        let specialPoolApproval = await specailPoolAllowance()
-        changeApprovalButton(true, specialPoolApproval)
-      } else if (content.deposit === "RGP-BNB") {
-        let approvalForRGPBNB = await BNBRGPAllowance()
-        let rgpApproval2 = await rgpAllowancePool()
-        changeApprovalButton(approvalForRGPBNB, rgpApproval2)
-      } else if (content.deposit === "RGP-BUSD") {
-        let approvalForRGPBUSD = await BUSDRGPAllowance()
-        let rgpApproval1 = await rgpAllowancePool()
-        changeApprovalButton(approvalForRGPBUSD, rgpApproval1)
-      } else if (content.deposit === "BNB-BUSD") {
-        let approvalForBNBBUSD = await BNBBUSDAllowance()
-        let approvalForRGP = await rgpAllowancePool()
-        changeApprovalButton(approvalForBNBBUSD, approvalForRGP)
+      if (content.deposit === 'RGP') {
+        setIsPoolRGP(true);
+        const specialPoolApproval = await specailPoolAllowance();
+        changeApprovalButton(true, specialPoolApproval);
+      } else if (content.deposit === 'RGP-BNB') {
+        const approvalForRGPBNB = await BNBRGPAllowance();
+        const rgpApproval2 = await rgpAllowancePool();
+        changeApprovalButton(approvalForRGPBNB, rgpApproval2);
+      } else if (content.deposit === 'RGP-BUSD') {
+        const approvalForRGPBUSD = await BUSDRGPAllowance();
+        const rgpApproval1 = await rgpAllowancePool();
+        changeApprovalButton(approvalForRGPBUSD, rgpApproval1);
+      } else if (content.deposit === 'BNB-BUSD') {
+        const approvalForBNBBUSD = await BNBBUSDAllowance();
+        const approvalForRGP = await rgpAllowancePool();
+        changeApprovalButton(approvalForBNBBUSD, approvalForRGP);
       }
-    }
+    };
 
     function changeApprovalButton(otherTokenApproval, rgpApproval) {
       if (otherTokenApproval && rgpApproval) {
-
-        setApproveValueForOtherToken(true)
-        setApproveValueForRGP(true)
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
       } else if (otherTokenApproval) {
-        setApproveValueForOtherToken(true)
+        setApproveValueForOtherToken(true);
       } else if (rgpApproval) {
-        setApproveValueForRGP(true)
+        setApproveValueForRGP(true);
       } else {
-        setApproveValueForRGP(false)
-        setApproveValueForOtherToken(false)
+        setApproveValueForRGP(false);
+        setApproveValueForOtherToken(false);
       }
     }
-    setApproveValueForRGP(false)
-    setApproveValueForOtherToken(false)
-    checkForApproval()
+    setApproveValueForRGP(false);
+    setApproveValueForOtherToken(false);
+    checkForApproval();
     // outPut();
   }, [wallet, content]);
 
   const callRefreshFarm = (confirmations, status) => {
     if (confirmations >= 1 && status >= 1) {
-      refreshFarm()
+      refreshFarm();
     }
-  }
+  };
 
   const RGPApproval = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address) + 400e18;
+      const walletBal = (await rgp.balanceOf(wallet.address)) + 400e18;
       await rgp.approve(SMART_SWAP.masterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -175,7 +189,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
   const RGPuseStake = async depositToken => {
     if (wallet.signer !== 'signer') {
       const specialPool = await RGPSpecialPool();
-      let data = await specialPool.stake(
+      const data = await specialPool.stake(
         ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
         {
           from: wallet.address,
@@ -183,8 +197,8 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data)
-      callRefreshFarm(confirmations, status)
+      const { confirmations, status } = await fetchTransactionData(data);
+      callRefreshFarm(confirmations, status);
     }
   };
 
@@ -193,7 +207,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     console.log('opening usewithdrawal now.');
     if (wallet.signer !== 'signer') {
       const specialPool = await RGPSpecialPool();
-      let data = await specialPool.unStake(
+      const data = await specialPool.unStake(
         ethers.utils.parseUnits(unstakeToken, 'ether'), // user input from onclick shoild be here...
         {
           from: wallet.address,
@@ -201,18 +215,17 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data)
+      const { confirmations, status } = await fetchTransactionData(data);
       // dispatch the getTokenStaked action from here when data changes
-      callRefreshFarm(confirmations, status)
+      callRefreshFarm(confirmations, status);
     }
   };
-
 
   // Approve specialPool......
   const RGPSpecialPoolApproval = async () => {
     if (wallet.signer !== 'signer') {
       const rgp = await rigelToken();
-      const walletBal = await rgp.balanceOf(wallet.address) + 400e18;
+      const walletBal = (await rgp.balanceOf(wallet.address)) + 400e18;
       await rgp.approve(SMART_SWAP.specialPool, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -225,12 +238,12 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
 
   // .......................................... START LP FOR BNB-RGP TOKENS ...............................
 
-  //deposit for the Liquidity Provider tokens for
+  // deposit for the Liquidity Provider tokens for
   const BNBRGPlpDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
       const lpTokens = await masterChefContract();
       const pid = 2;
-      let data = await lpTokens.deposit(
+      const data = await lpTokens.deposit(
         pid,
         ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
         {
@@ -239,17 +252,17 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data)
-      callRefreshFarm(confirmations, status)
+      const { confirmations, status } = await fetchTransactionData(data);
+      callRefreshFarm(confirmations, status);
     }
   };
 
-  //withdrawal for the Liquidity Provider tokens for
+  // withdrawal for the Liquidity Provider tokens for
   const BNBRGPlpTokensWithdrawal = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract()
+      const lpTokens = await masterChefContract();
       const pid = 2;
-      let data = await lpTokens.withdraw(
+      const data = await lpTokens.withdraw(
         pid,
         ethers.utils.parseEther(unstakeToken.toString(), 'ether'),
         {
@@ -258,17 +271,16 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data)
+      const { confirmations, status } = await fetchTransactionData(data);
       // dispatch the getTokenStaked action from here when data changes
-      callRefreshFarm(confirmations, status)
+      callRefreshFarm(confirmations, status);
     }
   };
-
 
   const BNBRGPlpApproval = async () => {
     if (wallet.signer !== 'signer') {
       const slpTwo = await smartSwapLPTokenPoolTwo();
-      const walletBal = await slpTwo.balanceOf(wallet.address) + 400e18;
+      const walletBal = (await slpTwo.balanceOf(wallet.address)) + 400e18;
       await slpTwo.approve(SMART_SWAP.masterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -277,18 +289,16 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     }
   };
 
-
-  //............................................END LP FOR BNB-RGP TOKENS .........................................
-
+  // ............................................END LP FOR BNB-RGP TOKENS .........................................
 
   // .......................................... START LP FOR RGP-BUSD TOKENS ...............................
 
-  //deposit for the Liquidity Provider tokens for
+  // deposit for the Liquidity Provider tokens for
   const RGPBUSDlpDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
       const lpTokens = await masterChefContract();
       const pid = 1;
-      let data = await lpTokens.deposit(
+      const data = await lpTokens.deposit(
         pid,
         ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
         {
@@ -297,17 +307,17 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data)
-      callRefreshFarm(confirmations, status)
+      const { confirmations, status } = await fetchTransactionData(data);
+      callRefreshFarm(confirmations, status);
     }
   };
 
-  //withdrawal for the Liquidity Provider tokens for
+  // withdrawal for the Liquidity Provider tokens for
   const RGPBUSDlpTokensWithdrawal = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract()
+      const lpTokens = await masterChefContract();
       const pid = 1;
-      let data = await lpTokens.withdraw(
+      const data = await lpTokens.withdraw(
         pid,
         ethers.utils.parseEther(unstakeToken.toString(), 'ether'),
         {
@@ -316,9 +326,9 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data)
+      const { confirmations, status } = await fetchTransactionData(data);
       // dispatch the getTokenStaked action from here when data changes
-      callRefreshFarm(confirmations, status)
+      callRefreshFarm(confirmations, status);
     }
   };
 
@@ -326,19 +336,18 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     if (wallet.signer !== 'signer') {
       try {
         const poolOne = await smartSwapLPTokenPoolOne();
-        const walletBal = await poolOne.balanceOf(wallet.address) + 400e18;
+        const walletBal = (await poolOne.balanceOf(wallet.address)) + 400e18;
         await poolOne.approve(SMART_SWAP.masterChef, walletBal, {
           from: wallet.address,
           gasLimit: 150000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         });
       } catch (e) {
-        props.showErrorMessage(e)
+        props.showErrorMessage(e);
       }
     }
   };
-  //............................................END LP FOR RGP-BUSD TOKENS .........................................
-
+  // ............................................END LP FOR RGP-BUSD TOKENS .........................................
 
   // .......................................... START LP FOR BNB-BUSD TOKENS ...............................
 
@@ -346,7 +355,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     if (wallet.signer !== 'signer') {
       const lpTokens = await masterChefContract();
       const pid = 3;
-      let data = await lpTokens.deposit(
+      const data = await lpTokens.deposit(
         pid,
         ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
         {
@@ -358,12 +367,12 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     }
   };
 
-  //withdrawal for the Liquidity Provider tokens for
+  // withdrawal for the Liquidity Provider tokens for
   const BNBBUSDlpTokensWithdrawal = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract()
+      const lpTokens = await masterChefContract();
       const pid = 3;
-      let data = await lpTokens.withdraw(
+      const data = await lpTokens.withdraw(
         pid,
         ethers.utils.parseEther(unstakeToken.toString(), 'ether'),
         {
@@ -372,16 +381,16 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data)
+      const { confirmations, status } = await fetchTransactionData(data);
       // dispatch the getTokenStaked action from here when data changes
-      callRefreshFarm(confirmations, status)
+      callRefreshFarm(confirmations, status);
     }
   };
 
   const BNBBUSDlpApproval = async () => {
     if (wallet.signer !== 'signer') {
       const poolThree = await smartSwapLPTokenPoolThree();
-      const walletBal = await poolThree.balanceOf(wallet.address) + 400e18;
+      const walletBal = (await poolThree.balanceOf(wallet.address)) + 400e18;
       await poolThree.approve(SMART_SWAP.masterChef, walletBal, {
         from: wallet.address,
         gasLimit: 150000,
@@ -390,18 +399,14 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     }
   };
 
-
-  //............................................END LP FOR BNB-BUSD TOKENS .........................................
-  const harvest = async (pId) => {
+  // ............................................END LP FOR BNB-BUSD TOKENS .........................................
+  const harvest = async pId => {
     if (wallet.signer !== 'signer' && pId != 0) {
       try {
-        const lpTokens = await masterChefContract()
-        await lpTokens.withdraw(
-          pId,
-          0,
-        );
+        const lpTokens = await masterChefContract();
+        await lpTokens.withdraw(pId, 0);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
   };
@@ -446,11 +451,11 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     }
   };
 
-  const fetchTransactionData = async (sendTransaction) => {
+  const fetchTransactionData = async sendTransaction => {
     const { confirmations, status } = await sendTransaction.wait(1);
 
-    return { confirmations, status }
-  }
+    return { confirmations, status };
+  };
 
   const open = () => {
     if (approveValueForOtherToken && approveValueForRGP) {
@@ -463,61 +468,58 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
   const closeModal = () => {
     modal2Disclosure.onClose();
   };
-  const confirmDeposit = async (val) => {
+  const confirmDeposit = async val => {
     setDepositValue('Pending Confirmation');
 
     try {
       if (wallet.signer !== 'signer') {
-        if (val === "RGP") {
+        if (val === 'RGP') {
           // await RGPuseStake(depositTokenValue);
-        } else if (val === "RGP-BNB") {
-          await BNBRGPlpDeposit(depositTokenValue)
-          setTimeout(() => closeModal(), 400)
-        } else if (val === "BNB-BUSD") {
-          await BNBBUSDlpDeposit(depositTokenValue)
-        } else if (val === "RGP-BUSD") {
-          await RGPBUSDlpDeposit(depositTokenValue)
+        } else if (val === 'RGP-BNB') {
+          await BNBRGPlpDeposit(depositTokenValue);
+          setTimeout(() => closeModal(), 400);
+        } else if (val === 'BNB-BUSD') {
+          await BNBBUSDlpDeposit(depositTokenValue);
+        } else if (val === 'RGP-BUSD') {
+          await RGPBUSDlpDeposit(depositTokenValue);
         } else {
           // await RGPuseStake(depositTokenValue)
         }
-        setUnstakeButtonValue('confirmed')
-        setTimeout(() => closeModal(), 400)
+        setUnstakeButtonValue('confirmed');
+        setTimeout(() => closeModal(), 400);
       }
     } catch (e) {
       console.log(e);
     }
     setDeposit(true);
-    setDepositValue('Confirmed')
-    setTimeout(() => close(), 400)
-
+    setDepositValue('Confirmed');
+    setTimeout(() => close(), 400);
   };
-  const confirmUnstakeDeposit = async (val) => {
+  const confirmUnstakeDeposit = async val => {
     setUnstakeButtonValue('Pending Confirmation');
     try {
       if (wallet.signer !== 'signer') {
-        if (val === "RGP") {
+        if (val === 'RGP') {
           // await RGPUnstake();
-        } else if (val === "RGP-BNB") {
-          await BNBRGPlpTokensWithdrawal()
-        } else if (val === "BNB-BUSD") {
-          await BNBBUSDlpTokensWithdrawal()
-        } else if (val === "RGP-BUSD") {
-          await RGPBUSDlpTokensWithdrawal()
+        } else if (val === 'RGP-BNB') {
+          await BNBRGPlpTokensWithdrawal();
+        } else if (val === 'BNB-BUSD') {
+          await BNBBUSDlpTokensWithdrawal();
+        } else if (val === 'RGP-BUSD') {
+          await RGPBUSDlpTokensWithdrawal();
         }
-        setUnstakeButtonValue('confirmed')
-        setTimeout(() => closeModal(), 400)
-
+        setUnstakeButtonValue('confirmed');
+        setTimeout(() => closeModal(), 400);
       }
     } catch (e) {
       console.log(
         'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
       );
     }
-
   };
 
-  //checkingS for approval.
-  const setApprove = (val) => {
+  // checkingS for approval.
+  const setApprove = val => {
     if (approveValueForOtherToken && approveValueForRGP) {
       modal2Disclosure.onOpen();
     } else {
@@ -525,51 +527,49 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     }
   };
 
-  const checkUser = async (val) => {
+  const checkUser = async val => {
     // try {
     if (wallet.signer !== 'signer') {
-      if (val === "RGP-BNB") {
+      if (val === 'RGP-BNB') {
         if (!approveValueForOtherToken && !approveValueForRGP) {
-          await RGPApproval()
-          await BNBRGPlpApproval()
+          await RGPApproval();
+          await BNBRGPlpApproval();
         } else if (!approveValueForRGP) {
-          await RGPApproval()
+          await RGPApproval();
         } else {
-          await BNBRGPlpApproval()
+          await BNBRGPlpApproval();
         }
-        setApproveValueForOtherToken(true)
-        setApproveValueForRGP(true)
-      } else if (val === "BNB-BUSD") {
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
+      } else if (val === 'BNB-BUSD') {
         if (!approveValueForOtherToken && !approveValueForRGP) {
-          await RGPApproval()
-          await BNBBUSDlpApproval()
+          await RGPApproval();
+          await BNBBUSDlpApproval();
         } else if (!approveValueForRGP) {
-          await RGPApproval()
+          await RGPApproval();
         } else {
-          await BNBBUSDlpApproval()
+          await BNBBUSDlpApproval();
         }
-        setApproveValueForOtherToken(true)
-        setApproveValueForRGP(true)
-      } else if (val === "RGP-BUSD") {
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
+      } else if (val === 'RGP-BUSD') {
         if (!approveValueForOtherToken && !approveValueForRGP) {
-          await RGPApproval()
-          await RGPBUSDlpApproval()
+          await RGPApproval();
+          await RGPBUSDlpApproval();
         } else if (!approveValueForRGP) {
-          await RGPApproval()
+          await RGPApproval();
         } else {
-          await RGPBUSDlpApproval()
+          await RGPBUSDlpApproval();
         }
 
-        setApproveValueForOtherToken(true)
-        setApproveValueForRGP(true)
-      } else if (val === "RGP") {
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
+      } else if (val === 'RGP') {
         await RGPSpecialPoolApproval();
-        setApproveValueForOtherToken(true)
-        setApproveValueForRGP(true)
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
         //  setApproveButtonColor(true);
-
       }
-
     } else if (ethers.utils.formatEther(checkAllow).toString() == 0.0) {
       await RGPSpecialPoolApproval();
 
@@ -602,7 +602,10 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
             </Text>{' '}
             <Text fontSize="14px" color="gray.400" marginTop="25px">
               {' '}
-              {content.type === "LP" ? `${content.tokensStaked[0]} LP` : "RGP"} Tokens Staked
+              {content.type === 'LP'
+                ? `${content.tokensStaked[0]} LP`
+                : 'RGP'}{' '}
+              Tokens Staked
             </Text>
           </Flex>
 
@@ -611,8 +614,16 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
               w="60%"
               h="50px"
               borderRadius="12px"
-              bg={approveValueForRGP && approveValueForOtherToken ? '#444159' : 'rgba(64, 186,213, 0.1)'}
-              color={approveValueForRGP && approveValueForOtherToken ? 'rgba(190, 190, 190, 1)' : '#40BAD5'}
+              bg={
+                approveValueForRGP && approveValueForOtherToken
+                  ? '#444159'
+                  : 'rgba(64, 186,213, 0.1)'
+              }
+              color={
+                approveValueForRGP && approveValueForOtherToken
+                  ? 'rgba(190, 190, 190, 1)'
+                  : '#40BAD5'
+              }
               border="0"
               mb="4"
               mr="6"
@@ -624,7 +635,9 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
               }
               onClick={() => setApprove(content.deposit)}
             >
-              {approveValueForRGP && approveValueForOtherToken ? 'Unstake' : 'Approve'}
+              {approveValueForRGP && approveValueForOtherToken
+                ? 'Unstake'
+                : 'Approve'}
             </Button>
             <Square
               size="40px"
@@ -634,12 +647,15 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
               marginTop="5px"
               bg="rgba(64, 186, 213, 0.1);"
             >
-              <AddIcon onClick={open} disabled={!approveValueForRGP || !approveValueForOtherToken ? true : false} />
+              <AddIcon
+                onClick={open}
+                disabled={!!(!approveValueForRGP || !approveValueForOtherToken)}
+              />
             </Square>
           </Flex>
         </Box>
 
-        <Box width="100%" textAlign="right" margin={["0", "0", "0 20px"]}>
+        <Box width="100%" textAlign="right" margin={['0', '0', '0 20px']}>
           <Flex>
             <Text fontSize="23px" marginRight="30px">
               {content.RGPEarned}
@@ -662,22 +678,20 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
             onClick={() => harvest(content.pId)}
           >
             Harvest
-            </Button>
-
-
+          </Button>
         </Box>
 
         <Box width="100%">
-          {!isPoolRGP && <Flex marginTop="10px" >
-            <Text color="gray.400" textAlign="right" marginRight="30px">
-              Minimum Farming Fee
-            </Text>{' '}
-
-            <Text fontSize="23px" marginTop="15px">
-              {content.farmingFee}
-            </Text>
-          </Flex>
-          }
+          {!isPoolRGP && (
+            <Flex marginTop="10px">
+              <Text color="gray.400" textAlign="right" marginRight="30px">
+                Entry Pool Fee
+              </Text>{' '}
+              <Text fontSize="23px" marginTop="15px">
+                {content.farmingFee} RGPs
+              </Text>
+            </Flex>
+          )}
           <Flex justifyContent="right">
             <Text marginTop="15px">Auto-Harvest</Text>
             <label className={styles.themeSwitch}>
@@ -689,14 +703,19 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
               />
               <div className={`${styles.slider} ${styles.round}`} />
             </label>
-            <Circle size="20px" bg="#fff" marginTop="14px" marginLeft="10px" marginRight="10px">
+            <Circle
+              size="20px"
+              bg="#fff"
+              marginTop="14px"
+              marginLeft="10px"
+              marginRight="10px"
+            >
               <Tooltip label="Auto Harvest (weekly)" fontSize="md">
                 <QuestionOutlineIcon color="#120136" cursor="pointer" />
               </Tooltip>
             </Circle>
           </Flex>
         </Box>
-
       </Flex>
       <Modal isOpen={modal1Disclosure.isOpen} onClose={close} isCentered="true">
         <ModalOverlay />
@@ -760,10 +779,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
-                disabled={
-                  depositValue === 'Confirm'
-                    ? false : true
-                }
+                disabled={depositValue !== 'Confirm'}
                 cursor="pointer"
                 border="none"
                 borderRadius="13px"
@@ -857,14 +873,14 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
                 mx="auto"
                 color={
                   unstakeButtonValue === 'Confirm' ||
-                    unstakeButtonValue === 'Confirmed'
+                  unstakeButtonValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
                   unstakeButtonValue === 'Confirm' ||
-                    unstakeButtonValue === 'Confirmed'
+                  unstakeButtonValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
@@ -879,7 +895,8 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
                 height="50px"
                 fontSize="16px"
                 _hover={
-                  unstakeButtonValue === 'Confirm' || unstakeButtonValue === 'Confirmed'
+                  unstakeButtonValue === 'Confirm' ||
+                  unstakeButtonValue === 'Confirmed'
                     ? { background: 'rgba(64, 186, 213, 0.15)' }
                     : { background: '#444159' }
                 }
@@ -914,16 +931,13 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
 ShowYieldFarmDetails.propTypes = {
   content: PropTypes.object.isRequired,
 };
-const mapStateToProps = ({ farming }) => {
-  return {
-    farming,
-  };
-};
-
+const mapStateToProps = ({ farming }) => ({
+  farming,
+});
 
 export default connect(
   mapStateToProps,
   {
-    refreshFarm
-  }
+    refreshFarm,
+  },
 )(ShowYieldFarmDetails);
