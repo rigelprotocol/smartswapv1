@@ -45,7 +45,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
   const [approveValueForOtherToken, setApproveValueForOtherToken] = useState(
     false,
   );
-
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const [depositTokenValue, setDepositTokenValue] = useState(0);
@@ -411,38 +410,44 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     }
   };
   // show max value
-  const showMaxValue = async (earn, input) => {
+  const showMaxValue = async (deposit, input) => {
     try {
+      // if (input === 'deposit') {
+      //   if (deposit === 'BUSD') {
+      //     const busd = await BUSDToken();
+      //     const walletBal = await busd.balanceOf(wallet.address);
+      //     // alert('setting max value for busd');
+      //     const busdBal = ethers.utils.formatUnits(walletBal);
+      //     setDepositTokenValue(busdBal);
+      //     // depositTokenValue
+      //   } else if (deposit === 'RGP') {
+      //     const rgp = await rigelToken();
+      //     const walletBal = await rgp.balanceOf(wallet.address);
+      //     // depositTokenValue
+      //     // alert('setting max value for RGP');
+      //     const rgpBal = ethers.utils.formatUnits(walletBal);
+      //     setDepositTokenValue(rgpBal);
+      //   }
+      // } else if (input === 'unstake') {
+      //   if (deposit === 'BUSD') {
+      //     const busd = await BUSDToken();
+      //     const walletBal = await busd.balanceOf(wallet.address);
+      //     // alert('setting max value for busd');
+      //     const busdBal = ethers.utils.formatUnits(walletBal);
+      //     setUnstakeToken(busdBal);
+      //   } else if (deposit === 'RGP') {
+      //     const rgp = await rigelToken();
+      //     const walletBal = await rgp.balanceOf(wallet.address);
+      //     // alert('setting max value for RGP');
+      //     const rgpBal = ethers.utils.formatUnits(walletBal);
+      //     setUnstakeToken(rgpBal);
+      //   }
+      // }
+
       if (input === 'deposit') {
-        if (earn === 'BUSD') {
-          const busd = await BUSDToken();
-          const walletBal = await busd.balanceOf(wallet.address);
-          // alert('setting max value for busd');
-          const busdBal = ethers.utils.formatUnits(walletBal);
-          setDepositTokenValue(busdBal);
-          // depositTokenValue
-        } else if (earn === 'RGP') {
-          const rgp = await rigelToken();
-          const walletBal = await rgp.balanceOf(wallet.address);
-          // depositTokenValue
-          // alert('setting max value for RGP');
-          const rgpBal = ethers.utils.formatUnits(walletBal);
-          setDepositTokenValue(rgpBal);
-        }
+        setDepositTokenValue(content.availableToken);
       } else if (input === 'unstake') {
-        if (earn === 'BUSD') {
-          const busd = await BUSDToken();
-          const walletBal = await busd.balanceOf(wallet.address);
-          // alert('setting max value for busd');
-          const busdBal = ethers.utils.formatUnits(walletBal);
-          setUnstakeToken(busdBal);
-        } else if (earn === 'RGP') {
-          const rgp = await rigelToken();
-          const walletBal = await rgp.balanceOf(wallet.address);
-          // alert('setting max value for RGP');
-          const rgpBal = ethers.utils.formatUnits(walletBal);
-          setUnstakeToken(rgpBal);
-        }
+        setUnstakeToken(content.tokensStaked[1]);
       }
     } catch (e) {
       console.log(
