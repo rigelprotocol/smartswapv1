@@ -14,7 +14,8 @@ export const TABS = {
   ACTIVE: 'ACTIVE',
   PRICE: 'PRICE',
 };
-export default function HomePage() {
+export default function HomePage(props) {
+  console.log(props);
   const [tab, setTab] = useState(TABS.MANUAL);
   return (
     <Layout title="Home Page">
@@ -47,37 +48,44 @@ export default function HomePage() {
                 >
                   Manual
                 </Text>
-                <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+                <Tooltip
+                  label="Coming Soon"
+                  bg="#120136"
+                  aria-label="A tooltip"
+                >
                   <Text
                     cursor="not-allowed"
                     className={
                       tab === TABS.PRICE ? styles.active : styles.inactive
                     }
-                  // onClick={() => {
-                  //   setTab(TABS.PRICE);
-                  // }}
+                    // onClick={() => {
+                    //   setTab(TABS.PRICE);
+                    // }}
                   >
                     Set price
-                </Text>
+                  </Text>
                 </Tooltip>
-                <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+                <Tooltip
+                  label="Coming Soon"
+                  bg="#120136"
+                  aria-label="A tooltip"
+                >
                   <Text
                     cursor="not-allowed"
                     className={
                       tab === TABS.AUTO_TIME ? styles.active : styles.inactive
                     }
-                  // onClick={() => {
-                  //   setTab(TABS.AUTO_TIME);
-                  // }}
+                    // onClick={() => {
+                    //   setTab(TABS.AUTO_TIME);
+                    // }}
                   >
                     Auto Time
-                </Text>
+                  </Text>
                 </Tooltip>
-
               </Flex>
             </Box>
             <ChartGraph />
-            <SendToken />
+            <SendToken {...props} />
           </Box>
           <Box mx={5} w={['100%', '100%', '30%', '29.5%']} mb={4}>
             <Box

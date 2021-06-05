@@ -24,7 +24,6 @@ import '../../styles/globals.css';
 import Toast from '../../components/Toast';
 import { reConnect } from '../WalletProvider/actions';
 
-
 const breakpoints = ['360px', '768px', '1024px', '1440px'];
 breakpoints.sm = breakpoints[0];
 breakpoints.md = breakpoints[1];
@@ -48,10 +47,9 @@ const newTheme = {
 const App = props => {
   const { wallet } = props.state;
 
-
   if (window.ethereum) {
-    ethereum.on('chainChanged', (chainId) => {
-      window.location.reload()
+    ethereum.on('chainChanged', chainId => {
+      window.location.reload();
     });
   }
 
@@ -67,7 +65,8 @@ const App = props => {
           <Route exact path="/" component={Splash} />
           <Route exact path="/farming" component={FarmingPage} />
           <Route exact path="/liquidity" component={LiquidityPage} />
-          <Route exact path="/smart-swapping" component={HomePage} />
+          <Route exact path="/swap/" component={HomePage} />
+          <Route exact path="/swap/:pair" component={HomePage} />
           <Route exact path="/margin-trading" component={MarginTradingPage} />
           <Route component={NotFoundPage} />
         </Switch>

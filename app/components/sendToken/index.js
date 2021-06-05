@@ -64,6 +64,16 @@ export const Manual = props => {
     changeData()
   }, [transactionDeadline, slippageValue])
 
+  useEffect(() => {
+    if (props.match.params.pair !== undefined) {
+      const { pair } = props.match.params;
+      const pairArray = pair.split('-');
+      setPathArray(tokenAddressWhere(pairArray[0]), pairArray[0]);
+      setPathToArray(tokenAddressWhere(pairArray[1]), pairArray[1]);
+      setSelectedToken(tokenWhere(pairArray[0]));
+      setSelectedToToken(tokenWhere(pairArray[1]));
+    }
+  }, [])
 
   useEffect(async () => {
     if (wallet.signer !== 'signer') {

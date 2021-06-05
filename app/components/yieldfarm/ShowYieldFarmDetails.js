@@ -473,7 +473,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
   const closeModal = () => {
     modal2Disclosure.onClose();
   };
-
   const confirmDeposit = async val => {
     setDepositValue('Pending Confirmation');
 
@@ -691,10 +690,10 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
           {!isPoolRGP && (
             <Flex marginTop="10px">
               <Text color="gray.400" textAlign="right" marginRight="30px">
-                Minimum Farming Fee
+                Entry Pool Fee
               </Text>{' '}
               <Text fontSize="23px" marginTop="15px">
-                {content.farmingFee}
+                {content.farmingFee} RGPs
               </Text>
             </Flex>
           )}
