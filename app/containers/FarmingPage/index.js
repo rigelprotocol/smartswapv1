@@ -212,7 +212,7 @@ export function FarmingPage(props) {
     const [whole, decimal] = splitNumber;
     const deci = decimal
       .split('')
-      .slice(0, 2)
+      .slice(0, 3)
       .join('');
     const output = [whole, deci];
     return output.join('.');
