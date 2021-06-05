@@ -6,10 +6,10 @@ import WETH9 from 'utils/abis/WETH9.json';
 
 export const checkNetVersion = () => {
   if (window.ethereum) {
-    return window.ethereum.networkVersion
+    return window.ethereum.networkVersion;
   }
-  return null
-}
+  return null;
+};
 
 export const TABS = {
   MANUAL: 'MANUAL',
@@ -20,7 +20,7 @@ export const TABS = {
 
 export const ROUTES = {
   FARMING: '/farming',
-  SMART_SWAPPING: '/smart-swapping',
+  SMART_SWAPPING: '/swap',
   LIQUIDITY: '/liquidity',
 };
 
@@ -30,7 +30,6 @@ export const TOKENS = {
   ETH: 'ETH',
   RGP: 'RGP',
 };
-
 
 const BSCTestnetTokens = {
   BNB: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
@@ -46,10 +45,10 @@ const BSCmainnetTokens = {
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
 };
 
-export const TOKENS_CONTRACT = (checkNetVersion() == 56) ? BSCmainnetTokens : BSCTestnetTokens
+export const TOKENS_CONTRACT =
+  checkNetVersion() == 56 ? BSCmainnetTokens : BSCTestnetTokens;
 
 const BSCMainnet = {
-
   SmartFactory: '0x655333A1cD74232C404049AF9d2d6cF1244E71F6',
   SMART_SWAPPING: '0xf78234E21f1F34c4D8f65faF1BC82bfc0fa24920',
   ETHRGPSMARTSWAPPAIR: '0x9218BFB996A9385C3b9633f87e9D68304Ef5a1e5',
@@ -80,9 +79,7 @@ const BSCTestnet = {
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
 };
 
-export const SMART_SWAP = (checkNetVersion() == 56) ? BSCMainnet : BSCTestnet;
-
-
+export const SMART_SWAP = checkNetVersion() == 56 ? BSCMainnet : BSCTestnet;
 
 export const tokenList = [
   { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '' },
@@ -91,14 +88,20 @@ export const tokenList = [
     abi: RigelToken,
     name: 'Rigel Protocol',
     img: '../../assets/rgp.svg',
-    address: (checkNetVersion() == 56) ? '0xFA262F303Aa244f9CC66f312F0755d89C3793192' : '0x9f0227a21987c1ffab1785ba3eba60578ec1501b',
+    address:
+      checkNetVersion() == 56
+        ? '0xFA262F303Aa244f9CC66f312F0755d89C3793192'
+        : '0x9f0227a21987c1ffab1785ba3eba60578ec1501b',
   },
   {
     abi: BUSD,
     symbol: 'BUSD',
     name: 'Binance USD',
     img: '../../assets/bnb.svg',
-    address: (checkNetVersion() == 56) ? '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' : '0x10249e900b919fdee9e2ed38b4cd83c4df857254',
+    address:
+      checkNetVersion() == 56
+        ? '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
+        : '0x10249e900b919fdee9e2ed38b4cd83c4df857254',
   },
   // WE CAN USE THIS
   // {
@@ -113,7 +116,10 @@ export const tokenList = [
     symbol: 'WBNB',
     name: 'Wrapped BNB',
     img: '../../assets/eth.svg',
-    address: (checkNetVersion() == 56) ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
+    address:
+      checkNetVersion() == 56
+        ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+        : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   },
   {
     abi: WETH9,
@@ -121,7 +127,10 @@ export const tokenList = [
     name: 'BNB',
 
     img: '../../assets/eth.svg',
-    address: (checkNetVersion() == 56) ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
+    address:
+      checkNetVersion() == 56
+        ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+        : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   },
   // {
   //   abi: WETH9,

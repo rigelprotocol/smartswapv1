@@ -315,7 +315,7 @@ export function LiquidityPage(props) {
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 290000,
+            gasLimit: 390000,
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
@@ -396,7 +396,7 @@ export function LiquidityPage(props) {
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 290000,
+            gasLimit: 390000,
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
