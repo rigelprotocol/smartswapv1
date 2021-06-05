@@ -203,6 +203,7 @@ export function FarmingPage(props) {
   };
 
   const formatBigNumber = bigNumber => {
+   
     const number = Number.parseFloat(ethers.utils.formatEther(bigNumber));
     if (number % 1 === 0) {
       return number.toFixed(3);
@@ -211,12 +212,10 @@ export function FarmingPage(props) {
     const [whole, decimal] = splitNumber;
     const deci = decimal
       .split('')
-      .slice(0, 3)
+      .slice(0, 2)
       .join('');
     const output = [whole, deci];
     return output.join('.');
-
-    // return Number.parseFloat(number).toFixed(3);
   };
 
   const calculateApy = (rgpPrice, totalLiquidity, inflation) =>
