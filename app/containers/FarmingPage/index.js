@@ -203,7 +203,6 @@ export function FarmingPage(props) {
   };
 
   const formatBigNumber = bigNumber => {
-   
     const number = Number.parseFloat(ethers.utils.formatEther(bigNumber));
     if (number % 1 === 0) {
       return number.toFixed(3);
@@ -224,14 +223,25 @@ export function FarmingPage(props) {
   const getFarmTokenBalance = async () => {
     if (wallet.address != '0x') {
       try {
-        const RGPToken = await rigelToken();
-        const poolOne = await smartSwapLPTokenPoolOne();
-        const poolTwo = await smartSwapLPTokenPoolTwo();
-        const poolThree = await smartSwapLPTokenPoolThree();
-        const RGPbalance = await RGPToken.balanceOf(wallet.address);
-        const poolOneBalance = await poolOne.balanceOf(wallet.address);
-        const poolTwoBalance = await poolTwo.balanceOf(wallet.address);
-        const poolThreeBalance = await poolThree.balanceOf(wallet.address);
+        const [
+          RGPToken,
+          poolOne,
+          poolTwo,
+          poolThree,
+          RGPbalance,
+          poolOneBalance,
+          poolTwoBalance,
+          poolThreeBalance,
+        ] = await Promise.all([
+          rigelToken(),
+          smartSwapLPTokenPoolOne(),
+          smartSwapLPTokenPoolTwo(),
+          smartSwapLPTokenPoolThree(),
+          RGPToken.balanceOf(wallet.address),
+          poolOne.balanceOf(wallet.address),
+          poolTwo.balanceOf(wallet.address),
+          poolThree.balanceOf(wallet.address),
+        ]);
 
         props.updateFarmBalances([
           formatBigNumber(RGPbalance),
