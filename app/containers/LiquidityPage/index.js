@@ -264,7 +264,8 @@ export function LiquidityPage(props) {
   const tokenBalance = async (tokenAddress, walletAddress) => {
     try {
       if (wallet.address != "0x") {
-        const balance = await erc20Token(tokenAddress).balanceOf(walletAddress);
+        const token = await erc20Token(tokenAddress);
+        const balance = await token.balanceOf(walletAddress);
         return ethers.utils.formatEther(balance);
       }
     } catch (error) {
