@@ -36,8 +36,8 @@ export const updateTokenStaked = value => dispatch => {
 export const updateFarmBalances = value => dispatch => {
   dispatch({ type: UPDATE_FARM_BALANCES, payload: value })
 }
+// move this action to the wallet action
 export const refreshFarm = value => dispatch => {
-  console.log("redresh")
   dispatch({ type: REFRESH_FARM })
 }
 

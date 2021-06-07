@@ -96,6 +96,7 @@ export const initialState = {
       pId: 3
     },
   ],
+  // move this to the wallet reducer
   refresh: false,
 };
 // const user_Individual_Reward = (individualLiquidity / totalLiquidity) * reward
@@ -165,6 +166,7 @@ const farmingPageReducer = (state = initialState, action) =>
           draft.contents[index].availableToken = item;
         })
         break
+        // move line 169 - 172 to wallet reducer, for easy access in all components
       case REFRESH_FARM:
         draft.refresh = true
         break
