@@ -146,6 +146,9 @@ export const Manual = props => {
     return calculatedVal.toString()
   }
 
+  const liquidityProviderFee = () => 0.003 * fromAmount;
+
+
   const checkForAllVariables = () => {
     if (isLoggedIn() && fromAmount > 0 && selectedToToken.name !== 'Select a token') {
       setDisableSwapTokenButton(false)
@@ -537,6 +540,7 @@ export const Manual = props => {
           path={path}
           amountIn={amountIn}
           fromAmount={fromAmount}
+          liquidityProviderFee={liquidityProviderFee}
           closeModal1={closeModal1}
           closeModal2={closeModal2}
           closeModal3={closeModal3}
