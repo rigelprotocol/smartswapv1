@@ -26,6 +26,8 @@ import {
   smartSwapLPTokenPoolThree,
 } from 'utils/SwapConnect';
 import { tokenList } from '../../utils/constants';
+
+import { changeRGPValue } from '../WalletProvider/actions';
 import {
   changeFarmingContent,
   changeFarmingContentToken,
@@ -37,7 +39,7 @@ import {
 // import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
   const { wallet, wallet_props } = props.wallet;
-  const { refresh } = props.farming;
+  
   const [RGPTotalTokStake, setRGPTotalTokStake] = useState('');
   const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState('');
   const [BNBTotalTokStake, setBNBTotalTokStake] = useState('');
@@ -48,9 +50,13 @@ export function FarmingPage(props) {
 
   useEffect(() => {
     getYieldFarmingData();
-    getTokenStaked();
     getFarmTokenBalance();
-  }, [wallet, refresh]);
+  }, [wallet]);
+
+  const refreshTokenStaked = () =>{
+    getTokenStaked();
+  // props.changeRGPValue(wallet)
+  }
 
   const getYieldFarmingData = async () => {
     try {
@@ -535,7 +541,12 @@ export function FarmingPage(props) {
                 <Text />
               </Flex>
               {props.farming.contents.map(content => (
-                <YieldFarm content={content} key={content.id} wallet={wallet} />
+                <YieldFarm 
+                content={content} 
+                key={content.id} 
+                wallet={wallet} 
+                refreshTokenStaked={refreshTokenStaked}
+                />
               ))}
             </Box>
           </Box>
@@ -571,5 +582,6 @@ export default connect(
     updateTotalLiquidity,
     updateTokenStaked,
     updateFarmBalances,
+    changeRGPValue
   },
 )(FarmingPage);

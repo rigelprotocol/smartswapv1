@@ -7,7 +7,7 @@ import ETHImage from '../../assets/eth.svg';
 import RGPImage from '../../assets/rgp.svg';
 import BUSDImage from '../../assets/busd.svg';
 
-const YieldFarm = ({ content, wallet }) => {
+const YieldFarm = ({ content, wallet, refreshTokenStaked }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
   const formatAmount = (value) => {
@@ -128,7 +128,11 @@ const YieldFarm = ({ content, wallet }) => {
 
       </Flex>
       {showYieldfarm && (
-        <ShowYieldFarmDetails content={content} wallet={wallet} />
+        <ShowYieldFarmDetails
+         content={content} 
+         wallet={wallet}
+         refreshTokenStaked={refreshTokenStaked}
+         />
       )}
     </>
   );

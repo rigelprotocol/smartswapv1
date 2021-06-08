@@ -23,9 +23,9 @@ import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
 import Web3 from 'web3';
-import { approveToken, runApproveCheck } from 'utils/wallet-wiget/TokensUtils';
+import { approveToken, runApproveCheck, getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { getPriceForToken } from 'containers/HomePage/service/swapServices';
-import { tokenWhere, tokenAddressWhere } from 'utils/constants';
+import { tokenWhere, tokenAddressWhere, tokenList } from 'utils/constants';
 import { router, WETH, updateOutPutAmountForRouter } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
@@ -34,8 +34,7 @@ import SwapSettings from "./SwapSettings";
 
 import ShowMessageBox from "../Toast/ShowMessageBox";
 import ConfirmSwapBox from './ConfirmSwapBox';
-import { changeDeadlineValue } from '../../containers/WalletProvider/actions';
-
+import { changeDeadlineValue, changeRGPValue } from '../../containers/WalletProvider/actions';
 export const Manual = props => {
   const { wallet } = props.wallet;
   const [fromAmount, setFromAmount] = useState('');
@@ -50,12 +49,14 @@ export const Manual = props => {
   const [isSendingTransaction, setIsSendingTransaction] = useState(false);
   const [userHasApproveToken, setUserHasApproveToken] = useState(false)
   const [transactionDeadline, setTransactionDeadline] = useState("")
+  const [balanceIsSet, setBalanceIsSet] = useState(false);
   const [actualTransactionDeadline, setActualTransactionDeadline] = useState(Math.floor(new Date().getTime() / 1000.0 + 1200))
   const [slippageValue, setSlippageValue] = useState("0.5")
   const [tokenAllowance, setTokenAllowance] = useState('');
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
 
   useEffect(() => {
+   
     (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])
@@ -74,7 +75,6 @@ export const Manual = props => {
       setSelectedToToken(tokenWhere(pairArray[1]));
     }
   }, [])
-
   useEffect(async () => {
     if (wallet.signer !== 'signer') {
       if (selectedToken.symbol === 'BNB') {
@@ -253,6 +253,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+           props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -287,6 +289,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -319,6 +323,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' });
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+           props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -346,6 +352,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+           props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -368,6 +376,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+           props.changeRGPValue(wallet)
         }
       } catch (e) {
         setTimeout(() => openModal4(), 1000)
@@ -547,7 +557,7 @@ export const Manual = props => {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 export default connect(
   mapStateToProps,
-  { notify, changeDeadlineValue },
+  { notify, changeDeadlineValue, changeRGPValue },
 )(Manual);
 
 async function updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage) {

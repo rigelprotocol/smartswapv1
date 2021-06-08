@@ -12,6 +12,7 @@ import {
   CLEAR_WALLET,
   CLOSE_LOADING_WALLET,
   CHANGE_DEADLINE,
+  CHANGE_BNB
 } from './constants';
 
 export const initialState = {
@@ -26,7 +27,7 @@ export const initialState = {
   connected: false,
   loading: false,
   transactionDeadLine: '1378747',
-  slippageValue: '383993939993',
+  slippageValue: '383993939993'
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -48,6 +49,9 @@ const walletProviderReducer = (state = initialState, action) =>
       case WALLET_PROPS:
         draft.wallet_props = action.payload.rgpBalance;
         break;
+      case CHANGE_BNB:
+        draft.wallet.balance = action.payload.balance;
+        break;
       case CLEAR_WALLET:
         draft.wallet = {
           balance: 0,
@@ -57,7 +61,6 @@ const walletProviderReducer = (state = initialState, action) =>
           chainId: 'chainId',
         };
       case CHANGE_DEADLINE:
-        console.log(action.payload);
         draft.transactionDeadLine = action.payload.actualTransactionDeadline;
         draft.slippageValue = action.payload.slippageValue;
         break;
