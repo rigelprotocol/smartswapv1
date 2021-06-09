@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 // @ts-nocheck
 /* eslint-disable prettier/prettier */
 /*
@@ -24,7 +25,6 @@ import {
   CLEAR_WALLET,
   CHANGE_DEADLINE
 } from './constants';
-import { assignRef } from '@chakra-ui/react';
 
 export const reConnect = (wallet) => async dispatch => {
   try {

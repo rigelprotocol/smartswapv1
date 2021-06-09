@@ -90,7 +90,8 @@ const BSCTestnet = {
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
 };
 
-export const SMART_SWAP = checkNetVersion() == 56 ? BSCMainnet : BSCTestnet;
+export const SMART_SWAP =
+  checkNetVersion() === BSCMainNetID.toString() ? BSCMainnet : BSCTestnet;
 
 export const tokenList = [
   { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '' },
@@ -100,7 +101,7 @@ export const tokenList = [
     name: 'Rigel Protocol',
     img: '../../assets/rgp.svg',
     address:
-      checkNetVersion() == 56
+      checkNetVersion() === BSCMainNetID.toString()
         ? '0xFA262F303Aa244f9CC66f312F0755d89C3793192'
         : '0x9f0227a21987c1ffab1785ba3eba60578ec1501b',
   },
@@ -110,7 +111,7 @@ export const tokenList = [
     name: 'Binance USD',
     img: '../../assets/bnb.svg',
     address:
-      checkNetVersion() == 56
+      checkNetVersion() === BSCMainNetID.toString()
         ? '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
         : '0x10249e900b919fdee9e2ed38b4cd83c4df857254',
   },
@@ -128,7 +129,7 @@ export const tokenList = [
     name: 'Wrapped BNB',
     img: '../../assets/eth.svg',
     address:
-      checkNetVersion() == 56
+      checkNetVersion() === BSCMainNetID.toString()
         ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
         : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   },
@@ -139,7 +140,7 @@ export const tokenList = [
 
     img: '../../assets/eth.svg',
     address:
-      checkNetVersion() == 56
+      checkNetVersion() === BSCMainNetID.toString()
         ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
         : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   },
