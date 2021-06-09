@@ -509,12 +509,13 @@ export function LiquidityPage(props) {
     timer1 = setTimeout(() => {
       closeInput()
       if (liquid) {
+        
         removeALiquidity(liquid.pairAddress)
       } else {
         setLiquidityTab("INDEX")
       }
       clearTimeout(timer1)
-    }, 3500);
+    }, 200);
 
   };
   const closeModal5 = () => {
