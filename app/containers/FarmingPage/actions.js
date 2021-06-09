@@ -6,7 +6,7 @@
 
 import {
   DEFAULT_ACTION, CHANGE_FARMING_CONTENT, CHANGE_FARMING_CONTENT_TOKEN, CHANGE_RGP_FARMING_FEE,
-  UPDATE_TOTAL_LIQUIDITY, UPDATE_TOKEN_STAKED, UPDATE_FARM_BALANCES, REFRESH_FARM
+  UPDATE_TOTAL_LIQUIDITY, UPDATE_TOKEN_STAKED, UPDATE_FARM_BALANCES
 } from './constants';
 
 export function defaultAction() {
@@ -35,10 +35,6 @@ export const updateTokenStaked = value => dispatch => {
 
 export const updateFarmBalances = value => dispatch => {
   dispatch({ type: UPDATE_FARM_BALANCES, payload: value })
-}
-export const refreshFarm = value => dispatch => {
-  console.log("redresh")
-  dispatch({ type: REFRESH_FARM })
 }
 
 

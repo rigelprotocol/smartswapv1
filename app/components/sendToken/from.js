@@ -6,7 +6,6 @@ import { Box, Flex, Text } from '@chakra-ui/layout';
 
 import { connect } from 'react-redux';
 import InputSelector from './InputSelector';
-import { tokenWhere } from '../../utils/constants';
 import TokenListBox from '../TokenListBox/index';
 
 const From = ({
