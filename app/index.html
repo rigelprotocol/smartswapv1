@@ -1,15 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- The first thing in any HTML file should be the charset -->
-    <meta charset="utf-8" />
-
+  <meta http-equiv='cache-control' content="no-cache">
+  <meta http-equiv='expires' content="-1">
+  <meta http-equiv='etag' content="">
+  <meta http-equiv="pragma" content="no-cache">
+  <!-- The first thing in any HTML file should be the charset -->
+  <meta charset="utf-8">
     <!-- Make the page mobile compatible -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Allow installing the app to the homescreen -->
     <meta name="mobile-web-app-capable" content="yes" />
 
+  <!-- Allow installing the app to the homescreen -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" href="/favicon.ico" />
+  <script>
+    if('caches' in window){
+      caches.keys().then((name)=>{
+        names.forEach(name=>{
+          caches.delete(name);
+        })
+      });
+    }
+  </script>
     <link rel="icon" href="/favicon.ico" />
     <title>
       RigelProtocol - Smart Swapping Exchange, Margin Trading & Cross Chain
