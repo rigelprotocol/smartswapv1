@@ -1,11 +1,20 @@
 // @ts-nocheck
 import Web3 from 'web3';
+import configureStore from 'configureStore';
 import RigelToken from 'utils/abis/RigelToken.json';
 import BUSD from 'utils/abis/BUSD.json';
 import WETH9 from 'utils/abis/WETH9.json';
 
+const store = configureStore();
+const BSCMainNetID = 56;
+
 export const checkNetVersion = () => {
-  if (window.ethereum) {
+  const { wallet } = store.getState().wallet;
+  const { signer } = wallet;
+  if (signer !== 'signer') {
+    return wallet.chainId;
+  }
+  if (window.ethereum !== undefined) {
     return window.ethereum.networkVersion;
   }
   return null;
@@ -46,7 +55,9 @@ const BSCmainnetTokens = {
 };
 
 export const TOKENS_CONTRACT =
-  checkNetVersion() == 56 ? BSCmainnetTokens : BSCTestnetTokens;
+  checkNetVersion() === BSCMainNetID.toString()
+    ? BSCmainnetTokens
+    : BSCTestnetTokens;
 
 const BSCMainnet = {
   SmartFactory: '0x655333A1cD74232C404049AF9d2d6cF1244E71F6',
