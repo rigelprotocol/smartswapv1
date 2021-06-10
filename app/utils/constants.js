@@ -1,19 +1,12 @@
 // @ts-nocheck
 import Web3 from 'web3';
-import configureStore from 'configureStore';
 import RigelToken from 'utils/abis/RigelToken.json';
 import BUSD from 'utils/abis/BUSD.json';
 import WETH9 from 'utils/abis/WETH9.json';
 
-const store = configureStore();
 const BSCMainNetID = 56;
 
 export const checkNetVersion = () => {
-  const { wallet } = store.getState().wallet;
-  const { signer } = wallet;
-  if (signer !== 'signer') {
-    return wallet.chainId;
-  }
   if (window.ethereum !== undefined) {
     return window.ethereum.networkVersion;
   }
