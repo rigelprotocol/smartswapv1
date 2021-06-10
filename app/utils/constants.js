@@ -45,7 +45,7 @@ const BSCmainnetTokens = {
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
 };
 
-export const TOKENS_CONTRACT =
+export const TOKENS_CONTRACT = () =>
   checkNetVersion() == 56 ? BSCmainnetTokens : BSCTestnetTokens;
 
 const BSCMainnet = {
