@@ -33,7 +33,7 @@ export const reConnect = (wallet) => async dispatch => {
     const ethProvider = await provider();
     const walletSigner = await signer();
     const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress))).toString();
-    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, walletSigner);
+    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT().RGP, walletSigner);
     dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: selectedAddress,
