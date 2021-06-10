@@ -39,7 +39,7 @@ import {
 // import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
   const { wallet, wallet_props } = props.wallet;
-  
+
   const [RGPTotalTokStake, setRGPTotalTokStake] = useState('');
   const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState('');
   const [BNBTotalTokStake, setBNBTotalTokStake] = useState('');
@@ -49,13 +49,14 @@ export function FarmingPage(props) {
   const [farmingFee, setFarmingFee] = useState(10);
 
   useEffect(() => {
-    getYieldFarmingData();
-    getFarmTokenBalance();
+    refreshTokenStaked();
   }, [wallet]);
 
-  const refreshTokenStaked = () =>{
+  const refreshTokenStaked = () => {
+    getYieldFarmingData();
+    getFarmTokenBalance();
     getTokenStaked();
-  // props.changeRGPValue(wallet)
+    // props.changeRGPValue(wallet)
   }
 
   const getYieldFarmingData = async () => {
@@ -209,7 +210,7 @@ export function FarmingPage(props) {
   };
 
   const formatBigNumber = bigNumber => {
-   
+
     const number = Number.parseFloat(ethers.utils.formatEther(bigNumber));
     if (number % 1 === 0) {
       return number.toFixed(3);
@@ -235,20 +236,23 @@ export function FarmingPage(props) {
           poolOne,
           poolTwo,
           poolThree,
-          RGPbalance,
-          poolOneBalance,
-          poolTwoBalance,
-          poolThreeBalance,
+
         ] = await Promise.all([
           rigelToken(),
           smartSwapLPTokenPoolOne(),
           smartSwapLPTokenPoolTwo(),
           smartSwapLPTokenPoolThree(),
-          RGPToken.balanceOf(wallet.address),
-          poolOne.balanceOf(wallet.address),
-          poolTwo.balanceOf(wallet.address),
-          poolThree.balanceOf(wallet.address),
         ]);
+
+        const [
+          RGPbalance,
+          poolOneBalance,
+          poolTwoBalance,
+          poolThreeBalance] = await Promise.all([
+            RGPToken.balanceOf(wallet.address),
+            poolOne.balanceOf(wallet.address),
+            poolTwo.balanceOf(wallet.address),
+            poolThree.balanceOf(wallet.address)])
 
         props.updateFarmBalances([
           formatBigNumber(RGPbalance),
@@ -498,7 +502,7 @@ export function FarmingPage(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return (
@@ -541,11 +545,11 @@ export function FarmingPage(props) {
                 <Text />
               </Flex>
               {props.farming.contents.map(content => (
-                <YieldFarm 
-                content={content} 
-                key={content.id} 
-                wallet={wallet} 
-                refreshTokenStaked={refreshTokenStaked}
+                <YieldFarm
+                  content={content}
+                  key={content.id}
+                  wallet={wallet}
+                  refreshTokenStaked={refreshTokenStaked}
                 />
               ))}
             </Box>
