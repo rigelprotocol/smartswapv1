@@ -19,7 +19,7 @@
   <link rel="icon" href="/favicon.ico" />
   <script>
     if('caches' in window){
-      caches.keys().then((name)=>{
+      caches.keys().then((names)=>{
         names.forEach(name=>{
           caches.delete(name);
         })

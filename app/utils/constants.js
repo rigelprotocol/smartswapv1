@@ -169,7 +169,7 @@ export const convertToNumber = (hex, decimals) => {
   return balanceDecimal.toLocaleString();
 };
 
-// export const convertIndexToAlphetString = number =>
+// export const convertIndexToAlphatString = number =>
 //   number
 //     .toString()
 //     .split('')
@@ -177,7 +177,7 @@ export const convertToNumber = (hex, decimals) => {
 //     .join('');
 
 // export const queryTemplate = (index, { address }, callData) => `
-//   ${convertIndexToAlphetString(
+//   ${convertIndexToAlphaString(
 //     index,
 //   )}: call(data: { to: "${address}", data: "${callData}" }) { data }`;
 
