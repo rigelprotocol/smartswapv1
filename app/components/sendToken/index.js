@@ -56,7 +56,7 @@ export const Manual = props => {
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
 
   useEffect(() => {
-   
+
     (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])
@@ -90,7 +90,7 @@ export const Manual = props => {
     if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
       setFromAmount(selectedToken.balance)
     }
-    if (tokenAllowance < fromAmount) {
+    if (parseFloat(tokenAllowance) < parseFloat(fromAmount)) {
       setUserHasApproveToken(false)
     }
   }, [fromAmount, amountIn]);
@@ -137,7 +137,7 @@ export const Manual = props => {
   const calculateSlippage = (amountIn) => {
     let calculatedVal
     if (slippageValue === "1") {
-      calculatedVal = amountIn + (amountIn * parseInt(slippageValue) / 100)
+      calculatedVal = amountIn + (amountIn * parseFloat(slippageValue) / 100)
     } else if (slippageValue === "0.1") {
       calculatedVal = amountIn - (amountIn * parseFloat(slippageValue) / 100)
     } else if (slippageValue === "0.5") {
@@ -257,7 +257,7 @@ export const Manual = props => {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
-           props.changeRGPValue(wallet)
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -327,7 +327,7 @@ export const Manual = props => {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' });
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
-           props.changeRGPValue(wallet)
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -356,7 +356,7 @@ export const Manual = props => {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
-           props.changeRGPValue(wallet)
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -380,7 +380,7 @@ export const Manual = props => {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
-           props.changeRGPValue(wallet)
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setTimeout(() => openModal4(), 1000)

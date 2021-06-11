@@ -54,10 +54,8 @@ const BSCmainnetTokens = {
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
 };
 
-export const TOKENS_CONTRACT =
-  checkNetVersion() === BSCMainNetID.toString()
-    ? BSCmainnetTokens
-    : BSCTestnetTokens;
+export const TOKENS_CONTRACT = () =>
+  checkNetVersion() == 56 ? BSCmainnetTokens : BSCTestnetTokens;
 
 const BSCMainnet = {
   SmartFactory: '0x655333A1cD74232C404049AF9d2d6cF1244E71F6',
