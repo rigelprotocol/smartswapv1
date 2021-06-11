@@ -90,7 +90,8 @@ export const Manual = props => {
     if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
       setFromAmount(selectedToken.balance)
     }
-    if (parseFloat(tokenAllowance) < parseFloat(fromAmount)) {
+    console.log(selectedToken.balance, fromAmount, tokenAllowance)
+    if (parseFloat(tokenAllowance) < parseFloat(fromAmount) && selectedToken.symbol !== 'BNB') {
       setUserHasApproveToken(false)
     }
   }, [fromAmount, amountIn]);
