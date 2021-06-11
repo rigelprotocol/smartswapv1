@@ -36,6 +36,7 @@ const ConfirmSwapBox = props => {
     selectedToken,
     selectedToToken,
     openLoadingSpinnerAndSwap,
+    liquidityProviderFee
   } = props;
 
   return (
@@ -58,7 +59,7 @@ const ConfirmSwapBox = props => {
           <ModalBody>
             <Flex justifyContent="space-between">
               <Box>
-                <Text>{fromAmount}</Text>
+                <Text>{fromAmount} </Text>
               </Box>
               <Box>
                 <Text>
@@ -69,6 +70,7 @@ const ConfirmSwapBox = props => {
                   )}
                   {` `}
                   {isNotEmpty(selectedToken) && selectedToken.symbol}
+                  {path[0].token}
                 </Text>
               </Box>
             </Flex>
@@ -126,7 +128,7 @@ const ConfirmSwapBox = props => {
                   Liquidity Provider Fee <QuestionIcon />{' '}
                 </Text>
                 <Box>
-                  <Text>0.03 {path[0].token}</Text>
+                  <Text>{liquidityProviderFee()} {path[0].token}</Text>
                 </Box>
               </Flex>
             </Box>

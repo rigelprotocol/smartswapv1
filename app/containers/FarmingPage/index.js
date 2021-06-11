@@ -9,10 +9,10 @@ import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
 import { connect } from 'react-redux';
 import Web3 from 'web3';
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
-import { tokenList } from "../../utils/constants"
+import FarmingPageModal from 'components/yieldfarm/FarmingPageModal';
 import {
   masterChefContract,
   rigelToken,
@@ -25,29 +25,38 @@ import {
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
 } from 'utils/SwapConnect';
+import { tokenList } from '../../utils/constants';
+
+import { changeRGPValue } from '../WalletProvider/actions';
 import {
   changeFarmingContent,
   changeFarmingContentToken,
   changeRGPFarmingFee,
   updateTotalLiquidity,
   updateTokenStaked,
-  updateFarmBalances
-} from "./actions"
+  updateFarmBalances,
+} from './actions';
 // import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
   const { wallet, wallet_props } = props.wallet;
-  const refresh = props.farming.refresh
-  const [RGPTotalTokStake, setRGPTotalTokStake] = useState("")
-  const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState("")
-  const [BNBTotalTokStake, setBNBTotalTokStake] = useState("")
-  const [ETHTotalTokStake, setETHTotalTokStake] = useState("")
+  
+  const [RGPTotalTokStake, setRGPTotalTokStake] = useState('');
+  const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState('');
+  const [BNBTotalTokStake, setBNBTotalTokStake] = useState('');
+  const [ETHTotalTokStake, setETHTotalTokStake] = useState('');
   const [farmingData, setFarmingData] = useState([]);
+  const [farmingModal, setFarmingModal] = useState(false);
+  const [farmingFee, setFarmingFee] = useState(10);
 
   useEffect(() => {
     getYieldFarmingData();
-    getTokenStaked();
     getFarmTokenBalance();
-  }, [wallet, refresh])
+  }, [wallet]);
+
+  const refreshTokenStaked = () =>{
+    getTokenStaked();
+  // props.changeRGPValue(wallet)
+  }
 
   const getYieldFarmingData = async () => {
     try {
@@ -57,29 +66,30 @@ export function FarmingPage(props) {
       const rgpAddress = await masterChef.poolInfo(0);
       const rgpContract = await LiquidityPairInstance(rgpAddress[0]);
       // const rgpSpecialPool = await RGPSpecialPool();
-      const totalStaking = ethers.BigNumber.from('200000000000000000000000')
+      const totalStaking = ethers.BigNumber.from('200000000000000000000000');
       const rgpSpecial = {
-        poolAddress: "",
+        poolAddress: '',
         poolSymbol: 'RGP',
         specialPool: true,
         token0: {
           address: rgpAddress,
-          symbol: "RGP",
-          amount: 1000
+          symbol: 'RGP',
+          amount: 1000,
         },
-      }
+      };
       poolsData = [...poolsData, rgpSpecial];
-      let RGPprice, BNBprice;
+      let RGPprice;
+      let BNBprice;
       for (let i = 1; i < poolLength; i++) {
         const poolInfo = await masterChef.poolInfo(i);
         const poolContract = await LiquidityPairInstance(poolInfo[0]);
         const poolReserves = await poolContract.getReserves();
         const token0Address = await poolContract.token0();
         const token1Address = await poolContract.token1();
-        const erc20Token0 = await erc20Token(token0Address)
-        const erc20Token1 = await erc20Token(token1Address)
-        const token0Symbol = await erc20Token0.symbol()
-        const token1Symbol = await erc20Token1.symbol()
+        const erc20Token0 = await erc20Token(token0Address);
+        const erc20Token1 = await erc20Token(token1Address);
+        const token0Symbol = await erc20Token0.symbol();
+        const token1Symbol = await erc20Token1.symbol();
         const pools = {
           poolInfo,
           poolAddress: poolInfo[0],
@@ -88,156 +98,221 @@ export function FarmingPage(props) {
           token0: {
             address: token0Address,
             symbol: token0Symbol,
-            amount: poolReserves[0]
+            amount: poolReserves[0],
           },
           token1: {
             address: token1Address,
             symbol: token1Symbol,
-            amount: poolReserves[1]
-          }
-        }
+            amount: poolReserves[1],
+          },
+        };
         if (i === 1) {
-          const RGPpriceDecimals = poolReserves[0].mul(1000).div(poolReserves[1])
+          const RGPpriceDecimals = poolReserves[0]
+            .mul(1000)
+            .div(poolReserves[1]);
           RGPprice = ethers.utils.formatUnits(RGPpriceDecimals, 3);
         }
         if (i === 3) {
           if (token0Symbol === 'BUSD') {
-            BNBprice = ethers.utils.formatUnits(poolReserves[0].mul(1000).div(poolReserves[1]), 3);
+            BNBprice = ethers.utils.formatUnits(
+              poolReserves[0].mul(1000).div(poolReserves[1]),
+              3,
+            );
           } else {
-            BNBprice = ethers.utils.formatUnits(poolReserves[1].mul(1000).div(poolReserves[0]), 3);
+            BNBprice = ethers.utils.formatUnits(
+              poolReserves[1].mul(1000).div(poolReserves[0]),
+              3,
+            );
           }
         }
         poolsData = [...poolsData, pools];
       }
-      console.log(poolsData, BNBprice)
+      console.log(poolsData, BNBprice);
       setFarmingData(poolsData);
-      const RGPLiquidity = ethers.utils.formatUnits(totalStaking.mul(1000 * RGPprice), 21).toString();
-      const BUSD_RGPLiquidity = ethers.utils.formatEther(poolsData[1].token0.amount.mul(2), { commify: true }).toString()
-      const RGP_BNBLiquidity = ethers.utils.formatUnits((poolsData[2].token0.amount).mul(BNBprice * 1000 * 2), 21).toString();
+      const RGPLiquidity = ethers.utils
+        .formatUnits(totalStaking.mul(1000 * RGPprice), 21)
+        .toString();
+      const BUSD_RGPLiquidity = ethers.utils
+        .formatEther(poolsData[1].token0.amount.mul(2), { commify: true })
+        .toString();
+      const RGP_BNBLiquidity = ethers.utils
+        .formatUnits(poolsData[2].token0.amount.mul(BNBprice * 1000 * 2), 21)
+        .toString();
       let BUSD_BNBLiquidity;
       if (poolsData[3].token0.symbol === 'BUSD') {
-        BUSD_BNBLiquidity = ethers.utils.formatEther(poolsData[3].token0.amount.mul(2), { commify: true }).toString()
+        BUSD_BNBLiquidity = ethers.utils
+          .formatEther(poolsData[3].token0.amount.mul(2), { commify: true })
+          .toString();
       } else {
-        BUSD_BNBLiquidity = ethers.utils.formatEther(poolsData[3].token1.amount.mul(2), { commify: true }).toString()
+        BUSD_BNBLiquidity = ethers.utils
+          .formatEther(poolsData[3].token1.amount.mul(2), { commify: true })
+          .toString();
       }
 
       props.updateTotalLiquidity([
-        { liquidity: RGPLiquidity, apy: calculateApy(RGPprice, RGPLiquidity, 1333.33) },
-        { liquidity: RGP_BNBLiquidity, apy: calculateApy(RGPprice, RGP_BNBLiquidity, 3333.33) },
-        { liquidity: BUSD_RGPLiquidity, apy: calculateApy(RGPprice, BUSD_RGPLiquidity, 2000) },
-        { liquidity: BUSD_BNBLiquidity, apy: calculateApy(RGPprice, BUSD_BNBLiquidity, 1333.33) }])
+        {
+          liquidity: RGPLiquidity,
+          apy: calculateApy(RGPprice, RGPLiquidity, 1333.33),
+        },
+        {
+          liquidity: RGP_BNBLiquidity,
+          apy: calculateApy(RGPprice, RGP_BNBLiquidity, 3333.33),
+        },
+        {
+          liquidity: BUSD_RGPLiquidity,
+          apy: calculateApy(RGPprice, BUSD_RGPLiquidity, 2000),
+        },
+        {
+          liquidity: BUSD_BNBLiquidity,
+          apy: calculateApy(RGPprice, BUSD_BNBLiquidity, 1333.33),
+        },
+      ]);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const getTokenStaked = async () => {
     try {
-
-      if (wallet.address != "0x") {
+      if (wallet.address != '0x') {
         // const specialPool = await RGPSpecialPool();
         const masterChef = await masterChefContract();
-        const poolOneEarned = await masterChef.pendingRigel(1, wallet.address)
-        const poolTwoEarned = await masterChef.pendingRigel(2, wallet.address)
-        const poolThreeEarned = await masterChef.pendingRigel(3, wallet.address)
+        const poolOneEarned = await masterChef.pendingRigel(1, wallet.address);
+        const poolTwoEarned = await masterChef.pendingRigel(2, wallet.address);
+        const poolThreeEarned = await masterChef.pendingRigel(
+          3,
+          wallet.address,
+        );
         const poolOneStaked = await masterChef.userInfo(1, wallet.address);
         const poolTwoStaked = await masterChef.userInfo(2, wallet.address);
         const poolThreeStaked = await masterChef.userInfo(3, wallet.address);
-
+        // console.log(formatBigNumber(poolTwoEarned),formatBigNumber(poolOneEarned),formatBigNumber(poolThreeEarned) )
         props.updateTokenStaked([
-          { staked: 0.00, earned: 0.00 },
-          { staked: formatBigNumber(poolTwoStaked.amount), earned: formatBigNumber(poolTwoEarned) },
-          { staked: formatBigNumber(poolOneStaked.amount), earned: formatBigNumber(poolOneEarned) },
-          { staked: formatBigNumber(poolThreeStaked.amount), earned: formatBigNumber(poolThreeEarned) }])
+          { staked: 0.0, earned: 0.0 },
+          {
+            staked: formatBigNumber(poolTwoStaked.amount),
+            earned: formatBigNumber(poolTwoEarned),
+          },
+          {
+            staked: formatBigNumber(poolOneStaked.amount),
+            earned: formatBigNumber(poolOneEarned),
+          },
+          {
+            staked: formatBigNumber(poolThreeStaked.amount),
+            earned: formatBigNumber(poolThreeEarned),
+          },
+        ]);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
+  };
 
-  }
+  const formatBigNumber = bigNumber => {
+   
+    const number = Number.parseFloat(ethers.utils.formatEther(bigNumber));
+    if (number % 1 === 0) {
+      return number.toFixed(3);
+    }
+    const splitNumber = number.toString().split('.');
+    const [whole, decimal] = splitNumber;
+    const deci = decimal
+      .split('')
+      .slice(0, 3)
+      .join('');
+    const output = [whole, deci];
+    return output.join('.');
+  };
 
-  const formatBigNumber = (bigNumber) => {
-    return Number.parseFloat(ethers.utils.formatEther(bigNumber)).toFixed(3);
-  }
-
-  const calculateApy = (rgpPrice, totalLiquidity, inflation) => {
-    return ((rgpPrice * inflation * 365 * 100) / totalLiquidity);
-  }
+  const calculateApy = (rgpPrice, totalLiquidity, inflation) =>
+    (rgpPrice * inflation * 365 * 100) / totalLiquidity;
 
   const getFarmTokenBalance = async () => {
     if (wallet.address != '0x') {
       try {
-        const RGPToken = await rigelToken()
-        const poolOne = await smartSwapLPTokenPoolOne()
-        const poolTwo = await smartSwapLPTokenPoolTwo()
-        const poolThree = await smartSwapLPTokenPoolThree()
-        const RGPbalance = await RGPToken.balanceOf(wallet.address)
-        const poolOneBalance = await poolOne.balanceOf(wallet.address)
-        const poolTwoBalance = await poolTwo.balanceOf(wallet.address)
-        const poolThreeBalance = await poolThree.balanceOf(wallet.address)
+        const [
+          RGPToken,
+          poolOne,
+          poolTwo,
+          poolThree,
+          RGPbalance,
+          poolOneBalance,
+          poolTwoBalance,
+          poolThreeBalance,
+        ] = await Promise.all([
+          rigelToken(),
+          smartSwapLPTokenPoolOne(),
+          smartSwapLPTokenPoolTwo(),
+          smartSwapLPTokenPoolThree(),
+          RGPToken.balanceOf(wallet.address),
+          poolOne.balanceOf(wallet.address),
+          poolTwo.balanceOf(wallet.address),
+          poolThree.balanceOf(wallet.address),
+        ]);
 
         props.updateFarmBalances([
           formatBigNumber(RGPbalance),
           formatBigNumber(poolTwoBalance),
           formatBigNumber(poolOneBalance),
           formatBigNumber(poolThreeBalance),
-        ])
+        ]);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
-
-
-  }
+  };
 
   useEffect(() => {
     const RGPfarmingFee = async () => {
       if (wallet.signer !== 'signer') {
-        const masterChef = await masterChefContract()
-        const minFarmingFee = await masterChef.farmingFee()
+        const masterChef = await masterChefContract();
+        const minFarmingFee = await masterChef.farmingFee();
         const fee = Web3.utils.fromWei(minFarmingFee.toString());
+        setFarmingFee(fee);
         props.changeRGPFarmingFee({
-          fee
-        })
+          fee,
+        });
       }
-    }
-    RGPfarmingFee()
+    };
+    RGPfarmingFee();
+    setFarmingModal(true);
   }, [wallet]);
 
   const getRGPPrice = async () => {
-    let rgpBalance = await getAddressTokenBalance(wallet.address, tokenList[1].address, wallet.signer)
-    return rgpBalance
-  }
+    const rgpBalance = await getAddressTokenBalance(
+      wallet.address,
+      tokenList[1].address,
+      wallet.signer,
+    );
+    return rgpBalance;
+  };
   // for the first pool
   const specialPoolUserData = async () => {
     console.log('opening usewithdrawal');
     if (wallet.signer !== 'signer') {
       const specialPool = await RGPSpecialPool();
-      let pool = await specialPool.userData(0);
-      return pool.tokenQuantity.toString()
+      const pool = await specialPool.userData(0);
+      return pool.tokenQuantity.toString();
     }
   };
   const specialPoolClaimReward = async () => {
     if (wallet.signer !== 'signer') {
       const specialPool = await RGPSpecialPool();
       const poolID = 0;
-      let pool = specialPool.calculateRewards(0);
-      return 0
+      const pool = specialPool.calculateRewards(0);
+      return 0;
     }
   };
 
   // changeTokenUserInfo
-  const changeTokenUserInfo = async (val) => {
+  const changeTokenUserInfo = async val => {
     if (wallet.signer !== 'signer') {
       const lpTokens = await masterChefContract();
       const pid = val;
 
-      return await lpTokens.userInfo(
-        pid,
-        wallet.address
-      );
+      return await lpTokens.userInfo(pid, wallet.address);
     }
-  }
+  };
 
   // Total RGP earn
   const getPriceForRGPToken = async () => {
@@ -245,21 +320,23 @@ export function FarmingPage(props) {
       const rout = await router();
       const valueToCheck = 1;
       const checkPriceOfOne = Web3.utils.toWei(valueToCheck.toString());
-      const getValue = await rout.getAmountsOut(
-        checkPriceOfOne,
-        [tokenList[1].address, tokenList[2].address]
-      )
-      const value1 = (getValue.toString().split(",")[1])
-      console.log("price................: ", value1);
-      return value1
+      const getValue = await rout.getAmountsOut(checkPriceOfOne, [
+        tokenList[1].address,
+        tokenList[2].address,
+      ]);
+      const value1 = getValue.toString().split(',')[1];
+      console.log('price................: ', value1);
+      return value1;
     }
-  }
+  };
 
   const BNBBUSDUserBalance = async () => {
     if (wallet.signer !== 'signer') {
       const poolThree = await smartSwapLPTokenPoolThree();
       const walletBal = await poolThree.balanceOf(wallet.address);
-      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(4)
+      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(
+        4,
+      );
     }
   };
 
@@ -267,7 +344,9 @@ export function FarmingPage(props) {
     if (wallet.signer !== 'signer') {
       const slpOne = await smartSwapLPTokenPoolOne();
       const walletBal = await slpOne.balanceOf(wallet.address);
-      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(4)
+      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(
+        4,
+      );
     }
   };
 
@@ -275,7 +354,9 @@ export function FarmingPage(props) {
     if (wallet.signer !== 'signer') {
       const poolTwo = await smartSwapLPTokenPoolTwo();
       const walletBal = await poolTwo.balanceOf(wallet.address);
-      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(4)
+      return Number(Web3.utils.fromWei(walletBal.toString(), 'ether')).toFixed(
+        4,
+      );
     }
   };
 
@@ -285,7 +366,7 @@ export function FarmingPage(props) {
       const rigelAllocPoint = await masterChef.poolInfo(0);
       return rigelAllocPoint.allocPoint.toString();
     }
-  }
+  };
 
   const poolInForAllocPoolTwo = async () => {
     if (wallet.signer !== 'signer') {
@@ -293,71 +374,71 @@ export function FarmingPage(props) {
       const rigelAllocPoint = await masterChef.poolInfo(1);
       return rigelAllocPoint.allocPoint.toString();
     }
-  }
+  };
 
   const poolInForAllocPoolThree = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract()
-      const rigelAllocPoint = await masterChef.poolInfo(2)
+      const masterChef = await masterChefContract();
+      const rigelAllocPoint = await masterChef.poolInfo(2);
       return rigelAllocPoint.allocPoint;
     }
-  }
+  };
 
   const poolInForAllocPoolFour = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract()
-      const rigelAllocPoint = await masterChef.poolInfo(3)
+      const masterChef = await masterChefContract();
+      const rigelAllocPoint = await masterChef.poolInfo(3);
       return rigelAllocPoint.allocPoint;
     }
-  }
+  };
 
   const changeRGPInflationPerDay = async () => {
     if (wallet.signer !== 'signer') {
-      return 200000 / 30
+      return 200000 / 30;
     }
-  }
+  };
 
   const calInflationForPoolRGP = async () => {
     if (wallet.signer !== 'signer') {
-      const inflation = await changeRGPInflationPerDay()
+      const inflation = await changeRGPInflationPerDay();
       const pool = await poolInForAlloc();
       const check = inflation * (pool / 100);
       return check;
     }
-  }
+  };
 
   const calInflationForPoolRGPBUSD = async () => {
     if (wallet.signer !== 'signer') {
-      const inflation = await changeRGPInflationPerDay()
+      const inflation = await changeRGPInflationPerDay();
       const pool = await poolInForAllocPoolTwo();
       const check = inflation * (pool / 100);
       return check;
     }
-  }
+  };
 
   const calInflationForPoolRGPBNB = async () => {
     if (wallet.signer !== 'signer') {
-      const inflation = await changeRGPInflationPerDay()
+      const inflation = await changeRGPInflationPerDay();
       const pool = await poolInForAllocPoolThree();
       const check = inflation * (pool / 100);
       return check;
     }
-  }
+  };
 
   const calInflationForPoolBNB = async () => {
     if (wallet.signer !== 'signer') {
-      const inflation = await changeRGPInflationPerDay()
+      const inflation = await changeRGPInflationPerDay();
       const pool = await poolInForAllocPoolFour();
       const check = inflation * (pool / 100);
       return check;
     }
-  }
+  };
 
   const changeTotalVolumePerPool = () => {
     if (wallet.signer !== 'signer') {
-      return 2433.3382
+      return 2433.3382;
     }
-  }
+  };
 
   const RGPTotalTokeStake = async () => {
     if (wallet.signer !== 'signer') {
@@ -369,53 +450,56 @@ export function FarmingPage(props) {
       //  setRGPTotalTokStake(userStakedBal)
       //  return userStakedBal
       // userStakedBal should be toFixed(4)
-
     }
   };
 
   const getAllLiquidities = async () => {
     try {
-      let pairs = []
+      const pairs = [];
       const smartFactory = await SmartFactory();
       const allLiquidityPairs = await smartFactory.allPairsLength();
       for (let i = 0; i < allLiquidityPairs.toString(); i++) {
         const pairAddress = await smartFactory.allPairs(i);
-        let liquidity = await LiquidityPairInstance(pairAddress);
+        const liquidity = await LiquidityPairInstance(pairAddress);
         const balance = await liquidity.balanceOf(wallet.address);
         const totalSupply = await liquidity.totalSupply();
-        const reserves = await liquidity.getReserves()
-        const pooledToken0 = ((balance.toString() / totalSupply) * reserves[0]) / 1e+18;
-        const pooledToken1 = ((balance.toString() / totalSupply) * reserves[1]) / 1e+18;
+        const reserves = await liquidity.getReserves();
+        const pooledToken0 =
+          ((balance.toString() / totalSupply) * reserves[0]) / 1e18;
+        const pooledToken1 =
+          ((balance.toString() / totalSupply) * reserves[1]) / 1e18;
         const token0 = await liquidity.token0();
         const token1 = await liquidity.token1();
-        const erc20Token0 = await erc20Token(token0)
-        const erc20Token1 = await erc20Token(token1)
-        const symbol0 = await erc20Token0.symbol()
-        const symbol1 = await erc20Token1.symbol()
-        let liquidityObject = {
+        const erc20Token0 = await erc20Token(token0);
+        const erc20Token1 = await erc20Token(token1);
+        const symbol0 = await erc20Token0.symbol();
+        const symbol1 = await erc20Token1.symbol();
+        const liquidityObject = {
           pairAddress: Web3.utils.toChecksumAddress(pairAddress),
           poolToken: Web3.utils.fromWei(balance.toString(), 'ether'),
           totalSupply: totalSupply.toString(),
           poolShare: balance.toString() / totalSupply,
           path: [
             { fromPath: token0, token: symbol0, amount: pooledToken0 },
-            { toPath: token1, token: symbol1, amount: pooledToken1 }
+            { toPath: token1, token: symbol1, amount: pooledToken1 },
           ],
           pooledToken0,
-          pooledToken1
-        }
+          pooledToken1,
+        };
         if (liquidityObject.poolToken != 0) {
           pairs.push(liquidityObject);
-          console.log(liquidityObject)
+          console.log(liquidityObject);
         }
-        props.changeFarmingContent({ reserves0: reserves[0].toString(), reserves1: reserves[1].toString(), symbol0, symbol1 })
+        props.changeFarmingContent({
+          reserves0: reserves[0].toString(),
+          reserves1: reserves[1].toString(),
+          symbol0,
+          symbol1,
+        });
       }
-      setLiquidities([...pairs])
-    } catch (error) {
-    }
-
-  }
-
+      setLiquidities([...pairs]);
+    } catch (error) {}
+  };
 
   return (
     <div>
@@ -445,6 +529,11 @@ export function FarmingPage(props) {
                 align="left"
                 display={['none', 'flex']}
               >
+                <FarmingPageModal
+                  farmingModal={farmingModal}
+                  setFarmingModal={setFarmingModal}
+                  farmingFee={farmingFee}
+                />
                 <Text>Deposit</Text>
                 <Text>Earn</Text>
                 <Text>APY</Text>
@@ -452,7 +541,12 @@ export function FarmingPage(props) {
                 <Text />
               </Flex>
               {props.farming.contents.map(content => (
-                <YieldFarm content={content} key={content.id} wallet={wallet} />
+                <YieldFarm 
+                content={content} 
+                key={content.id} 
+                wallet={wallet} 
+                refreshTokenStaked={refreshTokenStaked}
+                />
               ))}
             </Box>
           </Box>
@@ -467,16 +561,14 @@ FarmingPage.propTypes = {
   farmingPage: PropTypes.object,
 };
 
-const mapStateToProps = ({ farming, wallet }) => {
-  return {
-    farming,
-    wallet
-  };
-};
+const mapStateToProps = ({ farming, wallet }) => ({
+  farming,
+  wallet,
+});
 
 function mapDispatchToProps(dispatch) {
   return {
-    sendAction: (res) => dispatch({ type: SEND_ACTION, payload: res }),
+    sendAction: res => dispatch({ type: SEND_ACTION, payload: res }),
     dispatch,
   };
 }
@@ -489,8 +581,7 @@ export default connect(
     changeRGPFarmingFee,
     updateTotalLiquidity,
     updateTokenStaked,
-    updateFarmBalances
-  }
+    updateFarmBalances,
+    changeRGPValue
+  },
 )(FarmingPage);
-
-

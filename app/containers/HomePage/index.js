@@ -14,10 +14,11 @@ export const TABS = {
   ACTIVE: 'ACTIVE',
   PRICE: 'PRICE',
 };
-export default function HomePage() {
+export default function HomePage(props) {
+  console.log(props);
   const [tab, setTab] = useState(TABS.MANUAL);
   return (
-    <Layout title="Home Page">
+    <Layout title="Rigel Protocol - Smartswap">
       <>
         <Flex mb="100px" mx={2} flexWrap="wrap">
           <Box w={['100%', '100%', '30%', '29.5%']} mb={4} ml="2.8" mr="-0.7">
@@ -47,7 +48,11 @@ export default function HomePage() {
                 >
                   Manual
                 </Text>
-                <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+                <Tooltip
+                  label="Coming Soon"
+                  bg="#120136"
+                  aria-label="A tooltip"
+                >
                   <Text
                     cursor="not-allowed"
                     className={
@@ -58,9 +63,13 @@ export default function HomePage() {
                   // }}
                   >
                     Set price
-                </Text>
+                  </Text>
                 </Tooltip>
-                <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+                <Tooltip
+                  label="Coming Soon"
+                  bg="#120136"
+                  aria-label="A tooltip"
+                >
                   <Text
                     cursor="not-allowed"
                     className={
@@ -71,13 +80,12 @@ export default function HomePage() {
                   // }}
                   >
                     Auto Time
-                </Text>
+                  </Text>
                 </Tooltip>
-
               </Flex>
             </Box>
             <ChartGraph />
-            <SendToken />
+            <SendToken {...props} />
           </Box>
           <Box mx={5} w={['100%', '100%', '30%', '29.5%']} mb={4}>
             <Box

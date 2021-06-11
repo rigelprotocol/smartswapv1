@@ -13,7 +13,6 @@ import {
   UPDATE_TOTAL_LIQUIDITY,
   UPDATE_TOKEN_STAKED,
   UPDATE_FARM_BALANCES,
-  REFRESH_FARM
 } from './constants';
 
 
@@ -96,7 +95,6 @@ export const initialState = {
       pId: 3
     },
   ],
-  refresh: false,
 };
 // const user_Individual_Reward = (individualLiquidity / totalLiquidity) * reward
 // Reward = (Multiplier x block diff x reward per block x allocation point ) / Total Allocation Point
@@ -165,9 +163,7 @@ const farmingPageReducer = (state = initialState, action) =>
           draft.contents[index].availableToken = item;
         })
         break
-      case REFRESH_FARM:
-        draft.refresh = true
-        break
+    
     }
   });
 

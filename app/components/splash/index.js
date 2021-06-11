@@ -7,7 +7,7 @@ const Splash = props => {
   const { history } = props;
   useEffect(() => {
     const timer = setTimeout(() => {
-      history.push('/smart-swapping');
+      history.push('/swap');
     }, 3000);
     return () => clearTimeout(timer);
   }, []);

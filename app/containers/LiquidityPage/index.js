@@ -246,19 +246,37 @@ export function LiquidityPage(props) {
   }
 
   const approveToToken = async () => {
-    if (!isNotEmpty(toSelectedToken)) {
-      const approveResponse = await approveToken(wallet.address, toSelectedToken.address, wallet.signer, toValue);
-      if (approveResponse.hash !== undefined) {
-        setShowApprovalBox(false);
-        setHasAllowedToToken(true);
-        setOpenSupplyButton(false);
+    try {
+      if (!isNotEmpty(toSelectedToken)) {
+        const balance = await tokenBalance(toSelectedToken.address, wallet.address)
+        const approveResponse = await approveToken(wallet.address, toSelectedToken.address, wallet.signer, balance);
+        if (approveResponse.hash !== undefined) {
+          setShowApprovalBox(false);
+          setHasAllowedToToken(true);
+          setOpenSupplyButton(false);
+        }
       }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const tokenBalance = async (tokenAddress, walletAddress) => {
+    try {
+      if (wallet.address != "0x") {
+        const token = await erc20Token(tokenAddress);
+        const balance = await token.balanceOf(walletAddress);
+        return ethers.utils.formatEther(balance);
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
   const approveFromToken = async () => {
     if (!isNotEmpty(fromSelectedToken)) {
-      const approveResponse = await approveToken(wallet.address, fromSelectedToken.address, wallet.signer, fromValue);
+      const balance = await tokenBalance(fromSelectedToken.address, wallet.address)
+      const approveResponse = await approveToken(wallet.address, fromSelectedToken.address, wallet.signer, balance);
       if (approveResponse.hash !== undefined) {
         setShowApprovalBox(false);
         setHasAllowedFromToken(true);
@@ -315,7 +333,7 @@ export function LiquidityPage(props) {
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 290000,
+            gasLimit: 390000,
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
@@ -396,7 +414,7 @@ export function LiquidityPage(props) {
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 290000,
+            gasLimit: 390000,
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
@@ -491,12 +509,13 @@ export function LiquidityPage(props) {
     timer1 = setTimeout(() => {
       closeInput()
       if (liquid) {
+        
         removeALiquidity(liquid.pairAddress)
       } else {
         setLiquidityTab("INDEX")
       }
       clearTimeout(timer1)
-    }, 3500);
+    }, 200);
 
   };
   const closeModal5 = () => {
