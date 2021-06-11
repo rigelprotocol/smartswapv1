@@ -2,11 +2,7 @@ export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 
 export const formatBalance = balance => {
-  if (
-    parseFloat(balance) > 0 &&
-    Number(balance) === balance &&
-    balance % 1 !== 0
-  ) {
+  if (balance.toString().includes(".")) {
     return `${balance.toString().split('.')[0]}.${balance
       .toString()
       .split('.')[1]
