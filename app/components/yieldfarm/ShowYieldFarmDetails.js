@@ -25,6 +25,7 @@ import Web3 from 'web3';
 import configureStore from 'configureStore';
 import { connect } from 'react-redux';
 import styles from '../../styles/yieldFarmdetails.css';
+import { clearInputInfo } from "../../utils/UtilFunc"
 import {
   rigelToken,
   BUSDToken,
@@ -474,14 +475,12 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
   };
   const confirmDeposit = async val => {
     setDepositValue('Pending Confirmation');
-
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
           // await RGPuseStake(depositTokenValue);
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpDeposit(depositTokenValue);
-          setTimeout(() => closeModal(), 400);
         } else if (val === 'BNB-BUSD') {
           await BNBBUSDlpDeposit(depositTokenValue);
         } else if (val === 'RGP-BUSD') {
@@ -489,8 +488,9 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
         } else {
           // await RGPuseStake(depositTokenValue)
         }
-        setUnstakeButtonValue('confirmed');
+        setDepositValue('confirmed');
         setTimeout(() => closeModal(), 400);
+        clearInputInfo(setDepositTokenValue,setDepositValue,"Confirm")
       }
     } catch (e) {
       console.log(e);
@@ -514,6 +514,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
         }
         setUnstakeButtonValue('confirmed');
         setTimeout(() => closeModal(), 400);
+        clearInputInfo(setUnstakeToken,setUnstakeButtonValue,"Confirm")
       }
     } catch (e) {
       console.log(
