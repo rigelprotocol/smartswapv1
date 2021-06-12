@@ -1,13 +1,17 @@
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 
-export const formatBalance = balance =>
-  parseFloat(
-    `${balance.toString().split('.')[0]}.${balance
+export const formatBalance = balance => {
+  if (balance.toString().includes(".")) {
+    return `${balance.toString().split('.')[0]}.${balance
       .toString()
       .split('.')[1]
-      .substr(0, 4)}`,
-  ).toString();
+      .substr(0, 4)}`;
+  }
+  return parseFloat(balance)
+    .toFixed(4)
+    .toString();
+};
 
 export const isNotEmpty = objectToCheck =>
   objectToCheck &&
