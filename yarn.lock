@@ -9031,10 +9031,10 @@ immediate@~3.2.3:
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.2.3.tgz#d140fa8f614659bd6541233097ddaac25cdd991c"
   integrity sha1-0UD6j2FGWb1lQSMwl92qwlzdmRw=
 
-immer@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-3.0.0.tgz#3991440679116ec2d6b39b0ed5341e681b26ebcf"
-  integrity sha512-dqLrAUJz/G7vfcuQG6GdjOGm+5Mw9YJEvDRbEwHwzBPBRziZYevOq2P1pF//B07CG1l28ZsjSqLz+RziObkaDQ==
+immer@9.0.3:
+  version "9.0.3"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.3.tgz#146e2ba8b84d4b1b15378143c2345559915097f4"
+  integrity sha512-mONgeNSMuyjIe0lkQPa9YhdmTv8P19IeHV0biYhcXhbd5dhdB9HSK93zBpyKjp6wersSUgT5QyU0skmejUVP2A==
 
 immutable@^3.8.1:
   version "3.8.2"
