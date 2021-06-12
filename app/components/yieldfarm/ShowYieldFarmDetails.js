@@ -35,9 +35,8 @@ import {
   smartSwapLPTokenPoolThree,
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
-import { refreshFarm } from '../../containers/FarmingPage/actions';
 
-const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
+const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
   const [unstakeButtonValue, setUnstakeButtonValue] = useState('Confirm');
@@ -168,7 +167,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
 
   const callRefreshFarm = (confirmations, status) => {
     if (confirmations >= 1 && status >= 1) {
-      refreshFarm();
+      refreshTokenStaked()
     }
   };
 
@@ -878,21 +877,18 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
                 mx="auto"
                 color={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
-                // disabled={
-                //   unstakeButtonValue === 'Confirm'
-                //     ? false : true
-                // }
+                disabled={unstakeButtonValue !== 'Confirm'}
                 cursor="pointer"
                 border="none"
                 borderRadius="13px"
@@ -901,7 +897,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
                 fontSize="16px"
                 _hover={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? { background: 'rgba(64, 186, 213, 0.15)' }
                     : { background: '#444159' }
                 }
@@ -943,6 +939,5 @@ const mapStateToProps = ({ farming }) => ({
 export default connect(
   mapStateToProps,
   {
-    refreshFarm,
   },
 )(ShowYieldFarmDetails);

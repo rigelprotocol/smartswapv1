@@ -16,15 +16,16 @@ import {
 import { ethers } from 'ethers';
 import { TOKENS_CONTRACT } from 'utils/constants';
 import { formatBalance } from 'utils/UtilFunc';
+import { assignRef } from '@chakra-ui/react';
 import {
   WALLET_CONNECTED,
   WALLET_PROPS,
   LOADING_WALLET,
   CLOSE_LOADING_WALLET,
   CLEAR_WALLET,
-  CHANGE_DEADLINE
+  CHANGE_DEADLINE,
+  CHANGE_BNB
 } from './constants';
-import { assignRef } from '@chakra-ui/react';
 
 export const reConnect = (wallet) => async dispatch => {
   try {
@@ -32,8 +33,7 @@ export const reConnect = (wallet) => async dispatch => {
     const ethProvider = await provider();
     const walletSigner = await signer();
     const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress))).toString();
-    console.log(TOKENS_CONTRACT.RGP)
-    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT.RGP, walletSigner);
+    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT().RGP, walletSigner);
     dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: selectedAddress,
@@ -63,7 +63,7 @@ export const connectWallet = () => async dispatch => {
     const res = await connectMetaMask();
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
     const balance = await ethProvider.getBalance(res[0]);
-    const rgpBalance = await getAddressTokenBalance(res[0], TOKENS_CONTRACT.RGP, walletSigner);
+    const rgpBalance = await getAddressTokenBalance(res[0], TOKENS_CONTRACT().RGP, walletSigner);
     dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: res[0], balance: formatBalance(ethers.utils.formatEther(balance)),
@@ -111,4 +111,16 @@ export const disconnectWallet = () => dispatch => {
 }
 export const changeDeadlineValue = value => dispatch => {
   dispatch({ type: CHANGE_DEADLINE, payload: value })
+}
+export const changeRGPValue = wallet =>async dispatch => {
+  try{
+    const { address } = wallet;
+    const ethProvider = await provider();
+    const rgpBalance = await getAddressTokenBalance(wallet.address, TOKENS_CONTRACT().RGP, wallet.signer);
+    const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(address))).toString();
+    dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
+    dispatch({ type: CHANGE_BNB, payload: { balance }})
+  }catch{
+    console.log("error while trying to refresh data")
+  }
 }

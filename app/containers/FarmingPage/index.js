@@ -26,6 +26,8 @@ import {
   smartSwapLPTokenPoolThree,
 } from 'utils/SwapConnect';
 import { tokenList } from '../../utils/constants';
+
+import { changeRGPValue } from '../WalletProvider/actions';
 import {
   changeFarmingContent,
   changeFarmingContentToken,
@@ -37,7 +39,7 @@ import {
 // import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
   const { wallet, wallet_props } = props.wallet;
-  const { refresh } = props.farming;
+
   const [RGPTotalTokStake, setRGPTotalTokStake] = useState('');
   const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState('');
   const [BNBTotalTokStake, setBNBTotalTokStake] = useState('');
@@ -47,10 +49,15 @@ export function FarmingPage(props) {
   const [farmingFee, setFarmingFee] = useState(10);
 
   useEffect(() => {
+    refreshTokenStaked();
+  }, [wallet]);
+
+  const refreshTokenStaked = () => {
     getYieldFarmingData();
-    getTokenStaked();
     getFarmTokenBalance();
-  }, [wallet, refresh]);
+    getTokenStaked();
+    // props.changeRGPValue(wallet)
+  }
 
   const getYieldFarmingData = async () => {
     try {
@@ -203,7 +210,7 @@ export function FarmingPage(props) {
   };
 
   const formatBigNumber = bigNumber => {
-   
+
     const number = Number.parseFloat(ethers.utils.formatEther(bigNumber));
     if (number % 1 === 0) {
       return number.toFixed(3);
@@ -224,14 +231,28 @@ export function FarmingPage(props) {
   const getFarmTokenBalance = async () => {
     if (wallet.address != '0x') {
       try {
-        const RGPToken = await rigelToken();
-        const poolOne = await smartSwapLPTokenPoolOne();
-        const poolTwo = await smartSwapLPTokenPoolTwo();
-        const poolThree = await smartSwapLPTokenPoolThree();
-        const RGPbalance = await RGPToken.balanceOf(wallet.address);
-        const poolOneBalance = await poolOne.balanceOf(wallet.address);
-        const poolTwoBalance = await poolTwo.balanceOf(wallet.address);
-        const poolThreeBalance = await poolThree.balanceOf(wallet.address);
+        const [
+          RGPToken,
+          poolOne,
+          poolTwo,
+          poolThree,
+
+        ] = await Promise.all([
+          rigelToken(),
+          smartSwapLPTokenPoolOne(),
+          smartSwapLPTokenPoolTwo(),
+          smartSwapLPTokenPoolThree(),
+        ]);
+
+        const [
+          RGPbalance,
+          poolOneBalance,
+          poolTwoBalance,
+          poolThreeBalance] = await Promise.all([
+            RGPToken.balanceOf(wallet.address),
+            poolOne.balanceOf(wallet.address),
+            poolTwo.balanceOf(wallet.address),
+            poolThree.balanceOf(wallet.address)])
 
         props.updateFarmBalances([
           formatBigNumber(RGPbalance),
@@ -481,7 +502,7 @@ export function FarmingPage(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return (
@@ -524,7 +545,12 @@ export function FarmingPage(props) {
                 <Text />
               </Flex>
               {props.farming.contents.map(content => (
-                <YieldFarm content={content} key={content.id} wallet={wallet} />
+                <YieldFarm
+                  content={content}
+                  key={content.id}
+                  wallet={wallet}
+                  refreshTokenStaked={refreshTokenStaked}
+                />
               ))}
             </Box>
           </Box>
@@ -560,5 +586,6 @@ export default connect(
     updateTotalLiquidity,
     updateTokenStaked,
     updateFarmBalances,
+    changeRGPValue
   },
 )(FarmingPage);

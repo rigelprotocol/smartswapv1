@@ -28,7 +28,6 @@ import { tokenList } from 'utils/constants';
 import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
-
 function TokenListBox({
   setSelectedToken,
   setPathArray,
