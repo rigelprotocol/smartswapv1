@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box } from '@chakra-ui/layout';
-import ChartGraph from './ChartGraph';
+import ChartGraph from './ChartGraph.tsx';
 import styles from '../../styles/chart.css';
 import Title from './Title';
 
