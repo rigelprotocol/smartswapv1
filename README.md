@@ -1,6 +1,6 @@
 # Rigel Protocol smartSwapV1
 
-Rigel’s Protocol smartswapV1 is our fundamental exchange which will allow users to trade various tokens like BNB, BUSD, USDT, ETH, TRON, BAND on the Binance Smart Chain, with many other tokens like USDT, LINK, DAI, CRO, UNI, YFI, OMG, HEX and many, many more.
+Rigel’s Protocol smartswapV1 is our fundamental exchange which will allow users to trade various tokens like BNB, BUSD, USDT, ETH, TRON, and BAND on the Binance Smart Chain, with many other tokens like USDT, LINK, DAI, CRO, UNI, YFI, OMG, HEX and lots more.
 
 - Website: [rigelProtocol.com](https://rigelprotocol.com/)
 - Interface: [smartswap.rigelprotocol.com](https://smartswap.rigelprotocol.com/smart-swapping)
@@ -17,9 +17,7 @@ Rigel’s Protocol smartswapV1 is our fundamental exchange which will allow user
 
 | What makes us different | Low transaction fees  | Community |
 | ------------- |:-------------:| -----:|
-| Transparency is key to us, which is why we give you   | Cross chain operations guarantee low transaction | The Rigel Protocol is completely designed, set up,|
-| total control over your funds while you are using any  | fees without the need to leave funds on custody to | developed, and driven by the Rigel Protocol community. All proposals and decision-making |
-| of our products. | third parties or go through KYC process. |   developments are established and decided within the community. |
+| Transparency is key to us, which is why we give you  total control over your funds while you are using any of our products. | Cross chain operations guarantee low transaction  fees without the need to leave funds on custody to  third parties or go through KYC process. | The Rigel Protocol is completely designed, set up,  developed, and driven by the Rigel Protocol community. All proposals and decision-making developments are established and decided within the community.|
 
 ## Access Spoke rigel protocol smartswapV1
 To access the rigel protocol smartswapV1, visit [smartswap.rigelprotocol.com](https://smartswap.rigelprotocol.com/smart-swapping).
