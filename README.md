@@ -1,6 +1,6 @@
 # Rigel Protocol smartSwapV1
 
-Rigel’s Protocol smartswapV1 is our fundamental exchange which will allow users to trade various tokens like BNB, BUSD, USDT, ETH, TRON, and BAND on the Binance Smart Chain, with many other tokens like USDT, LINK, DAI, CRO, UNI, YFI, OMG, HEX and lots more.
+Rigel's protocol smartswap decentralized exchange is a fundamental exchange with excellent features like yield farming, margin Trading and cross chain protocol, allowing users to trade various tokens like BNB, BUSD, USDT, ETH, TRON, and BAND on the Binance Smart Chain, with many other tokens like USDT, LINK, DAI, CRO, UNI, YFI, OMG, HEX and lots more.
 
 - Website: [rigelProtocol.com](https://rigelprotocol.com/)
 - Interface: [smartswap.rigelprotocol.com](https://smartswap.rigelprotocol.com/smart-swapping)
