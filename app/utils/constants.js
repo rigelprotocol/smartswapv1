@@ -16,7 +16,6 @@ export const checkNetVersion = () => {
         ? window.ethereum.networkVersion
         : '';
     }
-    return window.ethereum.networkVersion;
   }
   return null;
 };
