@@ -60,6 +60,10 @@ const walletProviderReducer = (state = initialState, action) =>
           signer: 'signer',
           chainId: 'chainId',
         };
+        draft.connected = false;
+        draft.wallet_props = '0.0000';
+        draft.loading = false;
+        break;
       case CHANGE_DEADLINE:
         draft.transactionDeadLine = action.payload.actualTransactionDeadline;
         draft.slippageValue = action.payload.slippageValue;
