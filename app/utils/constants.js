@@ -16,6 +16,7 @@ export const checkNetVersion = () => {
         ? window.ethereum.networkVersion
         : '';
     }
+    return window.ethereum.networkVersion;
   }
   return null;
 };
@@ -54,11 +55,8 @@ const BSCmainnetTokens = {
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
 };
 const BSC_MAIN_NET_ID = 56;
-alert(
-  `${BSC_MAIN_NET_ID} === ${checkNetVersion()} main Id ${window.ethereum.chainId
-  }`,
-);
-export const TOKENS_CONTRACT =
+
+export const TOKENS_CONTRACT = () =>
   checkNetVersion() == BSC_MAIN_NET_ID ? BSCmainnetTokens : BSCTestnetTokens;
 
 const BSCMainnet = {
