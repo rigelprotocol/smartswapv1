@@ -6,7 +6,7 @@ import WETH9 from 'utils/abis/WETH9.json';
 
 export const checkNetVersion = () => {
   if (window.ethereum) {
-    return window.ethereum.chainId.toString();
+    return window.ethereum.chainId !== undefined ? window.ethereum.chainId.toString() : '';
   }
   return null;
 };
