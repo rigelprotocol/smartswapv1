@@ -35,7 +35,6 @@ const Nav = props => {
           <Link to="/farming">Farming</Link>
         </Text>
         <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
-
           <Text
             cursor="not-allowed"
             className={styles.nav__text}
@@ -55,7 +54,6 @@ const Nav = props => {
             </Link>
           </Text>
         </Tooltip>
-
       </div>
       <div className={styles.wallet__container}>
         {connected ? <Wallet /> : <ConnectWallet />}

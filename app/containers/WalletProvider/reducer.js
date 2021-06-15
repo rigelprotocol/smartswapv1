@@ -12,7 +12,7 @@ import {
   CLEAR_WALLET,
   CLOSE_LOADING_WALLET,
   CHANGE_DEADLINE,
-  CHANGE_BNB
+  CHANGE_BNB,
 } from './constants';
 
 export const initialState = {
@@ -27,7 +27,7 @@ export const initialState = {
   connected: false,
   loading: false,
   transactionDeadLine: '1378747',
-  slippageValue: '383993939993'
+  slippageValue: '383993939993',
 };
 
 /* eslint-disable default-case, no-param-reassign */
