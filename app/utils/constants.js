@@ -6,7 +6,7 @@ import WETH9 from 'utils/abis/WETH9.json';
 
 export const checkNetVersion = () => {
   if (window.ethereum) {
-    return window.ethereum.chainId !== undefined ? window.ethereum.chainId.toString() : '';
+    return (window.ethereum.chainId !== undefined && window.ethereum.chainId !== null) ? window.ethereum.chainId.toString() : '';
   }
   return null;
 };
@@ -45,7 +45,7 @@ const BSCmainnetTokens = {
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
 };
 const BSC_MAIN_NET_ID = window.ethereum !== undefined && window.ethereum.isTrust !== undefined && window.ethereum.isTrust ? '56' : '0x38';
-alert(BSC_MAIN_NET_ID + checkNetVersion())
+
 export const TOKENS_CONTRACT =
   checkNetVersion() === BSC_MAIN_NET_ID.toString()
     ? BSCmainnetTokens
