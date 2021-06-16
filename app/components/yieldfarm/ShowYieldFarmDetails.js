@@ -129,8 +129,8 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
     const checkForApproval = async () => {
       if (content.deposit === 'RGP') {
         setIsPoolRGP(true);
-        const specialPoolApproval = await specailPoolAllowance();
-        changeApprovalButton(true, specialPoolApproval);
+        // const specialPoolApproval = await specailPoolAllowance();
+        // changeApprovalButton(true, specialPoolApproval);
       } else if (content.deposit === 'RGP-BNB') {
         const approvalForRGPBNB = await BNBRGPAllowance();
         const rgpApproval2 = await rgpAllowancePool();

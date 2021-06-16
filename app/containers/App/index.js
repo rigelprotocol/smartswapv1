@@ -47,11 +47,15 @@ const newTheme = {
 const App = props => {
   const { wallet } = props.state;
 
-  if (window.ethereum) {
-    ethereum.on('chainChanged', chainId => {
-      window.location.reload();
-    });
-  }
+  useEffect(() => {
+    if (window.ethereum) {
+      ethereum.on('chainChanged', chainId => {
+        window.location.reload();
+      });
+    }
+    reConnector(props);
+  }, [])
+
 
   useEffect(() => {
     listener(wallet, props);
