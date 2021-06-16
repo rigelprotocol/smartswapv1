@@ -58,6 +58,9 @@ export function FarmingPage(props) {
     getTokenStaked();
     // props.changeRGPValue(wallet)
   }
+  useEffect(() => {
+    refreshTokenStaked();
+  }, [])
 
   const getYieldFarmingData = async () => {
     try {
@@ -84,13 +87,30 @@ export function FarmingPage(props) {
       for (let i = 1; i < poolLength; i++) {
         const poolInfo = await masterChef.poolInfo(i);
         const poolContract = await LiquidityPairInstance(poolInfo[0]);
-        const poolReserves = await poolContract.getReserves();
-        const token0Address = await poolContract.token0();
-        const token1Address = await poolContract.token1();
-        const erc20Token0 = await erc20Token(token0Address);
-        const erc20Token1 = await erc20Token(token1Address);
-        const token0Symbol = await erc20Token0.symbol();
-        const token1Symbol = await erc20Token1.symbol();
+        const [
+          poolReserves,
+          token0Address,
+          token1Address,
+        ] = await Promise.all([
+          poolContract.getReserves(),
+          poolContract.token0(),
+          poolContract.token1(),
+        ])
+        const [
+          erc20Token0,
+          erc20Token1
+        ] = await Promise.all([
+          erc20Token(token0Address),
+          erc20Token(token1Address)
+        ])
+        const [
+          token0Symbol,
+          token1Symbol
+        ] = await Promise.all([
+          erc20Token0.symbol(),
+          erc20Token1.symbol()
+        ])
+
         const pools = {
           poolInfo,
           poolAddress: poolInfo[0],
@@ -128,7 +148,6 @@ export function FarmingPage(props) {
         }
         poolsData = [...poolsData, pools];
       }
-      console.log(poolsData, BNBprice);
       setFarmingData(poolsData);
       const RGPLiquidity = ethers.utils
         .formatUnits(totalStaking.mul(1000 * RGPprice), 21)
@@ -176,17 +195,28 @@ export function FarmingPage(props) {
   const getTokenStaked = async () => {
     try {
       if (wallet.address != '0x') {
+        console.log(wallet.address)
         // const specialPool = await RGPSpecialPool();
         const masterChef = await masterChefContract();
-        const poolOneEarned = await masterChef.pendingRigel(1, wallet.address);
-        const poolTwoEarned = await masterChef.pendingRigel(2, wallet.address);
-        const poolThreeEarned = await masterChef.pendingRigel(
-          3,
-          wallet.address,
-        );
-        const poolOneStaked = await masterChef.userInfo(1, wallet.address);
-        const poolTwoStaked = await masterChef.userInfo(2, wallet.address);
-        const poolThreeStaked = await masterChef.userInfo(3, wallet.address);
+        const [
+          poolOneEarned,
+          poolTwoEarned,
+          poolThreeEarned,
+          poolOneStaked,
+          poolTwoStaked,
+          poolThreeStaked
+        ] = await Promise.all([
+          masterChef.pendingRigel(ethers.BigNumber.from(1), wallet.address),
+          masterChef.pendingRigel(ethers.BigNumber.from(2), wallet.address),
+          masterChef.pendingRigel(
+            ethers.BigNumber.from(3),
+            wallet.address,
+          ),
+          masterChef.userInfo(1, wallet.address),
+          masterChef.userInfo(2, wallet.address),
+          masterChef.userInfo(3, wallet.address)
+        ])
+
         // console.log(formatBigNumber(poolTwoEarned),formatBigNumber(poolOneEarned),formatBigNumber(poolThreeEarned) )
         props.updateTokenStaked([
           { staked: 0.0, earned: 0.0 },
@@ -268,14 +298,19 @@ export function FarmingPage(props) {
 
   useEffect(() => {
     const RGPfarmingFee = async () => {
-      if (wallet.signer !== 'signer') {
-        const masterChef = await masterChefContract();
-        const minFarmingFee = await masterChef.farmingFee();
-        const fee = Web3.utils.fromWei(minFarmingFee.toString());
-        setFarmingFee(fee);
-        props.changeRGPFarmingFee({
-          fee,
-        });
+      try {
+
+        if (wallet.signer !== 'signer') {
+          const masterChef = await masterChefContract();
+          const minFarmingFee = await masterChef.farmingFee();
+          const fee = Web3.utils.fromWei(minFarmingFee.toString());
+          setFarmingFee(fee);
+          props.changeRGPFarmingFee({
+            fee,
+          });
+        }
+      } catch (error) {
+        console.error(error.message)
       }
     };
     RGPfarmingFee();
