@@ -4,7 +4,10 @@ import { ModalBody, ModalHeader } from '@chakra-ui/react';
 import { connect } from 'react-redux';
 import MetaMaskImage from '../../assets/mask.svg';
 import TrustWalletImage from '../../assets/trust.svg';
-import { connectWallet } from '../../containers/WalletProvider/actions';
+import {
+  connectWallet,
+  connectTrustWallet,
+} from '../../containers/WalletProvider/actions';
 
 const Options = ({ connectWallet }) => (
   <>

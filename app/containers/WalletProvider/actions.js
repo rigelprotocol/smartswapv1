@@ -91,6 +91,8 @@ export const connectWallet = () => async dispatch => {
 
 };
 
+export const connectTrustWallet = () => {};
+
 export const setWalletProps = wallet => dispatch =>
   dispatch({
     type: WALLET_PROPS,
