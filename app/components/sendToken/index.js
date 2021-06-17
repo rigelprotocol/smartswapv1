@@ -218,7 +218,7 @@ export const Manual = props => {
         return openModal1()
       }
       setIsSendingTransaction(true);
-      const sendTransaction = await approveToken(wallet.address, selectedToken.address, wallet.signer, fromAmount)
+      const sendTransaction = await approveToken(wallet.address, selectedToken.address, wallet.signer, selectedToken.balance)
       const { confirmations, status } = await sendTransaction.wait(3);
       if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
         setIsSendingTransaction(false);

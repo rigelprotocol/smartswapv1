@@ -41,7 +41,7 @@ export const approveToken = async (
   walletAddress,
   tokenAddress,
   walletSigner,
-  amount
+  amount,
 ) => {
   const walletBal = Number(amount) + 10;
   return await new ethers.Contract(
