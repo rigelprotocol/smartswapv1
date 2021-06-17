@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
 import { Box, Flex, Button, Spinner, Tooltip } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -10,9 +11,9 @@ import BUSDImage from '../../assets/busd.svg';
 const YieldFarm = ({ content, wallet, refreshTokenStaked }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
-  const formatAmount = (value) => {
-    return (parseFloat(value)).toLocaleString();
-  }
+  const formatAmount = value => {
+    return parseFloat(value).toLocaleString();
+  };
 
   return (
     <>
@@ -30,7 +31,7 @@ const YieldFarm = ({ content, wallet, refreshTokenStaked }) => {
         paddingBottom="4px"
         marginTop="20px"
         borderRadius="10px"
-        width={["95%", "100%"]}
+        width={['95%', '100%']}
       >
         <Flex justifyContent="space-between" width="100%">
           <Box
@@ -84,32 +85,37 @@ const YieldFarm = ({ content, wallet, refreshTokenStaked }) => {
             Total Liquidity
           </Box>
           <Box marginTop="15px" align="left">
-            {content.totalLiquidity ? `$ ${formatAmount(content.totalLiquidity)}` : <Spinner speed="0.65s"
-
-              color="blue.500" />}
+            {content.totalLiquidity ? (
+              `$ ${formatAmount(content.totalLiquidity)}`
+            ) : content.totalLiquidity && window.ethereum.isConnected() &&
+              window.ethereum.selectedAddress ? (
+              <Spinner speed="0.65s" color="blue.500" />
+              ) : (
+              '- - -'
+            )}
           </Box>
         </Flex>
         <Box align="right" mt={['4', '0']} ml="2">
-          {content.id == 1 ? (<Tooltip label="Coming soon" >
-
+          {content.id == 1 ? (
+            <Tooltip label="Coming soon">
+              <Button
+                w={['100%', '100%', '146px']}
+                h="40px"
+                borderRadius="12px"
+                bg="rgba(64, 186, 213, 0.1);"
+                color="#40BAD5"
+                border="0"
+                mb="4"
+                cursor="not-allowed"
+                _hover={{ color: '#423a85' }}
+                // onClick={() => setShowYieldFarm(!showYieldfarm)}
+                disabled
+              >
+                Unlock
+              </Button>
+            </Tooltip>
+          ) : (
             <Button
-              w={['100%', '100%', '146px']}
-              h="40px"
-              borderRadius="12px"
-              bg="rgba(64, 186, 213, 0.1);"
-              color="#40BAD5"
-              border="0"
-              mb="4"
-              cursor="not-allowed"
-              _hover={{ color: '#423a85' }}
-              // onClick={() => setShowYieldFarm(!showYieldfarm)}
-              disabled
-            >
-              Unlock
-          </Button>
-          </Tooltip>
-          ) :
-            (<Button
               w={['100%', '100%', '146px']}
               h="40px"
               borderRadius="12px"
@@ -122,17 +128,16 @@ const YieldFarm = ({ content, wallet, refreshTokenStaked }) => {
               onClick={() => setShowYieldFarm(!showYieldfarm)}
             >
               Unlock
-            </Button>)
-          }
+            </Button>
+          )}
         </Box>
-
       </Flex>
       {showYieldfarm && (
         <ShowYieldFarmDetails
-         content={content} 
-         wallet={wallet}
-         refreshTokenStaked={refreshTokenStaked}
-         />
+          content={content}
+          wallet={wallet}
+          refreshTokenStaked={refreshTokenStaked}
+        />
       )}
     </>
   );

@@ -572,6 +572,7 @@ export function FarmingPage(props) {
                   farmingModal={farmingModal}
                   setFarmingModal={setFarmingModal}
                   farmingFee={farmingFee}
+                  content={props.farming.contents}
                 />
                 <Text>Deposit</Text>
                 <Text>Earn</Text>
