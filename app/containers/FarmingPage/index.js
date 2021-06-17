@@ -47,16 +47,34 @@ export function FarmingPage(props) {
   const [farmingData, setFarmingData] = useState([]);
   const [farmingModal, setFarmingModal] = useState(false);
   const [farmingFee, setFarmingFee] = useState(10);
+  const [initialLoad, setInitialLoad] = useState(true)
 
   useEffect(() => {
     refreshTokenStaked();
   }, [wallet]);
 
+  useEffect(() => {
+    const RGPfarmingFee = async () => {
+      if (wallet.signer !== 'signer') {
+        const masterChef = await masterChefContract();
+        const minFarmingFee = await masterChef.farmingFee();
+        const fee = Web3.utils.fromWei(minFarmingFee.toString());
+        setFarmingFee(fee);
+        props.changeRGPFarmingFee({
+          fee,
+        });
+      }
+    };
+    RGPfarmingFee();
+    console.log(initialLoad)
+    initialLoad ? setFarmingModal(true):setFarmingModal(false)
+   
+  }, [wallet]);
   const refreshTokenStaked = () => {
     getYieldFarmingData();
     getFarmTokenBalance();
     getTokenStaked();
-    // props.changeRGPValue(wallet)
+props.changeRGPValue(wallet)
   }
 
   const getYieldFarmingData = async () => {
@@ -203,6 +221,7 @@ export function FarmingPage(props) {
             earned: formatBigNumber(poolThreeEarned),
           },
         ]);
+     setInitialLoad(false)
       }
     } catch (error) {
       console.error(error);
@@ -266,21 +285,6 @@ export function FarmingPage(props) {
     }
   };
 
-  useEffect(() => {
-    const RGPfarmingFee = async () => {
-      if (wallet.signer !== 'signer') {
-        const masterChef = await masterChefContract();
-        const minFarmingFee = await masterChef.farmingFee();
-        const fee = Web3.utils.fromWei(minFarmingFee.toString());
-        setFarmingFee(fee);
-        props.changeRGPFarmingFee({
-          fee,
-        });
-      }
-    };
-    RGPfarmingFee();
-    setFarmingModal(true);
-  }, [wallet]);
 
   const getRGPPrice = async () => {
     const rgpBalance = await getAddressTokenBalance(

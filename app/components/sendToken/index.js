@@ -137,13 +137,13 @@ export const Manual = props => {
   }
   const calculateSlippage = (amountIn) => {
     let calculatedVal
-    if (slippageValue === "1") {
-      calculatedVal = amountIn + (amountIn * parseFloat(slippageValue) / 100)
-    } else if (slippageValue === "0.1") {
-      calculatedVal = amountIn - (amountIn * parseFloat(slippageValue) / 100)
-    } else if (slippageValue === "0.5") {
-      calculatedVal = amountIn
-    }
+    // if (slippageValue === "1") {
+    //   calculatedVal = amountIn + (amountIn * parseFloat(slippageValue) / 100)
+    // } else if (slippageValue === "0.1") {
+    //   calculatedVal = amountIn - (amountIn * parseFloat(slippageValue) / 100)
+    // } else if (slippageValue === "0.5") {
+    //   calculatedVal = amountIn
+    // }
     return calculatedVal.toString()
   }
 

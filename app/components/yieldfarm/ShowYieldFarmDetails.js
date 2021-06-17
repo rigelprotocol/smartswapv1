@@ -488,16 +488,13 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
         } else {
           // await RGPuseStake(depositTokenValue)
         }
-        setDepositValue('confirmed');
-        setTimeout(() => closeModal(), 400);
+        setTimeout(() => close(), 400);
+    setDeposit(true);
         clearInputInfo(setDepositTokenValue,setDepositValue,"Confirm")
       }
     } catch (e) {
       console.log(e);
     }
-    setDeposit(true);
-    setDepositValue('Confirmed');
-    setTimeout(() => close(), 400);
   };
   const confirmUnstakeDeposit = async val => {
     setUnstakeButtonValue('Pending Confirmation');
@@ -512,7 +509,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
         } else if (val === 'RGP-BUSD') {
           await RGPBUSDlpTokensWithdrawal();
         }
-        setUnstakeButtonValue('confirmed');
         setTimeout(() => closeModal(), 400);
         clearInputInfo(setUnstakeToken,setUnstakeButtonValue,"Confirm")
       }
