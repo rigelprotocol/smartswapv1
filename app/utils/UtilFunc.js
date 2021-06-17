@@ -27,26 +27,26 @@ export const changeTransactionDeadline = val => {
     return time;
   }
 }
-export const calculateSlippage = (amountIn,slippageValue) => {
-  let calculatedVal
+// export const calculateSlippage = (amountIn,slippageValue) => {
+//   let calculatedVal
   
-  let BNAmountIn = new BN(amountIn || 0)
-  console.log(BNAmountIn.toString())
-  let val = BNAmountIn.times(slippageValue).div('100')
-console.log(val.toString())
+//   let BNAmountIn = new BN(amountIn || 0)
+//   console.log(BNAmountIn.toString())
+//   let val = BNAmountIn.times(slippageValue).div('100')
+// console.log(val.toString())
 
-  if (slippageValue === "1") {
-calculatedVal = BNAmountIn.plus(val)
-console.log(calculatedVal,amountIn)
-  } else if (slippageValue === "0.1") {
-    calculatedVal = BNAmountIn.minus(val.toString())
-  } else if (slippageValue === "0.5") {
-    calculatedVal = new BN(amountIn)
-    console.log(calculatedVal,amountIn)
-  }
-  console.log({calculatedVal:calculatedVal.toString(),BNAmountIn:BNAmountIn.toString(),amountIn,calculedVal:calculatedVal.toNumber()})
-   return calculatedVal.toString()
-}
+//   if (slippageValue === "1") {
+// calculatedVal = BNAmountIn.plus(val)
+// console.log(calculatedVal,amountIn)
+//   } else if (slippageValue === "0.1") {
+//     calculatedVal = BNAmountIn.minus(val.toString())
+//   } else if (slippageValue === "0.5") {
+//     calculatedVal = new BN(amountIn)
+//     console.log(calculatedVal,amountIn)
+//   }
+//   console.log({calculatedVal:calculatedVal.toString(),BNAmountIn:BNAmountIn.toString(),amountIn,calculedVal:calculatedVal.toNumber()})
+//    return calculatedVal.toString()
+// }
 export const clearInputInfo = (setInput,setButton = false,value) =>{
 setInput('')
 if(setButton){
