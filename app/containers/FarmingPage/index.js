@@ -66,7 +66,7 @@ export function FarmingPage(props) {
       }
     };
     RGPfarmingFee();
-    initialLoad ? setFarmingModal(true):setFarmingModal(false)
+    checkIfInitialLoading()
    
   }, [wallet]);
   const refreshTokenStaked = () => {
@@ -74,6 +74,9 @@ export function FarmingPage(props) {
     getFarmTokenBalance();
     getTokenStaked();
 props.changeRGPValue(wallet)
+  }
+  const checkIfInitialLoading =() =>{
+    initialLoad ? setFarmingModal(true):setFarmingModal(false)
   }
 
   const getYieldFarmingData = async () => {
