@@ -569,7 +569,7 @@ async function updateSendAmount(path, selectedToken, selectedToToken, askAmount,
   if (typeof path[1] != 'undefined') {
     const fromPath = selectedToken.address;
     const toPath = selectedToToken.address;
-    // try {
+    try {
       setShowBox(false);
       setBoxMessage('...');
       const amount = await rout.getAmountsOut(
@@ -579,12 +579,12 @@ async function updateSendAmount(path, selectedToken, selectedToToken, askAmount,
       // if(field != 'to' && )
       return (field != 'to') ? setAmountIn(
         ethers.utils.formatEther(calculateSlippage(amount[1].toString()))) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-    // }
-    // catch (e) {
-    //   setAmountIn('');
-    //   setBoxMessage("Please check your token selection");
-    //   setShowBox(true);
-    // }
+    }
+    catch (e) {
+      setAmountIn('');
+      setBoxMessage("Please check your token selection");
+      setShowBox(true);
+    }
   }
 }
 
