@@ -66,7 +66,6 @@ export function FarmingPage(props) {
       }
     };
     RGPfarmingFee();
-    console.log(initialLoad)
     initialLoad ? setFarmingModal(true):setFarmingModal(false)
    
   }, [wallet]);
