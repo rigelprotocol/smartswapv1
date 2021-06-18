@@ -24,7 +24,6 @@ import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
 import Web3 from 'web3';
 import { approveToken, runApproveCheck, getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
-import { calculateSlippage } from 'utils/UtilFunc'
 import { getPriceForToken } from 'containers/HomePage/service/swapServices';
 import { tokenWhere, tokenAddressWhere, tokenList } from 'utils/constants';
 import { router, WETH, updateOutPutAmountForRouter } from '../../utils/SwapConnect';
@@ -167,16 +166,16 @@ export const Manual = props => {
   const callTransformFunction = async (askAmount = '', field = "from") => {
     if (wallet.signer !== 'signer' && askAmount.length > 0 && path[1]) {
       if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "BUSD") || (selectedToken.symbol === "BUSD" && selectedToToken.symbol === "RGP")) {
-        await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage,slippageValue);
+        await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage);
         setDisableSwapTokenButton(false);
       } else if ((selectedToken.symbol === "RGP" && selectedToToken.symbol === "BNB") || (selectedToken.symbol === "BNB" && selectedToToken.symbol === "RGP")) {
-        await update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage,slippageValue)
+        await update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage)
         setDisableSwapTokenButton(false);
       } else if ((selectedToken.symbol === "WBNB" && selectedToToken.symbol === "BNB") || (selectedToken.symbol === "BNB" && selectedToToken.symbol === "WBNB")) {
-        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field,calculateSlippage,slippageValue);
+        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field,calculateSlippage);
         setDisableSwapTokenButton(false);
       } else {
-        await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage,slippageValue);
+        await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage);
         setDisableSwapTokenButton(false)
       }
       setDisableSwapTokenButton(false)
@@ -565,7 +564,7 @@ export default connect(
   { notify, changeDeadlineValue, changeRGPValue },
 )(Manual);
 
-async function updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage,slippageValue) {
+async function updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage) {
   const rout = await updateOutPutAmountForRouter();
   if (typeof path[1] != 'undefined') {
     const fromPath = selectedToken.address;
@@ -579,7 +578,7 @@ async function updateSendAmount(path, selectedToken, selectedToToken, askAmount,
       );
       // if(field != 'to' && )
       return (field != 'to') ? setAmountIn(
-        ethers.utils.formatEther(calculateSlippage(amount[1].toString(),slippageValue),21)) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+        ethers.utils.formatEther(calculateSlippage(amount[1].toString()))) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     // }
     // catch (e) {
     //   setAmountIn('');
@@ -589,7 +588,7 @@ async function updateSendAmount(path, selectedToken, selectedToToken, askAmount,
   }
 }
 
-async function update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage,slippageValue) {
+async function update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage) {
   const routRGPETH = await updateOutPutAmountForRouter();
   if (typeof path[1] != 'undefined') {
     const fromPath = selectedToken.address
@@ -603,7 +602,7 @@ async function update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, a
       );
       // * calculateSlippage()
       return (field != 'to') ? setAmountIn(
-        ethers.utils.formatEther(calculateSlippage(amount[1].toString(),slippageValue),21).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+        ethers.utils.formatEther(calculateSlippage(amount[1].toString())).toString()) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
       setBoxMessage("Please check your token selection");
