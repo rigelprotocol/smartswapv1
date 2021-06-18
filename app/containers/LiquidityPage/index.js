@@ -23,6 +23,7 @@ import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { tokenList, tokenWhere, SMART_SWAP } from '../../utils/constants';
+import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
 import { isNotEmpty } from "../../utils/UtilFunc";
 
@@ -501,6 +502,7 @@ export function LiquidityPage(props) {
     modal4Disclosure.onClose();
     setPopupText("wait you will be redirected")
     await getAllLiquidities()
+    props.changeRGPValue(wallet)
     console.log(liquidities)
 
     console.log(fromSelectedToken, toSelectedToken)
@@ -879,5 +881,5 @@ const mapStateToProps = ({ wallet }) => ({ wallet })
 
 export default connect(
   mapStateToProps,
-  { showErrorMessage, notify },
+  { showErrorMessage, notify,changeRGPValue },
 )(LiquidityPage);

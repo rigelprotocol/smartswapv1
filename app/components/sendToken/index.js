@@ -172,7 +172,7 @@ export const Manual = props => {
         await update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage)
         setDisableSwapTokenButton(false);
       } else if ((selectedToken.symbol === "WBNB" && selectedToToken.symbol === "BNB") || (selectedToken.symbol === "BNB" && selectedToToken.symbol === "WBNB")) {
-        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field, calculateSlippage);
+        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field,calculateSlippage);
         setDisableSwapTokenButton(false);
       } else {
         await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage);
