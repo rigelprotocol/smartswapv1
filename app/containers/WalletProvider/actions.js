@@ -126,7 +126,6 @@ export const changeRGPValue = wallet => async dispatch => {
 }
 
 export const getTokenAddress = (chainId) => {
-  alert(chainId)
   if (chainId === '0x38') {
     return '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
   }

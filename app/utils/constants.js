@@ -5,7 +5,7 @@ import BUSD from 'utils/abis/BUSD.json';
 import WETH9 from 'utils/abis/WETH9.json';
 
 export const checkNetVersion = () => {
-  if (window.ethereum) {
+  if (window.ethereum && window.ethereum.chainId !== null) {
     return window.ethereum.chainId.toString();
   }
   return null;
