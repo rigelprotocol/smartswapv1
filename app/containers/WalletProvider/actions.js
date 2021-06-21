@@ -16,7 +16,6 @@ import {
 import { ethers } from 'ethers';
 import { TOKENS_CONTRACT } from 'utils/constants';
 import { formatBalance } from 'utils/UtilFunc';
-import { assignRef } from '@chakra-ui/react';
 import {
   WALLET_CONNECTED,
   WALLET_PROPS,
@@ -33,7 +32,7 @@ export const reConnect = (wallet) => async dispatch => {
     const ethProvider = await provider();
     const walletSigner = await signer();
     const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress))).toString();
-    const rgpBalance = await getAddressTokenBalance(selectedAddress, TOKENS_CONTRACT().RGP, walletSigner);
+    const rgpBalance = await getAddressTokenBalance(selectedAddress, getTokenAddress(chainId), walletSigner);
     dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: selectedAddress,
@@ -63,13 +62,13 @@ export const connectWallet = () => async dispatch => {
     const res = await connectMetaMask();
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
     const balance = await ethProvider.getBalance(res[0]);
-    const rgpBalance = await getAddressTokenBalance(res[0], TOKENS_CONTRACT().RGP, walletSigner);
     dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: res[0], balance: formatBalance(ethers.utils.formatEther(balance)),
         provider: ethProvider, signer: walletSigner, chainId,
       },
     });
+    const rgpBalance = await getAddressTokenBalance(res[0], getTokenAddress(chainId), walletSigner);
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
     return dispatch({
       type: NOTICE, message: {
@@ -112,15 +111,23 @@ export const disconnectWallet = () => dispatch => {
 export const changeDeadlineValue = value => dispatch => {
   dispatch({ type: CHANGE_DEADLINE, payload: value })
 }
-export const changeRGPValue = wallet =>async dispatch => {
-  try{
+export const changeRGPValue = wallet => async dispatch => {
+  try {
     const { address } = wallet;
     const ethProvider = await provider();
-    const rgpBalance = await getAddressTokenBalance(wallet.address, TOKENS_CONTRACT().RGP, wallet.signer);
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    const rgpBalance = await getAddressTokenBalance(wallet.address, getTokenAddress(chainId), wallet.signer);
     const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(address))).toString();
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
-    dispatch({ type: CHANGE_BNB, payload: { balance }})
-  }catch{
+    dispatch({ type: CHANGE_BNB, payload: { balance } })
+  } catch {
     console.log("error while trying to refresh data")
   }
+}
+
+export const getTokenAddress = (chainId) => {
+  if (chainId === '0x38') {
+    return '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
+  }
+  return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
 }
