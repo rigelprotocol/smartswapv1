@@ -58,7 +58,7 @@ export const initialState = {
     },
     {
       id: '3',
-      img: 'busd.svg',
+      img: 'rgp.svg',
       //changed from
       // deposit: 'RGP-BUSD', to
       deposit: "RGP-BUSD",
@@ -77,7 +77,7 @@ export const initialState = {
     },
     {
       id: '4',
-      img: 'busd.svg',
+      img: 'rgp.svg',
       //changed from
       // deposit: 'BNB-BUSD', to
       deposit: "BNB-BUSD",
