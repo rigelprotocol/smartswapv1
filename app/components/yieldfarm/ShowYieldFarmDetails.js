@@ -407,7 +407,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
         const { confirmations, status } = await fetchTransactionData(withdraw);
         callRefreshFarm(confirmations, status);
       } catch (error) {
-        console.error(error);
       }
     }
   };
