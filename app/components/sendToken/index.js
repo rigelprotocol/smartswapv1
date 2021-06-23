@@ -22,6 +22,7 @@ import { Button } from '@chakra-ui/button';
 import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
+import { useHistory } from "react-router-dom";
 import Web3 from 'web3';
 import { approveToken, runApproveCheck, getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { getPriceForToken } from 'containers/HomePage/service/swapServices';
@@ -36,6 +37,7 @@ import ShowMessageBox from "../Toast/ShowMessageBox";
 import ConfirmSwapBox from './ConfirmSwapBox';
 import { changeDeadlineValue, changeRGPValue } from '../../containers/WalletProvider/actions';
 export const Manual = props => {
+  const history = useHistory()
   const { wallet } = props.wallet;
   const [fromAmount, setFromAmount] = useState('');
   const [path, setPath] = useState([{ fromPath: tokenAddressWhere('RGP'), token: "RGP" }]);
@@ -60,6 +62,20 @@ export const Manual = props => {
     (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])
+  useEffect(() => {
+    // if(selectedToToken !== "SELECT A TOKEN"){
+    //   history.push("/swap/BUSD-BNB")
+    // }
+    // if(selectedToken.name!=="SELECT A TOKEN" && selectedToToken !== "SELECT A TOKEN"){
+    //   history.push("/swap/BUSD-BNB")
+    // }
+   if(selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN"){
+     history.push(`/swap/${selectedToken.symbol}-${selectedToToken.symbol}`)
+   }else{
+    history.push("/swap")
+   }
+    
+  }, [selectedToken, selectedToToken])
 
   useEffect(() => {
     changeData()
@@ -569,7 +585,7 @@ async function updateSendAmount(path, selectedToken, selectedToToken, askAmount,
   if (typeof path[1] != 'undefined') {
     const fromPath = selectedToken.address;
     const toPath = selectedToToken.address;
-    // try {
+    try {
       setShowBox(false);
       setBoxMessage('...');
       const amount = await rout.getAmountsOut(
@@ -579,12 +595,12 @@ async function updateSendAmount(path, selectedToken, selectedToToken, askAmount,
       // if(field != 'to' && )
       return (field != 'to') ? setAmountIn(
         ethers.utils.formatEther(calculateSlippage(amount[1].toString()))) : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-    // }
-    // catch (e) {
-    //   setAmountIn('');
-    //   setBoxMessage("Please check your token selection");
-    //   setShowBox(true);
-    // }
+    }
+    catch (e) {
+      setAmountIn('');
+      setBoxMessage("Please check your token selection");
+      setShowBox(true);
+    }
   }
 }
 
