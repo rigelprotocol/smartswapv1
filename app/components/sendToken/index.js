@@ -63,12 +63,6 @@ export const Manual = props => {
     checkForAllVariables()
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])
   useEffect(() => {
-    // if(selectedToToken !== "SELECT A TOKEN"){
-    //   history.push("/swap/BUSD-BNB")
-    // }
-    // if(selectedToken.name!=="SELECT A TOKEN" && selectedToToken !== "SELECT A TOKEN"){
-    //   history.push("/swap/BUSD-BNB")
-    // }
    if(selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN"){
      history.push(`/swap/${selectedToken.symbol}-${selectedToToken.symbol}`)
    }else{
