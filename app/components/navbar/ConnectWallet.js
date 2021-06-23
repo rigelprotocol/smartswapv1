@@ -11,6 +11,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Tooltip,
   ModalCloseButton,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
@@ -74,20 +75,25 @@ const Wallet = ({ loading, show, connectingWallet }) => {
               Binance Smart Chain Network
             </Text>
           </MenuItem>
-          <MenuItem
-            onClick={open}
-            _hover={{ background: '#29235E' }}
-            _focus={{ outline: 0, background: '#29235E' }}
-            cursor="pointer"
-            rounded="xl"
-            fontSize="14px"
-            className={styles.trade__button__item}
-          >
-            <Ethereum />
-            <Text ml={5} fontSize="sm" color="gray.400">
-              Ethereum Network
-            </Text>
-          </MenuItem>
+          <Tooltip label="Coming Soon" aria-label="A tooltip">
+            <MenuItem
+              onClick={e => {
+                e.preventDefault();
+              }}
+              _hover={{ background: '#29235E' }}
+              _focus={{ outline: 0, background: '#29235E' }}
+              cursor="not-allowed"
+              rounded="xl"
+              fontSize="14px"
+              opacity="0.465"
+              className={styles.trade__button__item}
+            >
+              <Ethereum />
+              <Text ml={5} fontSize="sm" color="gray.400">
+                Ethereum Network
+              </Text>
+            </MenuItem>
+          </Tooltip>
         </MenuList>
       </Menu>
       <Modal isOpen={modal1Disclosure.isOpen} onClose={close} isCentered>

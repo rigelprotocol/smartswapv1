@@ -40,8 +40,8 @@ const Options = ({ connectWallet }) => (
         justifyContent="space-between"
         p={8}
         mt={5}
-        onClick={() => {
-          connectTrustWallet();
+        onClick={async () => {
+          connectWallet();
         }}
         rounded="2xl"
       >

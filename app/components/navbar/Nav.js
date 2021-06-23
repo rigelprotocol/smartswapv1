@@ -47,14 +47,11 @@ const Nav = props => {
                 : 'white'
             }
           >
-
             <Link
               // to="/margin-trading"
               cursor="not-allowed"
             >
-
               Margin Trading
-
             </Link>
           </Text>
         </Tooltip>

@@ -403,9 +403,10 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
     if (wallet.signer !== 'signer' && pId != 0) {
       try {
         const lpTokens = await masterChefContract();
-        await lpTokens.withdraw(pId, 0);
+        const withdraw = await lpTokens.withdraw(pId, 0);
+        const { confirmations, status } = await fetchTransactionData(withdraw);
+        callRefreshFarm(confirmations, status);
       } catch (error) {
-        console.error(error);
       }
     }
   };
@@ -489,8 +490,8 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
           // await RGPuseStake(depositTokenValue)
         }
         setTimeout(() => close(), 400);
-    setDeposit(true);
-        clearInputInfo(setDepositTokenValue,setDepositValue,"Confirm")
+        setDeposit(true);
+        clearInputInfo(setDepositTokenValue, setDepositValue, "Confirm")
       }
     } catch (e) {
       console.log(e);
@@ -510,7 +511,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
           await RGPBUSDlpTokensWithdrawal();
         }
         setTimeout(() => closeModal(), 400);
-        clearInputInfo(setUnstakeToken,setUnstakeButtonValue,"Confirm")
+        clearInputInfo(setUnstakeToken, setUnstakeButtonValue, "Confirm")
       }
     } catch (e) {
       console.log(
