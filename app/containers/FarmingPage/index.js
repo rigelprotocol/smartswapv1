@@ -12,7 +12,9 @@ import Web3 from 'web3';
 import { Box, Flex, Text, useDisclosure } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
+import InfoModal from 'components/modal/InfoModal'
 import FarmingPageModal from 'components/yieldfarm/FarmingPageModal';
+import RGPFarmInfo from 'components/yieldfarm/RGPFarmInfo';
 import {
   masterChefContract,
   rigelToken,
@@ -26,7 +28,7 @@ import {
   smartSwapLPTokenPoolThree,
 } from 'utils/SwapConnect';
 import { tokenList } from '../../utils/constants';
-
+import { useDisclosure as useModalDisclosure } from "@chakra-ui/react";
 import { changeRGPValue } from '../WalletProvider/actions';
 import {
   changeFarmingContent,
@@ -48,6 +50,8 @@ export function FarmingPage(props) {
   const [farmingModal, setFarmingModal] = useState(false);
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true)
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useModalDisclosure()
+
 
   useEffect(() => {
     refreshTokenStaked();
@@ -67,16 +71,16 @@ export function FarmingPage(props) {
     };
     RGPfarmingFee();
     checkIfInitialLoading()
-   
+
   }, [wallet]);
   const refreshTokenStaked = () => {
     getYieldFarmingData();
     getFarmTokenBalance();
     getTokenStaked();
-props.changeRGPValue(wallet)
+    props.changeRGPValue(wallet)
   }
-  const checkIfInitialLoading =() =>{
-    initialLoad ? setFarmingModal(true):setFarmingModal(false)
+  const checkIfInitialLoading = () => {
+    initialLoad ? setFarmingModal(true) : setFarmingModal(false)
   }
 
   const getYieldFarmingData = async () => {
@@ -223,7 +227,7 @@ props.changeRGPValue(wallet)
             earned: formatBigNumber(poolThreeEarned),
           },
         ]);
-     setInitialLoad(false)
+        setInitialLoad(false)
       }
     } catch (error) {
       console.error(error);
@@ -514,6 +518,13 @@ props.changeRGPValue(wallet)
   return (
     <div>
       <Layout title="Farming Page">
+        <InfoModal
+          isOpenModal={isOpenModal}
+          onCloseModal={onCloseModal}
+          title="RGP STAKING POOL IS COMING SOON..."
+        >
+          <RGPFarmInfo />
+        </ InfoModal>
         <Flex
           mx={5}
           justifyContent="center"
@@ -552,6 +563,8 @@ props.changeRGPValue(wallet)
               </Flex>
               {props.farming.contents.map(content => (
                 <YieldFarm
+
+                  onOpenModal={onOpenModal}
                   content={content}
                   key={content.id}
                   wallet={wallet}
