@@ -39,6 +39,7 @@ const Index = ({
         >
           Add Liquidity
         </Button>
+        {/* CREATE A NEW BUTTON TO ALLOW USERS CREATE NEW PAIR, THIS WILL STILL LEAD TO THE ADDLIQUIDITYPAGE */}
       </Box>
 
       <Flex

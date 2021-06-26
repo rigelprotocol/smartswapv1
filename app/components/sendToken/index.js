@@ -161,6 +161,8 @@ export const Manual = props => {
 
   const checkForAllVariables = () => {
     if (isLoggedIn() && fromAmount > 0 && selectedToToken.name !== 'Select a token') {
+      // CHECK IF THERE IS ENOUGH LIQUIDIY ON THE OAIR, BY CALLING GETPAIR(), THEN LiquidityPairInstance(pairAddress), THEN TOTALSUPPLY TO GET THE TOTALSUPPLIED ON THAT PAIR. IF IT IS INSUFFICIENT, SHOW A POPUP TELLING THEM.
+      // IF IT DOES NOT EXIST, SHOW A MODAL WITH A BUTTON(WILL LEAD TO THE ADDLIQUIDITY PAGE) THAT IT DOESN'T EXIST, BUT THEY CAN ADD.
       setDisableSwapTokenButton(false)
       return true;
     }

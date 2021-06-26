@@ -479,6 +479,9 @@ export function LiquidityPage(props) {
   }
 
   const open = async () => {
+    // CHECK IF THERE IS LIQUIDITY ON THIS, BY CALLING THE GETPATR FUNCTION ON SMARTFACTORY
+    // IF IT DOES CONTINUE WITH THE PROCESS
+    // IF NOT SHOW A MODAL THAT TELLS THE USER TO ADD LIQUIDITY TO THIS SET OF PAIRS 
     await getPriceForToken()
     modal1Disclosure.onOpen();
   };
