@@ -69,7 +69,9 @@ export const connectWallet = () => async dispatch => {
         provider: ethProvider, signer: walletSigner, chainId,
       },
     });
-    const rgpBalance = await getAddressTokenBalance(res[0], getTokenAddress(chainId), walletSigner);
+    const rgpAddress = getTokenAddress(chainId);
+    alert(rgpAddress);
+    const rgpBalance = await getAddressTokenBalance(res[0], rgpAddress, walletSigner);
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
     return dispatch({
       type: NOTICE, message: {
