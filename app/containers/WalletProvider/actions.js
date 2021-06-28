@@ -128,13 +128,10 @@ export const changeRGPValue = wallet => async dispatch => {
 
 export const getTokenAddress = (chainId) => {
   if (chainId === '0x38' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
-    console.log('chan-id for Main BSC Network')
     return '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
   }
   if (chainId === '0x61') {
-    console.log('chan-id for Test Network')
     return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
   }
-  console.log('Found Trust Wallet')
   return window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38' && '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
 }
