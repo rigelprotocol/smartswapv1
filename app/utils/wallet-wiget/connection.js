@@ -92,33 +92,34 @@ export function disconnectUser() {
 }
 // Object.fromEntries( Object.entries(TOKENS_CONTRACT).filter(([key, value]) => key === symbol))
 export const setupNetwork = async () => {
+  console.log('Check Network')
   const walletProvider = window.ethereum;
-  if (walletProvider !== undefined) {
+  if (walletProvider !== undefined && walletProvider.isTrust) {
     const chainId = 38;
     const deviceChainId = await window.ethereum.request({
       method: 'eth_chainId',
     });
     if (deviceChainId !== '0x38') {
       try {
-        const req = await walletProvider.request({
-          method: 'wallet_switchEthereumChain',
+        await walletProvider.request({
+          method: 'wallet_addEthereumChain',
           params: [
             {
               chainId: `0x${chainId.toString()}`,
-              // chainName: 'Smart Chain',
-              // nativeCurrency: {
-              //   name: 'BNB',
-              //   symbol: 'bnb',
-              //   decimals: 18,
-              // },
-              // rpcUrls: ['https://bsc-dataseed.binance.org/'],
-              // blockExplorerUrls: ['https://bscscan.com/'],
+              chainName: 'Smart Chain',
+              nativeCurrency: {
+                name: 'BNB',
+                symbol: 'bnb',
+                decimals: 18,
+              },
+              rpcUrls: ['https://bsc-dataseed.binance.org/'],
+              blockExplorerUrls: ['https://bscscan.com/'],
             },
           ],
         });
-        alert(req);
         return true;
       } catch (error) {
+        console.error(error);
         return false;
       }
     }

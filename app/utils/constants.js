@@ -44,10 +44,9 @@ const BSCmainnetTokens = {
   ETH: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
 };
-let BSC_MAIN_NET_ID;
-try {
-  BSC_MAIN_NET_ID = window.ethereum.isTrust ? '56' : '0x38';
-} catch (e) { }
+const BSC_MAIN_NET_ID =
+  window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
+
 export const TOKENS_CONTRACT =
   checkNetVersion() === BSC_MAIN_NET_ID.toString()
     ? BSCmainnetTokens
