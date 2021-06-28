@@ -70,7 +70,6 @@ export const connectWallet = () => async dispatch => {
       },
     });
     const rgpAddress = getTokenAddress(chainId);
-    alert(rgpAddress);
     const rgpBalance = await getAddressTokenBalance(res[0], rgpAddress, walletSigner);
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
     return dispatch({
