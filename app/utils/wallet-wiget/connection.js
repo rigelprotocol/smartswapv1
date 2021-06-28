@@ -88,7 +88,6 @@ export const connectionEventListener = wallet => dispatch => {
 };
 
 export function disconnectUser() {
-  console.log('>>>> Hello A ll');
 }
 // Object.fromEntries( Object.entries(TOKENS_CONTRACT).filter(([key, value]) => key === symbol))
 export const setupNetwork = async () => {
