@@ -29,6 +29,7 @@ const AddLiquidity = ({
   setFromValue,
   toValue,
   setFromAddress,
+  addLiquidityPageHeading,
   setToAddress,
   approveToToken,
   approveFromToken,
@@ -49,12 +50,17 @@ const AddLiquidity = ({
   closeModal4,
   closeModal5,
   closeModal6,
+  closeModal7,
   modal1Disclosure,
   modal2Disclosure,
   modal3Disclosure,
   modal4Disclosure,
   modal5Disclosure,
   modal6Disclosure,
+  modal7Disclosure,
+  changeButtonCreateNewTokenPair,
+  newTokenPairButton,
+  createNewTokenPair,
   showApprovalBox,
   hasAllowedToToken,
   hasAllowedFromToken,
@@ -71,7 +77,7 @@ const AddLiquidity = ({
     {isNewUser ? <ApproveBox popupText={popupText} /> : <div />}
     <Flex justifyContent="space-between" alignItems="center" px={4}>
       <ArrowLeft cursor="pointer" onClick={() => back('INDEX')} />
-      <Text color="gray.200">Add Liquidity</Text>
+      <Text color="gray.200">{addLiquidityPageHeading}</Text>
       <Question />
     </Flex>
 
@@ -244,7 +250,7 @@ const AddLiquidity = ({
             height="50px"
             fontSize="16px"
             _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-            onClick={confirmingSupply}
+            onClick={newTokenPairButton ? createNewTokenPair : confirmingSupply}
           >
             Confirm Supply
           </Button>
@@ -424,6 +430,61 @@ const AddLiquidity = ({
         </ModalBody>
       </ModalContent>
     </Modal>
+    <Modal isOpen={modal7Disclosure.isOpen} onClose={closeModal7} isCentered>
+      <ModalOverlay />
+      <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
+ <ModalHeader fontSize="18px" fontWeight="regular" align="center">
+          Add Pairs
+        </ModalHeader>
+      <ModalBody>
+          <Text color="gray.400">
+            There is no liquidity on this pair, will you like to add Liquidity.
+          </Text>
+          <Flex justifyContent="space-between" flexDirection={["column","row","column","row"]}>
+              <Button
+               d="block"
+               w={["100%","48%","100%","48%"]}
+               marginTop={["20px","0px","20px","0px"]}
+               h="50px"
+               color="#40BAD5"
+               border="none"
+               fontWeight="regular"
+               fontSize="lg"
+               cursor="pointer"
+               rounded="2xl"
+               bg="rgba(64, 186, 213,0.25)"
+               borderColor="#40BAD5"
+               _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+               _active={{ outline: '#29235E', background: '#29235E' }}
+                onClick={changeButtonCreateNewTokenPair}
+              >
+                YES
+              </Button>
+          <Button
+                 d="block"
+                 w={["100%","48%","100%","48%"]}
+                 marginTop={["20px","0px","20px","0px"]}
+                 _hover={{ borderColor: 'rgba(64, 186, 213,0.35)' }}
+                 h="50px"
+                 color="#40BAD5"
+                 border="2px solid #40BAD5"
+                 fontWeight="regular"
+                 fontSize="lg"
+                 cursor="pointer"
+                 rounded="2xl"
+                 bg="transparent"
+                _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
+                onClick={closeModal7}
+              >
+                NO
+              </Button>
+       
+          </Flex>
+         </ModalBody>
+      
+      </ModalContent>
+    </Modal>
+  
   </Box>
 );
 AddLiquidity.propTypes = {
@@ -435,6 +496,7 @@ AddLiquidity.propTypes = {
   approveFromToken: PropTypes.func,
   setToAddress: PropTypes.func,
   fromValue: PropTypes.string.isRequired,
+  addLiquidityPageHeading: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
   setFromSelectedToken: PropTypes.func.isRequired,
   fromSelectedToken: PropTypes.object.isRequired,
@@ -446,6 +508,7 @@ AddLiquidity.propTypes = {
   confirmingSupply: PropTypes.func.isRequired,
   buttonValue: PropTypes.string.isRequired,
   openSupplyButton: PropTypes.bool.isRequired,
+  newTokenPairButton: PropTypes.bool.isRequired,
   open: PropTypes.func.isRequired,
   closeModal1: PropTypes.func.isRequired,
   closeModal2: PropTypes.func.isRequired,
@@ -453,12 +516,16 @@ AddLiquidity.propTypes = {
   closeModal4: PropTypes.func.isRequired,
   closeModal5: PropTypes.func.isRequired,
   closeModal6: PropTypes.func.isRequired,
+  closeModal7: PropTypes.func.isRequired,
+  changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
+  createNewTokenPair: PropTypes.func.isRequired,
   modal1Disclosure: PropTypes.object,
   modal2Disclosure: PropTypes.object,
   modal3Disclosure: PropTypes.object,
   modal4Disclosure: PropTypes.object,
   modal5Disclosure: PropTypes.object,
   modal6Disclosure: PropTypes.object,
+  modal7Disclosure: PropTypes.object,
   approveLiquidityToken: PropTypes.func.isRequired,
   tokenFromValue: PropTypes.string.isRequired,
   tokenToValue: PropTypes.string.isRequired,

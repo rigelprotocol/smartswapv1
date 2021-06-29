@@ -63,6 +63,8 @@ export function LiquidityPage(props) {
   const [liquidityPairRatio, setLiquidityPairRatio] = useState(0)
   const [hasApprovedLPTokens, setHasApprovedLPTokens] = useState(false)
   const [approving, setApproving] = useState(false)
+  const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
+  const [newTokenPairButton, setNewTokenPairButton] = useState(false)
 
   let timer1
   useEffect(() => (
@@ -80,13 +82,25 @@ export function LiquidityPage(props) {
 
 
   useEffect(() => {
-    if (fromAddress && toAddress) {
-      getLiquidityPairRatio();
+    if ((fromAddress && toAddress)) {
+     checkIfLiquidityPairExist()
+      // getLiquidityPairRatio();
 
     }
 
   }, [fromSelectedToken, toSelectedToken])
 
+  const checkIfLiquidityPairExist = async () => {
+      const factory = await SmartFactory();
+    const fromPath = ethers.utils.getAddress(fromAddress);
+    const toPath = ethers.utils.getAddress(toAddress);
+    const LPAddress = await factory.getPair(toPath,fromPath)
+if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
+  getLiquidityPairRatio()
+}else{
+  openModal7()
+}
+  }
   const getLiquidityPairRatio = async () => {
     try {
       const factory = await SmartFactory();
@@ -110,6 +124,25 @@ export function LiquidityPage(props) {
 
   }
 
+  const changeButtonCreateNewTokenPair = async () =>{
+    closeModal7()
+    setNewTokenPairButton(true)
+    setButtonValue("Create a new pool")
+    
+  }
+  const createNewTokenPair = async () =>{
+    alert("creating")
+      try{
+        const factory = await SmartFactory();
+      const fromPath = ethers.utils.getAddress(fromAddress);
+      const toPath = ethers.utils.getAddress(toAddress);
+      const LPAddress = await factory.createPair(toPath, fromPath);
+      console.log(LPAddress)
+      }catch(e){
+        props.showErrorMessage(e)
+      }
+      
+  }
 
   useEffect(() => {
     const checkData = async () => {
@@ -292,6 +325,7 @@ export function LiquidityPage(props) {
   const modal4Disclosure = useDisclosure();
   const modal5Disclosure = useDisclosure();
   const modal6Disclosure = useDisclosure();
+  const modal7Disclosure = useDisclosure();
 
   function addData(data) {
     setLiquidities([...liquidities, data])
@@ -536,6 +570,13 @@ export function LiquidityPage(props) {
     modal4Disclosure.onOpen();
   };
 
+  const openModal7 = () =>{
+    modal7Disclosure.onOpen()
+  }
+  const closeModal7 = () =>{
+    modal7Disclosure.onClose()
+  }
+
   const closeAllModals = async (val = false) => {
 
     setPopupText("Waiting for confirmation from metamask. It is better you don't leave this page");
@@ -570,8 +611,9 @@ export function LiquidityPage(props) {
   const back = (tab) => {
     setLiquidityTab(tab)
   }
-  const addLiquidityPage = () => {
+  const addLiquidityPage = (head) => {
     setLiquidityTab("ADDLIQUIDITY")
+setAddLiquidityPageHeading(head)
   }
   const getAmountForLiquidity = async (value) => {
     const convertToEther = ethers.utils.parseEther(value.toString())
@@ -838,7 +880,11 @@ export function LiquidityPage(props) {
               closeModal4={closeModal4}
               closeModal5={closeModal5}
               closeModal6={closeModal6}
+              closeModal7={closeModal7}
+              changeButtonCreateNewTokenPair={changeButtonCreateNewTokenPair}
               buttonValue={buttonValue}
+              newTokenPairButton={newTokenPairButton}
+              createNewTokenPair={createNewTokenPair}
               setToAddress={setToAddress}
               approveToToken={approveToToken}
               approveFromToken={approveFromToken}
@@ -847,6 +893,7 @@ export function LiquidityPage(props) {
               setFromAddress={setFromAddress}
               selectingToken={selectingToken}
               toSelectedToken={toSelectedToken}
+              addLiquidityPageHeading={addLiquidityPageHeading}
               approveBNBPopup={approveBNBPopup}
               displayBNBbutton={displayBNBbutton}
               modal1Disclosure={modal1Disclosure}
@@ -855,6 +902,7 @@ export function LiquidityPage(props) {
               modal4Disclosure={modal4Disclosure}
               modal5Disclosure={modal5Disclosure}
               modal6Disclosure={modal6Disclosure}
+              modal7Disclosure={modal7Disclosure}
               openSupplyButton={openSupplyButton}
               approveTokenSpending={approveTokenSpending}
               confirmingSupply={confirmingSupply}

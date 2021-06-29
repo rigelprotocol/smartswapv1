@@ -21,9 +21,11 @@ const Index = ({
       rounded="lg"
     >
       <Box mt={5} p={5}>
+        <Flex justifyContent="space-between" flexDirection={["column","row","column","row"]}>
         <Button
           d="block"
-          w="100%"
+          w={["100%","48%","100%","48%"]}
+          marginTop={["20px","0px","20px","0px"]}
           h="50px"
           color="#40BAD5"
           border="none"
@@ -35,10 +37,29 @@ const Index = ({
           borderColor="#40BAD5"
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
-          onClick={() => addLiquidityPage()}
+          onClick={() => addLiquidityPage("Add Liquidity")}
         >
           Add Liquidity
         </Button>
+        <Button
+         d="block"
+         w={["100%","48%","100%","48%"]}
+         marginTop={["20px","0px","20px","0px"]}
+         _hover={{ borderColor: 'rgba(64, 186, 213,0.35)' }}
+         h="50px"
+         color="#40BAD5"
+         border="2px solid #40BAD5"
+         fontWeight="regular"
+         fontSize="lg"
+         cursor="pointer"
+         rounded="2xl"
+         bg="transparent"
+         onClick={() => addLiquidityPage("Create a new pair")}
+         >
+          Create a pair
+        </Button>
+        </Flex>
+        
         {/* CREATE A NEW BUTTON TO ALLOW USERS CREATE NEW PAIR, THIS WILL STILL LEAD TO THE ADDLIQUIDITYPAGE */}
       </Box>
 
