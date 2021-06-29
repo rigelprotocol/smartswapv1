@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 // @ts-nocheck
 /* eslint-disable prettier/prettier */
 /*
@@ -68,7 +69,8 @@ export const connectWallet = () => async dispatch => {
         provider: ethProvider, signer: walletSigner, chainId,
       },
     });
-    const rgpBalance = await getAddressTokenBalance(res[0], getTokenAddress(chainId), walletSigner);
+    const rgpAddress = getTokenAddress(chainId);
+    const rgpBalance = await getAddressTokenBalance(res[0], rgpAddress, walletSigner);
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
     return dispatch({
       type: NOTICE, message: {
@@ -126,8 +128,11 @@ export const changeRGPValue = wallet => async dispatch => {
 }
 
 export const getTokenAddress = (chainId) => {
-  if (chainId === '0x38') {
+  if (chainId === '0x38' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
     return '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
   }
-  return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
+  if (chainId === '0x61') {
+    return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
+  }
+  return window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38' && '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
 }
