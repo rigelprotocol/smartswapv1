@@ -7,7 +7,7 @@ import ETHImage from '../../assets/eth.svg';
 import RGPImage from '../../assets/rgp.svg';
 import BUSDImage from '../../assets/busd.svg';
 
-const YieldFarm = ({ content, wallet, refreshTokenStaked }) => {
+const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
   const formatAmount = (value) => {
@@ -100,13 +100,14 @@ const YieldFarm = ({ content, wallet, refreshTokenStaked }) => {
               color="#40BAD5"
               border="0"
               mb="4"
-              cursor="not-allowed"
+
               _hover={{ color: '#423a85' }}
               // onClick={() => setShowYieldFarm(!showYieldfarm)}
-              disabled
+              onClick={onOpenModal}
+
             >
               Unlock
-          </Button>
+            </Button>
           </Tooltip>
           ) :
             (<Button
@@ -129,10 +130,10 @@ const YieldFarm = ({ content, wallet, refreshTokenStaked }) => {
       </Flex>
       {showYieldfarm && (
         <ShowYieldFarmDetails
-         content={content} 
-         wallet={wallet}
-         refreshTokenStaked={refreshTokenStaked}
-         />
+          content={content}
+          wallet={wallet}
+          refreshTokenStaked={refreshTokenStaked}
+        />
       )}
     </>
   );

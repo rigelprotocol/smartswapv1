@@ -1,8 +1,10 @@
+import { ethers,BigNumber } from 'ethers';
+import BN from 'bignumber.js'
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 
 export const formatBalance = balance => {
-  if (balance.toString().includes(".")) {
+  if (balance.toString().includes('.')) {
     return `${balance.toString().split('.')[0]}.${balance
       .toString()
       .split('.')[1]
@@ -21,9 +23,28 @@ export const isNotEmpty = objectToCheck =>
 export const changeTransactionDeadline = val => {
   if (val === '' || val < 0) {
     const time = Math.floor(new Date().getTime() / 1000.0 + 1200);
-    console.log(time);
     return time;
   }
-  const time = Math.floor(new Date().getTime() / 1000.0 + val * 60);
-  return time;
-};
+}
+// export const calculateSlippage = (amountIn,slippageValue) => {
+//   let calculatedVal
+  
+//   let BNAmountIn = new BN(amountIn || 0)
+//   let val = BNAmountIn.times(slippageValue).div('100')
+
+//   if (slippageValue === "1") {
+// calculatedVal = BNAmountIn.plus(val)
+// console.log(calculatedVal,amountIn)
+//   } else if (slippageValue === "0.1") {
+//     calculatedVal = BNAmountIn.minus(val.toString())
+//   } else if (slippageValue === "0.5") {
+//     calculatedVal = new BN(amountIn)
+//   }
+//    return calculatedVal.toString()
+// }
+export const clearInputInfo = (setInput,setButton = false,value) =>{
+setInput('')
+if(setButton){
+  setButton(value)
+}
+}

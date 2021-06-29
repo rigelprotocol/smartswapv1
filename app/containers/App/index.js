@@ -22,13 +22,15 @@ import NotFoundPage from 'containers/NotFoundPage/index';
 import Splash from 'components/splash/index';
 import '../../styles/globals.css';
 import Toast from '../../components/Toast';
-import { reConnect } from '../WalletProvider/actions';
+import { reConnect, disconnectWallet } from '../WalletProvider/actions';
+import TrustWallet from './../../components/TrustWallet/index';
 
-const breakpoints = ['360px', '768px', '1024px', '1440px'];
-breakpoints.sm = breakpoints[0];
-breakpoints.md = breakpoints[1];
-breakpoints.lg = breakpoints[2];
-breakpoints.xl = breakpoints[3];
+const breakpoints = {
+  sm: '360px',
+  md: '768px',
+  lg: '1024px',
+  xl: '1440px',
+};
 WebFont.load({
   google: {
     families: [
@@ -60,6 +62,7 @@ const App = props => {
   return (
     <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
+        <TrustWallet />
         <Toast {...props} />
         <Switch>
           <Route exact path="/" component={Splash} />
@@ -78,7 +81,7 @@ const mapStateToProps = state => ({ state });
 
 export default connect(
   mapStateToProps,
-  { reConnect },
+  { reConnect, disconnectWallet },
 )(App);
 
 function reConnector(props) {
@@ -107,6 +110,10 @@ function listener(wallet, props) {
       } else if (accounts[0] !== wallet.address) {
         return props.reConnect(window.ethereum);
       }
+    });
+    window.ethereum.on('disconnect', error => {
+      if (error) window.location.reload();
+      props.disconnectWallet();
     });
   }
 }
