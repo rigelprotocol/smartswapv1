@@ -34,7 +34,7 @@ const Nav = props => {
         >
           <Link to="/farming">Farming</Link>
         </Text>
-        <Tooltip label="(Margin Trading) Coming Soon" bg="#120136" aria-label="A tooltip">
+        <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
 
           <Text
             cursor="not-allowed"
@@ -51,12 +51,7 @@ const Nav = props => {
               // to="/margin-trading"
               cursor="not-allowed"
             >
-            <Text display={["none","none","block"]}>
               Margin Trading
-            </Text>
-            <Text display={["block","block","none"]}>
-             Margin
-            </Text>
               
             </Link>
           </Text>

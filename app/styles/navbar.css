@@ -1,6 +1,6 @@
 .nav__text {
-	font-size: 14px;
-	margin: auto 10px;
+	font-size: 11px;
+	margin: auto 4px;
 }
 
 .trade__button,
@@ -134,6 +134,7 @@
 		display: flex;
 		margin-top: 10px;
 	}
+	
 }
 
 @media only screen and (min-width: 1024px) {
