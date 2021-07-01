@@ -88,37 +88,6 @@ export const connectionEventListener = wallet => dispatch => {
 };
 
 export function disconnectUser() {
+  console.log('>>>> Hello All');
 }
 // Object.fromEntries( Object.entries(TOKENS_CONTRACT).filter(([key, value]) => key === symbol))
-export const setupNetwork = async () => {
-  const walletProvider = window.ethereum;
-  if (walletProvider !== undefined && walletProvider.isTrust) {
-    const chainId = 38;
-    const deviceChainId = await window.ethereum.request({
-      method: 'eth_chainId',
-    });
-    if (deviceChainId !== '0x38') {
-      try {
-        await walletProvider.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId: `0x${chainId.toString()}`,
-              chainName: 'Smart Chain',
-              nativeCurrency: {
-                name: 'BNB',
-                symbol: 'bnb',
-                decimals: 18,
-              },
-              rpcUrls: ['https://bsc-dataseed.binance.org/'],
-              blockExplorerUrls: ['https://bscscan.com/'],
-            },
-          ],
-        });
-        return true;
-      } catch (error) {
-        return false;
-      }
-    }
-  }
-};

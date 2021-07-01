@@ -23,7 +23,6 @@ import Splash from 'components/splash/index';
 import '../../styles/globals.css';
 import Toast from '../../components/Toast';
 import { reConnect, disconnectWallet } from '../WalletProvider/actions';
-import TrustWallet from './../../components/TrustWallet/index';
 
 const breakpoints = {
   sm: '360px',
@@ -62,7 +61,6 @@ const App = props => {
   return (
     <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
-        <TrustWallet />
         <Toast {...props} />
         <Switch>
           <Route exact path="/" component={Splash} />
