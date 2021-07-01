@@ -55,7 +55,7 @@ const Nav = props => {
               Margin Trading
             </Text>
             <Text display={["block","block","none"]}>
-             M / T
+             Margin
             </Text>
               
             </Link>
