@@ -18,7 +18,7 @@ export default function HomePage(props) {
   console.log(props);
   const [tab, setTab] = useState(TABS.MANUAL);
   return (
-    <Layout title="Home Page">
+    <Layout title="Rigel Protocol - Smartswap">
       <>
         <Flex mb="100px" mx={2} flexWrap="wrap">
           <Box w={['100%', '100%', '30%', '29.5%']} mb={4} ml="2.8" mr="-0.7">
@@ -58,9 +58,9 @@ export default function HomePage(props) {
                     className={
                       tab === TABS.PRICE ? styles.active : styles.inactive
                     }
-                    // onClick={() => {
-                    //   setTab(TABS.PRICE);
-                    // }}
+                  // onClick={() => {
+                  //   setTab(TABS.PRICE);
+                  // }}
                   >
                     Set price
                   </Text>
@@ -75,9 +75,9 @@ export default function HomePage(props) {
                     className={
                       tab === TABS.AUTO_TIME ? styles.active : styles.inactive
                     }
-                    // onClick={() => {
-                    //   setTab(TABS.AUTO_TIME);
-                    // }}
+                  // onClick={() => {
+                  //   setTab(TABS.AUTO_TIME);
+                  // }}
                   >
                     Auto Time
                   </Text>

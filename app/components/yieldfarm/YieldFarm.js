@@ -7,7 +7,7 @@ import ETHImage from '../../assets/eth.svg';
 import RGPImage from '../../assets/rgp.svg';
 import BUSDImage from '../../assets/busd.svg';
 
-const YieldFarm = ({ content, wallet }) => {
+const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
   const formatAmount = (value) => {
@@ -18,7 +18,7 @@ const YieldFarm = ({ content, wallet }) => {
     <>
       <Flex
         justifyContent="space-between"
-        flexDirection={['column', 'row']}
+        flexDirection={['column',"column", 'row']}
         color="white"
         margin="0 auto"
         background="linear-gradient(
@@ -30,13 +30,13 @@ const YieldFarm = ({ content, wallet }) => {
         paddingBottom="4px"
         marginTop="20px"
         borderRadius="10px"
-        width={["95%", "100%"]}
+        width={["95%","95%", "100%"]}
       >
         <Flex justifyContent="space-between" width="100%">
           <Box
             marginTop="15px"
             align="left"
-            display={['block', 'none']}
+            display={['block',"block", 'none']}
             opacity="0.5"
           >
             Deposit
@@ -49,7 +49,7 @@ const YieldFarm = ({ content, wallet }) => {
           <Box
             marginTop="15px"
             align="left"
-            display={['block', 'none']}
+            display={['block',"block", 'none']}
             opacity="0.5"
           >
             Earn
@@ -65,7 +65,7 @@ const YieldFarm = ({ content, wallet }) => {
           <Box
             marginTop="15px"
             align="left"
-            display={['block', 'none']}
+            display={['block',"block", 'none']}
             opacity="0.5"
           >
             APY
@@ -74,11 +74,11 @@ const YieldFarm = ({ content, wallet }) => {
             {formatAmount(content.ARYValue)} %
           </Box>
         </Flex>
-        <Flex justifyContent="space-between" width="100%">
+        <Flex justifyContent="space-between" width="100%" marginBottom={["10px","10px","0"]}>
           <Box
             marginTop="15px"
             align="left"
-            display={['block', 'none']}
+            display={['block',"block", 'none']}
             opacity="0.5"
           >
             Total Liquidity
@@ -100,13 +100,14 @@ const YieldFarm = ({ content, wallet }) => {
               color="#40BAD5"
               border="0"
               mb="4"
-              cursor="not-allowed"
+
               _hover={{ color: '#423a85' }}
               // onClick={() => setShowYieldFarm(!showYieldfarm)}
-              disabled
+              onClick={onOpenModal}
+
             >
               Unlock
-          </Button>
+            </Button>
           </Tooltip>
           ) :
             (<Button
@@ -128,7 +129,11 @@ const YieldFarm = ({ content, wallet }) => {
 
       </Flex>
       {showYieldfarm && (
-        <ShowYieldFarmDetails content={content} wallet={wallet} />
+        <ShowYieldFarmDetails
+          content={content}
+          wallet={wallet}
+          refreshTokenStaked={refreshTokenStaked}
+        />
       )}
     </>
   );

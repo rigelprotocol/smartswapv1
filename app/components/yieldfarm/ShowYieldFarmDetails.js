@@ -25,6 +25,7 @@ import Web3 from 'web3';
 import configureStore from 'configureStore';
 import { connect } from 'react-redux';
 import styles from '../../styles/yieldFarmdetails.css';
+import { clearInputInfo } from "../../utils/UtilFunc"
 import {
   rigelToken,
   BUSDToken,
@@ -35,9 +36,8 @@ import {
   smartSwapLPTokenPoolThree,
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
-import { refreshFarm } from '../../containers/FarmingPage/actions';
 
-const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
+const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
   const [unstakeButtonValue, setUnstakeButtonValue] = useState('Confirm');
@@ -168,7 +168,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
 
   const callRefreshFarm = (confirmations, status) => {
     if (confirmations >= 1 && status >= 1) {
-      refreshFarm();
+      refreshTokenStaked()
     }
   };
 
@@ -403,9 +403,10 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
     if (wallet.signer !== 'signer' && pId != 0) {
       try {
         const lpTokens = await masterChefContract();
-        await lpTokens.withdraw(pId, 0);
+        const withdraw = await lpTokens.withdraw(pId, 0);
+        const { confirmations, status } = await fetchTransactionData(withdraw);
+        callRefreshFarm(confirmations, status);
       } catch (error) {
-        console.error(error);
       }
     }
   };
@@ -475,14 +476,12 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
   };
   const confirmDeposit = async val => {
     setDepositValue('Pending Confirmation');
-
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
           // await RGPuseStake(depositTokenValue);
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpDeposit(depositTokenValue);
-          setTimeout(() => closeModal(), 400);
         } else if (val === 'BNB-BUSD') {
           await BNBBUSDlpDeposit(depositTokenValue);
         } else if (val === 'RGP-BUSD') {
@@ -490,15 +489,13 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
         } else {
           // await RGPuseStake(depositTokenValue)
         }
-        setUnstakeButtonValue('confirmed');
-        setTimeout(() => closeModal(), 400);
+        setTimeout(() => close(), 400);
+        setDeposit(true);
+        clearInputInfo(setDepositTokenValue, setDepositValue, "Confirm")
       }
     } catch (e) {
       console.log(e);
     }
-    setDeposit(true);
-    setDepositValue('Confirmed');
-    setTimeout(() => close(), 400);
   };
   const confirmUnstakeDeposit = async val => {
     setUnstakeButtonValue('Pending Confirmation');
@@ -513,8 +510,8 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
         } else if (val === 'RGP-BUSD') {
           await RGPBUSDlpTokensWithdrawal();
         }
-        setUnstakeButtonValue('confirmed');
         setTimeout(() => closeModal(), 400);
+        clearInputInfo(setUnstakeToken, setUnstakeButtonValue, "Confirm")
       }
     } catch (e) {
       console.log(
@@ -878,21 +875,18 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
                 mx="auto"
                 color={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
-                // disabled={
-                //   unstakeButtonValue === 'Confirm'
-                //     ? false : true
-                // }
+                disabled={unstakeButtonValue !== 'Confirm'}
                 cursor="pointer"
                 border="none"
                 borderRadius="13px"
@@ -901,7 +895,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshFarm }) => {
                 fontSize="16px"
                 _hover={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? { background: 'rgba(64, 186, 213, 0.15)' }
                     : { background: '#444159' }
                 }
@@ -943,6 +937,5 @@ const mapStateToProps = ({ farming }) => ({
 export default connect(
   mapStateToProps,
   {
-    refreshFarm,
   },
 )(ShowYieldFarmDetails);

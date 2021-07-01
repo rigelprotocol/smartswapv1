@@ -22,10 +22,11 @@ import { Button } from '@chakra-ui/button';
 import { connect } from 'react-redux';
 import { ethers } from 'ethers';
 import { notify } from 'containers/NoticeProvider/actions';
+import { useHistory } from "react-router-dom";
 import Web3 from 'web3';
-import { approveToken, runApproveCheck } from 'utils/wallet-wiget/TokensUtils';
+import { approveToken, runApproveCheck, getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { getPriceForToken } from 'containers/HomePage/service/swapServices';
-import { tokenWhere, tokenAddressWhere } from 'utils/constants';
+import { tokenWhere, tokenAddressWhere, tokenList } from 'utils/constants';
 import { router, WETH, updateOutPutAmountForRouter } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
@@ -34,9 +35,9 @@ import SwapSettings from "./SwapSettings";
 
 import ShowMessageBox from "../Toast/ShowMessageBox";
 import ConfirmSwapBox from './ConfirmSwapBox';
-import { changeDeadlineValue } from '../../containers/WalletProvider/actions';
-
+import { changeDeadlineValue, changeRGPValue } from '../../containers/WalletProvider/actions';
 export const Manual = props => {
+  const history = useHistory()
   const { wallet } = props.wallet;
   const [fromAmount, setFromAmount] = useState('');
   const [path, setPath] = useState([{ fromPath: tokenAddressWhere('RGP'), token: "RGP" }]);
@@ -50,15 +51,25 @@ export const Manual = props => {
   const [isSendingTransaction, setIsSendingTransaction] = useState(false);
   const [userHasApproveToken, setUserHasApproveToken] = useState(false)
   const [transactionDeadline, setTransactionDeadline] = useState("")
+  const [balanceIsSet, setBalanceIsSet] = useState(false);
   const [actualTransactionDeadline, setActualTransactionDeadline] = useState(Math.floor(new Date().getTime() / 1000.0 + 1200))
   const [slippageValue, setSlippageValue] = useState("0.5")
   const [tokenAllowance, setTokenAllowance] = useState('');
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
 
   useEffect(() => {
+
     (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])
+  useEffect(() => {
+   if(selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN"){
+     history.push(`/swap/${selectedToken.symbol}-${selectedToToken.symbol}`)
+   }else{
+    history.push("/swap")
+   }
+    
+  }, [selectedToken, selectedToToken])
 
   useEffect(() => {
     changeData()
@@ -74,7 +85,6 @@ export const Manual = props => {
       setSelectedToToken(tokenWhere(pairArray[1]));
     }
   }, [])
-
   useEffect(async () => {
     if (wallet.signer !== 'signer') {
       if (selectedToken.symbol === 'BNB') {
@@ -90,7 +100,7 @@ export const Manual = props => {
     if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
       setFromAmount(selectedToken.balance)
     }
-    if (tokenAllowance < fromAmount) {
+    if (parseFloat(tokenAllowance) < parseFloat(fromAmount) && selectedToken.symbol !== 'BNB') {
       setUserHasApproveToken(false)
     }
   }, [fromAmount, amountIn]);
@@ -137,7 +147,7 @@ export const Manual = props => {
   const calculateSlippage = (amountIn) => {
     let calculatedVal
     if (slippageValue === "1") {
-      calculatedVal = amountIn + (amountIn * parseInt(slippageValue) / 100)
+      calculatedVal = amountIn + (amountIn * parseFloat(slippageValue) / 100)
     } else if (slippageValue === "0.1") {
       calculatedVal = amountIn - (amountIn * parseFloat(slippageValue) / 100)
     } else if (slippageValue === "0.5") {
@@ -145,6 +155,9 @@ export const Manual = props => {
     }
     return calculatedVal.toString()
   }
+
+  const liquidityProviderFee = () => 0.003 * fromAmount;
+
 
   const checkForAllVariables = () => {
     if (isLoggedIn() && fromAmount > 0 && selectedToToken.name !== 'Select a token') {
@@ -169,7 +182,7 @@ export const Manual = props => {
         await update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage)
         setDisableSwapTokenButton(false);
       } else if ((selectedToken.symbol === "WBNB" && selectedToToken.symbol === "BNB") || (selectedToken.symbol === "BNB" && selectedToToken.symbol === "WBNB")) {
-        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field, calculateSlippage);
+        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field,calculateSlippage);
         setDisableSwapTokenButton(false);
       } else {
         await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage);
@@ -214,7 +227,7 @@ export const Manual = props => {
         return openModal1()
       }
       setIsSendingTransaction(true);
-      const sendTransaction = await approveToken(wallet.address, selectedToken.address, wallet.signer, fromAmount)
+      const sendTransaction = await approveToken(wallet.address, selectedToken.address, wallet.signer, selectedToken.balance)
       const { confirmations, status } = await sendTransaction.wait(3);
       if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
         setIsSendingTransaction(false);
@@ -253,6 +266,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -287,6 +302,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -319,6 +336,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' });
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -346,6 +365,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -368,6 +389,8 @@ export const Manual = props => {
         if (typeof sendTransaction.hash != 'undefined' && confirmations >= 3 && status) {
           setIsSendingTransaction(false);
           props.notify({ title: 'Transaction  Message', body: 'Swap was successful and is confirmed', type: 'success' })
+          getTokenListBalance(tokenList, wallet, setBalanceIsSet);
+          props.changeRGPValue(wallet)
         }
       } catch (e) {
         setTimeout(() => openModal4(), 1000)
@@ -527,6 +550,7 @@ export const Manual = props => {
           path={path}
           amountIn={amountIn}
           fromAmount={fromAmount}
+          liquidityProviderFee={liquidityProviderFee}
           closeModal1={closeModal1}
           closeModal2={closeModal2}
           closeModal3={closeModal3}
@@ -547,7 +571,7 @@ export const Manual = props => {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 export default connect(
   mapStateToProps,
-  { notify, changeDeadlineValue },
+  { notify, changeDeadlineValue, changeRGPValue },
 )(Manual);
 
 async function updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage) {
