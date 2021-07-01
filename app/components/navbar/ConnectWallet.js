@@ -13,6 +13,7 @@ import {
   MenuItem,
   Tooltip,
   ModalCloseButton,
+  Spinner
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { connect } from 'react-redux';
@@ -34,6 +35,28 @@ const Wallet = ({ loading, show, connectingWallet }) => {
   const close = () => {
     modal1Disclosure.onClose();
   };
+
+  if (loading) {
+    return (
+      <Button
+        as={Button}
+        border="none"
+        fontWeight="regular"
+        fontSize="md"
+        rounded="xl"
+        cursor="pointer"
+        bg="rgba(64, 186, 213,0.25)"
+        color="#40BAD5"
+        _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+        _active={{ outline: '#29235E' }}
+        _expanded={{ bg: '#29235E' }}
+        rightIcon={<Spinner size="xs" />}
+      >
+        Connecting...
+      </Button>
+
+    )
+  }
 
   return (
     <>

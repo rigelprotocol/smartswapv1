@@ -45,6 +45,7 @@ const walletProviderReducer = (state = initialState, action) =>
       case WALLET_CONNECTED:
         draft.wallet = action.wallet;
         draft.connected = true;
+        draft.loading = false;
         break;
       case WALLET_PROPS:
         draft.wallet_props = action.payload.rgpBalance;
