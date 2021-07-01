@@ -203,7 +203,7 @@ const AddLiquidity = ({
               <Box>{fromValue}</Box>
             </Flex>
             <Flex m="1" justifyContent="space-between">
-              <Text mt={-1}> {toSelectedToken.symbol} Deposited </Text>
+              <Text mt={-1}> {toSelectedToken.symbol}  </Text>
               <Box>{toValue}</Box>
             </Flex>
             <Flex m="1" justifyContent="space-between">

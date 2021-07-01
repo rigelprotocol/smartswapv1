@@ -87,7 +87,7 @@ const Manual = ({
 };
 
 Manual.propTypes = {
-  toValue: PropTypes.number.isRequired,
+  toValue: PropTypes.string.isRequired,
   setToAddress: PropTypes.func.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,
