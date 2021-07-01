@@ -16,9 +16,9 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked }) => {
 
   return (
     <>
-      <Flex
+          <Flex
         justifyContent="space-between"
-        flexDirection={['column', 'row']}
+        flexDirection={['column',"column", 'row']}
         color="white"
         margin="0 auto"
         background="linear-gradient(
@@ -30,13 +30,13 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked }) => {
         paddingBottom="4px"
         marginTop="20px"
         borderRadius="10px"
-        width={["95%", "100%"]}
+        width={["95%","95%", "100%"]}
       >
         <Flex justifyContent="space-between" width="100%">
           <Box
             marginTop="15px"
             align="left"
-            display={['block', 'none']}
+            display={['block',"block", 'none']}
             opacity="0.5"
           >
             Deposit
@@ -49,7 +49,7 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked }) => {
           <Box
             marginTop="15px"
             align="left"
-            display={['block', 'none']}
+            display={['block',"block", 'none']}
             opacity="0.5"
           >
             Earn
@@ -65,7 +65,7 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked }) => {
           <Box
             marginTop="15px"
             align="left"
-            display={['block', 'none']}
+            display={['block',"block", 'none']}
             opacity="0.5"
           >
             APY
@@ -74,11 +74,11 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked }) => {
             {formatAmount(content.ARYValue)} %
           </Box>
         </Flex>
-        <Flex justifyContent="space-between" width="100%">
+        <Flex justifyContent="space-between" width="100%" marginBottom={["10px","10px","0"]}>
           <Box
             marginTop="15px"
             align="left"
-            display={['block', 'none']}
+            display={['block',"block", 'none']}
             opacity="0.5"
           >
             Total Liquidity
@@ -128,7 +128,7 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked }) => {
         </Box>
 
       </Flex>
-      {showYieldfarm && (
+   {showYieldfarm && (
         <ShowYieldFarmDetails
           content={content}
           wallet={wallet}
