@@ -52,12 +52,13 @@ const Nav = props => {
               cursor="not-allowed"
             >
               Margin Trading
+              
             </Link>
           </Text>
         </Tooltip>
 
       </div>
-      <div className={styles.wallet__container}>
+       <div className={styles.wallet__container}>
         {connected ? <Wallet /> : <ConnectWallet />}
         <SocialMedia />
       </div>
