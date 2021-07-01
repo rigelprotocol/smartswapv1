@@ -34,7 +34,7 @@ const Nav = props => {
         >
           <Link to="/farming">Farming</Link>
         </Text>
-        <Tooltip label="Coming Soon" bg="#120136" aria-label="A tooltip">
+        <Tooltip label="(Margin Trading) Coming Soon" bg="#120136" aria-label="A tooltip">
 
           <Text
             cursor="not-allowed"
@@ -51,13 +51,19 @@ const Nav = props => {
               // to="/margin-trading"
               cursor="not-allowed"
             >
+            <Text display={["none","none","block"]}>
               Margin Trading
+            </Text>
+            <Text display={["block","block","none"]}>
+             M / T
+            </Text>
+              
             </Link>
           </Text>
         </Tooltip>
 
       </div>
-      <div className={styles.wallet__container}>
+       <div className={styles.wallet__container}>
         {connected ? <Wallet /> : <ConnectWallet />}
         <SocialMedia />
       </div>
