@@ -29,6 +29,7 @@ const ConfirmSwapBox = props => {
     closeModal2,
     closeModal3,
     closeModal4,
+    minimumAmountToReceive,
     modal1Disclosure,
     modal2Disclosure,
     modal3Disclosure,
@@ -111,7 +112,7 @@ const ConfirmSwapBox = props => {
                   {' '}
                   Minimum received <QuestionIcon />
                 </Text>
-                <Box>{amountIn}</Box>
+                <Box>{minimumAmountToReceive()}</Box>
               </Flex>
               <Flex m="1" justifyContent="space-between">
                 <Text>
