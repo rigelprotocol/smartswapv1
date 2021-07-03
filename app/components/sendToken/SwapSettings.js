@@ -25,7 +25,9 @@ const SwapSettings = ({
   setSlippageValue,
   slippageValue,
   errorMessage,
-  setErrorMessage
+  setErrorMessage,
+  deadline,
+  setDeadline
 }) => {
   const changeSlippageValue = val => {
     setSlippageValue(val);
@@ -115,7 +117,7 @@ const SwapSettings = ({
                 <Input
                   placeholder="0.0"
                   fontSize="lg"
-                  color=" rgba(255, 255, 255,0.7)"
+                  color=" rgba(255, 255, 255,0.8)"
                   isRequired
                   size="sm"
                   ml={2}
@@ -140,17 +142,16 @@ const SwapSettings = ({
               <Input
                 placeholder="0.0"
                 fontSize="lg"
-                color=" rgba(255, 255, 255,0.25)"
+                color=" rgba(255, 255, 255,0.8)"
                 isRequired
                 type="number"
                 size="sm"
                 width="30%"
-                value={transactionDeadline}
-                onChange={e =>
-                  changeDeadline(
-                    changeTransactionDeadline(e.target.value),
-                    e.target.value,
-                  )
+                value={deadline}
+                onChange={e => {
+                  setDeadline(e.target.value)
+                }
+
                 }
               />
               <Text style={{ margin: '8px 10px 0px' }}> Minutes</Text>
