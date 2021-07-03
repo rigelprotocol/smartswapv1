@@ -25,7 +25,8 @@ import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { tokenList, tokenWhere, SMART_SWAP } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
-import { isNotEmpty } from "../../utils/UtilFunc";
+import { isNotEmpty, getDeadline } from "../../utils/UtilFunc";
+import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
 // 35,200
 export function LiquidityPage(props) {
@@ -63,6 +64,8 @@ export function LiquidityPage(props) {
   const [liquidityPairRatio, setLiquidityPairRatio] = useState(0)
   const [hasApprovedLPTokens, setHasApprovedLPTokens] = useState(false)
   const [approving, setApproving] = useState(false)
+  const [deadline, setDeadline] = useLocalStorage('deadline', 20)
+
 
   let timer1
   useEffect(() => (
@@ -306,7 +309,7 @@ export function LiquidityPage(props) {
 
       try {
         const rout = await router();
-        const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
+        const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toString())
         const amountAMin = Web3.utils.toWei((fromValue * 0.8).toString())
@@ -361,7 +364,7 @@ export function LiquidityPage(props) {
           tokenSelected = fromAddress;
         }
         const rout = await router();
-        const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
+        const deadLine = getDeadline(deadline);
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidityETH(
@@ -394,7 +397,7 @@ export function LiquidityPage(props) {
       const rout = await router();
       const checking = ethers.utils.parseEther(liquidity.toString());
 
-      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
+      const deadLine = getDeadline(deadline);
       try {
         setApproving(true);
         const hasRemovedLiquidity = await rout.removeLiquidity(

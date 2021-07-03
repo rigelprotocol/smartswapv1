@@ -37,6 +37,8 @@ import ShowMessageBox from "../Toast/ShowMessageBox";
 import ConfirmSwapBox from './ConfirmSwapBox';
 import { changeDeadlineValue, changeRGPValue } from '../../containers/WalletProvider/actions';
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
+import { getDeadline } from '../../utils/UtilFunc';
+
 
 
 export const Manual = props => {
@@ -61,6 +63,7 @@ export const Manual = props => {
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
 
   const [slippage, setSlippage] = useLocalStorage("slippage", 1.5)
+  const [deadline, setDeadline] = useLocalStorage('deadline', 20)
 
   useEffect(() => {
 
@@ -252,7 +255,7 @@ export const Manual = props => {
     if (wallet.signer !== 'signer') {
       openModal2()
       const rout = await router();
-      const deadL = actualTransactionDeadline;
+      const deadL = getDeadline(deadline);
       const fromPath = ethers.utils.getAddress(selectedToken.address);
       const toPath = ethers.utils.getAddress(selectedToToken.address);
       try {
@@ -290,7 +293,7 @@ export const Manual = props => {
     if (wallet.signer !== 'signer') {
       openModal2()
       const rout = await router();
-      const deadL = actualTransactionDeadline;
+      const deadL = getDeadline(deadline);
       const fromPath = ethers.utils.getAddress(selectedToken.address);
       const toPath = ethers.utils.getAddress(selectedToToken.address);
       const inputAmount = Web3.utils.toWei(amountIn.toString());
@@ -326,7 +329,7 @@ export const Manual = props => {
     if (wallet.signer !== 'signer') {
       openModal2()
       const rout = await router();
-      const deadL = actualTransactionDeadline;
+      const deadL = getDeadline(deadline);
       const fromPath = ethers.utils.getAddress(selectedToken.address);
       const toPath = ethers.utils.getAddress(selectedToToken.address);
       const inputAmount = Web3.utils.toWei(minimumAmountToReceive().toString());
@@ -479,6 +482,8 @@ export const Manual = props => {
           setActualTransactionDeadline={setActualTransactionDeadline}
           slippageValue={slippage}
           setSlippageValue={setSlippage}
+          deadline={deadline}
+          setDeadline={setDeadline}
           setErrorMessage={setErrorMessage}
           errorMessage={errorMessage}
         />
