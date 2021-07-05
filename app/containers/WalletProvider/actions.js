@@ -29,6 +29,7 @@ import {
 
 export const reConnect = (wallet) => async dispatch => {
   try {
+    dispatch({ type: LOADING_WALLET, payload: true });
     const { selectedAddress, chainId } = wallet;
     const ethProvider = await provider();
     const walletSigner = await signer();
@@ -41,7 +42,7 @@ export const reConnect = (wallet) => async dispatch => {
       },
     })
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
-
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   } catch (e) {
     return dispatch({
       type: NOTICE, message: {
@@ -50,6 +51,8 @@ export const reConnect = (wallet) => async dispatch => {
         type: 'error',
       }
     });
+  } finally {
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   }
 
 }
@@ -88,6 +91,9 @@ export const connectWallet = () => async dispatch => {
         type: 'error',
       }
     });
+  } finally {
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+
   }
 
 };

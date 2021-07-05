@@ -20,6 +20,9 @@ import ETHImage from '../../assets/eth.svg';
 import BUSDImage from '../../assets/busd.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import ArrowDown from '../../assets/arrow-down.svg';
+import { useLocalStorage } from '../../utils/hooks/storageHooks'
+import { getDeadline } from '../../utils/UtilFunc';
+
 
 const removeALiquidity = ({
   back,
@@ -33,6 +36,9 @@ const removeALiquidity = ({
 }) => {
   const [fromValue, setFromValue] = useState(0);
   const [toValue, setToValue] = useState(0);
+  const [deadline, setDeadline] = useLocalStorage('deadline', 20)
+
+
   useEffect(() => {
     const getPriceForToken = async path => {
       if (wallet.signer !== 'signer') {
@@ -76,7 +82,7 @@ const removeALiquidity = ({
 
   const removeLiquidityForETH = async (tokenAddress, liquidity) => {
     const rout = await router();
-    const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
+    const deadLine = getDeadline(deadline);
     const liquidityAmount = ethers.utils.parseEther(
       liquidity.toString(),
       'ether',

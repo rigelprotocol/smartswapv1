@@ -25,7 +25,8 @@ import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { tokenList, tokenWhere, SMART_SWAP } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
-import { isNotEmpty } from "../../utils/UtilFunc";
+import { isNotEmpty, getDeadline } from "../../utils/UtilFunc";
+import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
 // 35,200
 export function LiquidityPage(props) {
@@ -63,6 +64,8 @@ export function LiquidityPage(props) {
   const [liquidityPairRatio, setLiquidityPairRatio] = useState(0)
   const [hasApprovedLPTokens, setHasApprovedLPTokens] = useState(false)
   const [approving, setApproving] = useState(false)
+  const [deadline, setDeadline] = useLocalStorage('deadline', 20)
+
 
   let timer1
   useEffect(() => (
@@ -74,7 +77,7 @@ export function LiquidityPage(props) {
     //  changeButtonValue();
   }, [toSelectedToken, liquidities]);
   const handleFromAmount = (value) => {
-    setToValue(value * liquidityPairRatio);
+    setToValue((value * liquidityPairRatio).toString());
     // calculateToValue(value, 'from');
   }
 
@@ -155,53 +158,45 @@ export function LiquidityPage(props) {
     }
   }, [fromValue, toValue])
 
-
   useEffect(() => {
-
-    const balanceOfUserLPs = async () => {
-      if (wallet.signer !== 'signer') {
-        const smartSwapLP = await smartSwapLPToken();
-        const walletBal = await smartSwapLP.balanceOf(wallet.address);
-        const checkWalletBal = ethers.utils.formatEther(walletBal, 'ether')
-        const value = (checkWalletBal.toString() * percentValue) / 100
-        setSmartSwapLPBalance(value)
-
-        getAllLiquidities();
-      }
+    if (wallet.address != "0x") {
+      getAllLiquidities();
     }
-
-    const getBalance = async () => {
-      await balanceOfUserLPs()
-      await getAmountForLiquidity(smartSwapLPBalance)
-    }
-    getBalance()
   }, [wallet])
 
-  useEffect(() => {
 
+
+  useEffect(() => {
     const balanceOfUserLPs = async () => {
 
-      if (wallet.signer !== 'signer') {
-        const smartSwapLP = await smartSwapLPToken();
-        const walletBal = await smartSwapLP.balanceOf(wallet.address);
-        const checkWalletBal = ethers.utils.formatEther(walletBal, 'ether');
-        const liquidityValue = liquidities.length && (liquidities[0].path[0].fromPath);
-        const convertValue = ethers.utils.formatEther(liquidityValue, 'ether');
-        const stateValue = Number((convertValue.toString() * percentValue) / 100) / 1e+18;
-        const value = (checkWalletBal.toString() * percentValue) / 100;
-        setSmartSwapLPBalance(stateValue)
+      if (wallet.address != "0x") {
+        try {
+          const smartSwapLP = await smartSwapLPToken();
+          const walletBal = await smartSwapLP.balanceOf(wallet.address);
+          const checkWalletBal = ethers.utils.formatEther(walletBal, 'ether');
+          const liquidityValue = liquidities.length && (liquidities[0].path[0].fromPath);
+          const convertValue = ethers.utils.formatEther(liquidityValue, 'ether');
+          const stateValue = Number((convertValue.toString() * percentValue) / 100) / 1e+18;
+          const value = (checkWalletBal.toString() * percentValue) / 100;
+          setSmartSwapLPBalance(stateValue)
+        } catch (error) {
+          console.error(error)
+        }
       }
     }
 
 
     const getBalance = async () => {
       await balanceOfUserLPs()
-      await getAmountForLiquidity(smartSwapLPBalance)
+      if (smartSwapLPBalance) {
+        await getAmountForLiquidity(smartSwapLPBalance)
+      }
     }
     getBalance()
   }, [percentValue, wallet])
 
   const getAllLiquidities = async () => {
+
     setLiquidityLoading(true);
     try {
       const pairs = []
@@ -235,7 +230,6 @@ export function LiquidityPage(props) {
         }
         if (liquidityObject.poolToken != 0) {
           pairs.push(liquidityObject);
-          console.log(liquidityObject)
         }
       }
       setLiquidities([...pairs])
@@ -315,9 +309,9 @@ export function LiquidityPage(props) {
 
       try {
         const rout = await router();
-        const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
+        const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
-        const amountBDesired = Web3.utils.toWei(toValue.toFixed(4).toString())
+        const amountBDesired = Web3.utils.toWei(toValue.toString())
         const amountAMin = Web3.utils.toWei((fromValue * 0.8).toString())
         const amountBMin = Web3.utils.toWei((toValue * 0.8).toString())
 
@@ -370,7 +364,7 @@ export function LiquidityPage(props) {
           tokenSelected = fromAddress;
         }
         const rout = await router();
-        const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
+        const deadLine = getDeadline(deadline);
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidityETH(
@@ -391,6 +385,7 @@ export function LiquidityPage(props) {
         openModal3()
       } catch (e) {
         props.showErrorMessage(e)
+        console.log(e.message)
         openModal5()
       }
     }
@@ -402,7 +397,7 @@ export function LiquidityPage(props) {
       const rout = await router();
       const checking = ethers.utils.parseEther(liquidity.toString());
 
-      const deadLine = Math.floor(new Date().getTime() / 1000.0 + 1200);
+      const deadLine = getDeadline(deadline);
       try {
         setApproving(true);
         const hasRemovedLiquidity = await rout.removeLiquidity(
@@ -511,7 +506,7 @@ export function LiquidityPage(props) {
     timer1 = setTimeout(() => {
       closeInput()
       if (liquid) {
-        
+
         removeALiquidity(liquid.pairAddress)
       } else {
         setLiquidityTab("INDEX")
@@ -881,5 +876,5 @@ const mapStateToProps = ({ wallet }) => ({ wallet })
 
 export default connect(
   mapStateToProps,
-  { showErrorMessage, notify,changeRGPValue },
+  { showErrorMessage, notify, changeRGPValue },
 )(LiquidityPage);

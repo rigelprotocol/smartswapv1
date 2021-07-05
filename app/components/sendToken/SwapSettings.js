@@ -25,16 +25,18 @@ const SwapSettings = ({
   setSlippageValue,
   slippageValue,
   errorMessage,
-  setErrorMessage
+  setErrorMessage,
+  deadline,
+  setDeadline
 }) => {
   const changeSlippageValue = val => {
     setSlippageValue(val);
     if (val < 0.5) {
       setErrorMessage("Your transaction might fail")
-    } else if(val>5 && val<49.9){
-     setErrorMessage("Your transaction may be frontrun")
-    }else if(val>50 ){
- setErrorMessage("Enter a valid slippage percentage")
+    } else if (val > 5 && val < 49.9) {
+      setErrorMessage("Your transaction may be frontrun")
+    } else if (val > 50) {
+      setErrorMessage("Enter a valid slippage percentage")
     } else {
       setErrorMessage("")
     }
@@ -91,7 +93,7 @@ const SwapSettings = ({
               </Tooltip>
             </Text>
             <Flex justifyContent="space-between">
-              {['0.1', '0.5', '1'].map((value,index) => (
+              {['0.1', '0.5', '1'].map((value, index) => (
                 <Button
                   border="0px"
                   h="30px"
@@ -115,18 +117,18 @@ const SwapSettings = ({
                 <Input
                   placeholder="0.0"
                   fontSize="lg"
-                  color=" rgba(255, 255, 255,0.25)"
+                  color=" rgba(255, 255, 255,0.8)"
                   isRequired
                   size="sm"
                   ml={2}
                   width="50%"
                   value={slippageValue}
-                  onChange={(e)=>changeSlippageValue(e.target.value)}
+                  onChange={(e) => changeSlippageValue(e.target.value)}
                 />
                 {/* <InputRightAddon children="%" w="10px" h="20px" /> */}
               </InputGroup>
             </Flex>
-           <Text color="red">{errorMessage}</Text>
+            <Text color="red">{errorMessage}</Text>
             <Text>
               Transaction Deadline{' '}
               <Tooltip
@@ -140,17 +142,16 @@ const SwapSettings = ({
               <Input
                 placeholder="0.0"
                 fontSize="lg"
-                color=" rgba(255, 255, 255,0.25)"
+                color=" rgba(255, 255, 255,0.8)"
                 isRequired
                 type="number"
                 size="sm"
                 width="30%"
-                value={transactionDeadline}
-                onChange={e =>
-                  changeDeadline(
-                    changeTransactionDeadline(e.target.value),
-                    e.target.value,
-                  )
+                value={deadline}
+                onChange={e => {
+                  setDeadline(e.target.value)
+                }
+
                 }
               />
               <Text style={{ margin: '8px 10px 0px' }}> Minutes</Text>

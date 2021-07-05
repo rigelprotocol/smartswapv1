@@ -36,6 +36,11 @@ import SwapSettings from "./SwapSettings";
 import ShowMessageBox from "../Toast/ShowMessageBox";
 import ConfirmSwapBox from './ConfirmSwapBox';
 import { changeDeadlineValue, changeRGPValue } from '../../containers/WalletProvider/actions';
+import { useLocalStorage } from '../../utils/hooks/storageHooks'
+import { getDeadline } from '../../utils/UtilFunc';
+
+
+
 export const Manual = props => {
   const history = useHistory()
   const { wallet } = props.wallet;
@@ -57,18 +62,21 @@ export const Manual = props => {
   const [tokenAllowance, setTokenAllowance] = useState('');
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
 
+  const [slippage, setSlippage] = useLocalStorage("slippage", 1.5)
+  const [deadline, setDeadline] = useLocalStorage('deadline', 20)
+
   useEffect(() => {
 
     (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])
   useEffect(() => {
-   if(selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN"){
-     history.push(`/swap/${selectedToken.symbol}-${selectedToToken.symbol}`)
-   }else{
-    history.push("/swap")
-   }
-    
+    if (selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN") {
+      history.push(`/swap/${selectedToken.symbol}-${selectedToToken.symbol}`)
+    } else {
+      history.push("/swap")
+    }
+
   }, [selectedToken, selectedToToken])
 
   useEffect(() => {
@@ -156,6 +164,10 @@ export const Manual = props => {
     return calculatedVal.toString()
   }
 
+  const minimumAmountToReceive = useCallback(() => {
+    return ((100 - Number(slippage)) / 100) * Number(amountIn);
+  }, [slippage, amountIn])
+
   const liquidityProviderFee = () => 0.003 * fromAmount;
 
 
@@ -182,7 +194,7 @@ export const Manual = props => {
         await update_RGP_ETH_SendAmount(selectedToken, selectedToToken, path, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage)
         setDisableSwapTokenButton(false);
       } else if ((selectedToken.symbol === "WBNB" && selectedToToken.symbol === "BNB") || (selectedToken.symbol === "BNB" && selectedToToken.symbol === "WBNB")) {
-        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field,calculateSlippage);
+        await update_WETH_ETH_SendAmount(askAmount, setAmountIn, amountIn, setFromAmount, field, calculateSlippage);
         setDisableSwapTokenButton(false);
       } else {
         await updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage);
@@ -243,14 +255,14 @@ export const Manual = props => {
     if (wallet.signer !== 'signer') {
       openModal2()
       const rout = await router();
-      const deadL = actualTransactionDeadline;
+      const deadL = getDeadline(deadline);
       const fromPath = ethers.utils.getAddress(selectedToken.address);
       const toPath = ethers.utils.getAddress(selectedToToken.address);
       try {
         setIsSendingTransaction(true)
         const sendTransaction = await rout.swapExactTokensForTokens(
           Web3.utils.toWei(fromAmount.toString()),
-          Web3.utils.toWei(amountIn.toString()),
+          Web3.utils.toWei(minimumAmountToReceive().toString()),
           [fromPath, toPath],
           wallet.address,
           deadL,
@@ -281,7 +293,7 @@ export const Manual = props => {
     if (wallet.signer !== 'signer') {
       openModal2()
       const rout = await router();
-      const deadL = actualTransactionDeadline;
+      const deadL = getDeadline(deadline);
       const fromPath = ethers.utils.getAddress(selectedToken.address);
       const toPath = ethers.utils.getAddress(selectedToToken.address);
       const inputAmount = Web3.utils.toWei(amountIn.toString());
@@ -317,10 +329,10 @@ export const Manual = props => {
     if (wallet.signer !== 'signer') {
       openModal2()
       const rout = await router();
-      const deadL = actualTransactionDeadline;
+      const deadL = getDeadline(deadline);
       const fromPath = ethers.utils.getAddress(selectedToken.address);
       const toPath = ethers.utils.getAddress(selectedToToken.address);
-      const inputAmount = Web3.utils.toWei(amountIn.toString());
+      const inputAmount = Web3.utils.toWei(minimumAmountToReceive().toString());
       setIsSendingTransaction(true);
       try {
         const sendTransaction = await rout.swapExactTokensForETH(
@@ -468,8 +480,10 @@ export const Manual = props => {
           transactionDeadline={transactionDeadline}
           setTransactionDeadline={setTransactionDeadline}
           setActualTransactionDeadline={setActualTransactionDeadline}
-          slippageValue={slippageValue}
-          setSlippageValue={setSlippageValue}
+          slippageValue={slippage}
+          setSlippageValue={setSlippage}
+          deadline={deadline}
+          setDeadline={setDeadline}
           setErrorMessage={setErrorMessage}
           errorMessage={errorMessage}
         />
@@ -555,6 +569,7 @@ export const Manual = props => {
           closeModal2={closeModal2}
           closeModal3={closeModal3}
           closeModal4={closeModal4}
+          minimumAmountToReceive={minimumAmountToReceive}
           tokenPrice={tokenPrice}
           selectedToken={selectedToken}
           selectedToToken={selectedToToken}

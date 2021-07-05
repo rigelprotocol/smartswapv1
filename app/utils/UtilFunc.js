@@ -1,4 +1,4 @@
-import { ethers,BigNumber } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import BN from 'bignumber.js'
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
@@ -26,9 +26,13 @@ export const changeTransactionDeadline = val => {
     return time;
   }
 }
+
+export const getDeadline = (deadlineInMinutes = 20) => {
+  return Math.floor((new Date()).getTime() + (Number(deadlineInMinutes) * 60))
+}
 // export const calculateSlippage = (amountIn,slippageValue) => {
 //   let calculatedVal
-  
+
 //   let BNAmountIn = new BN(amountIn || 0)
 //   let val = BNAmountIn.times(slippageValue).div('100')
 
@@ -42,9 +46,9 @@ export const changeTransactionDeadline = val => {
 //   }
 //    return calculatedVal.toString()
 // }
-export const clearInputInfo = (setInput,setButton = false,value) =>{
-setInput('')
-if(setButton){
-  setButton(value)
-}
+export const clearInputInfo = (setInput, setButton = false, value) => {
+  setInput('')
+  if (setButton) {
+    setButton(value)
+  }
 }
