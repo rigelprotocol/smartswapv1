@@ -31,7 +31,7 @@ import { useLocalStorage } from '../../utils/hooks/storageHooks'
 // 35,200
 export function LiquidityPage(props) {
   const { wallet, wallet_props } = props.wallet;
-  const [fromValue, setFromValue] = useState('0');
+  const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('0');
   const [isNewUser, setIsNewUser] = useState(false)
   const [selectingToken, setSelectingToken] = useState(tokenList);
@@ -40,7 +40,6 @@ export function LiquidityPage(props) {
   const [toAddress, setToAddress] = useState('')
   const [toSelectedToken, setToSelectedToken] = useState(tokenWhere('SELECT A TOKEN'))
   const [liquidities, setLiquidities] = useState([])
-  // const [liquidityTab, setLiquidityTab] = useState("REMOVEALIQUIDITY")
   const [liquidityTab, setLiquidityTab] = useState("INDEX");
   const [popupText, setPopupText] = useState('Approving Account');
   const [displayButton, setDisplayButton] = useState(false);
@@ -65,8 +64,7 @@ export function LiquidityPage(props) {
   const [hasApprovedLPTokens, setHasApprovedLPTokens] = useState(false)
   const [approving, setApproving] = useState(false)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
-
-
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   let timer1
   useEffect(() => (
     clearTimeout(timer1)
@@ -493,28 +491,26 @@ export function LiquidityPage(props) {
   const openModal5 = () => {
     modal5Disclosure.onOpen();
   };
-  const closeModal4 = async () => {
-    modal4Disclosure.onClose();
+  const closeModal4 = () => { 
+     modal4Disclosure.onClose();
+    onOpenModal()
     setPopupText("wait you will be redirected")
-    await getAllLiquidities()
-    props.changeRGPValue(wallet)
-    console.log(liquidities)
-
-    console.log(fromSelectedToken, toSelectedToken)
-    const liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
-    console.log(liquid)
-    timer1 = setTimeout(() => {
-      closeInput()
-      if (liquid) {
-
-        removeALiquidity(liquid.pairAddress)
-      } else {
-        setLiquidityTab("INDEX")
-      }
-      clearTimeout(timer1)
-    }, 200);
-
+    getAllCurrentLiquities()
   };
+const getAllCurrentLiquities = async () =>{
+  await getAllLiquidities()
+   
+  props.changeRGPValue(wallet)
+  const liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
+  console.log(liquid)
+    closeInput()
+    if (liquid) {
+      removeALiquidity(liquid.pairAddress)        
+     } else {
+      setLiquidityTab("INDEX")
+    }
+
+}
   const closeModal5 = () => {
     modal5Disclosure.onClose();
     closeInput()
@@ -579,7 +575,9 @@ export function LiquidityPage(props) {
     const liquidity = liquidities.filter(liquidity => liquidity.pairAddress === pairAddress)
     setLiquidityToRemove(liquidity[0])
     await getAmountForLiquidity(smartSwapLPBalance)
-    setLiquidityTab("REMOVEALIQUIDITY")
+  
+      setLiquidityTab("REMOVEALIQUIDITY")
+    
   }
   const closeModal2 = () => {
     modal2Disclosure.onClose();
@@ -862,6 +860,8 @@ export function LiquidityPage(props) {
               tokenToValue={tokenToValue}
               handleFromAmount={handleFromAmount}
               sendingTransaction={sendingTransaction}
+              onCloseModal ={onCloseModal}
+              isOpenModal ={isOpenModal}
             />
           }
 

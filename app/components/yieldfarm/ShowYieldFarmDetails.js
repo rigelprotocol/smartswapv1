@@ -26,6 +26,7 @@ import configureStore from 'configureStore';
 import { connect } from 'react-redux';
 import styles from '../../styles/yieldFarmdetails.css';
 import { clearInputInfo } from "../../utils/UtilFunc"
+import SpinModal from "../modal/SpinModal"
 import {
   rigelToken,
   BUSDToken,
@@ -47,14 +48,16 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
   );
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
-  const [depositTokenValue, setDepositTokenValue] = useState(0);
-  const [unstakeToken, setUnstakeToken] = useState(0);
+  const [depositTokenValue, setDepositTokenValue] = useState("");
+  const [unstakeToken, setUnstakeToken] = useState("");
   const [stakedToken, setStakeToken] = useState('0.00');
   const [rewards, setRewards] = useState('0.000');
   const [isNewUser, setIsNewUser] = useState(true);
   const [allowanceApproval, setAllowanceApproval] = useState(false);
   const [isPoolRGP, setIsPoolRGP] = useState(false);
-
+  const [spinModalTitle, setSpinModalTitle] = useState("Spin");
+  const [spinModalText, setSpinModalText] = useState("Spin");
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   useEffect(() => {
     const outPut = async () => {
       if (wallet.signer !== 'signer') {
@@ -462,7 +465,14 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
 
     return { confirmations, status };
   };
-
+const openSpinModal =(title,text)=>{
+  setSpinModalText(text)
+  setSpinModalTitle(title)
+  onOpenModal()
+}
+const closeSpinModal =(title,text)=>{
+  onCloseModal()
+}
   const open = () => {
     if (approveValueForOtherToken && approveValueForRGP) {
       modal1Disclosure.onOpen();
@@ -476,6 +486,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
   };
   const confirmDeposit = async val => {
     setDepositValue('Pending Confirmation');
+    openSpinModal('Depositing...',`Depositing ${depositTokenValue} ${val}`)
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
@@ -489,16 +500,19 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
         } else {
           // await RGPuseStake(depositTokenValue)
         }
-        setTimeout(() => close(), 400);
-        setDeposit(true);
-        clearInputInfo(setDepositTokenValue, setDepositValue, "Confirm")
       }
     } catch (e) {
       console.log(e);
+    }finally{
+      closeSpinModal()
+        setTimeout(() => close(), 400);
+        setDeposit(true);
+        clearInputInfo(setDepositTokenValue, setDepositValue, "Confirm")
     }
   };
   const confirmUnstakeDeposit = async val => {
     setUnstakeButtonValue('Pending Confirmation');
+    openSpinModal('Unstaking...',`Unstaking ${unstakeToken} ${val}`)
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
@@ -510,13 +524,16 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
         } else if (val === 'RGP-BUSD') {
           await RGPBUSDlpTokensWithdrawal();
         }
-        setTimeout(() => closeModal(), 400);
-        clearInputInfo(setUnstakeToken, setUnstakeButtonValue, "Confirm")
+        
       }
     } catch (e) {
       console.log(
         'sorry there is a few error, you are most likely not logged in. Please login to ypur metamask extensition and try again.',
       );
+    }finally{
+      closeSpinModal()
+      setTimeout(() => closeModal(), 400);
+      clearInputInfo(setUnstakeToken, setUnstakeButtonValue, "Confirm")
     }
   };
 
@@ -738,7 +755,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
               <Input
                 type="text"
                 color="#fff"
-                placeholder="Available Token"
+                placeholder="0"
                 bg="#29235E"
                 opacity="0.5"
                 h="50px"
@@ -841,7 +858,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
               <Input
                 type="text"
                 color="#fff"
-                placeholder="Available Token"
+                placeholder="0"
                 bg="#29235E"
                 opacity="0.5"
                 h="50px"
@@ -924,6 +941,21 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked }) => {
           </ModalBody>
         </ModalContent>
       </Modal>
+  <SpinModal
+     isOpenModal={isOpenModal}
+     onCloseModal={onCloseModal}
+     title={spinModalTitle}
+  >
+    <Box
+    textAlign="center"
+    mt={3} 
+    mb={8}
+    >
+      {spinModalText}
+    </Box>
+      </SpinModal>
+
+      
     </>
   );
 };
