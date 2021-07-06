@@ -16,6 +16,7 @@ import To from 'components/liquidity/to';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/spinner';
+import SpinModal from "../modal/SpinModal"
 import ApproveBox from './ApproveBox';
 import LiquidityPriceBox from './LiquidityPriceBox';
 import Question from '../../assets/question.svg';
@@ -61,6 +62,8 @@ const AddLiquidity = ({
   tokenFromValue,
   tokenToValue,
   handleFromAmount,
+  onCloseModal,
+  isOpenModal 
 }) => (
   <Box
     bg="#120136"
@@ -424,6 +427,20 @@ const AddLiquidity = ({
         </ModalBody>
       </ModalContent>
     </Modal>
+    
+  <SpinModal
+     isOpenModal={isOpenModal}
+     onCloseModal={onCloseModal}
+     title="Success"
+  >
+    <Box
+    textAlign="center"
+    mt={3} 
+    mb={8}
+    >
+   Redirecting user (please be patience)
+    </Box>
+      </SpinModal>
   </Box>
 );
 AddLiquidity.propTypes = {
@@ -453,6 +470,8 @@ AddLiquidity.propTypes = {
   closeModal4: PropTypes.func.isRequired,
   closeModal5: PropTypes.func.isRequired,
   closeModal6: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  isOpenModal:PropTypes.func.isRequired, 
   modal1Disclosure: PropTypes.object,
   modal2Disclosure: PropTypes.object,
   modal3Disclosure: PropTypes.object,
