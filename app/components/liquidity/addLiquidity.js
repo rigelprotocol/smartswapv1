@@ -438,7 +438,7 @@ const AddLiquidity = ({
     mt={3} 
     mb={8}
     >
-   Redirecting user (please be patience)
+  Providing {fromValue} {fromSelectedToken.symbol} and {toValue} {toSelectedToken.symbol}
     </Box>
       </SpinModal>
   </Box>

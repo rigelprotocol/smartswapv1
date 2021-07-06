@@ -512,7 +512,7 @@ const closeSpinModal =(title,text)=>{
   };
   const confirmUnstakeDeposit = async val => {
     setUnstakeButtonValue('Pending Confirmation');
-    openSpinModal('Staking...',`Staking ${unstakeToken} ${val}`)
+    openSpinModal('Unstaking...',`Unstaking ${unstakeToken} ${val}`)
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
