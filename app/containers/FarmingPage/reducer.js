@@ -163,7 +163,8 @@ const farmingPageReducer = (state = initialState, action) =>
           draft.contents[index].availableToken = item;
         })
         break
-    
+      default:
+        return state;
     }
   });
 
