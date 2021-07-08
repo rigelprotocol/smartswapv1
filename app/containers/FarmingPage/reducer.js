@@ -13,6 +13,7 @@ import {
   UPDATE_TOTAL_LIQUIDITY,
   UPDATE_TOKEN_STAKED,
   UPDATE_FARM_BALANCES,
+  UPDATE_FARM_ALLOWANCE
 } from './constants';
 
 
@@ -37,7 +38,8 @@ export const initialState = {
       tokenPrice: 0,
       totalVolumePerPool: 0,
       farmingFee: 0,
-      pId: 0
+      pId: 0,
+      poolAllowance: ''
     },
     {
       id: '2',
@@ -54,7 +56,8 @@ export const initialState = {
       tokenPrice: 0,
       totalVolumePerPool: 0,
       farmingFee: 0,
-      pId: 2
+      pId: 2,
+      poolAllowance: ''
     },
     {
       id: '3',
@@ -92,7 +95,8 @@ export const initialState = {
       tokenPrice: 0,
       totalVolumePerPool: 0,
       farmingFee: 0,
-      pId: 3
+      pId: 3,
+      poolAllowance: ''
     },
   ],
 };
@@ -161,6 +165,12 @@ const farmingPageReducer = (state = initialState, action) =>
         let balances = action.payload
         balances.forEach((item, index) => {
           draft.contents[index].availableToken = item;
+        })
+        break
+      case UPDATE_FARM_ALLOWANCE:
+        let allowances = action.payload
+        allowances.forEach((item, index) => {
+          draft.contents[index].poolAllowance = item;
         })
         break
       default:
