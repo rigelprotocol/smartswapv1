@@ -12,7 +12,8 @@ import {
   CLEAR_WALLET,
   CLOSE_LOADING_WALLET,
   CHANGE_DEADLINE,
-  CHANGE_BNB
+  CHANGE_BNB,
+  UPDATE_CHAINID
 } from './constants';
 
 export const initialState = {
@@ -45,6 +46,7 @@ const walletProviderReducer = (state = initialState, action) =>
       case WALLET_CONNECTED:
         draft.wallet = action.wallet;
         draft.connected = true;
+        draft.loading = false;
         break;
       case WALLET_PROPS:
         draft.wallet_props = action.payload.rgpBalance;
@@ -67,6 +69,9 @@ const walletProviderReducer = (state = initialState, action) =>
       case CHANGE_DEADLINE:
         draft.transactionDeadLine = action.payload.actualTransactionDeadline;
         draft.slippageValue = action.payload.slippageValue;
+        break;
+      case UPDATE_CHAINID:
+        draft.wallet.chainId = action.payload;
         break;
       default:
         return state;

@@ -23,11 +23,13 @@ import {
   CLOSE_LOADING_WALLET,
   CLEAR_WALLET,
   CHANGE_DEADLINE,
-  CHANGE_BNB
+  CHANGE_BNB,
+  UPDATE_CHAINID
 } from './constants';
 
 export const reConnect = (wallet) => async dispatch => {
   try {
+    dispatch({ type: LOADING_WALLET, payload: true });
     const { selectedAddress, chainId } = wallet;
     const ethProvider = await provider();
     const walletSigner = await signer();
@@ -40,7 +42,7 @@ export const reConnect = (wallet) => async dispatch => {
       },
     })
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
-
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   } catch (e) {
     return dispatch({
       type: NOTICE, message: {
@@ -49,6 +51,8 @@ export const reConnect = (wallet) => async dispatch => {
         type: 'error',
       }
     });
+  } finally {
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   }
 
 }
@@ -59,6 +63,7 @@ export const connectWallet = () => async dispatch => {
     const ethProvider = await provider();
     const walletSigner = await signer()
     const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+
     const res = await connectMetaMask();
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
     const balance = await ethProvider.getBalance(res[0]);
@@ -81,11 +86,14 @@ export const connectWallet = () => async dispatch => {
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
     return dispatch({
       type: NOTICE, message: {
-        title: 'Connection Error:',
+        title: 'Connection Error',
         body: 'Please reload this page and reconnect',
         type: 'error',
       }
     });
+  } finally {
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+
   }
 
 };
@@ -111,6 +119,11 @@ export const disconnectWallet = () => dispatch => {
 export const changeDeadlineValue = value => dispatch => {
   dispatch({ type: CHANGE_DEADLINE, payload: value })
 }
+
+export const updateChainId = chainId => dispatch => {
+  dispatch({ type: UPDATE_CHAINID, payload: chainId })
+}
+
 export const changeRGPValue = wallet => async dispatch => {
   try {
     const { address } = wallet;

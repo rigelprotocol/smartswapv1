@@ -30,28 +30,32 @@ const TradeButton = () => {
         rounded="2xl"
         border=" 1px solid rgba(255, 255, 255,0.15) "
       >
-        <MenuItem
-          _hover={{ background: '#29235E' }}
-          _focus={{ outline: 0, background: '#29235E' }}
-          cursor="pointer"
-          fontSize="14px"
-          rounded="xl"
-          h="40px"
-          className={styles.trade__button__item}
-        >
-          <Link to={ROUTES.SMART_SWAPPING}> Smart Swapping </Link>
-        </MenuItem>
-        <MenuItem
-          _hover={{ background: '#29235E' }}
-          _focus={{ outline: 0, background: '#29235E' }}
-          cursor="pointer"
-          fontSize="14px"
-          rounded="xl"
-          h="40px"
-          className={styles.trade__button__item}
-        >
-          <Link to={ROUTES.LIQUIDITY}> Liquidity </Link>
-        </MenuItem>
+        <Link to={ROUTES.SMART_SWAPPING}>
+          <MenuItem
+            _hover={{ background: '#29235E' }}
+            _focus={{ outline: 0, background: '#29235E' }}
+            cursor="pointer"
+            fontSize="14px"
+            rounded="xl"
+            h="40px"
+            className={styles.trade__button__item}
+          >
+            Smart Swapping
+          </MenuItem>
+        </Link>
+        <Link to={ROUTES.LIQUIDITY}>
+          <MenuItem
+            _hover={{ background: '#29235E' }}
+            _focus={{ outline: 0, background: '#29235E' }}
+            cursor="pointer"
+            fontSize="14px"
+            rounded="xl"
+            h="40px"
+            className={styles.trade__button__item}
+          >
+            Liquidity
+          </MenuItem>
+        </Link>
       </MenuList>
     </Menu>
   );

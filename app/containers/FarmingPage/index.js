@@ -37,6 +37,7 @@ import {
   updateTotalLiquidity,
   updateTokenStaked,
   updateFarmBalances,
+
 } from './actions';
 // import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
@@ -51,6 +52,7 @@ export function FarmingPage(props) {
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useModalDisclosure()
+
 
 
   useEffect(() => {

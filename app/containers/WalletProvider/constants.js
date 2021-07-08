@@ -12,3 +12,5 @@ export const WALLET_CONNECTED = 'app/WalletProvider/WALLET_CONNECTED';
 export const CLOSE_LOADING_WALLET = 'app/WalletProvider/CLOSE_LOADING_WALLET';
 export const CHANGE_DEADLINE = 'app/WalletProvider/CHANGE_DEADLINE';
 export const CHANGE_BNB = 'app/WalletProvider/CHANGE_BNB';
+export const UPDATE_CHAINID = 'app/WalletProvider/UPDATE_CHAINID';
+

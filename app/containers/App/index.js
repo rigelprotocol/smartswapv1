@@ -22,7 +22,12 @@ import NotFoundPage from 'containers/NotFoundPage/index';
 import Splash from 'components/splash/index';
 import '../../styles/globals.css';
 import Toast from '../../components/Toast';
-import { reConnect, disconnectWallet } from '../WalletProvider/actions';
+import { reConnect, disconnectWallet, updateChainId } from '../WalletProvider/actions';
+import TrustWallet from './../../components/TrustWallet/index';
+import { setWallet } from 'containers/WalletProvider/saga';
+import { isSupportedNetwork } from './../../utils/wallet-wiget/connection'
+import { notify } from 'containers/NoticeProvider/actions';
+
 
 const breakpoints = {
   sm: '360px',
@@ -48,16 +53,38 @@ const newTheme = {
 const App = props => {
   const { wallet } = props.state;
 
-  if (window.ethereum) {
-    ethereum.on('chainChanged', chainId => {
-      window.location.reload();
-    });
-  }
+  useEffect(() => {
+    if (window.ethereum) {
+
+      checkchain()
+      const obj = ethereum.on('chainChanged', chainId => {
+        console.log(chainId)
+        window.location.reload();
+      });
+
+    }
+  }, [])
 
   useEffect(() => {
+    checkchain()
+  }, [wallet]);
+
+  const checkchain = async () => {
+    const chainID = await window.ethereum.request({
+      method: 'eth_chainId',
+    })
+    props.updateChainId(chainID)
+    if (!isSupportedNetwork(chainID)) {
+      return props.notify({
+        title: 'Unsupported Network',
+        body: 'Please switch to Binance Smart Chain mainnet',
+        type: 'error'
+      });
+    }
     listener(wallet, props);
     reConnector(props);
-  }, [wallet]);
+  }
+
   return (
     <ToastProvider placement="bottom-right">
       <ThemeProvider theme={newTheme}>
@@ -79,7 +106,7 @@ const mapStateToProps = state => ({ state });
 
 export default connect(
   mapStateToProps,
-  { reConnect, disconnectWallet },
+  { reConnect, disconnectWallet, notify, updateChainId },
 )(App);
 
 function reConnector(props) {

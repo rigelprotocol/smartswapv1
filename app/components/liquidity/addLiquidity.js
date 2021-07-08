@@ -17,6 +17,7 @@ import InfoTextBox from 'components/TextBox/InfoTextBox';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/spinner';
+import SpinModal from "../modal/SpinModal"
 import ApproveBox from './ApproveBox';
 import LiquidityPriceBox from './LiquidityPriceBox';
 import Question from '../../assets/question.svg';
@@ -68,6 +69,8 @@ const AddLiquidity = ({
   tokenFromValue,
   tokenToValue,
   handleFromAmount,
+  onCloseModal,
+  isOpenModal 
 }) => (
   <Box
     bg="#120136"
@@ -219,7 +222,7 @@ const AddLiquidity = ({
               <Box>{fromValue}</Box>
             </Flex>
             <Flex m="1" justifyContent="space-between">
-              <Text mt={-1}> {toSelectedToken.symbol} Deposited </Text>
+              <Text mt={-1}> {toSelectedToken.symbol}  </Text>
               <Box>{toValue}</Box>
             </Flex>
             <Flex m="1" justifyContent="space-between">
@@ -495,6 +498,20 @@ const AddLiquidity = ({
       </ModalContent>
     </Modal>
   
+    
+  <SpinModal
+     isOpenModal={isOpenModal}
+     onCloseModal={onCloseModal}
+     title="Success"
+  >
+    <Box
+    textAlign="center"
+    mt={3} 
+    mb={8}
+    >
+  Providing {fromValue} {fromSelectedToken.symbol} and {toValue} {toSelectedToken.symbol}
+    </Box>
+      </SpinModal>
   </Box>
 );
 AddLiquidity.propTypes = {
@@ -529,6 +546,8 @@ AddLiquidity.propTypes = {
   closeModal7: PropTypes.func.isRequired,
   changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
   createNewTokenPair: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  isOpenModal:PropTypes.func.isRequired, 
   modal1Disclosure: PropTypes.object,
   modal2Disclosure: PropTypes.object,
   modal3Disclosure: PropTypes.object,

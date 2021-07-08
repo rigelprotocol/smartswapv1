@@ -34,6 +34,7 @@ const RGP = ({ wallet_props }) => {
           background:
             'linear-gradient(to right, rgb(64,186,213),rgb(3,90,166))',
         }}
+        mt={["10","10","0"]}
       >
         {wallet_props} RGP
       </Button>

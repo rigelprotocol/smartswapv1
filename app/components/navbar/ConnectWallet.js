@@ -13,18 +13,20 @@ import {
   MenuItem,
   Tooltip,
   ModalCloseButton,
+  Spinner
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { connect } from 'react-redux';
 import { connectingWallet } from 'containers/WalletProvider/actions';
 import styles from '../../styles/navbar.css';
+import { isSupportedNetwork } from '../../utils/wallet-wiget/connection'
 
 import Options from './Options';
 import Loading from './Loading';
 import Binance from '../../assets/bnb.svg';
 import Ethereum from '../../assets/eth.svg';
 
-const Wallet = ({ loading, show, connectingWallet }) => {
+const Wallet = ({ loading, show, connectingWallet, chainId }) => {
   const modal1Disclosure = useDisclosure();
 
   const open = () => {
@@ -34,6 +36,49 @@ const Wallet = ({ loading, show, connectingWallet }) => {
   const close = () => {
     modal1Disclosure.onClose();
   };
+
+  if (loading) {
+    return (
+      <Button
+        as={Button}
+        border="none"
+        fontWeight="regular"
+        fontSize="md"
+        rounded="xl"
+        cursor="pointer"
+        bg="rgba(64, 186, 213,0.25)"
+        color="#40BAD5"
+        _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+        _active={{ outline: '#29235E' }}
+        _expanded={{ bg: '#29235E' }}
+        rightIcon={<Spinner size="xs" />}
+      >
+        Connecting..
+      </Button>
+
+    )
+  }
+
+  if (!isSupportedNetwork(chainId)) {
+    return (
+      <Button
+        as={Button}
+        border="none"
+        fontWeight="regular"
+        fontSize="md"
+        rounded="xl"
+        cursor="pointer"
+        bg="rgba(64, 186, 213,0.25)"
+        color="#40BAD5"
+        _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+        _active={{ outline: '#29235E' }}
+        _expanded={{ bg: '#29235E' }}
+      >
+        Unsupported Network
+      </Button>
+
+    )
+  }
 
   return (
     <>
@@ -125,9 +170,10 @@ const Wallet = ({ loading, show, connectingWallet }) => {
   );
 };
 const mapStateToProps = ({ wallet }) => {
-  const { loading } = wallet;
+  const { loading, wallet: { chainId } } = wallet;
   return {
     loading,
+    chainId
   };
 };
 export default connect(
