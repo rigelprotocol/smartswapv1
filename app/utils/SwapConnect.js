@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import BUSD from 'utils/abis/BUSD.json';
 import LiquidityPairAbi from 'utils/abis/smartSwapLPToken.json';
 import RigelToken from 'utils/abis/RigelToken.json';
+import ERC20Token from 'utils/abis/ERC20Token.json';
 import SmartSwapFactoryForSwap from 'utils/abis/SmartSwapFactoryForSwap.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 import SmartSwapLPToken from 'utils/abis/smartSwapLPToken.json';
@@ -102,6 +103,10 @@ export const BUSDToken = async () =>
 // BNB token
 export const BNBTOKEN = async () =>
   new ethers.Contract(SMART_SWAP.BNB, BUSD, getSigner());
+
+// BNB token
+export const ERC20Tokens = async () =>
+  new ethers.Contract("0x4af5ff1a60a6ef6c7c8f9c4e304cd9051fca3ec0",ERC20Token,undefined)
 
 // WETH (ETH)
 export const WETH = async () => {

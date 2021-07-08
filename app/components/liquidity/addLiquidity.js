@@ -13,6 +13,7 @@ import {
 import { CheckIcon, CloseIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import LiquidityFromBox from 'components/liquidity/from';
 import To from 'components/liquidity/to';
+import InfoTextBox from 'components/TextBox/InfoTextBox';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/spinner';
@@ -22,7 +23,7 @@ import Question from '../../assets/question.svg';
 import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
-
+import InfoModal from 'components/modal/InfoModal';
 
 const AddLiquidity = ({
   fromValue,
@@ -74,13 +75,22 @@ const AddLiquidity = ({
     w={['100%', '100%', '29.50%', '29.5%']}
     rounded="lg"
   >
+    <InfoModal>
+      
+    </InfoModal>
     {isNewUser ? <ApproveBox popupText={popupText} /> : <div />}
     <Flex justifyContent="space-between" alignItems="center" px={4}>
       <ArrowLeft cursor="pointer" onClick={() => back('INDEX')} />
       <Text color="gray.200">{addLiquidityPageHeading}</Text>
       <Question />
     </Flex>
+{newTokenPairButton && <InfoTextBox>
+  <Text>
+    <b>Tip</b>: When you add liquidity, you will receive pool tokens representing your position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.
+  </Text>
+</InfoTextBox>
 
+}
     <LiquidityFromBox
       label="input"
       fromValue={fromValue}

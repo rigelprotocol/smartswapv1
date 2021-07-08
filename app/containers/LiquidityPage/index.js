@@ -21,12 +21,15 @@ import AddLiquidity from 'components/liquidity/addLiquidity';
 import RemoveALiquidity from 'components/liquidity/removeALiquidity';
 import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
+import ERC20Tokens from 'utils/abis/ERC20Token.json';
+import { getProvider } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { tokenList, tokenWhere, SMART_SWAP } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
 import { isNotEmpty } from "../../utils/UtilFunc";
-
+import { getAddress } from '@ethersproject/address'
+import { Contract } from '@ethersproject/contracts'
 // 35,200
 export function LiquidityPage(props) {
   const { wallet, wallet_props } = props.wallet;
@@ -71,6 +74,18 @@ export function LiquidityPage(props) {
     clearTimeout(timer1)
   ), [liquidityTab])
   useEffect(() => {
+
+    function isAddress(value) {
+      try {
+        return getAddress(value)
+      } catch {
+        return false
+      }
+    }
+  
+    let data = isAddress("0x4af5ff1a60a6ef6c7c8f9c4e304cd9051fca3ec0")
+    console.log(data) 
+    getData()
     displayBNBbutton();
     // calculateToValue()
     //  changeButtonValue();
@@ -80,7 +95,18 @@ export function LiquidityPage(props) {
     // calculateToValue(value, 'from');
   }
 
-
+const getData = async () =>{
+//   let contract =await new Contract("0x4af5ff1a60a6ef6c7c8f9c4e304cd9051fca3ec0",ERC20Tokens,getProvider())
+// // let name = await contract.name()
+// let address = await contract.address
+// // console.log("you",name,{address,name})
+// console.log({address})
+let gcontract =await new Contract("0x9f0227a21987c1ffab1785ba3eba60578ec1501b", ERC20Tokens, getProvider())
+let gname = await gcontract.name()
+let gBalance = await gcontract.balanceOf("0x3552b618dc1c3d5e53818c651bc41ae7a307f767")
+console.log("you",{total:gname.toString()},{balance:gBalance.toString()})
+console.log(ERC20Tokens)
+}
   useEffect(() => {
     if ((fromAddress && toAddress)) {
      checkIfLiquidityPairExist()
@@ -611,9 +637,10 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
   const back = (tab) => {
     setLiquidityTab(tab)
   }
-  const addLiquidityPage = (head) => {
+  const addLiquidityPage = (head,newPair) => {
     setLiquidityTab("ADDLIQUIDITY")
 setAddLiquidityPageHeading(head)
+newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
   }
   const getAmountForLiquidity = async (value) => {
     const convertToEther = ethers.utils.parseEther(value.toString())

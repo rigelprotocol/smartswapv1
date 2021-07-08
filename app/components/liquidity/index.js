@@ -37,7 +37,7 @@ const Index = ({
           borderColor="#40BAD5"
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
-          onClick={() => addLiquidityPage("Add Liquidity")}
+          onClick={() => addLiquidityPage("Add Liquidity",false)}
         >
           Add Liquidity
         </Button>
@@ -54,7 +54,7 @@ const Index = ({
          cursor="pointer"
          rounded="2xl"
          bg="transparent"
-         onClick={() => addLiquidityPage("Create a new pair")}
+         onClick={() => addLiquidityPage("Create a new pair",true)}
          >
           Create a pair
         </Button>
