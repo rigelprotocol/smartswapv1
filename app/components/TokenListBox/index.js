@@ -7,7 +7,6 @@
  * TokenListBox
  *
  */
-
 import {
   Modal,
   ModalBody,
@@ -29,6 +28,7 @@ import { tokenList } from 'utils/constants';
 import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
+import Empty_set from '../../assets/Empty_set.svg';
 import {getTokenList } from "utils/tokens"
 
 function TokenListBox({
@@ -48,6 +48,7 @@ function TokenListBox({
   const [balanceIsSet, setBalanceIsSet] = useState(false);
   const [searchToken, setSearchToken] = useState('');
   const [openCautionModal, setOpenCautionModal] = useState(false);
+  const [selectedTokenForModal, setSelectedTokenForModal] = useState({});
   const account = wallet.wallet;
   useEffect(() => {
     getTokenListBalance(list, account, setBalanceIsSet);
@@ -59,24 +60,21 @@ function TokenListBox({
   const searchTokens =async ()=>{
     if (searchToken !== '') {
       let tokenArrayList =await getTokenList(searchToken)
-      console.log({tokenArrayList})
-      // const filteredTokenList = tokenList.filter(
-      //   token =>
-      //     token.symbol.toLowerCase().includes(searchToken.toLowerCase()) ||
-      //     token.name.toLowerCase().includes(searchToken.toLowerCase()),
-      // );
-      // if(filteredTokenList.length>0){
-      //  return setList(filteredTokenList); 
-      // }else{
-      //   setOpenCautionModal(true)
-      //   onOpenModal()
-      //   return setList(filteredTokenList); 
-      // }
       return setList(tokenArrayList);
     }
   }
-  const importTokens = () =>{
-    alert("import")
+  const importTokens = (token) =>{
+    token.available=true
+    token.imported = true
+    isFunc(setSelectedToken) && setSelectedToken(token);
+    isFunc(setSelectedToToken) && setSelectedToToken(token);
+    isFunc(setPathToArray) &&
+      setPathToArray(token.address, token.symbol);
+    isFunc(setPathArray) &&
+      setPathArray(token.address, token.symbol);
+    isFunc(getToAmount) && getToAmount();
+    onCloseModal()
+    isFunc(onClose) && onClose();
   }
   return (
     <>
@@ -118,12 +116,14 @@ function TokenListBox({
             <ArrowDownImage />
           </Flex>
           {list.map((token,index) => (
+            <>
             <Flex
               justifyContent="space-between"
               mt={1}
               cursor="pointer"
               onClick={() => {
-                isFunc(setSelectedToken) && setSelectedToken(token);
+                if(token.available){
+                    isFunc(setSelectedToken) && setSelectedToken(token);
                 isFunc(setSelectedToToken) && setSelectedToToken(token);
                 isFunc(setPathToArray) &&
                   setPathToArray(token.address, token.symbol);
@@ -131,6 +131,8 @@ function TokenListBox({
                   setPathArray(token.address, token.symbol);
                 isFunc(getToAmount) && getToAmount();
                 isFunc(onClose) && onClose();
+                }
+              
               }}
               key={index}
             >
@@ -146,16 +148,36 @@ function TokenListBox({
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                {!balanceIsSet ? '0.0' : token.balance}
+                {token.available ?
+                 !balanceIsSet ? '0.0' : 
+                 token.balance :
+                 <Button 
+                 border="0" 
+                 bg="#29235eda" 
+                 color="rgba(255, 255, 255, 0.555)" 
+                 borderRadius="15px" cursor="pointer" 
+                 _hover={{ color: 'white' }}
+                 onClick={()=> {
+                   setSelectedTokenForModal(token)
+                   onOpenModal()
+                  }}
+                 >
+                  Import
+                  </Button>
+                  }
+                
               </Text>
-            </Flex>
+        
+            </Flex>  
+             {token.imported && <Text fontSize="10px" mt="-12px" color= '#b3b3b3' ml="10px">imported by user</Text>}
+          </>
           ))}
         </ModalBody>
         <ModalFooter />
       </ModalContent>
     </Modal>
     
-  {openCautionModal &&
+
    <Modal onClose={onCloseModal} isOpen={isOpenModal} isCentered>
    <ModalOverlay />
    <ModalContent bg="#120136" color="#fff" borderRadius="20px">
@@ -181,10 +203,10 @@ _focus={{ outline: 'none' }}
 </Text>
 <Box bg="#29235e21" w="90%" m="0 auto" color="rgba(255, 255, 255, 0.555)" borderRadius="15px" padding="15px">
 <h2>Image</h2>
-<h3>MUM</h3>
-<h4>Mother</h4>
-<h6>address</h6>
-<Button padding ="1 2" border={0} background="rgba(230, 214, 214, 0.664)" color="red">
+<h3>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.symbol : "y"}</h3>
+<h5>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.name : "y"}</h5>
+<h6>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.address : "y"}</h6>
+<Button padding ="1 2" border={0} background="rgba(206, 76, 76, 0.664)" color="red"  _hover={{ color: 'red' }}>
   null unknown source
 </Button>
 </Box>
@@ -204,11 +226,11 @@ _focus={{ outline: 'none' }}
                height="50px"
                fontSize="16px"
                _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-               onClick={importTokens}>Import tokens</Button>
+               onClick={() =>importTokens(selectedTokenForModal)}>Import tokens</Button>
        </ModalFooter>
    </ModalContent>
 </Modal> 
-    }
+  
     </>
   );
 }

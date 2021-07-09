@@ -21,15 +21,11 @@ import AddLiquidity from 'components/liquidity/addLiquidity';
 import RemoveALiquidity from 'components/liquidity/removeALiquidity';
 import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
-import ERC20Tokens from 'utils/abis/ERC20Token.json';
-import { getProvider } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { tokenList, tokenWhere, SMART_SWAP } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
 import { isNotEmpty } from "../../utils/UtilFunc";
-import { getAddress } from '@ethersproject/address'
-import { Contract } from '@ethersproject/contracts'
 import { getDeadline } from "../../utils/UtilFunc";
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
@@ -58,7 +54,7 @@ export function LiquidityPage(props) {
   const [hasAllowedFromToken, setHasAllowedFromToken] = useState(false)
   const [hasAllowedToToken, setHasAllowedToToken] = useState(false)
   const [showApprovalBox, setShowApprovalBox] = useState(true)
-  const [tokenFromValue, setTokenFromValue] = useState("0")
+  const [tokenFromValue, setTokenFromValue] = useState("")
   const [trxHashed, setTrxHashed] = useState({})
   const [sendingTransaction, setSendingTransaction] = useState(false)
   const [tokenToValue, setTokenToValue] = useState("0")
@@ -70,7 +66,7 @@ export function LiquidityPage(props) {
   const [approving, setApproving] = useState(false)
   const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
   const [newTokenPairButton, setNewTokenPairButton] = useState(false)
-
+  const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   let timer1
@@ -78,18 +74,6 @@ export function LiquidityPage(props) {
     clearTimeout(timer1)
   ), [liquidityTab])
   useEffect(() => {
-
-    function isAddress(value) {
-      try {
-        return getAddress(value)
-      } catch {
-        return false
-      }
-    }
-  
-    let data = isAddress("0x4af5ff1a60a6ef6c7c8f9c4e304cd9051fca3ec0")
-    console.log(data) 
-    getData()
     displayBNBbutton();
     // calculateToValue()
     //  changeButtonValue();
@@ -99,19 +83,12 @@ export function LiquidityPage(props) {
     // calculateToValue(value, 'from');
   }
 
-const getData = async () =>{
-//   let contract =await new Contract("0x4af5ff1a60a6ef6c7c8f9c4e304cd9051fca3ec0",ERC20Tokens,getProvider())
-// // let name = await contract.name()
-// let address = await contract.address
-// // console.log("you",name,{address,name})
-// console.log({address})
-let gcontract =await new Contract("0x9f0227a21987c1ffab1785ba3eba60578ec1501b", ERC20Tokens, getProvider())
-let gname = await gcontract.name()
-let gBalance = await gcontract.balanceOf("0x3552b618dc1c3d5e53818c651bc41ae7a307f767")
-console.log("you",{total:gname.toString()},{balance:gBalance.toString()})
-console.log(ERC20Tokens)
-}
   useEffect(() => {
+    if(toSelectedToken && toSelectedToken.imported && toSelectedToken.available){
+      setDisableToSelectInputBox(false)
+    }else{
+      setDisableToSelectInputBox(true)
+    }
     if ((fromAddress && toAddress)) {
      checkIfLiquidityPairExist()
       // getLiquidityPairRatio();
@@ -127,6 +104,7 @@ console.log(ERC20Tokens)
     const LPAddress = await factory.getPair(toPath,fromPath)
 if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
   getLiquidityPairRatio()
+  changeButtonCreateNewTokenPair("Supply")
 }else{
   openModal7()
 }
@@ -943,6 +921,7 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               sendingTransaction={sendingTransaction}
               onCloseModal ={onCloseModal}
               isOpenModal ={isOpenModal}
+              disableToSelectInputBox={disableToSelectInputBox}
             />
           }
 

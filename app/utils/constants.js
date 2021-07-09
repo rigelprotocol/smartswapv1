@@ -85,10 +85,12 @@ export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
 export const tokenList = [
-  { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '' },
+  { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '',available:true },
   {
     symbol: 'RGP',
     abi: RigelToken,
+    available:true,
+    imported:false,
     name: 'Rigel Protocol',
     img: '../../assets/rgp.svg',
     address:
@@ -99,6 +101,8 @@ export const tokenList = [
   {
     abi: BUSD,
     symbol: 'BUSD',
+    available:true,
+    imported:false,
     name: 'Binance USD',
     img: '../../assets/bnb.svg',
     address:
@@ -117,6 +121,8 @@ export const tokenList = [
   {
     abi: WETH9,
     symbol: 'WBNB',
+    available:true,
+    imported:false,
     name: 'Wrapped BNB',
     img: '../../assets/eth.svg',
     address:
@@ -127,6 +133,8 @@ export const tokenList = [
   {
     abi: WETH9,
     symbol: 'BNB',
+    available:true,
+    imported:false,
     name: 'BNB',
 
     img: '../../assets/eth.svg',

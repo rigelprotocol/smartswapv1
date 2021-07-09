@@ -17,9 +17,11 @@ const Manual = ({
   toSelectedToken,
   setToSelectedToken,
   label,
+  disableToSelectInputBox
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
+  console.log(disableToSelectInputBox)
   return (
     <>
       <Box
@@ -50,7 +52,7 @@ const Manual = ({
             border="1px solid rgba(255, 255, 255,0.25)"
             fontSize="lg"
             color="rgb(255, 255, 255)"
-            disabled
+            disabled ={disableToSelectInputBox}
             onChange={event => event.preventDefault()}
           />
           <Flex alignItems="center">
@@ -95,6 +97,7 @@ Manual.propTypes = {
   setToAddress: PropTypes.func.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,
+  disableToSelectInputBox: PropTypes.bool.isRequired,
   label: PropTypes.string,
 };
 export default Manual;

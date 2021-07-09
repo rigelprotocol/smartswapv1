@@ -113,31 +113,31 @@ import { getProvider } from 'utils/SwapConnect';
 
 // SEARCH TOKENS
 export const getTokenList =async (searchToken) =>{
-   console.log(searchToken)
-   let token;
    const filteredTokenList = filterAvailableTokenList(searchToken)
    if(filteredTokenList.length>0){
       return filteredTokenList
    }else{
       let addressOfToken =await  isItAddress(searchToken)
-      console.log({addressOfToken})
      let tokenData = addressOfToken ? await getTokenWithContract(searchToken) : await getTokenWithoutContract(searchToken)
-      return tokenData.length > 0 ? tokenData : 0
+      return tokenData.length > 0 ? tokenData : []
    }
 }
 
 export const getTokenWithContract = async (searchToken) =>{
-   console.log({searchToken})
    let contract =await new Contract(searchToken, ERC20Token, getProvider())
-   console.log({contract})
    try{
       let name = await contract.name()
-   let balance = await contract.balanceOf("0x3552b618dc1c3d5e53818c651bc41ae7a307f767")
-   let tokenObject = [{
+      let symbol = await contract.symbol()
+      let balance = await contract.balanceOf("0x3552b618dc1c3d5e53818c651bc41ae7a307f767")
+      let address = await contract.address
+      let tokenObject = [{
       name: name.toString(),
-      balance: balance.toString()
+      balance: balance.toString(),
+      available:false,
+      imported:false,
+      symbol,
+      address
    }]
-    console.log({tokenObject})
    return tokenObject   
    }catch(e){
       console.log(e)
@@ -150,9 +150,7 @@ return []
 }
 export const isItAddress  = (token) => {
    try {
-      console.log(token)
       return getAddress(token)
- 
     } catch {
       return false
     }

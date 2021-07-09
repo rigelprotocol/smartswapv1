@@ -38,6 +38,7 @@ const AddLiquidity = ({
   toSelectedToken,
   setFromSelectedToken,
   setToSelectedToken,
+  disableToSelectInputBox,
   popupText,
   confirmingSupply,
   isNewUser,
@@ -108,6 +109,7 @@ const AddLiquidity = ({
       setToAddress={setToAddress}
       toSelectedToken={toSelectedToken}
       setToSelectedToken={setToSelectedToken}
+      disableToSelectInputBox={disableToSelectInputBox}
     />
     {toSelectedToken.symbol !== 'SELECT A TOKEN' && fromValue > 0 ? (
       <LiquidityPriceBox
@@ -531,6 +533,7 @@ AddLiquidity.propTypes = {
   confirmingSupply: PropTypes.func.isRequired,
   buttonValue: PropTypes.string.isRequired,
   openSupplyButton: PropTypes.bool.isRequired,
+  disableToSelectInputBox: PropTypes.bool.isRequired,
   newTokenPairButton: PropTypes.bool.isRequired,
   open: PropTypes.func.isRequired,
   closeModal1: PropTypes.func.isRequired,
