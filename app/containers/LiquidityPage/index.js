@@ -30,7 +30,7 @@ import { LIQUIDITYTABS } from "./constants";
 import { isNotEmpty } from "../../utils/UtilFunc";
 import { getAddress } from '@ethersproject/address'
 import { Contract } from '@ethersproject/contracts'
-import { isNotEmpty, getDeadline } from "../../utils/UtilFunc";
+import { getDeadline } from "../../utils/UtilFunc";
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
 // 35,200

@@ -19,6 +19,7 @@ const Manual = ({
   label,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   return (
     <>
       <Box
@@ -77,6 +78,9 @@ const Manual = ({
                 setPathArray={setToAddress}
                 isOpen={isOpen}
                 onClose={onClose}
+                isOpenModal={isOpenModal}
+                onOpenModal={onOpenModal}
+                onCloseModal={onCloseModal}
               />
             </Menu>
           </Flex>

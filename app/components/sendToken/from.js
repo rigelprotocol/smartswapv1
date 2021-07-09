@@ -17,6 +17,7 @@ const From = ({
   wallet,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   // move this to the actually state created
   // useEffect(() => {
   //   setSelectedToken(tokenWhere('rgp'));
@@ -53,6 +54,9 @@ const From = ({
         setPathArray={setPathArray}
         isOpen={isOpen}
         onClose={onClose}
+        isOpenModal={isOpenModal}
+        onOpenModal={onOpenModal}
+        onCloseModal={onCloseModal}
       />
     </>
   );

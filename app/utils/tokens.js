@@ -1,3 +1,11 @@
+import { tokenList } from 'utils/constants';
+import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
+import { isFunc } from 'utils/UtilFunc';
+import { getAddress } from '@ethersproject/address'
+import { Contract } from '@ethersproject/contracts'
+import ERC20Token from 'utils/abis/ERC20Token.json';
+import { getProvider } from 'utils/SwapConnect';
+
 // import { SmartFactory } from './SwapConnect';
 // list all transactions here
 // export default async function Tokens() {
@@ -102,3 +110,59 @@
 //     );
 //   };
 // }
+
+// SEARCH TOKENS
+export const getTokenList =async (searchToken) =>{
+   console.log(searchToken)
+   let token;
+   const filteredTokenList = filterAvailableTokenList(searchToken)
+   if(filteredTokenList.length>0){
+      return filteredTokenList
+   }else{
+      let addressOfToken =await  isItAddress(searchToken)
+      console.log({addressOfToken})
+     let tokenData = addressOfToken ? await getTokenWithContract(searchToken) : await getTokenWithoutContract(searchToken)
+      return tokenData.length > 0 ? tokenData : 0
+   }
+}
+
+export const getTokenWithContract = async (searchToken) =>{
+   console.log({searchToken})
+   let contract =await new Contract(searchToken, ERC20Token, getProvider())
+   console.log({contract})
+   try{
+      let name = await contract.name()
+   let balance = await contract.balanceOf("0x3552b618dc1c3d5e53818c651bc41ae7a307f767")
+   let tokenObject = [{
+      name: name.toString(),
+      balance: balance.toString()
+   }]
+    console.log({tokenObject})
+   return tokenObject   
+   }catch(e){
+      console.log(e)
+   }
+
+}
+export const getTokenWithoutContract = (searchToken) =>{
+alert("without contract")
+return []
+}
+export const isItAddress  = (token) => {
+   try {
+      console.log(token)
+      return getAddress(token)
+ 
+    } catch {
+      return false
+    }
+}
+
+export const filterAvailableTokenList =(searchToken) =>{
+ const filteredTokenList = tokenList.filter(
+        token =>
+          token.symbol.toLowerCase().includes(searchToken.toLowerCase()) ||
+          token.name.toLowerCase().includes(searchToken.toLowerCase()),
+      );
+     return filteredTokenList
+}

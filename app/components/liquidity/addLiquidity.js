@@ -24,7 +24,6 @@ import Question from '../../assets/question.svg';
 import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
-import InfoModal from 'components/modal/InfoModal';
 
 const AddLiquidity = ({
   fromValue,
@@ -78,9 +77,6 @@ const AddLiquidity = ({
     w={['100%', '100%', '29.50%', '29.5%']}
     rounded="lg"
   >
-    <InfoModal>
-      
-    </InfoModal>
     {isNewUser ? <ApproveBox popupText={popupText} /> : <div />}
     <Flex justifyContent="space-between" alignItems="center" px={4}>
       <ArrowLeft cursor="pointer" onClick={() => back('INDEX')} />
