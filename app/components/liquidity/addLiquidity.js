@@ -270,7 +270,7 @@ const AddLiquidity = ({
             height="50px"
             fontSize="16px"
             _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-            onClick={newTokenPairButton ? createNewTokenPair : confirmingSupply}
+            onClick={confirmingSupply}
           >
             Confirm Supply
           </Button>
