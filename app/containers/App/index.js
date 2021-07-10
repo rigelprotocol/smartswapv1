@@ -74,15 +74,10 @@ const App = props => {
       method: 'eth_chainId',
     })
     props.updateChainId(chainID)
-    if (!isSupportedNetwork(chainID)) {
-      return props.notify({
-        title: 'Unsupported Network',
-        body: 'Please switch to Binance Smart Chain mainnet',
-        type: 'error'
-      });
+    if (isSupportedNetwork(chainID)) {
+      listener(wallet, props);
+      reConnector(props);
     }
-    listener(wallet, props);
-    reConnector(props);
   }
 
   return (
