@@ -17,11 +17,12 @@ const Manual = ({
   toSelectedToken,
   setToSelectedToken,
   label,
-  disableToSelectInputBox
+  disableToSelectInputBox,
+  setToValue
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
-  console.log(disableToSelectInputBox)
+
   return (
     <>
       <Box
@@ -53,7 +54,13 @@ const Manual = ({
             fontSize="lg"
             color="rgb(255, 255, 255)"
             disabled ={disableToSelectInputBox}
-            onChange={event => event.preventDefault()}
+            onChange={event =>disableToSelectInputBox? event.preventDefault(): 
+              setToValue(event.target.value)
+            }
+            // onChange={event => {
+            //   setFromValue(event.target.value);
+            //   handleFromAmount(event.target.value);
+            // }}
           />
           <Flex alignItems="center">
             <Menu>
@@ -97,6 +104,7 @@ Manual.propTypes = {
   setToAddress: PropTypes.func.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,
+  setToValue: PropTypes.func.isRequired,
   disableToSelectInputBox: PropTypes.bool.isRequired,
   label: PropTypes.string,
 };

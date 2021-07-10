@@ -28,6 +28,7 @@ import BreakdownBg from '../../assets/breakdown-bg.svg';
 const AddLiquidity = ({
   fromValue,
   setFromValue,
+  setToValue,
   toValue,
   setFromAddress,
   addLiquidityPageHeading,
@@ -84,7 +85,13 @@ const AddLiquidity = ({
       <Text color="gray.200">{addLiquidityPageHeading}</Text>
       <Question />
     </Flex>
-{newTokenPairButton && <InfoTextBox>
+{newTokenPairButton ? <InfoTextBox>
+<Text>
+  <h4>You are the first Liquidity Provider</h4>
+   <Text>The ratio of tokens you add will set the price of this pool</Text>
+  </Text>
+</InfoTextBox> : 
+<InfoTextBox>
   <Text>
     <b>Tip</b>: When you add liquidity, you will receive pool tokens representing your position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.
   </Text>
@@ -110,6 +117,7 @@ const AddLiquidity = ({
       toSelectedToken={toSelectedToken}
       setToSelectedToken={setToSelectedToken}
       disableToSelectInputBox={disableToSelectInputBox}
+      setToValue={setToValue}
     />
     {toSelectedToken.symbol !== 'SELECT A TOKEN' && fromValue > 0 ? (
       <LiquidityPriceBox
@@ -117,6 +125,7 @@ const AddLiquidity = ({
         fromValue={fromValue}
         toValue={toValue}
         fromSelectedToken={fromSelectedToken}
+        newTokenPairButton={newTokenPairButton}
       />
     ) : (
       <div />
@@ -180,7 +189,7 @@ const AddLiquidity = ({
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
           // disabled={openSupplyButton}
-          onClick={open}
+          onClick={()=>newTokenPairButton ? open("new"):open("old")}
         >
           {buttonValue}
         </Button>
@@ -286,7 +295,7 @@ const AddLiquidity = ({
             Waiting for Confirmation
           </Text>
           <Text fontSize="16px" fontWeight="bold">
-            Supplying {fromValue} {fromSelectedToken.symbol} to {toValue}{' '}
+            Supplying {fromValue} {fromSelectedToken.symbol} and {toValue}{' '}
             {toSelectedToken.symbol}
           </Text>
         </ModalBody>
@@ -451,11 +460,11 @@ const AddLiquidity = ({
           <Text color="gray.400">
             There is no liquidity on this pair, will you like to add Liquidity.
           </Text>
-          <Flex justifyContent="space-between" flexDirection={["column","row","column","row"]}>
+          <Flex justifyContent="space-between">
               <Button
                d="block"
-               w={["100%","48%","100%","48%"]}
-               marginTop={["20px","0px","20px","0px"]}
+               w="90%"
+               margin="20px auto"
                h="50px"
                color="#40BAD5"
                border="none"
@@ -469,27 +478,9 @@ const AddLiquidity = ({
                _active={{ outline: '#29235E', background: '#29235E' }}
                 onClick={changeButtonCreateNewTokenPair}
               >
-                YES
+                OK
               </Button>
-          <Button
-                 d="block"
-                 w={["100%","48%","100%","48%"]}
-                 marginTop={["20px","0px","20px","0px"]}
-                 _hover={{ borderColor: 'rgba(64, 186, 213,0.35)' }}
-                 h="50px"
-                 color="#40BAD5"
-                 border="2px solid #40BAD5"
-                 fontWeight="regular"
-                 fontSize="lg"
-                 cursor="pointer"
-                 rounded="2xl"
-                 bg="transparent"
-                _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-                onClick={closeModal7}
-              >
-                NO
-              </Button>
-       
+        
           </Flex>
          </ModalBody>
       
@@ -523,6 +514,7 @@ AddLiquidity.propTypes = {
   fromValue: PropTypes.string.isRequired,
   addLiquidityPageHeading: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
+  setToValue: PropTypes.func.isRequired,
   setFromSelectedToken: PropTypes.func.isRequired,
   fromSelectedToken: PropTypes.object.isRequired,
   toValue: PropTypes.string.isRequired,

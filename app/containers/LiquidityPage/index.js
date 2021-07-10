@@ -57,7 +57,7 @@ export function LiquidityPage(props) {
   const [tokenFromValue, setTokenFromValue] = useState("")
   const [trxHashed, setTrxHashed] = useState({})
   const [sendingTransaction, setSendingTransaction] = useState(false)
-  const [tokenToValue, setTokenToValue] = useState("0")
+  const [tokenToValue, setTokenToValue] = useState("")
   const [fromTokenAllowance, setFromTokenAllowance] = useState('')
   const [toTokenAllowance, setToTokenAllowance] = useState('')
   const [liquidityLoading, setLiquidityLoading] = useState(false)
@@ -67,6 +67,7 @@ export function LiquidityPage(props) {
   const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
   const [newTokenPairButton, setNewTokenPairButton] = useState(false)
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
+  const [disableFromSelectInputBox, setDisableFromSelectInputBox] = useState(false)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   let timer1
@@ -79,16 +80,14 @@ export function LiquidityPage(props) {
     //  changeButtonValue();
   }, [toSelectedToken, liquidities]);
   const handleFromAmount = (value) => {
-    setToValue((value * liquidityPairRatio).toString());
+    if(!newTokenPairButton){
+      setToValue((value * liquidityPairRatio).toString());
+    }
+    
     // calculateToValue(value, 'from');
   }
 
   useEffect(() => {
-    if(toSelectedToken && toSelectedToken.imported && toSelectedToken.available){
-      setDisableToSelectInputBox(false)
-    }else{
-      setDisableToSelectInputBox(true)
-    }
     if ((fromAddress && toAddress)) {
      checkIfLiquidityPairExist()
       // getLiquidityPairRatio();
@@ -102,9 +101,10 @@ export function LiquidityPage(props) {
     const fromPath = ethers.utils.getAddress(fromAddress);
     const toPath = ethers.utils.getAddress(toAddress);
     const LPAddress = await factory.getPair(toPath,fromPath)
-if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
+if (LPAddress !== "0x0000000000000000000000000000000000000000" ){ 
+   setNewTokenPairButton(false)
+   setButtonValue("Supply")
   getLiquidityPairRatio()
-  changeButtonCreateNewTokenPair("Supply")
 }else{
   openModal7()
 }
@@ -135,21 +135,28 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
   const changeButtonCreateNewTokenPair = async () =>{
     closeModal7()
     setNewTokenPairButton(true)
+    setDisableToSelectInputBox(false)
     setButtonValue("Create a new pool")
+    
     
   }
   const createNewTokenPair = async () =>{
-    alert("creating")
       try{
+        closeModal1()
+        modal2Disclosure.onOpen()
         const factory = await SmartFactory();
       const fromPath = ethers.utils.getAddress(fromAddress);
       const toPath = ethers.utils.getAddress(toAddress);
       const LPAddress = await factory.createPair(toPath, fromPath);
       console.log(LPAddress)
-      }catch(e){
-        props.showErrorMessage(e)
-      }
-      
+      // setTrxHashed(data)
+      closeModal2()
+      openModal3()
+    } catch (e) {
+      props.showErrorMessage(e)
+      closeModal2()
+      openModal5()
+    }
   }
 
   useEffect(() => {
@@ -268,6 +275,7 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
         }
         if (liquidityObject.poolToken != 0) {
           pairs.push(liquidityObject);
+          console.log(liquidityObject)
         }
       }
       setLiquidities([...pairs])
@@ -341,6 +349,7 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
     setDisplayButton(false)
     setFromSelectedToken(tokenWhere('rgp'))
     setToSelectedToken(tokenWhere("SELECT A TOKEN"))
+    setNewTokenPairButton(false)
   }
 
   const addingLiquidity = async () => {
@@ -351,9 +360,9 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
         const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toString())
-        const amountAMin = Web3.utils.toWei((fromValue * 0.8).toString())
-        const amountBMin = Web3.utils.toWei((toValue * 0.8).toString())
-
+        const amountAMin =newTokenPairButton ? amountADesired : Web3.utils.toWei((fromValue * 0.8).toString())
+        const amountBMin = newTokenPairButton ? amountBDesired : Web3.utils.toWei((toValue * 0.8).toString())
+console.log({amountADesired,amountAMin,amountBDesired,amountBMin})
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidity(
@@ -371,6 +380,7 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
+        console.log({"adding":data})
         setTrxHashed(data)
         closeModal2()
         openModal3()
@@ -512,11 +522,19 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
     }
   }
 
-  const open = async () => {
+  const open = async (value) => {
     // CHECK IF THERE IS LIQUIDITY ON THIS, BY CALLING THE GETPATR FUNCTION ON SMARTFACTORY
     // IF IT DOES CONTINUE WITH THE PROCESS
     // IF NOT SHOW A MODAL THAT TELLS THE USER TO ADD LIQUIDITY TO THIS SET OF PAIRS 
-    await getPriceForToken()
+    if(value === "new"){
+      const value1 = (parseFloat(fromValue) / parseFloat(toValue)).toFixed(5)
+      const value2 = (parseFloat(toValue) / parseFloat(fromValue)).toFixed(5)
+      setTokenFromValue(value1)
+      setTokenToValue(value2)
+    }else{
+      await getPriceForToken()
+    }
+    
     modal1Disclosure.onOpen();
   };
 
@@ -920,6 +938,7 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               handleFromAmount={handleFromAmount}
               sendingTransaction={sendingTransaction}
               onCloseModal ={onCloseModal}
+              setToValue={setToValue}
               isOpenModal ={isOpenModal}
               disableToSelectInputBox={disableToSelectInputBox}
             />
