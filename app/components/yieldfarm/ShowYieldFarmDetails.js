@@ -78,8 +78,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
           pool2Allowance,
           pool1Allowance,
           pool3Allowance])
-
-
       }
     } catch (error) {
       console.error(error, "something went wrong")
@@ -765,14 +763,10 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
               h="50px"
               borderRadius="12px"
               bg={
-                approveValueForRGP && approveValueForOtherToken
-                  ? '#444159'
-                  : 'rgba(64, 186,213, 0.1)'
+                'rgba(64, 186,213, 0.1)'
               }
               color={
-                approveValueForRGP && approveValueForOtherToken
-                  ? 'rgba(190, 190, 190, 1)'
-                  : '#40BAD5'
+                '#40BAD5'
               }
               border="0"
               mb="4"
@@ -818,13 +812,13 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
             w="100%"
             h="50px"
             borderRadius="12px"
-            bg="#444159"
-            color="rgba(190, 190, 190, 1)"
+            bg="rgba(64, 186,213, 0.1)"
+            color="#40BAD5"
             border="0"
             mb="4"
             mr="6"
             cursor="pointer"
-            _hover={{ bg: '#444159' }}
+            _hover={{ color: 'white' }}
             onClick={() => harvest(content.pId)}
           >
             Harvest
