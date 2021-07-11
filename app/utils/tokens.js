@@ -1,5 +1,5 @@
 import { tokenList } from 'utils/constants';
-import Web3 from 'Web3'
+import Web3 from 'web3'
 import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import { getAddress } from '@ethersproject/address'
