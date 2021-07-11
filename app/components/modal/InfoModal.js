@@ -39,7 +39,7 @@ const InfoModal = ({ onCloseModal, isOpenModal, title, children }) => {
                             mx="auto"
                             color="#40BAD5"
                             width="100%"
-                            background="rgba(64, 186, 213, 0.15)"
+                            background="#120136"
                             cursor="pointer"
                             border="none"
                             borderRadius="13px"

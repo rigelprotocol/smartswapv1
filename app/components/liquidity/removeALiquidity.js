@@ -315,13 +315,13 @@ const removeALiquidity = ({
           ) : (
             <Button
               color="#A8B3BD"
-              bgColor="#52606D"
+              bgColor="#40BAD540"
               rounded="lg"
               width="100%"
               border="0"
               height="56px"
               disabled={approving}
-              _hover={{ background: '#52616D' }}
+              _hover={{ background: '#40BAD540' }}
               cursor="pointer"
               onClick={removeThisLiquidity}
             >
