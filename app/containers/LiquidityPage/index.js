@@ -140,25 +140,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
     
     
   }
-  const createNewTokenPair = async () =>{
-      try{
-        closeModal1()
-        modal2Disclosure.onOpen()
-        const factory = await SmartFactory();
-      const fromPath = ethers.utils.getAddress(fromAddress);
-      const toPath = ethers.utils.getAddress(toAddress);
-      const LPAddress = await factory.createPair(toPath, fromPath);
-      console.log(LPAddress)
-      // setTrxHashed(data)
-      closeModal2()
-      openModal3()
-    } catch (e) {
-      props.showErrorMessage(e)
-      closeModal2()
-      openModal5()
-    }
-  }
-
   useEffect(() => {
     const checkData = async () => {
       if (wallet.signer !== 'signer') {
@@ -177,12 +158,12 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
 
       if (Number(tokenAllowance) > Number(fromValue)) {
         setHasAllowedFromToken(true);
-        setShowApprovalBox(false);
-        setOpenSupplyButton(true);
+        // setShowApprovalBox(false);
+        // setOpenSupplyButton(true);
       } else {
         setHasAllowedFromToken(false);
-        setShowApprovalBox(true);
-        setOpenSupplyButton(false);
+        // setShowApprovalBox(true);
+        // setOpenSupplyButton(false);
       }
 
     }
@@ -193,14 +174,21 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
 
       if (Number(tokenAllowance) > Number(toValue)) {
         setHasAllowedToToken(true)
-        setShowApprovalBox(false);
-        setOpenSupplyButton(true);
+        // setShowApprovalBox(false);
+        // setOpenSupplyButton(true);
       } else {
         setHasAllowedToToken(false);
-        setShowApprovalBox(true);
-        setOpenSupplyButton(false);
+        // setShowApprovalBox(true);
+        // setOpenSupplyButton(false);
       }
     }
+  if(hasAllowedFromToken && hasAllowedToToken ){
+    setShowApprovalBox(false);
+    setOpenSupplyButton(true);
+  }else{
+    setShowApprovalBox(true);
+    setOpenSupplyButton(false);
+  }
   }, [fromValue, toValue])
 
   useEffect(() => {
@@ -350,6 +338,8 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
     setFromSelectedToken(tokenWhere('rgp'))
     setToSelectedToken(tokenWhere("SELECT A TOKEN"))
     setNewTokenPairButton(false)
+    setButtonValue("Supply")
+
   }
 
   const addingLiquidity = async () => {
@@ -360,9 +350,8 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
         const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toString())
-        const amountAMin =newTokenPairButton ? amountADesired : Web3.utils.toWei((fromValue * 0.8).toString())
-        const amountBMin = newTokenPairButton ? amountBDesired : Web3.utils.toWei((toValue * 0.8).toString())
-console.log({amountADesired,amountAMin,amountBDesired,amountBMin})
+        const amountAMin =newTokenPairButton ? 0 : Web3.utils.toWei((fromValue * 0.8).toString())
+        const amountBMin = newTokenPairButton ? 0 : Web3.utils.toWei((toValue * 0.8).toString())
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidity(
@@ -903,7 +892,6 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               changeButtonCreateNewTokenPair={changeButtonCreateNewTokenPair}
               buttonValue={buttonValue}
               newTokenPairButton={newTokenPairButton}
-              createNewTokenPair={createNewTokenPair}
               setToAddress={setToAddress}
               approveToToken={approveToToken}
               approveFromToken={approveFromToken}

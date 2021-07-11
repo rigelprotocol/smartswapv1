@@ -1,4 +1,5 @@
 import { tokenList } from 'utils/constants';
+import Web3 from 'Web3'
 import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import { getAddress } from '@ethersproject/address'
@@ -112,27 +113,27 @@ import { getProvider } from 'utils/SwapConnect';
 // }
 
 // SEARCH TOKENS
-export const getTokenList =async (searchToken) =>{
+export const getTokenList =async (searchToken,account) =>{
    const filteredTokenList = filterAvailableTokenList(searchToken)
    if(filteredTokenList.length>0){
       return filteredTokenList
    }else{
       let addressOfToken =await  isItAddress(searchToken)
-     let tokenData = addressOfToken ? await getTokenWithContract(searchToken) : await getTokenWithoutContract(searchToken)
+     let tokenData = addressOfToken ? await getTokenWithContract(searchToken,account) : await getTokenWithoutContract(searchToken,account)
       return tokenData.length > 0 ? tokenData : []
    }
 }
 
-export const getTokenWithContract = async (searchToken) =>{
+export const getTokenWithContract = async (searchToken,account) =>{
    let contract =await new Contract(searchToken, ERC20Token, getProvider())
    try{
       let name = await contract.name()
       let symbol = await contract.symbol()
-      let balance = await contract.balanceOf("0x3552b618dc1c3d5e53818c651bc41ae7a307f767")
+      let balance = await contract.balanceOf(account.address)
       let address = await contract.address
       let tokenObject = [{
       name: name.toString(),
-      balance: balance.toString(),
+      balance: Web3.utils.fromWei(balance.toString()),
       available:false,
       imported:false,
       symbol,
@@ -145,7 +146,7 @@ export const getTokenWithContract = async (searchToken) =>{
 
 }
 export const getTokenWithoutContract = (searchToken) =>{
-alert("without contract")
+console.log("This has not been implemented")
 return []
 }
 export const isItAddress  = (token) => {

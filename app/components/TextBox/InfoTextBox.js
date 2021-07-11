@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 
 const InfoTextBox = ({children}) => {
-    console.log(children)
     return (
         <Box  bg="#29235e21" w="90%" m="0 auto" color="rgba(255, 255, 255, 0.555)" borderRadius="15px" padding="15px">
            {children}

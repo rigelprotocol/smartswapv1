@@ -27,7 +27,7 @@ import Web3 from 'web3';
 import { approveToken, runApproveCheck, getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { getPriceForToken } from 'containers/HomePage/service/swapServices';
 import { tokenWhere, tokenAddressWhere, tokenList } from 'utils/constants';
-import { router, WETH, updateOutPutAmountForRouter } from '../../utils/SwapConnect';
+import { router, WETH, updateOutPutAmountForRouter, SmartFactory } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
@@ -57,6 +57,7 @@ export const Manual = props => {
   const [userHasApproveToken, setUserHasApproveToken] = useState(false)
   const [transactionDeadline, setTransactionDeadline] = useState("")
   const [balanceIsSet, setBalanceIsSet] = useState(false);
+  const [newTokenPair, setNewTokenPair] = useState(false);
   const [actualTransactionDeadline, setActualTransactionDeadline] = useState(Math.floor(new Date().getTime() / 1000.0 + 1200))
   const [slippageValue, setSlippageValue] = useState("0.5")
   const [tokenAllowance, setTokenAllowance] = useState('');
@@ -73,6 +74,8 @@ export const Manual = props => {
   useEffect(() => {
     if (selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN") {
       history.push(`/swap/${selectedToken.symbol}-${selectedToToken.symbol}`)
+    // CHECK IF LIQUIDITY EXISTS ON PAIR
+checkIfLiquidityPairExist()
     } else {
       history.push("/swap")
     }
@@ -105,18 +108,32 @@ export const Manual = props => {
   }, [selectedToken, wallet]);
 
   useEffect(() => {
-    if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
+    if(!newTokenPair){
+      if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
       setFromAmount(selectedToken.balance)
     }
     if (parseFloat(tokenAllowance) < parseFloat(fromAmount) && selectedToken.symbol !== 'BNB') {
       setUserHasApproveToken(false)
     }
+    }
+    
   }, [fromAmount, amountIn]);
 
+  const checkIfLiquidityPairExist = async () => {
+    const factory = await SmartFactory();
+  const fromPath = ethers.utils.getAddress(selectedToken.address);
+  const toPath = ethers.utils.getAddress(selectedToToken.address);
+  const LPAddress = await factory.getPair(toPath,fromPath)
+if (LPAddress === "0x0000000000000000000000000000000000000000" ){ 
+ setNewTokenPair(true)
+ openModal5()
+}
+}
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const modal3Disclosure = useDisclosure();
   const modal4Disclosure = useDisclosure();
+  const modal5Disclosure = useDisclosure();
 
   // handling change ev
   const handleChangeToAmount = (event) => {
@@ -464,6 +481,16 @@ export const Manual = props => {
     modal4Disclosure.onClose();
     closeAllModals()
   };
+  const openModal5 = () => {
+    modal5Disclosure.onOpen();
+  }
+
+  const closeModal5 = () => {
+    modal5Disclosure.onClose();
+  };
+ const openLiquidityPage = () =>{
+  props.history.push("/liquidity")
+ }
   const closeAllModals = () => {
     setTimeout(() => closeModal2(), 500)
     setTimeout(() => closeModal1(), 1200)
@@ -571,6 +598,7 @@ export const Manual = props => {
           closeModal2={closeModal2}
           closeModal3={closeModal3}
           closeModal4={closeModal4}
+          closeModal5={closeModal5}
           minimumAmountToReceive={minimumAmountToReceive}
           tokenPrice={tokenPrice}
           selectedToken={selectedToken}
@@ -579,6 +607,8 @@ export const Manual = props => {
           modal2Disclosure={modal2Disclosure}
           modal3Disclosure={modal3Disclosure}
           modal4Disclosure={modal4Disclosure}
+          modal5Disclosure={modal5Disclosure}
+          openLiquidityPage={openLiquidityPage}
           openLoadingSpinnerAndSwap={openLoadingSpinnerAndSwap}
         />
       </Box>

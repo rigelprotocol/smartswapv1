@@ -28,7 +28,6 @@ import { tokenList } from 'utils/constants';
 import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
-import Empty_set from '../../assets/Empty_set.svg';
 import {getTokenList } from "utils/tokens"
 
 function TokenListBox({
@@ -47,7 +46,6 @@ function TokenListBox({
   const [list, setList] = useState(tokenList);
   const [balanceIsSet, setBalanceIsSet] = useState(false);
   const [searchToken, setSearchToken] = useState('');
-  const [openCautionModal, setOpenCautionModal] = useState(false);
   const [selectedTokenForModal, setSelectedTokenForModal] = useState({});
   const account = wallet.wallet;
   useEffect(() => {
@@ -59,7 +57,7 @@ function TokenListBox({
   }, [searchToken]);
   const searchTokens =async ()=>{
     if (searchToken !== '') {
-      let tokenArrayList =await getTokenList(searchToken)
+      let tokenArrayList =await getTokenList(searchToken,account)
       return setList(tokenArrayList);
     }
   }
@@ -118,6 +116,7 @@ function TokenListBox({
           {list.map((token,index) => (
             <>
             <Flex
+            
               justifyContent="space-between"
               mt={1}
               cursor="pointer"
@@ -136,7 +135,7 @@ function TokenListBox({
               }}
               key={index}
             >
-              <Flex alignItems="center">
+              <Flex alignItems="center" opacity={!token.available ? "0.2":""}>
                 <span className={`icon icon-${token.symbol.toLowerCase()}`} />
                 <Text fontSize="md" fontWeight="regular" color="#ffinf" ml={2}>
                   {token.symbol}
@@ -189,7 +188,7 @@ color="#fff"
 cursor="pointer"
 _focus={{ outline: 'none' }}
 />
-       <ModalHeader>Import tokens</ModalHeader>
+       <ModalHeader>Import</ModalHeader>
 
        <ModalBody>
        <Flex justifyContent="center">
@@ -201,12 +200,12 @@ _focus={{ outline: 'none' }}
 <Text>
   This token doesn't appear on the active token list(s). Make sure this is the token that you want to trade.
 </Text>
-<Box bg="#29235e21" w="90%" m="0 auto" color="rgba(255, 255, 255, 0.555)" borderRadius="15px" padding="15px">
+<Box bg="#29235e21" w="90%" m="0 auto" borderRadius="15px" padding="15px">
 <h2>Image</h2>
-<h3>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.symbol : "y"}</h3>
-<h5>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.name : "y"}</h5>
-<h6>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.address : "y"}</h6>
-<Button padding ="1 2" border={0} background="rgba(206, 76, 76, 0.664)" color="red"  _hover={{ color: 'red' }}>
+<h3 style={{color:"white"}}>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.symbol : ""}</h3>
+<h5 style={{color:"#444159"}}>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.name : ""}</h5>
+<h6 style={{color:"rgba(255, 255, 255, 0.555)"}}>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.address : ""}</h6>
+<Button padding ="1 2" border={0} background="#E8006F" color="white"  _hover={{ color: 'E8006F' }}>
   null unknown source
 </Button>
 </Box>
@@ -226,7 +225,7 @@ _focus={{ outline: 'none' }}
                height="50px"
                fontSize="16px"
                _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-               onClick={() =>importTokens(selectedTokenForModal)}>Import tokens</Button>
+               onClick={() =>importTokens(selectedTokenForModal)}>Import</Button>
        </ModalFooter>
    </ModalContent>
 </Modal> 

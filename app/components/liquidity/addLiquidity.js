@@ -63,7 +63,6 @@ const AddLiquidity = ({
   modal7Disclosure,
   changeButtonCreateNewTokenPair,
   newTokenPairButton,
-  createNewTokenPair,
   showApprovalBox,
   hasAllowedToToken,
   hasAllowedFromToken,
@@ -178,18 +177,18 @@ const AddLiquidity = ({
           d="block"
           w="100%"
           h="50px"
-          color={openSupplyButton ? '#BEBEBE' : 'rgba(64, 186, 213, 1)'}
+          color={!openSupplyButton ? '#BEBEBE' : 'rgba(64, 186, 213, 1)'}
           border="none"
           fontWeight="regular"
           fontSize="lg"
           cursor="pointer"
           rounded="2xl"
-          bg={openSupplyButton ? '#444159' : 'rgba(64, 186, 213, 0.1)'}
+          bg={!openSupplyButton ? '#444159' : 'rgba(64, 186, 213, 0.1)'}
           borderColor="#40BAD5"
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
-          // disabled={openSupplyButton}
-          onClick={()=>newTokenPairButton ? open("new"):open("old")}
+          disabled={!openSupplyButton}
+          onClick={()=>newTokenPairButton ? open("new") : open("old")}
         >
           {buttonValue}
         </Button>
@@ -249,7 +248,7 @@ const AddLiquidity = ({
               <Text> Share of Pool </Text>
               <Box>
                 <Text>
-                  {fromValue > 0 && toValue > 0
+                  {newTokenPairButton ? "100" : fromValue > 0 && toValue > 0
                     ? (parseFloat(fromValue) * 3) / 100
                     : 0.0}
                   %
@@ -536,7 +535,6 @@ AddLiquidity.propTypes = {
   closeModal6: PropTypes.func.isRequired,
   closeModal7: PropTypes.func.isRequired,
   changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
-  createNewTokenPair: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   isOpenModal:PropTypes.func.isRequired, 
   modal1Disclosure: PropTypes.object,
