@@ -187,7 +187,7 @@ const AddLiquidity = ({
           borderColor="#40BAD5"
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
-          disabled={!openSupplyButton}
+          disabled={openSupplyButton ? false : true}
           onClick={()=>newTokenPairButton ? open("new") : open("old")}
         >
           {buttonValue}

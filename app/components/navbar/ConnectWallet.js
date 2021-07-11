@@ -13,8 +13,7 @@ import {
   MenuItem,
   Tooltip,
   ModalCloseButton,
-  Spinner,
-
+  Spinner
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { connect } from 'react-redux';
@@ -26,12 +25,9 @@ import Options from './Options';
 import Loading from './Loading';
 import Binance from '../../assets/bnb.svg';
 import Ethereum from '../../assets/eth.svg';
-import InfoModal from 'components/modal/InfoModal'
-
 
 const Wallet = ({ loading, show, connectingWallet, chainId }) => {
   const modal1Disclosure = useDisclosure();
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const open = () => {
     modal1Disclosure.onOpen();
@@ -43,8 +39,6 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
 
   if (loading) {
     return (
-
-
       <Button
         as={Button}
         border="none"
@@ -67,31 +61,22 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
 
   if (!isSupportedNetwork(chainId)) {
     return (
-      <>
-        <InfoModal
-          isOpenModal={isOpen}
-          onCloseModal={onClose}
-          title="UNSUPPORTED NETWORK"
-        >
-          Please switch your wallet to Binance Smart Chain Mainnet
-        </ InfoModal>
-        <Button
-          as={Button}
-          border="none"
-          fontWeight="regular"
-          fontSize="md"
-          rounded="xl"
-          cursor="pointer"
-          bg="rgba(64, 186, 213,0.25)"
-          color="#40BAD5"
-          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-          _active={{ outline: '#29235E' }}
-          _expanded={{ bg: '#29235E' }}
-          onClick={onOpen}
-        >
-          Unsupported Network
-        </Button>
-      </>
+      <Button
+        as={Button}
+        border="none"
+        fontWeight="regular"
+        fontSize="md"
+        rounded="xl"
+        cursor="pointer"
+        bg="rgba(64, 186, 213,0.25)"
+        color="#40BAD5"
+        _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+        _active={{ outline: '#29235E' }}
+        _expanded={{ bg: '#29235E' }}
+      >
+        Unsupported Network
+      </Button>
+
     )
   }
 
