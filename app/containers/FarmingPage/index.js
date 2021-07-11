@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
 import { connect } from 'react-redux';
 import Web3 from 'web3';
-import { Box, Flex, Text, useDisclosure } from '@chakra-ui/layout';
+import { Box, Flex, Text, } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
 import InfoModal from 'components/modal/InfoModal'
@@ -37,6 +37,7 @@ import {
   updateTotalLiquidity,
   updateTokenStaked,
   updateFarmBalances,
+
 } from './actions';
 // import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
@@ -51,6 +52,7 @@ export function FarmingPage(props) {
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useModalDisclosure()
+
 
 
   useEffect(() => {

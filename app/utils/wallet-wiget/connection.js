@@ -122,3 +122,10 @@ export const setupNetwork = async () => {
     }
   }
 };
+
+const supportedNetworks = ["0x61", '0x38', 'chainId']
+
+
+export const isSupportedNetwork = (chainId) => {
+  return supportedNetworks.includes(chainId);
+}
