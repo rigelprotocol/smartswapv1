@@ -246,11 +246,11 @@ export function LiquidityPage(props) {
       const pairsData = await Promise.all(allExchange.map((address) => {
         return getPoolData(address);
       }))
-
-      const userPair = pairsData.filter(pair => pair.poolToken != 0)
-      setLiquidities(userPair)
+      const userPairs = pairsData.filter(pair => pair.poolToken != 0)
+      setLiquidities(userPairs)
 
     } catch (error) {
+      console.error(error)
     } finally {
       setLiquidityLoading(false)
     }
