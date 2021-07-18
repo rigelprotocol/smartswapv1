@@ -193,50 +193,75 @@ export function LiquidityPage(props) {
     getBalance()
   }, [percentValue, wallet])
 
-  const getAllLiquidities = async () => {
+  const getAllPairs = (length, allPairs) => {
+    let pairs = [];
+    for (let i = 0; i < length; i++) {
+      pairs.push(allPairs(i))
+    }
+    return pairs;
+  }
 
+  const getPoolData = async (address) => {
+    const liquidity = await LiquidityPairInstance(address);
+    const [balance, totalSupply, reserves, token0, token1] = await Promise.all([
+      liquidity.balanceOf(wallet.address),
+      liquidity.totalSupply(),
+      liquidity.getReserves(),
+      liquidity.token0(),
+      liquidity.token1()
+    ])
+    const [erc20Token0, erc20Token1] = await Promise.all([
+      erc20Token(token0),
+      erc20Token(token1)
+    ])
+    const [symbol0, symbol1] = await Promise.all([
+      erc20Token0.symbol(),
+      erc20Token1.symbol()
+    ])
+    const pooledToken0 = ((balance / totalSupply) * reserves[0]) / 1e+18;
+    const pooledToken1 = ((balance / totalSupply) * reserves[1]) / 1e+18;
+
+    const liquidityObject = {
+      pairAddress: address,
+      poolToken: Web3.utils.fromWei(balance.toString(), 'ether'),
+      totalSupply: totalSupply.toString(),
+      poolShare: balance.toString() / totalSupply,
+      path: [
+        { fromPath: token0, token: symbol0, amount: pooledToken0 },
+        { toPath: token1, token: symbol1, amount: pooledToken1 }
+      ],
+      pooledToken0,
+      pooledToken1
+    }
+    return liquidityObject;
+  }
+
+
+  const getAllLiquidities = async () => {
     setLiquidityLoading(true);
     try {
-      const pairs = []
       const smartFactory = await SmartFactory();
       const allLiquidityPairs = await smartFactory.allPairsLength();
-      for (let i = 0; i < allLiquidityPairs.toString(); i++) {
-        const pairAddress = await smartFactory.allPairs(i);
-        const liquidity = await LiquidityPairInstance(pairAddress);
-        const balance = await liquidity.balanceOf(wallet.address);
-        const totalSupply = await liquidity.totalSupply();
-        const reserves = await liquidity.getReserves()
-        const pooledToken0 = ((balance / totalSupply) * reserves[0]) / 1e+18;
-        const pooledToken1 = ((balance / totalSupply) * reserves[1]) / 1e+18;
-        const token0 = await liquidity.token0();
-        const token1 = await liquidity.token1();
-        const erc20Token0 = await erc20Token(token0)
-        const erc20Token1 = await erc20Token(token1)
-        const symbol0 = await erc20Token0.symbol()
-        const symbol1 = await erc20Token1.symbol()
-        const liquidityObject = {
-          pairAddress: Web3.utils.toChecksumAddress(pairAddress),
-          poolToken: Web3.utils.fromWei(balance.toString(), 'ether'),
-          totalSupply: totalSupply.toString(),
-          poolShare: balance.toString() / totalSupply,
-          path: [
-            { fromPath: token0, token: symbol0, amount: pooledToken0 },
-            { toPath: token1, token: symbol1, amount: pooledToken1 }
-          ],
-          pooledToken0,
-          pooledToken1
-        }
-        if (liquidityObject.poolToken != 0) {
-          pairs.push(liquidityObject);
-        }
-      }
-      setLiquidities([...pairs])
+      const allExchange = await Promise.all(getAllPairs(allLiquidityPairs.toNumber(), smartFactory.allPairs))
+      const pairsData = await Promise.all(allExchange.map((address) => {
+        return getPoolData(address);
+      }))
+      const userPairs = pairsData.filter(pair => pair.poolToken != 0)
+      setLiquidities(userPairs)
+
     } catch (error) {
+      console.error(error)
     } finally {
       setLiquidityLoading(false)
     }
 
   }
+
+
+
+
+
+
 
   const approveToToken = async () => {
     try {
@@ -491,26 +516,26 @@ export function LiquidityPage(props) {
   const openModal5 = () => {
     modal5Disclosure.onOpen();
   };
-  const closeModal4 = () => { 
-     modal4Disclosure.onClose();
+  const closeModal4 = () => {
+    modal4Disclosure.onClose();
     onOpenModal()
     setPopupText("wait you will be redirected")
     getAllCurrentLiquities()
   };
-const getAllCurrentLiquities = async () =>{
-  await getAllLiquidities()
-   
-  props.changeRGPValue(wallet)
-  const liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
-  console.log(liquid)
+  const getAllCurrentLiquities = async () => {
+    await getAllLiquidities()
+
+    props.changeRGPValue(wallet)
+    const liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
+    console.log(liquid)
     closeInput()
     if (liquid) {
-      removeALiquidity(liquid.pairAddress)        
-     } else {
+      removeALiquidity(liquid.pairAddress)
+    } else {
       setLiquidityTab("INDEX")
     }
 
-}
+  }
   const closeModal5 = () => {
     modal5Disclosure.onClose();
     closeInput()
@@ -575,9 +600,9 @@ const getAllCurrentLiquities = async () =>{
     const liquidity = liquidities.filter(liquidity => liquidity.pairAddress === pairAddress)
     setLiquidityToRemove(liquidity[0])
     await getAmountForLiquidity(smartSwapLPBalance)
-  
-      setLiquidityTab("REMOVEALIQUIDITY")
-    
+
+    setLiquidityTab("REMOVEALIQUIDITY")
+
   }
   const closeModal2 = () => {
     modal2Disclosure.onClose();
@@ -860,8 +885,8 @@ const getAllCurrentLiquities = async () =>{
               tokenToValue={tokenToValue}
               handleFromAmount={handleFromAmount}
               sendingTransaction={sendingTransaction}
-              onCloseModal ={onCloseModal}
-              isOpenModal ={isOpenModal}
+              onCloseModal={onCloseModal}
+              isOpenModal={isOpenModal}
             />
           }
 
