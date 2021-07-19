@@ -45,7 +45,11 @@ function TokenListBox({
   const [list, setList] = useState(tokenList);
   useEffect(() => {
     (async () => {
-      const updatedToken = await getTokenListBalance(list, account, setBalanceIsSet);
+      const updatedToken = await getTokenListBalance(
+        list,
+        account,
+        setBalanceIsSet,
+      );
       setBalanceIsSet(true);
       setList(updatedToken);
     })();
