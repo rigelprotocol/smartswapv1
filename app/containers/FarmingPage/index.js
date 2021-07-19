@@ -15,6 +15,7 @@ import YieldFarm from 'components/yieldfarm/YieldFarm';
 import InfoModal from 'components/modal/InfoModal'
 import FarmingPageModal from 'components/yieldfarm/FarmingPageModal';
 import RGPFarmInfo from 'components/yieldfarm/RGPFarmInfo';
+
 import {
   masterChefContract,
   rigelToken,
@@ -27,8 +28,8 @@ import {
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
 } from 'utils/SwapConnect';
-import { tokenList } from '../../utils/constants';
-import { useDisclosure as useModalDisclosure } from "@chakra-ui/react";
+import { tokenList, SMART_SWAP } from '../../utils/constants';
+import { useDisclosure as useModalDisclosure, useToast } from "@chakra-ui/react";
 import { changeRGPValue } from '../WalletProvider/actions';
 import {
   changeFarmingContent,
@@ -52,7 +53,34 @@ export function FarmingPage(props) {
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useModalDisclosure()
+  const toast = useToast()
 
+  useEffect(() => {
+    const harvestSubscription = async () => {
+      const rigelEarned = await rigelToken();
+      console.log(rigelEarned)
+      if (wallet.address != "0x") {
+
+        const filter = rigelEarned.filters.Transfer(SMART_SWAP.masterChef, wallet.address, null);
+        rigelEarned.on(filter, (sender, receiver, amount) => {
+          toast({
+            title: "RGP Harvest Successful",
+            description: `${ethers.utils.formatEther(amount)} RGP has been transfered to your address`,
+            status: "success",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+
+          })
+        })
+      }
+      return () => {
+        rigelEarned.off()
+      }
+    }
+    return harvestSubscription()
+
+  }, [wallet.address])
 
 
   useEffect(() => {
