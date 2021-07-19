@@ -49,7 +49,7 @@ function TokenListBox({
       try {
         const updatedToken = await list.map(async (token, index) => {
           const { signer } = account;
-          let { balance, name, symbol, address } = token;
+          let { balance, name, symbol, address, logoURI } = token;
           balance =
             symbol === 'BNB' && signer !== 'signer'
               ? account.balance
@@ -60,7 +60,7 @@ function TokenListBox({
                 address,
                 signer,
               ));
-          return { balance, name, symbol, address };
+          return { balance, name, symbol, address, logoURI };
         });
         setBalanceIsSet(true);
         setList(await Promise.all(updatedToken));
