@@ -13,4 +13,4 @@ export const CLOSE_LOADING_WALLET = 'app/WalletProvider/CLOSE_LOADING_WALLET';
 export const CHANGE_DEADLINE = 'app/WalletProvider/CHANGE_DEADLINE';
 export const CHANGE_BNB = 'app/WalletProvider/CHANGE_BNB';
 export const UPDATE_CHAINID = 'app/WalletProvider/UPDATE_CHAINID';
-
+export const GET_ALL_TOKEN = 'app/WalletProvider/GET_ALL_TOKEN';

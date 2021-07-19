@@ -18,16 +18,15 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 import React, { useEffect, useState } from 'react';
-// import PropTypes from 'prop-types';
-// import styled from 'styled-components';
+import { FixedSizeList as List } from 'react-window';
 import { Input } from '@chakra-ui/react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
-import { tokenList } from 'utils/constants';
 import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
+
 function TokenListBox({
   setSelectedToken,
   setPathArray,
@@ -37,14 +36,23 @@ function TokenListBox({
   isOpen,
   onClose,
   wallet,
+  ExtendedTokenList,
 }) {
-  const [list, setList] = useState(tokenList);
   const [balanceIsSet, setBalanceIsSet] = useState(false);
   const [searchToken, setSearchToken] = useState('');
   const account = wallet.wallet;
+  const { tokenList } = ExtendedTokenList;
+  const [list, setList] = useState(tokenList);
   useEffect(() => {
-    getTokenListBalance(list, account, setBalanceIsSet);
+    (async () => {
+      const updatedToken = await getTokenListBalance(list, account, setBalanceIsSet);
+      setBalanceIsSet(true);
+      setList(updatedToken);
+    })();
   }, [isOpen, account]);
+  useEffect(() => {
+    setList(tokenList);
+  }, [tokenList]);
   useEffect(() => {
     if (searchToken !== '') {
       const filteredTokenList = tokenList.filter(
@@ -56,6 +64,39 @@ function TokenListBox({
     }
     return setList(tokenList);
   }, [searchToken]);
+  const Row = ({ index, key, style }) => (
+    <Flex
+      justifyContent="space-between"
+      mt={1}
+      cursor="pointer"
+      onClick={() => {
+        isFunc(setSelectedToken) && setSelectedToken(list[index]);
+        isFunc(setSelectedToToken) && setSelectedToToken(list[index]);
+        isFunc(setPathToArray) &&
+          setPathToArray(list[index].address, list[index].symbol);
+        isFunc(setPathArray) &&
+          setPathArray(list[index].address, list[index].symbol);
+        isFunc(getToAmount) && getToAmount();
+        isFunc(onClose) && onClose();
+      }}
+    >
+      <Flex alignItems="center">
+        <img style={{ width: '7%' }} src={list[index].logoURI} alt=" " />
+        <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
+          {list[index].symbol}
+        </Text>
+        <Text mx={3}>
+          <small style={{ display: 'block', color: '#b3b3b3' }}>
+            {list[index].name}
+          </small>
+        </Text>
+      </Flex>
+      <Text fontSize="md" fontWeight="regular" color="#fff">
+        {!balanceIsSet ? '0.0' : list[index].balance}
+      </Text>
+    </Flex>
+  );
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -94,39 +135,9 @@ function TokenListBox({
             </Text>
             <ArrowDownImage />
           </Flex>
-          {list.map((token,index) => (
-            <Flex
-              justifyContent="space-between"
-              mt={1}
-              cursor="pointer"
-              onClick={() => {
-                isFunc(setSelectedToken) && setSelectedToken(token);
-                isFunc(setSelectedToToken) && setSelectedToToken(token);
-                isFunc(setPathToArray) &&
-                  setPathToArray(token.address, token.symbol);
-                isFunc(setPathArray) &&
-                  setPathArray(token.address, token.symbol);
-                isFunc(getToAmount) && getToAmount();
-                isFunc(onClose) && onClose();
-              }}
-              key={index}
-            >
-              <Flex alignItems="center">
-                <span className={`icon icon-${token.symbol.toLowerCase()}`} />
-                <Text fontSize="md" fontWeight="regular" color="#ffinf" ml={2}>
-                  {token.symbol}
-                </Text>
-                <Text mx={3}>
-                  <small style={{ display: 'block', color: '#b3b3b3' }}>
-                    {token.name}
-                  </small>
-                </Text>
-              </Flex>
-              <Text fontSize="md" fontWeight="regular" color="#fff">
-                {!balanceIsSet ? '0.0' : token.balance}
-              </Text>
-            </Flex>
-          ))}
+          <List width={400} height={300} itemCount={list.length} itemSize={10}>
+            {Row}
+          </List>
         </ModalBody>
         <ModalFooter />
       </ModalContent>
@@ -142,8 +153,12 @@ TokenListBox.propTypes = {
   setSelectedToToken: PropTypes.func,
   setPathToArray: PropTypes.func,
   wallet: PropTypes.object,
+  ExtendedTokenList: PropTypes.object,
 };
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({ wallet, ExtendedTokenList }) => ({
+  wallet,
+  ExtendedTokenList,
+});
 
 export default connect(
   mapStateToProps,

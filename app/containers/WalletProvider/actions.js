@@ -15,7 +15,7 @@ import {
   signer,
 } from 'utils/wallet-wiget/connection';
 import { ethers } from 'ethers';
-import { TOKENS_CONTRACT } from 'utils/constants';
+import { getTokens, tokenList } from 'utils/constants';
 import { formatBalance } from 'utils/UtilFunc';
 import {
   WALLET_CONNECTED,
@@ -25,7 +25,8 @@ import {
   CLEAR_WALLET,
   CHANGE_DEADLINE,
   CHANGE_BNB,
-  UPDATE_CHAINID
+  UPDATE_CHAINID,
+  GET_ALL_TOKEN,
 } from './constants';
 
 export const reConnect = (wallet) => async dispatch => {
@@ -148,4 +149,25 @@ export const getTokenAddress = (chainId) => {
     return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
   }
   return window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38' && '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
+}
+
+export const getTokenList = () => async (dispatch) => {
+  let allToken;
+  const storedReducer = JSON.parse(await localStorage.getItem("persist:root"));
+  if (storedReducer != null) {
+    const reducerWallet = JSON.parse(storedReducer.ExtendedTokenList)
+    allToken = reducerWallet.tokenList;
+  }
+  if (allToken === undefined || allToken.length == 0 || storedReducer === undefined) {
+    const { tokens } = await getTokens();
+    allToken = tokenList.concat(tokens);
+  }
+  const returnData = allToken.map((token, id) => {
+    const { name, address, symbol, logoURI } = token;
+    const balance = 0;
+    return { id, name, address, symbol, logoURI, balance }
+  });
+  return dispatch({
+    type: GET_ALL_TOKEN, payload: returnData
+  })
 }

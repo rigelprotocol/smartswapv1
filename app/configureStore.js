@@ -4,10 +4,34 @@
 
 import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware } from 'connected-react-router';
+import { persistStore, persistReducer, createTransform } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import createReducer from './reducers';
 
+export const SetTransform = createTransform(
+  // transform state on its way to being serialized and persisted.
+  (inboundState, key) =>
+    // convert mySet to an Array.
+    ({ ...inboundState, tokenList: [...inboundState.tokenList] }),
+  // transform state being rehydrated
+  (outboundState, key) =>
+    // convert tokenList back to a Set.
+    ({ ...outboundState, tokenList: new Set(outboundState.tokenList) }),
+  // define which reducers this transform gets called for.
+  { whitelist: ['ExtendedTokenList'] },
+);
+
 export default function configureStore(initialState = {}, history) {
+  const persistConfig = {
+    // configuration object for redux-persist
+    key: 'root',
+    storage, // define which storage to use
+    transforms: [SetTransform],
+    whitelist: ['ExtendedTokenList'],
+    // blacklist : []
+  };
+  const persistedReducer = persistReducer(persistConfig, createReducer());
   let composeEnhancers = compose;
 
   // If Redux Dev Tools and Saga Dev Tools Extensions are installed, enable them
@@ -24,7 +48,7 @@ export default function configureStore(initialState = {}, history) {
   const enhancers = [applyMiddleware(...middlewares)];
 
   const store = createStore(
-    createReducer(),
+    persistedReducer,
     initialState,
     composeEnhancers(...enhancers),
   );
@@ -32,9 +56,10 @@ export default function configureStore(initialState = {}, history) {
   /* istanbul ignore next */
   if (module.hot) {
     module.hot.accept('./reducers', () => {
-      store.replaceReducer(createReducer(store.injectedReducers));
+      store.replaceReducer(createReducer());
     });
   }
 
-  return store;
+  const persistor = persistStore(store);
+  return { store, persistor };
 }

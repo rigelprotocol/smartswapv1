@@ -90,19 +90,18 @@ export const tokenList = [
   { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '' },
   {
     symbol: 'RGP',
-    abi: RigelToken,
     name: 'Rigel Protocol',
-    img: '../../assets/rgp.svg',
+    logoURI: '../../assets/rgp.svg',
     address:
       checkNetVersion() === BSC_MAIN_NET_ID.toString()
         ? '0xFA262F303Aa244f9CC66f312F0755d89C3793192'
         : '0x9f0227a21987c1ffab1785ba3eba60578ec1501b',
   },
   {
-    abi: BUSD,
     symbol: 'BUSD',
     name: 'Binance USD',
-    img: '../../assets/bnb.svg',
+    logoURI:
+      'https://tokens.pancakeswap.finance/images/0xe9e7cea3dedca5984780bafc599bd69add087d56.png',
     address:
       checkNetVersion() === BSC_MAIN_NET_ID.toString()
         ? '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
@@ -113,25 +112,23 @@ export const tokenList = [
   //   abi: BNB,
   //   symbol: 'BNB',
   //   name: 'Binance SmartChain USD',
-  //   img: '../../assets/bnb.svg',
+  //   logoURI: '../../assets/bnb.svg',
   //   address: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
   // },
   {
-    abi: WETH9,
     symbol: 'WBNB',
     name: 'Wrapped BNB',
-    img: '../../assets/eth.svg',
+    logoURI: '../../assets/eth.svg',
     address:
       checkNetVersion() === BSC_MAIN_NET_ID.toString()
         ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
         : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   },
   {
-    abi: WETH9,
     symbol: 'BNB',
     name: 'BNB',
-
-    img: '../../assets/eth.svg',
+    logoURI:
+      'https://tokens.pancakeswap.finance/images/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
     address:
       checkNetVersion() === BSC_MAIN_NET_ID.toString()
         ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
@@ -146,6 +143,14 @@ export const tokenList = [
   //   address: '0x492Df17f202e36525151Ce7BcD49d5637Dc10659',
   // },
 ];
+const tokenSource =
+  'https://tokens.pancakeswap.finance/pancakeswap-extended.json';
+
+export const getTokens = () =>
+  fetch(tokenSource, {
+    methods: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  }).then(data => data.json());
 
 export const tokenWhere = field =>
   field !== null &&
