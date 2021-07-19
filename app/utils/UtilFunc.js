@@ -15,6 +15,8 @@ export const formatBalance = balance => {
     .toString();
 };
 
+
+
 export const isNotEmpty = objectToCheck =>
   objectToCheck &&
   Object.keys(objectToCheck).length === 0 &&

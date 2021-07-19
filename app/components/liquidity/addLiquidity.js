@@ -62,6 +62,7 @@ const AddLiquidity = ({
   modal6Disclosure,
   modal7Disclosure,
   changeButtonCreateNewTokenPair,
+  createNewTokenPair,
   newTokenPairButton,
   showApprovalBox,
   hasAllowedToToken,
@@ -269,7 +270,7 @@ const AddLiquidity = ({
             height="50px"
             fontSize="16px"
             _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-            onClick={confirmingSupply}
+            onClick={newTokenPairButton?createNewTokenPair : confirmingSupply}
           >
             Confirm Supply
           </Button>
@@ -535,6 +536,7 @@ AddLiquidity.propTypes = {
   closeModal6: PropTypes.func.isRequired,
   closeModal7: PropTypes.func.isRequired,
   changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
+  createNewTokenPair: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   isOpenModal:PropTypes.func.isRequired, 
   modal1Disclosure: PropTypes.object,

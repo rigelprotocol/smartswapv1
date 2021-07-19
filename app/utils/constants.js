@@ -168,6 +168,8 @@ export const convertToNumber = (hex, decimals) => {
   return balanceDecimal.toLocaleString();
 };
 
+export const checkIfTokenIsListed = symbol => tokenList.find(token => token.symbol === symbol)
+
 // export const convertIndexToAlphetString = number =>
 //   number
 //     .toString()

@@ -5,7 +5,10 @@ import { isFunc } from 'utils/UtilFunc';
 import { getAddress } from '@ethersproject/address'
 import { Contract } from '@ethersproject/contracts'
 import ERC20Token from 'utils/abis/ERC20Token.json';
+import BUSD from 'utils/abis/BUSD.json';
+import RigelToken from 'utils/abis/RigelToken.json';
 import { getProvider } from 'utils/SwapConnect';
+import { filter } from 'lodash';
 
 // import { SmartFactory } from './SwapConnect';
 // list all transactions here
@@ -113,30 +116,64 @@ import { getProvider } from 'utils/SwapConnect';
 // }
 
 // SEARCH TOKENS
+var web3 = new Web3(window.ethereum)
 export const getTokenList =async (searchToken,account) =>{
    const filteredTokenList = filterAvailableTokenList(searchToken)
    if(filteredTokenList.length>0){
+      console.log(filteredTokenList)
       return filteredTokenList
    }else{
-      let addressOfToken =await  isItAddress(searchToken)
-     let tokenData = addressOfToken ? await getTokenWithContract(searchToken,account) : await getTokenWithoutContract(searchToken,account)
+      let addressOfToken = isItAddress(searchToken)
+     let tokenData = addressOfToken ? await getTokenWithContract(searchToken,account) :  getTokenWithoutContract(searchToken,account)
+   // let tokenData = await getTokenWithWeb3(searchToken,account)
       return tokenData.length > 0 ? tokenData : []
    }
 }
 
-export const getTokenWithContract = async (searchToken,account) =>{
-   let contract =await new Contract(searchToken, ERC20Token, getProvider())
+const getTokenWithWeb3 =async (searchToken,account) =>{
+   let RGPAddress = "0xfa262f303aa244f9cc66f312f0755d89c3793192"
+let contract = new web3.eth.Contract(RigelToken, RGPAddress)
+   console.log({add:contract._address})
+   console.log({RigelToken})
+   console.log({contract})
    try{
+      console.log({json:contract._jsonInterface})
+      //  contract._jsonInterface.name().call((err, res) => console.log(`name ${res}`))
+      contract.methods.name().call((err,res)=>console.log(res)).catch(e=>console.log(e))
+     let symbol = await contract.methods.symbol()
+     let balance = account.address == "0x" ? "" : await contract.methods.balanceOf(account.address)
+     console.log({balance})
+     let address =  contract._address
+     let tokenObject = [{
+     available:false,
+     imported:false,
+     symbol,
+     img:"",
+     address
+  }]
+  console.log({contract,tokenObject})
+//   return tokenObject 
+return []  
+  }catch(e){
+     console.log(e)
+  }
+}
+
+export const getTokenWithContract = async (searchToken,account) =>{
+  
+   try{
+       let contract =new Contract(searchToken, ERC20Token, getProvider())
       let name = await contract.name()
       let symbol = await contract.symbol()
-      let balance = await contract.balanceOf(account.address)
-      let address = await contract.address
+      let balance = account.address == "0x" ? "" : await contract.balanceOf(account.address)
+      let address =  contract.address
       let tokenObject = [{
       name: name.toString(),
       balance: Web3.utils.fromWei(balance.toString()),
       available:false,
       imported:false,
       symbol,
+      img:"",
       address
    }]
    return tokenObject   
@@ -165,3 +202,4 @@ export const filterAvailableTokenList =(searchToken) =>{
       );
      return filteredTokenList
 }
+

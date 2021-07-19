@@ -14,7 +14,8 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { connect } from 'react-redux';
 import { Flex } from '@chakra-ui/layout';
-import { useDisclosure } from '@chakra-ui/react';
+import { Button, useDisclosure } from '@chakra-ui/react';
+import { useHistory } from "react-router-dom";
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
@@ -22,15 +23,17 @@ import RemoveALiquidity from 'components/liquidity/removeALiquidity';
 import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
-import { tokenList, tokenWhere, SMART_SWAP } from '../../utils/constants';
+import { tokenList, tokenWhere, SMART_SWAP,  checkIfTokenIsListed } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
 import { isNotEmpty } from "../../utils/UtilFunc";
+import {getTokenList } from "../../utils/tokens"
 import { getDeadline } from "../../utils/UtilFunc";
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
 // 35,200
 export function LiquidityPage(props) {
+  const history = useHistory()
   const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('0');
@@ -67,7 +70,7 @@ export function LiquidityPage(props) {
   const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
   const [newTokenPairButton, setNewTokenPairButton] = useState(false)
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
-  const [disableFromSelectInputBox, setDisableFromSelectInputBox] = useState(false)
+  const [areBothTokensNew,setAreBothTokensNew] = useState(false)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   let timer1
@@ -88,13 +91,40 @@ export function LiquidityPage(props) {
   }
 
   useEffect(() => {
+    if (props.match.params.pair !== undefined) {
+      const { pair } = props.match.params;
+      const pairArray = pair.split('-');
+      setLiquidityTab("ADDLIQUIDITY")
+      if(pairArray.length===2 ){
+ getTokensListed(pairArray)
+      }else{
+        history.push("/liquidity")
+      }
+    }
+  }, [wallet])
+
+  useEffect(() => {
+
     if ((fromAddress && toAddress)) {
+        if(fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN"){
+          history.push(`/liquidity/${checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address}-${checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address}`)
+        }else{
+         history.push("/liquidity")
+        }
      checkIfLiquidityPairExist()
       // getLiquidityPairRatio();
 
     }
 
   }, [fromSelectedToken, toSelectedToken])
+
+
+const getTokensListed = async (pairArray) => {
+ let selection0 = await getTokenList(pairArray[0],wallet)
+ let selection1 = await getTokenList(pairArray[1],wallet)
+ if(selection0 !== []) setFromSelectedToken(selection0[0])
+ if(selection1 !== []) setToSelectedToken(selection1[0])
+}
 
   const checkIfLiquidityPairExist = async () => {
       const factory = await SmartFactory();
@@ -148,7 +178,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
     }
     checkData()
   }, [fromAddress])
-
 
 
   useEffect(async () => {
@@ -263,7 +292,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
         }
         if (liquidityObject.poolToken != 0) {
           pairs.push(liquidityObject);
-          console.log(liquidityObject)
         }
       }
       setLiquidities([...pairs])
@@ -344,14 +372,50 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
 
   const addingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
-
       try {
         const rout = await router();
         const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toString())
-        const amountAMin =newTokenPairButton ? 0 : Web3.utils.toWei((fromValue * 0.8).toString())
-        const amountBMin = newTokenPairButton ? 0 : Web3.utils.toWei((toValue * 0.8).toString())
+        const amountAMin =Web3.utils.toWei((fromValue * 0.8).toString())
+        const amountBMin = Web3.utils.toWei((toValue * 0.8).toString())
+        closeModal1()
+        modal2Disclosure.onOpen()
+        const data = await rout.addLiquidity(
+          fromAddress,
+          toAddress,
+          amountADesired.toString(),
+          amountBDesired.toString(),
+          amountAMin.toString(),
+          amountBMin,
+          wallet.address,
+          deadLine,
+          {
+            from: wallet.address,
+            gasLimit: 390000,
+            gasPrice: ethers.utils.parseUnits('10', 'gwei'),
+          },
+        );
+        console.log({"adding":data})
+        setTrxHashed(data)
+        closeModal2()
+        openModal3()
+      } catch (e) {
+        props.showErrorMessage(e)
+        closeModal2()
+        openModal5()
+      }
+    }
+  };
+  const createNewTokenPair = async () => {
+    if (wallet.signer !== 'signer') {
+      try {
+        const rout = await router();
+        const deadLine = getDeadline(deadline);
+        const amountADesired = Web3.utils.toWei(fromValue.toString())
+        const amountBDesired = Web3.utils.toWei(toValue.toString())
+        const amountAMin = 0
+        const amountBMin = 0
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidity(
@@ -890,6 +954,7 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               closeModal6={closeModal6}
               closeModal7={closeModal7}
               changeButtonCreateNewTokenPair={changeButtonCreateNewTokenPair}
+              createNewTokenPair={createNewTokenPair}
               buttonValue={buttonValue}
               newTokenPairButton={newTokenPairButton}
               setToAddress={setToAddress}

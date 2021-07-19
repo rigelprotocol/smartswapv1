@@ -93,6 +93,7 @@ const App = props => {
           <Route exact path="/" component={Splash} />
           <Route exact path="/farming" component={FarmingPage} />
           <Route exact path="/liquidity" component={LiquidityPage} />
+          <Route exact path="/liquidity/:pair" component={LiquidityPage} />
           <Route exact path="/swap/" component={HomePage} />
           <Route exact path="/swap/:pair" component={HomePage} />
           <Route exact path="/margin-trading" component={MarginTradingPage} />

@@ -29,6 +29,8 @@ import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import {getTokenList } from "utils/tokens"
+import NullImage48 from '../../assets/Null-48.svg';
+import NewTokenModal from './NewTokenModal';
 
 function TokenListBox({
   setSelectedToken,
@@ -61,7 +63,7 @@ function TokenListBox({
       return setList(tokenArrayList);
     }
   }
-  const importTokens = (token) =>{
+  const importToken = (token) =>{
     token.available=true
     token.imported = true
     isFunc(setSelectedToken) && setSelectedToken(token);
@@ -158,7 +160,7 @@ function TokenListBox({
                  _hover={{ color: 'white' }}
                  onClick={()=> {
                    setSelectedTokenForModal(token)
-                   onOpenModal()
+                   React.useMemo(onOpenModal())
                   }}
                  >
                   Import
@@ -176,59 +178,12 @@ function TokenListBox({
       </ModalContent>
     </Modal>
     
-
-   <Modal onClose={onCloseModal} isOpen={isOpenModal} isCentered>
-   <ModalOverlay />
-   <ModalContent bg="#120136" color="#fff" borderRadius="20px">
-   <ModalCloseButton
-   onClick={onCloseModal} 
-bg="none"
-border="0px"
-color="#fff"
-cursor="pointer"
-_focus={{ outline: 'none' }}
-/>
-       <ModalHeader>Import</ModalHeader>
-
-       <ModalBody>
-       <Flex justifyContent="center">
-      <Flex textAlign="center" w="60px" h="60px" borderRadius="50%" border="2px solid white" justifyContent="center" alignItems="center" flexDirection="row">
-       <Text fontSize="35px"> ! </Text>
-     </Flex>
-    </Flex>
-     <Box textAlign="center">
-<Text>
-  This token doesn't appear on the active token list(s). Make sure this is the token that you want to trade.
-</Text>
-<Box bg="#29235e21" w="90%" m="0 auto" borderRadius="15px" padding="15px">
-<h2>Image</h2>
-<h3 style={{color:"white"}}>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.symbol : ""}</h3>
-<h5 style={{color:"#444159"}}>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.name : ""}</h5>
-<h6 style={{color:"rgba(255, 255, 255, 0.555)"}}>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.address : ""}</h6>
-<Button padding ="1 2" border={0} background="#E8006F" color="white"  _hover={{ color: 'E8006F' }}>
-  null unknown source
-</Button>
-</Box>
-     </Box>
-       </ModalBody>
-       <ModalFooter>
-           <Button
-               my="2"
-               mx="auto"
-               color="#40BAD5"
-               width="100%"
-               background="rgba(64, 186, 213, 0.15)"
-               cursor="pointer"
-               border="none"
-               borderRadius="13px"
-               padding="10px"
-               height="50px"
-               fontSize="16px"
-               _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-               onClick={() =>importTokens(selectedTokenForModal)}>Import</Button>
-       </ModalFooter>
-   </ModalContent>
-</Modal> 
+    <NewTokenModal 
+    onCloseModal={onCloseModal}
+    isOpenModal={isOpenModal}
+    selectedTokenForModal={selectedTokenForModal}
+    importToken={importToken}
+    />
   
     </>
   );

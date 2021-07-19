@@ -15,6 +15,7 @@ import { router, LPTokenContract } from 'utils/SwapConnect';
 import PropTypes from 'prop-types';
 import { SettingsIcon } from '@chakra-ui/icons';
 import BNBImage from '../../assets/bnb.svg';
+import NullImage from '../../assets/Null-24.svg';
 import RGPImage from '../../assets/rgp.svg';
 import ETHImage from '../../assets/eth.svg';
 import BUSDImage from '../../assets/busd.svg';
@@ -237,7 +238,7 @@ const removeALiquidity = ({
                 ) : liquidityToRemove.path[0].token === 'ETH' ? (
                   <ETHImage />
                 ) : (
-                  <BNBImage />
+                  <NullImage />
                 )}
                 {liquidityToRemove.path[0].token == 'WBNB'
                   ? 'BNB'
@@ -256,7 +257,7 @@ const removeALiquidity = ({
                 ) : liquidityToRemove.path[1].token === 'ETH' ? (
                   <ETHImage />
                 ) : (
-                  <BNBImage />
+                  <NullImage />
                 )}
                 {liquidityToRemove.path[1].token == 'WBNB'
                   ? 'BNB'
@@ -351,7 +352,7 @@ const removeALiquidity = ({
               ) : liquidityToRemove.path[0].token === 'ETH' ? (
                 <ETHImage />
               ) : (
-                <BNBImage />
+                <NullImage />
               )}
               {liquidityToRemove.path[1].token === 'RGP' ? (
                 <RGPImage />
@@ -360,7 +361,7 @@ const removeALiquidity = ({
               ) : liquidityToRemove.path[1].token === 'ETH' ? (
                 <ETHImage />
               ) : (
-                <BNBImage />
+                <NullImage />
               )}
               <Text marginTop="0" marginLeft="7px">
                 {liquidityToRemove.path[0].token == 'WBNB'
