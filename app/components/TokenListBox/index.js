@@ -23,6 +23,7 @@ import { Input } from '@chakra-ui/react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
+import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
 import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
@@ -45,13 +46,27 @@ function TokenListBox({
   const [list, setList] = useState(tokenList);
   useEffect(() => {
     (async () => {
-      const updatedToken = await getTokenListBalance(
-        list,
-        account,
-        setBalanceIsSet,
-      );
-      setBalanceIsSet(true);
-      setList(updatedToken);
+      try {
+        const updatedToken = await list.map(async (token, index) => {
+          const { signer } = account;
+          let { balance, name, symbol, address } = token;
+          balance =
+            symbol === 'BNB' && signer !== 'signer'
+              ? account.balance
+              : address !== undefined &&
+              signer !== 'signer' &&
+              (await getAddressTokenBalance(
+                account.address,
+                address,
+                signer,
+              ));
+          return { balance, name, symbol, address };
+        });
+        setBalanceIsSet(true);
+        setList(await Promise.all(updatedToken));
+      } catch (e) {
+        console.log(e);
+      }
     })();
   }, [isOpen, account]);
   useEffect(() => {
