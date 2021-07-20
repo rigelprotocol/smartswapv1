@@ -20,7 +20,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { connect } from 'react-redux';
 import { connectingWallet } from 'containers/WalletProvider/actions';
 import styles from '../../styles/navbar.css';
-import { isSupportedNetwork } from '../../utils/wallet-wiget/connection'
+import { isSupportedNetwork, switchToBSC } from '../../utils/wallet-wiget/connection'
 
 import Options from './Options';
 import Loading from './Loading';
@@ -87,7 +87,7 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E' }}
           _expanded={{ bg: '#29235E' }}
-          onClick={onOpen}
+          onClick={switchToBSC}
         >
           Unsupported Network
         </Button>
