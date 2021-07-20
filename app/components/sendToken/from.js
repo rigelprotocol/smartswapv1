@@ -12,6 +12,7 @@ const From = ({
   fromAmount,
   handleChangeFromAmount,
   setPathArray,
+  checkIfLiquidityPairExist,
   selectedToken,
   setSelectedToken,
   wallet,
@@ -54,6 +55,7 @@ const From = ({
         setPathArray={setPathArray}
         isOpen={isOpen}
         onClose={onClose}
+        checkIfLiquidityPairExist={checkIfLiquidityPairExist}
         isOpenModal={isOpenModal}
         onOpenModal={onOpenModal}
         onCloseModal={onCloseModal}

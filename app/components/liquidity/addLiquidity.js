@@ -62,6 +62,7 @@ const AddLiquidity = ({
   modal6Disclosure,
   modal7Disclosure,
   changeButtonCreateNewTokenPair,
+  checkIfLiquidityPairExist,
   createNewTokenPair,
   newTokenPairButton,
   showApprovalBox,
@@ -106,6 +107,7 @@ const AddLiquidity = ({
       handleFromAmount={handleFromAmount}
       fromSelectedToken={fromSelectedToken}
       setFromSelectedToken={setFromSelectedToken}
+      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
     />
     <Flex justifyContent="center" my={3}>
       <Plus />
@@ -117,6 +119,7 @@ const AddLiquidity = ({
       toSelectedToken={toSelectedToken}
       setToSelectedToken={setToSelectedToken}
       disableToSelectInputBox={disableToSelectInputBox}
+      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
       setToValue={setToValue}
     />
     {toSelectedToken.symbol !== 'SELECT A TOKEN' && fromValue > 0 ? (
@@ -130,6 +133,14 @@ const AddLiquidity = ({
     ) : (
       <div />
     )}
+      {newTokenPairButton &&
+    <InfoTextBox>
+    <Text>
+ Please note that creating a new token may result is a higher amount of gas fee
+  </Text>
+    
+    </InfoTextBox>
+}
     <Box mt={5} p={5}>
       {!hasAllowedToToken && (toSelectedToken.symbol !== "SELECT A TOKEN") && (toSelectedToken.symbol !== "BNB") && (
         <Button
@@ -195,6 +206,7 @@ const AddLiquidity = ({
         </Button>
       )}
     </Box>
+  
     {/* modal 1 summary */}
     <Modal isOpen={modal1Disclosure.isOpen} onClose={closeModal1} isCentered>
       <ModalOverlay />
@@ -515,7 +527,8 @@ AddLiquidity.propTypes = {
   addLiquidityPageHeading: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
   setToValue: PropTypes.func.isRequired,
-  setFromSelectedToken: PropTypes.func.isRequired,
+  setFromSelectedToken: PropTypes.func.isRequired, 
+  checkIfLiquidityPairExist: PropTypes.func.isRequired,
   fromSelectedToken: PropTypes.object.isRequired,
   toValue: PropTypes.string.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
@@ -546,7 +559,6 @@ AddLiquidity.propTypes = {
   modal5Disclosure: PropTypes.object,
   modal6Disclosure: PropTypes.object,
   modal7Disclosure: PropTypes.object,
-  approveLiquidityToken: PropTypes.func.isRequired,
   tokenFromValue: PropTypes.string.isRequired,
   tokenToValue: PropTypes.string.isRequired,
   handleFromAmount: PropTypes.func,

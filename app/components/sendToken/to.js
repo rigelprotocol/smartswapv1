@@ -11,6 +11,7 @@ const SendTo = (props) => {
   const {
     amountIn,
     handleChangeToAmount,
+    checkIfLiquidityPairExist,
     setPathToArray,
     selectedToToken,
     setSelectedToToken,
@@ -54,6 +55,7 @@ const SendTo = (props) => {
         setPathToArray={setPathToArray}
         isOpen={isOpen}
         onClose={onClose}
+        checkIfLiquidityPairExist={checkIfLiquidityPairExist}
         isOpenModal={isOpenModal}
         onOpenModal={onOpenModal}
         onCloseModal={onCloseModal}

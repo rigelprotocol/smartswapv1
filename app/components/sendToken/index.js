@@ -60,6 +60,8 @@ export const Manual = props => {
   const [actualTransactionDeadline, setActualTransactionDeadline] = useState(Math.floor(new Date().getTime() / 1000.0 + 1200))
   const [slippageValue, setSlippageValue] = useState("0.5")
   const [tokenAllowance, setTokenAllowance] = useState('');
+  const [toURL, setToURL] = useState("")
+  const [fromURL, setFromURL] = useState("");
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
   const [areBothTokensNew,setAreBothTokensNew] = useState(false)
   const [selectedTokenForModal,setSelectedTokenForModal] = useState({})
@@ -79,17 +81,15 @@ export const Manual = props => {
       if(pairArray.length===2){ 
         getTokensListed(pairArray)
              }else{
-              history.push("/swap")
+              // history.push("/swap")
              }
     }
   }, [wallet])
   useEffect(() => {
-    if(selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN"){
-      history.push(`/swap/${checkIfTokenIsListed(selectedToken.symbol) ? selectedToken.symbol : selectedToken.address}-${checkIfTokenIsListed(selectedToToken.symbol) ? selectedToToken.symbol : selectedToToken.address}`)
-    }else{
-     history.push("/swap")
+     setUpUrl(selectedToken,selectedToToken)
+    if(Object.entries(selectedTokenForModal).length === 0){
+      checkIfLiquidityPairExist()
     }
-     
    }, [selectedToken, selectedToToken])
 
   useEffect(() => {
@@ -126,6 +126,7 @@ export const Manual = props => {
       setSelectedTokenForModal(selectedToToken)
       setAreBothTokensNew(false)
     }else{
+      setSelectedTokenForModal({})
       checkIfLiquidityPairExist()
     }
     
@@ -138,14 +139,23 @@ export const Manual = props => {
     setPathToArray(selection1[0].address, selection1[0].name);
     setSelectedToken(selection0[0]);
     setSelectedToToken(selection1[0]);
+    setUpUrl(selection0[0],selection1[0])
     displayModalsForNewToken(selection0[0],selection1[0])
    }
+  const setUpUrl = () => {
 
+    if (selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN") {
+      let toURLToken = checkIfTokenIsListed(selectedToken.symbol) ? selectedToken.symbol : selectedToken.address 
+        setToURL(toURLToken)
+      let fromURLToken = checkIfTokenIsListed(selectedToToken.symbol) ? selectedToToken.symbol : selectedToToken.address
+      setFromURL(fromURLToken)
+      history.push(`/swap/${toURLToken}-${fromURLToken}`)
+    }else{
+      history.push('/swap')
+    }
+  }
    const displayModalsForNewToken = (selectedToken,selectedToToken) =>{
     if (selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN") {
-      let toURL = checkIfTokenIsListed(selectedToken.symbol) ? selectedToken.symbol : selectedToken.address
-      let fromURL = checkIfTokenIsListed(selectedToToken.symbol) ? selectedToToken.symbol : selectedToToken.address
-      history.push(`/swap/${toURL}-${fromURL}`)
       if(!checkIfTokenIsListed(selectedToken.symbol) && !checkIfTokenIsListed(selectedToToken.symbol)){
         setDataForModal(true,selectedToken)
       }else if(!checkIfTokenIsListed(selectedToken.symbol)){
@@ -235,8 +245,6 @@ if (LPAddress === "0x0000000000000000000000000000000000000000" ){
 
   const checkForAllVariables = () => {
     if (isLoggedIn() && fromAmount > 0 && selectedToToken.name !== 'Select a token') {
-      // CHECK IF THERE IS ENOUGH LIQUIDIY ON THE OAIR, BY CALLING GETPAIR(), THEN LiquidityPairInstance(pairAddress), THEN TOTALSUPPLY TO GET THE TOTALSUPPLIED ON THAT PAIR. IF IT IS INSUFFICIENT, SHOW A POPUP TELLING THEM.
-      // IF IT DOES NOT EXIST, SHOW A MODAL WITH A BUTTON(WILL LEAD TO THE ADDLIQUIDITY PAGE) THAT IT DOESN'T EXIST, BUT THEY CAN ADD.
       setDisableSwapTokenButton(false)
       return true;
     }
@@ -534,8 +542,7 @@ if (LPAddress === "0x0000000000000000000000000000000000000000" ){
     modal5Disclosure.onClose();
   };
  const openLiquidityPage = () =>{
-  const { pair } = props.match.params;
-  props.history.push(`/liquidity/${pair}`)
+  props.history.push(`/liquidity/${toURL}-${fromURL}`)
  }
   const closeAllModals = () => {
     setTimeout(() => closeModal2(), 500)
@@ -569,6 +576,7 @@ if (LPAddress === "0x0000000000000000000000000000000000000000" ){
           setPathArray={setPathArray}
           selectedToken={selectedToken}
           setSelectedToken={setSelectedToken}
+          checkIfLiquidityPairExist={checkIfLiquidityPairExist}
           getToAmount={getToAmount}
           userWallet={props.wallet}
           setPath={setPath}
@@ -582,6 +590,7 @@ if (LPAddress === "0x0000000000000000000000000000000000000000" ){
           handleChangeToAmount={handleChangeToAmount}
           setPathToArray={setPathToArray}
           setAmountIn={setAmountIn}
+          checkIfLiquidityPairExist={checkIfLiquidityPairExist}
           selectedToToken={selectedToToken}
           setSelectedToToken={setSelectedToToken}
           getToAmount={getToAmount}

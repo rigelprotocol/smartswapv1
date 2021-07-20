@@ -69,8 +69,9 @@ export function LiquidityPage(props) {
   const [approving, setApproving] = useState(false)
   const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
   const [newTokenPairButton, setNewTokenPairButton] = useState(false)
+  const [fromURL, setFromURL] = useState("")
+  const [toURL, setToURL] = useState("")
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
-  const [areBothTokensNew,setAreBothTokensNew] = useState(false)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   let timer1
@@ -79,15 +80,11 @@ export function LiquidityPage(props) {
   ), [liquidityTab])
   useEffect(() => {
     displayBNBbutton();
-    // calculateToValue()
-    //  changeButtonValue();
   }, [toSelectedToken, liquidities]);
   const handleFromAmount = (value) => {
     if(!newTokenPairButton){
       setToValue((value * liquidityPairRatio).toString());
     }
-    
-    // calculateToValue(value, 'from');
   }
 
   useEffect(() => {
@@ -96,6 +93,8 @@ export function LiquidityPage(props) {
       const pairArray = pair.split('-');
       setLiquidityTab("ADDLIQUIDITY")
       if(pairArray.length===2 ){
+        setFromURL(pairArray[0])
+        setToURL(pairArray[1])
  getTokensListed(pairArray)
       }else{
         history.push("/liquidity")
@@ -103,30 +102,43 @@ export function LiquidityPage(props) {
     }
   }, [wallet])
 
+  
   useEffect(() => {
-
-    if ((fromAddress && toAddress)) {
-        if(fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN"){
-          history.push(`/liquidity/${checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address}-${checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address}`)
-        }else{
-         history.push("/liquidity")
-        }
-     checkIfLiquidityPairExist()
-      // getLiquidityPairRatio();
-
-    }
-
+    setUpUrl(fromSelectedToken,toSelectedToken)
+   checkIfLiquidityPairExist(fromSelectedToken.address,toSelectedToken.address)
+   
   }, [fromSelectedToken, toSelectedToken])
 
 
 const getTokensListed = async (pairArray) => {
  let selection0 = await getTokenList(pairArray[0],wallet)
  let selection1 = await getTokenList(pairArray[1],wallet)
- if(selection0 !== []) setFromSelectedToken(selection0[0])
- if(selection1 !== []) setToSelectedToken(selection1[0])
+ if(selection0 !== []) {
+   setFromSelectedToken(selection0[0])
+   setFromAddress(selection0[0].address)
+  }
+ if(selection1 !== []) {
+   setToSelectedToken(selection1[0])
+   setToAddress(selection1[0].address)
+  }
+ if(selection0 !== [] && selection1[0]!== []){
+   checkIfLiquidityPairExist() 
+  //  checkIfLiquidityPairExist(selection0[0].address,selection1[0].address) 
+ }
+}
+const setUpUrl = () => {
+  if (fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN") {
+    let toTokenURL = checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address
+    let fromTokenURL = checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address
+    setFromURL(fromTokenURL)
+        setToURL(toTokenURL)
+    history.push(`/liquidity/${toTokenURL}-${fromTokenURL}`)
+  }else{
+    history.push('/liquidity')
+  }
 }
 
-  const checkIfLiquidityPairExist = async () => {
+  const checkIfLiquidityPairExist = async (fromAddress = fromSelectedToken.address,toAddress = toSelectedToken.address) => {
       const factory = await SmartFactory();
     const fromPath = ethers.utils.getAddress(fromAddress);
     const toPath = ethers.utils.getAddress(toAddress);
@@ -145,7 +157,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
       const fromPath = ethers.utils.getAddress(fromAddress);
       const toPath = ethers.utils.getAddress(toAddress);
       const LPAddress = await factory.getPair(toPath, fromPath);
-      console.log(LPAddress);
       const LPcontract = await LPTokenContract(LPAddress)
       const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
       const token0 = await LPcontract.token0();
@@ -187,12 +198,8 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
 
       if (Number(tokenAllowance) > Number(fromValue)) {
         setHasAllowedFromToken(true);
-        // setShowApprovalBox(false);
-        // setOpenSupplyButton(true);
       } else {
         setHasAllowedFromToken(false);
-        // setShowApprovalBox(true);
-        // setOpenSupplyButton(false);
       }
 
     }
@@ -203,12 +210,8 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
 
       if (Number(tokenAllowance) > Number(toValue)) {
         setHasAllowedToToken(true)
-        // setShowApprovalBox(false);
-        // setOpenSupplyButton(true);
       } else {
         setHasAllowedToToken(false);
-        // setShowApprovalBox(true);
-        // setOpenSupplyButton(false);
       }
     }
   if(hasAllowedFromToken && hasAllowedToToken ){
@@ -321,12 +324,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
 
   }
 
-
-
-
-
-
-
   const approveToToken = async () => {
     try {
       if (!isNotEmpty(toSelectedToken)) {
@@ -375,24 +372,18 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
   const modal6Disclosure = useDisclosure();
   const modal7Disclosure = useDisclosure();
 
-  function addData(data) {
-    setLiquidities([...liquidities, data])
-    // close all opened values
-
-  }
   function closeInput() {
     setApproveBNBPopup(false)
     setFromValue("")
     setToValue("")
     setOpenSupplyButton(true)
     setPopupText("Approve")
-    // setButtonValue("Invalid pair")
     setDisplayButton(false)
     setFromSelectedToken(tokenWhere('rgp'))
     setToSelectedToken(tokenWhere("SELECT A TOKEN"))
     setNewTokenPairButton(false)
     setButtonValue("Supply")
-
+    onCloseModal()
   }
 
   const addingLiquidity = async () => {
@@ -421,7 +412,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
-        console.log({"adding":data})
         setTrxHashed(data)
         closeModal2()
         openModal3()
@@ -439,8 +429,8 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
         const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toString())
-        const amountAMin = 0
-        const amountBMin = 0
+        const amountAMin =Web3.utils.toWei((fromValue * 0.8).toString())
+        const amountBMin = Web3.utils.toWei((toValue * 0.8).toString())
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidity(
@@ -454,11 +444,10 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 390000,
+            gasLimit:  5900008,
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
-        console.log({"adding":data})
         setTrxHashed(data)
         closeModal2()
         openModal3()
@@ -639,7 +628,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
   };
   const getAllCurrentLiquities = async () => {
     await getAllLiquidities()
-
     props.changeRGPValue(wallet)
     const liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
     console.log(liquid)
@@ -677,7 +665,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
     setApproveBNBPopup(true);
     try {
       const { confirmations, status } = await fetchTransactionData(trxHashed)
-      console.log(confirmations, status)
       if (confirmations >= 1 && status) {
         closeModal6();
         openModal4()
@@ -720,7 +707,6 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
     })
   };
   const removeALiquidity = async (pairAddress) => {
-    console.log(pairAddress)
     const liquidity = liquidities.filter(liquidity => liquidity.pairAddress === pairAddress)
     setLiquidityToRemove(liquidity[0])
     await getAmountForLiquidity(smartSwapLPBalance)
@@ -761,7 +747,6 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
         const factory = await SmartFactory();
 
         const LPAddress = await factory.getPair(toPath, fromPath);
-        console.log(LPAddress);
         const LPcontract = await LPTokenContract(LPAddress)
         const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
         const liqidityRatio = tokenAReserve.toString() / tokenBreserve.toString();
@@ -865,22 +850,6 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
     }
     return false
   };
-  // approve token
-  const approveLiquidityToken = async () => {
-    if (fromSelectedToken.symbol === "RGP") {
-      checkUser()
-      await rgpApproval()
-      // checkUser()
-    } else if (fromSelectedToken.symbol === "BUSD") {
-      checkUser()
-      await bnbApproval()
-      // checkUser()
-    } else if (fromSelectedToken.symbol === "WBNB") {
-      checkUser()
-      await ETHApproval()
-      // checkUser()
-    }
-  }
 
   async function checkUser() {
     if (wallet.signer !== 'signer') {
@@ -1001,13 +970,13 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               modal6Disclosure={modal6Disclosure}
               modal7Disclosure={modal7Disclosure}
               openSupplyButton={openSupplyButton}
+              checkIfLiquidityPairExist={checkIfLiquidityPairExist}
               approveTokenSpending={approveTokenSpending}
               confirmingSupply={confirmingSupply}
               fromSelectedToken={fromSelectedToken}
               setToSelectedToken={setToSelectedToken}
               setOpenSupplyButton={setOpenSupplyButton}
               setFromSelectedToken={setFromSelectedToken}
-              approveLiquidityToken={approveLiquidityToken}
               showApprovalBox={showApprovalBox}
               hasAllowedToToken={hasAllowedToToken}
               hasAllowedFromToken={hasAllowedFromToken}

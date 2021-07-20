@@ -13,6 +13,7 @@ const LiquidityFromBox = ({
   setFromValue,
   setFromAddress,
   handleFromAmount,
+  checkIfLiquidityPairExist,
   fromSelectedToken,
   setFromSelectedToken,
   label,
@@ -78,7 +79,8 @@ const LiquidityFromBox = ({
               <TokenListBox
                 setSelectedToken={setFromSelectedToken}
                 setPathArray={setFromAddress}
-                isOpen={isOpen}
+                isOpen={isOpen}                
+                checkIfLiquidityPairExist={checkIfLiquidityPairExist}
                 onClose={onClose}
                 isOpenModal={isOpenModal}
                 onOpenModal={onOpenModal}
@@ -98,6 +100,7 @@ LiquidityFromBox.propTypes = {
   fromSelectedToken: PropTypes.object.isRequired,
   setFromAddress: PropTypes.func.isRequired,
   setFromSelectedToken: PropTypes.func.isRequired,
+  checkIfLiquidityPairExist: PropTypes.func.isRequired,
   label: PropTypes.string,
 };
 

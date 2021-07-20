@@ -38,6 +38,7 @@ function TokenListBox({
   getToAmount,
   setSelectedToToken,
   setPathToArray,
+  checkIfLiquidityPairExist,
   isOpen,
   onClose,
   isOpenModal,
@@ -74,7 +75,12 @@ function TokenListBox({
       setPathArray(token.address, token.symbol);
     isFunc(getToAmount) && getToAmount();
     onCloseModal()
-    isFunc(onClose) && onClose();
+    if(isFunc(onClose)){
+      onClose();
+      setSearchToken('')
+      setSelectedTokenForModal({})
+    }
+ checkIfLiquidityPairExist()
   }
   return (
     <>
@@ -131,7 +137,11 @@ function TokenListBox({
                 isFunc(setPathArray) &&
                   setPathArray(token.address, token.symbol);
                 isFunc(getToAmount) && getToAmount();
-                isFunc(onClose) && onClose();
+                if(isFunc(onClose)){
+                  onClose();
+                  setSearchToken('')
+                }  
+              checkIfLiquidityPairExist()
                 }
               
               }}

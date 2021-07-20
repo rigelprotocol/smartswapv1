@@ -17,6 +17,7 @@ const Manual = ({
   toSelectedToken,
   setToSelectedToken,
   label,
+  checkIfLiquidityPairExist,
   disableToSelectInputBox,
   setToValue
 }) => {
@@ -88,6 +89,7 @@ const Manual = ({
                 isOpen={isOpen}
                 onClose={onClose}
                 isOpenModal={isOpenModal}
+                checkIfLiquidityPairExist={checkIfLiquidityPairExist}
                 onOpenModal={onOpenModal}
                 onCloseModal={onCloseModal}
               />
@@ -104,6 +106,7 @@ Manual.propTypes = {
   setToAddress: PropTypes.func.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,
+  checkIfLiquidityPairExist: PropTypes.func.isRequired,
   setToValue: PropTypes.func.isRequired,
   disableToSelectInputBox: PropTypes.bool.isRequired,
   label: PropTypes.string,
