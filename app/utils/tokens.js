@@ -1,11 +1,9 @@
 import { tokenList } from 'utils/constants';
+import { convertFromWei } from 'utils/UtilFunc';
 import Web3 from 'web3'
-import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
-import { isFunc } from 'utils/UtilFunc';
 import { getAddress } from '@ethersproject/address'
 import { Contract } from '@ethersproject/contracts'
 import ERC20Token from 'utils/abis/ERC20Token.json';
-import BUSD from 'utils/abis/BUSD.json';
 import RigelToken from 'utils/abis/RigelToken.json';
 import { getProvider } from 'utils/SwapConnect';
 import { filter } from 'lodash';
@@ -133,9 +131,6 @@ export const getTokenList =async (searchToken,account) =>{
 const getTokenWithWeb3 =async (searchToken,account) =>{
    let RGPAddress = "0xfa262f303aa244f9cc66f312f0755d89c3793192"
 let contract = new web3.eth.Contract(RigelToken, RGPAddress)
-   console.log({add:contract._address})
-   console.log({RigelToken})
-   console.log({contract})
    try{
       console.log({json:contract._jsonInterface})
       //  contract._jsonInterface.name().call((err, res) => console.log(`name ${res}`))
@@ -166,17 +161,24 @@ export const getTokenWithContract = async (searchToken,account) =>{
       let name = await contract.name()
       let symbol = await contract.symbol()
       let balance = account.address == "0x" ? "" : await contract.balanceOf(account.address)
+      let decimals = await contract.decimals()
       let address =  contract.address
+      let filteredTokenList = filterTokenListWithAddress(symbol)
+      if(filteredTokenList.length>0){
+         return filteredTokenList
+      }else{
       let tokenObject = [{
       name: name.toString(),
-      balance: Web3.utils.fromWei(balance.toString()),
+      balance: convertFromWei(balance,decimals),
       available:false,
       imported:false,
       symbol,
       img:"",
       address
-   }]
-   return tokenObject   
+   }] 
+   return tokenObject 
+}
+    
    }catch(e){
       console.log(e)
    }
@@ -202,4 +204,10 @@ export const filterAvailableTokenList =(searchToken) =>{
       );
      return filteredTokenList
 }
-
+export const filterTokenListWithAddress =(symbol) =>{
+ const filteredTokenList = tokenList.filter(
+        token =>
+          token.symbol.toLowerCase() ===symbol.toLowerCase()
+      );
+     return filteredTokenList
+}

@@ -13,7 +13,8 @@ import {
   MenuItem,
   Tooltip,
   ModalCloseButton,
-  Spinner
+  Spinner,
+
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { connect } from 'react-redux';
@@ -25,9 +26,12 @@ import Options from './Options';
 import Loading from './Loading';
 import Binance from '../../assets/bnb.svg';
 import Ethereum from '../../assets/eth.svg';
+import InfoModal from 'components/modal/InfoModal'
+
 
 const Wallet = ({ loading, show, connectingWallet, chainId }) => {
   const modal1Disclosure = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const open = () => {
     modal1Disclosure.onOpen();
@@ -43,6 +47,8 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
 
   if (loading) {
     return (
+
+
       <Button
         as={Button}
         border="none"

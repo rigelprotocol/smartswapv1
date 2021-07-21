@@ -44,7 +44,8 @@ const BSCmainnetTokens = {
   ETH: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
 };
-const BSC_MAIN_NET_ID = window.ethereum.isTrust ? '56' : '0x38';
+const BSC_MAIN_NET_ID =
+  window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
 export const TOKENS_CONTRACT =
   checkNetVersion() === BSC_MAIN_NET_ID.toString()
     ? BSCmainnetTokens
@@ -247,6 +248,17 @@ export const balanceAbi = [
     ],
     stateMutability: 'view',
     type: 'function',
+  },
+];
+export const decimalAbi = [
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [{ "name": "", "type": "uint8" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
 ];
 // export const balanceAbi = [
