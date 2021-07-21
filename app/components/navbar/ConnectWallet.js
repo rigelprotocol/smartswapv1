@@ -40,6 +40,10 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
   const close = () => {
     modal1Disclosure.onClose();
   };
+  const switchNetwork = () => {
+    onOpen();
+    switchToBSC()
+  }
 
   if (loading) {
     return (
@@ -87,7 +91,7 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E' }}
           _expanded={{ bg: '#29235E' }}
-          onClick={switchToBSC}
+          onClick={switchNetwork}
         >
           Unsupported Network
         </Button>
