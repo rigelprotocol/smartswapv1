@@ -25,7 +25,7 @@ import Toast from '../../components/Toast';
 import { reConnect, disconnectWallet, updateChainId } from '../WalletProvider/actions';
 import TrustWallet from './../../components/TrustWallet/index';
 import { setWallet } from 'containers/WalletProvider/saga';
-import { isSupportedNetwork } from './../../utils/wallet-wiget/connection'
+import { isSupportedNetwork, switchToBSC } from './../../utils/wallet-wiget/connection'
 import { notify } from 'containers/NoticeProvider/actions';
 
 
@@ -74,12 +74,11 @@ const App = props => {
       method: 'eth_chainId',
     })
     props.updateChainId(chainID)
-    if (!isSupportedNetwork(chainID)) {
-      return props.notify({
-        title: 'Unsupported Network',
-        body: 'Please switch to Binance Smart Chain mainnet',
-        type: 'error'
-      });
+    if (isSupportedNetwork(chainID)) {
+      listener(wallet, props);
+      reConnector(props);
+    } else {
+      switchToBSC();
     }
     listener(wallet, props);
     reConnector(props);

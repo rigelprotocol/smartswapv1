@@ -15,6 +15,7 @@ import YieldFarm from 'components/yieldfarm/YieldFarm';
 import InfoModal from 'components/modal/InfoModal'
 import FarmingPageModal from 'components/yieldfarm/FarmingPageModal';
 import RGPFarmInfo from 'components/yieldfarm/RGPFarmInfo';
+import { notify } from 'containers/NoticeProvider/actions';
 
 import {
   masterChefContract,
@@ -38,7 +39,7 @@ import {
   updateTotalLiquidity,
   updateTokenStaked,
   updateFarmBalances,
-
+  farmDataLoading
 } from './actions';
 // import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
@@ -54,6 +55,7 @@ export function FarmingPage(props) {
   const [initialLoad, setInitialLoad] = useState(true)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useModalDisclosure()
   const toast = useToast()
+  const id = "totalLiquidityToast"
 
   useEffect(() => {
     const harvestSubscription = async () => {
@@ -115,6 +117,7 @@ export function FarmingPage(props) {
 
   const getYieldFarmingData = async () => {
     try {
+      props.farmDataLoading(true)
       const masterChef = await masterChefContract();
       const poolLength = await masterChef.poolLength();
       let poolsData = [];
@@ -224,6 +227,19 @@ export function FarmingPage(props) {
       ]);
     } catch (error) {
       console.log(error);
+      if (!toast.isActive(id)) {
+        toast({
+          id,
+          title: "Unable to load data",
+          description: "Ensure your wallet is on BSC network and reload page",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+          position: "bottom-right",
+        })
+      }
+    } finally {
+      props.farmDataLoading(false)
     }
   };
 
@@ -599,6 +615,7 @@ export function FarmingPage(props) {
                   key={content.id}
                   wallet={wallet}
                   refreshTokenStaked={refreshTokenStaked}
+                  loadingTotalLiquidity={props.farming.loading}
                 />
               ))}
             </Box>
@@ -635,6 +652,8 @@ export default connect(
     updateTotalLiquidity,
     updateTokenStaked,
     updateFarmBalances,
-    changeRGPValue
+    changeRGPValue,
+    farmDataLoading,
+    notify
   },
 )(FarmingPage);

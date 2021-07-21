@@ -19,7 +19,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { connect } from 'react-redux';
 import { connectingWallet } from 'containers/WalletProvider/actions';
 import styles from '../../styles/navbar.css';
-import { isSupportedNetwork } from '../../utils/wallet-wiget/connection'
+import { isSupportedNetwork, switchToBSC } from '../../utils/wallet-wiget/connection'
 
 import Options from './Options';
 import Loading from './Loading';
@@ -36,6 +36,10 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
   const close = () => {
     modal1Disclosure.onClose();
   };
+  const switchNetwork = () => {
+    onOpen();
+    switchToBSC()
+  }
 
   if (loading) {
     return (
@@ -61,22 +65,31 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
 
   if (!isSupportedNetwork(chainId)) {
     return (
-      <Button
-        as={Button}
-        border="none"
-        fontWeight="regular"
-        fontSize="md"
-        rounded="xl"
-        cursor="pointer"
-        bg="rgba(64, 186, 213,0.25)"
-        color="#40BAD5"
-        _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-        _active={{ outline: '#29235E' }}
-        _expanded={{ bg: '#29235E' }}
-      >
-        Unsupported Network
-      </Button>
-
+      <>
+        <InfoModal
+          isOpenModal={isOpen}
+          onCloseModal={onClose}
+          title="UNSUPPORTED NETWORK"
+        >
+          Please switch your wallet to Binance Smart Chain Mainnet
+        </ InfoModal>
+        <Button
+          as={Button}
+          border="none"
+          fontWeight="regular"
+          fontSize="md"
+          rounded="xl"
+          cursor="pointer"
+          bg="rgba(64, 186, 213,0.25)"
+          color="#40BAD5"
+          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+          _active={{ outline: '#29235E' }}
+          _expanded={{ bg: '#29235E' }}
+          onClick={switchNetwork}
+        >
+          Unsupported Network
+        </Button>
+      </>
     )
   }
 

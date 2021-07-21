@@ -13,7 +13,8 @@ import {
   UPDATE_TOTAL_LIQUIDITY,
   UPDATE_TOKEN_STAKED,
   UPDATE_FARM_BALANCES,
-  UPDATE_FARM_ALLOWANCE
+  UPDATE_FARM_ALLOWANCE,
+  FARM_DATA_LOADING
 } from './constants';
 
 
@@ -99,6 +100,8 @@ export const initialState = {
       poolAllowance: ''
     },
   ],
+  loading: false,
+  error: null,
 };
 // const user_Individual_Reward = (individualLiquidity / totalLiquidity) * reward
 // Reward = (Multiplier x block diff x reward per block x allocation point ) / Total Allocation Point
@@ -172,6 +175,10 @@ const farmingPageReducer = (state = initialState, action) =>
         allowances.forEach((item, index) => {
           draft.contents[index].poolAllowance = item;
         })
+        break
+
+      case FARM_DATA_LOADING:
+        draft.loading = action.payload;
         break
       default:
         return state;

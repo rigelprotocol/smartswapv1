@@ -12,3 +12,4 @@ export const UPDATE_TOTAL_LIQUIDITY = 'app/FarmingPage/UPDATE_TOTAL_LIQUIDITY';
 export const UPDATE_TOKEN_STAKED = 'app/FarmingPage/UPDATE_TOKEN_STAKED';
 export const UPDATE_FARM_BALANCES = 'app/FarmingPage/UPDATE_FARM_BALANCES'
 export const UPDATE_FARM_ALLOWANCE = 'app/FarmingPage/UPDATE_FARM_ALLOWANCE'
+export const FARM_DATA_LOADING = 'app/FarmingPage/FARM_DATA_LOADING'
