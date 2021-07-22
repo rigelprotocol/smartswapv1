@@ -20,6 +20,7 @@
   import { Button } from '@chakra-ui/button';
   import { PropTypes } from 'prop-types';
   import NullImage48 from '../../assets/Null-48.svg';
+  import NullImage24 from '../../assets/Null-24.svg';
   
   const NewTokenModal =({
     onCloseModal,
@@ -58,7 +59,7 @@
   <h5 style={{color:"#444159"}}>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.name : ""}</h5>
   <h6 style={{color:"rgba(255, 255, 255, 0.555)"}}>{selectedTokenForModal && !selectedTokenForModal.available ? selectedTokenForModal.address : ""}</h6>
   <Button padding ="1 2" border={0} background="#E8006F" color="white"  _hover={{ color: 'E8006F' }}>
-    null unknown source
+  {selectedTokenForModal && !selectedTokenForModal.available && selectedTokenForModal.img ? selectedTokenForModal.img : <NullImage24 />} unknown source
   </Button>
   </Box>
        </Box>
