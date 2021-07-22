@@ -104,10 +104,6 @@ export const BUSDToken = async () =>
 export const BNBTOKEN = async () =>
   new ethers.Contract(SMART_SWAP.BNB, BUSD, getSigner());
 
-// BNB token
-export const ERC20Tokens = async () =>
-  new ethers.Contract("0x4af5ff1a60a6ef6c7c8f9c4e304cd9051fca3ec0",ERC20Token,undefined)
-
 // WETH (ETH)
 export const WETH = async () => {
   const WETH9Address = (checkNetVersion() == 56) ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A';

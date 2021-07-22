@@ -136,7 +136,7 @@ const AddLiquidity = ({
       {newTokenPairButton &&
     <InfoTextBox>
     <Text>
- Please note that creating a new token may result is a higher amount of gas fee
+ Please note that creating a new pool may result in a higher amount of gas fee
   </Text>
     
     </InfoTextBox>

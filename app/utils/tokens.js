@@ -4,7 +4,6 @@ import Web3 from 'web3'
 import { getAddress } from '@ethersproject/address'
 import { Contract } from '@ethersproject/contracts'
 import ERC20Token from 'utils/abis/ERC20Token.json';
-import RigelToken from 'utils/abis/RigelToken.json';
 import { getProvider } from 'utils/SwapConnect';
 import { filter } from 'lodash';
 
@@ -128,32 +127,6 @@ export const getTokenList =async (searchToken,account) =>{
    }
 }
 
-const getTokenWithWeb3 =async (searchToken,account) =>{
-   let RGPAddress = "0xfa262f303aa244f9cc66f312f0755d89c3793192"
-let contract = new web3.eth.Contract(RigelToken, RGPAddress)
-   try{
-      console.log({json:contract._jsonInterface})
-      //  contract._jsonInterface.name().call((err, res) => console.log(`name ${res}`))
-      contract.methods.name().call((err,res)=>console.log(res)).catch(e=>console.log(e))
-     let symbol = await contract.methods.symbol()
-     let balance = account.address == "0x" ? "" : await contract.methods.balanceOf(account.address)
-     console.log({balance})
-     let address =  contract._address
-     let tokenObject = [{
-     available:false,
-     imported:false,
-     symbol,
-     img:"",
-     address
-  }]
-  console.log({contract,tokenObject})
-//   return tokenObject 
-return []  
-  }catch(e){
-     console.log(e)
-  }
-}
-
 export const getTokenWithContract = async (searchToken,account) =>{
   
    try{
@@ -185,7 +158,6 @@ export const getTokenWithContract = async (searchToken,account) =>{
 
 }
 export const getTokenWithoutContract = (searchToken) =>{
-console.log("This has not been implemented")
 return []
 }
 export const isItAddress  = (token) => {
