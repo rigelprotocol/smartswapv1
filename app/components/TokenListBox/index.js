@@ -166,7 +166,14 @@ function TokenListBox({
         <ModalFooter>
           <Flex justifyContent="center">
             {' '}
-            <Text>Manage Token</Text>
+            <Text
+              onClick={() => {
+                setManageToken(true);
+                setCurrencyList(false);
+              }}
+            >
+              Manage Token
+            </Text>
           </Flex>
         </ModalFooter>
       </ModalContent>
