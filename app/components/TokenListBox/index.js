@@ -18,13 +18,12 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 import React, { useEffect, useState } from 'react';
-import { FixedSizeList as List } from 'react-window';
+import { FixedSizeList } from 'react-window';
 import { Input } from '@chakra-ui/react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
-import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 
@@ -72,9 +71,10 @@ function TokenListBox({
   useEffect(() => {
     setList(tokenList);
   }, [tokenList]);
+
   useEffect(() => {
     if (searchToken !== '') {
-      const filteredTokenList = tokenList.filter(
+      const filteredTokenList = list.filter(
         token =>
           token.symbol.toLowerCase().includes(searchToken.toLowerCase()) ||
           token.name.toLowerCase().includes(searchToken.toLowerCase()),
@@ -154,9 +154,14 @@ function TokenListBox({
             </Text>
             <ArrowDownImage />
           </Flex>
-          <List width={400} height={300} itemCount={list.length} itemSize={10}>
+          <FixedSizeList
+            width={400}
+            height={300}
+            itemCount={list.length}
+            itemSize={10}
+          >
             {Row}
-          </List>
+          </FixedSizeList>
         </ModalBody>
         <ModalFooter />
       </ModalContent>
