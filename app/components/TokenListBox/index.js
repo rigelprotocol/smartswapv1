@@ -163,7 +163,12 @@ function TokenListBox({
             {Row}
           </FixedSizeList>
         </ModalBody>
-        <ModalFooter />
+        <ModalFooter>
+          <Flex justifyContent="center">
+            {' '}
+            <Text>Manage Token</Text>
+          </Flex>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
