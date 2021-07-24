@@ -96,5 +96,5 @@
     setPathToArray: PropTypes.func,
   };
   
-  export default React.memo(NewTokenModal)
+  export default NewTokenModal
   
