@@ -63,7 +63,6 @@ const AddLiquidity = ({
   modal7Disclosure,
   changeButtonCreateNewTokenPair,
   checkIfLiquidityPairExist,
-  createNewTokenPair,
   newTokenPairButton,
   showApprovalBox,
   hasAllowedToToken,
@@ -142,7 +141,7 @@ const AddLiquidity = ({
     </InfoTextBox>
 }
     <Box mt={5} p={5}>
-      {!hasAllowedToToken && (toSelectedToken.symbol !== "SELECT A TOKEN") && (toSelectedToken.symbol !== "BNB") && (
+      {!hasAllowedToToken && (toSelectedToken.symbol !== "SELECT A TOKEN")  && (
         <Button
           d="block"
           w="100%"
@@ -163,7 +162,7 @@ const AddLiquidity = ({
           Approve {toSelectedToken.symbol}
         </Button>
       )}
-      {!hasAllowedFromToken && (fromSelectedToken.symbol !== "SELECT A TOKEN") && (fromSelectedToken.symbol !== "BNB") && (
+      {!hasAllowedFromToken && (fromSelectedToken.symbol !== "SELECT A TOKEN") && (
         <Button
           d="block"
           w="100%"
@@ -189,17 +188,17 @@ const AddLiquidity = ({
           d="block"
           w="100%"
           h="50px"
-          color={!openSupplyButton ? '#BEBEBE' : 'rgba(64, 186, 213, 1)'}
+          color={openSupplyButton ? 'rgba(64, 186, 213, 1)' : '#BEBEBE'}
           border="none"
           fontWeight="regular"
           fontSize="lg"
           cursor="pointer"
           rounded="2xl"
-          bg={!openSupplyButton ? '#444159' : 'rgba(64, 186, 213, 0.1)'}
+          bg={openSupplyButton ? 'rgba(64, 186, 213, 0.1)' : '#444159'}
           borderColor="#40BAD5"
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
-          disabled={openSupplyButton ? false : true}
+          disabled={!openSupplyButton}
           onClick={()=>newTokenPairButton ? open("new") : open("old")}
         >
           {buttonValue}
@@ -282,7 +281,7 @@ const AddLiquidity = ({
             height="50px"
             fontSize="16px"
             _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
-            onClick={newTokenPairButton?createNewTokenPair : confirmingSupply}
+            onClick={confirmingSupply}
           >
             Confirm Supply
           </Button>
@@ -549,7 +548,6 @@ AddLiquidity.propTypes = {
   closeModal6: PropTypes.func.isRequired,
   closeModal7: PropTypes.func.isRequired,
   changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
-  createNewTokenPair: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   isOpenModal:PropTypes.func.isRequired, 
   modal1Disclosure: PropTypes.object,
