@@ -3,8 +3,8 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import { notify } from 'containers/NoticeProvider/actions';
 import configureStore from 'configureStore';
 import { WALLET_CONNECTED } from 'containers/WalletProvider/constants';
-import { formatBalance } from 'utils/UtilFunc';
-import { balanceAbi } from '../constants';
+import { formatBalance,convertFromWei } from 'utils/UtilFunc';
+import { balanceAbi,decimalAbi } from '../constants';
 import { add } from 'lodash';
 const store = configureStore();
 
@@ -38,12 +38,17 @@ export const getAddressTokenBalance = async (
   walletSigner,
 ) =>
   formatBalance(
-    ethers.utils.formatEther(
+    convertFromWei(
       await new ethers.Contract(
         tokenAddress,
         balanceAbi,
         walletSigner,
       ).balanceOf(address),
+      await new ethers.Contract(
+        tokenAddress,
+        decimalAbi,
+        walletSigner,
+      ).decimals()
     ),
   );
 /**
@@ -90,7 +95,6 @@ export const connectionEventListener = wallet => dispatch => {
 
 export function disconnectUser() {
 }
-// Object.fromEntries( Object.entries(TOKENS_CONTRACT).filter(([key, value]) => key === symbol))
 export const setupNetwork = async () => {
   const walletProvider = window.ethereum;
   if (walletProvider !== undefined && walletProvider.isTrust) {
@@ -146,7 +150,7 @@ export const switchToBSC = async () => {
       });
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
-      if (switError.code === 4902) {
+      if (switchError.code === 4902) {
         addBSCToMetamask()
       }
       // handle other  errors codes

@@ -46,7 +46,6 @@ const BSCmainnetTokens = {
 };
 const BSC_MAIN_NET_ID =
   window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
-
 export const TOKENS_CONTRACT =
   checkNetVersion() === BSC_MAIN_NET_ID.toString()
     ? BSCmainnetTokens
@@ -87,10 +86,12 @@ export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
 export const tokenList = [
-  { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '' },
+  { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '',available:true },
   {
     symbol: 'RGP',
     abi: RigelToken,
+    available:true,
+    imported:false,
     name: 'Rigel Protocol',
     img: '../../assets/rgp.svg',
     address:
@@ -101,6 +102,8 @@ export const tokenList = [
   {
     abi: BUSD,
     symbol: 'BUSD',
+    available:true,
+    imported:false,
     name: 'Binance USD',
     img: '../../assets/bnb.svg',
     address:
@@ -119,6 +122,8 @@ export const tokenList = [
   {
     abi: WETH9,
     symbol: 'WBNB',
+    available:true,
+    imported:false,
     name: 'Wrapped BNB',
     img: '../../assets/eth.svg',
     address:
@@ -129,6 +134,8 @@ export const tokenList = [
   {
     abi: WETH9,
     symbol: 'BNB',
+    available:true,
+    imported:false,
     name: 'BNB',
 
     img: '../../assets/eth.svg',
@@ -161,6 +168,8 @@ export const convertToNumber = (hex, decimals) => {
   }
   return balanceDecimal.toLocaleString();
 };
+
+export const checkIfTokenIsListed = symbol => tokenList.find(token => token.symbol === symbol)
 
 // export const convertIndexToAlphetString = number =>
 //   number
@@ -239,6 +248,17 @@ export const balanceAbi = [
     ],
     stateMutability: 'view',
     type: 'function',
+  },
+];
+export const decimalAbi = [
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [{ "name": "", "type": "uint8" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
 ];
 // export const balanceAbi = [

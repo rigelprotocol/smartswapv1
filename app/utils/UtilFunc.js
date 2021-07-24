@@ -1,5 +1,6 @@
 import { ethers, BigNumber } from 'ethers';
 import BN from 'bignumber.js'
+import Web3 from 'web3'
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 
@@ -14,6 +15,21 @@ export const formatBalance = balance => {
     .toFixed(4)
     .toString();
 };
+
+export const convertFromWei = (balance,decimals) => {
+  let decimalValue = decimals ? decimals : 18
+  let unitMap = Web3.utils.unitMap
+  let unit = Object.keys(unitMap).find(unit => unitMap[unit] === Math.pow(10,decimalValue).toString())
+ return Web3.utils.fromWei(balance.toString(),unit)
+ 
+}
+export const convertToWei = (balance,decimals) => {
+  let decimalValue = decimals ? decimals : 18
+  let unitMap = Web3.utils.unitMap
+  let unit = Object.keys(unitMap).find(unit => unitMap[unit] === Math.pow(10,decimalValue).toString())
+ return Web3.utils.toWei(balance.toString(),unit)
+ 
+}
 
 export const isNotEmpty = objectToCheck =>
   objectToCheck &&

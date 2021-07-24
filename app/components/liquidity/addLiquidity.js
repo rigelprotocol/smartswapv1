@@ -13,6 +13,7 @@ import {
 import { CheckIcon, CloseIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import LiquidityFromBox from 'components/liquidity/from';
 import To from 'components/liquidity/to';
+import InfoTextBox from 'components/TextBox/InfoTextBox';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/spinner';
@@ -24,12 +25,13 @@ import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
 
-
 const AddLiquidity = ({
   fromValue,
   setFromValue,
+  setToValue,
   toValue,
   setFromAddress,
+  addLiquidityPageHeading,
   setToAddress,
   approveToToken,
   approveFromToken,
@@ -37,6 +39,7 @@ const AddLiquidity = ({
   toSelectedToken,
   setFromSelectedToken,
   setToSelectedToken,
+  disableToSelectInputBox,
   popupText,
   confirmingSupply,
   isNewUser,
@@ -50,12 +53,17 @@ const AddLiquidity = ({
   closeModal4,
   closeModal5,
   closeModal6,
+  closeModal7,
   modal1Disclosure,
   modal2Disclosure,
   modal3Disclosure,
   modal4Disclosure,
   modal5Disclosure,
   modal6Disclosure,
+  modal7Disclosure,
+  changeButtonCreateNewTokenPair,
+  checkIfLiquidityPairExist,
+  newTokenPairButton,
   showApprovalBox,
   hasAllowedToToken,
   hasAllowedFromToken,
@@ -74,10 +82,22 @@ const AddLiquidity = ({
     {isNewUser ? <ApproveBox popupText={popupText} /> : <div />}
     <Flex justifyContent="space-between" alignItems="center" px={4}>
       <ArrowLeft cursor="pointer" onClick={() => back('INDEX')} />
-      <Text color="gray.200">Add Liquidity</Text>
+      <Text color="gray.200">{addLiquidityPageHeading}</Text>
       <Question />
     </Flex>
+{newTokenPairButton ? <InfoTextBox>
+<Text>
+  <h4>You are the first Liquidity Provider</h4>
+   <Text>The ratio of tokens you add will set the price of this pool</Text>
+  </Text>
+</InfoTextBox> : 
+<InfoTextBox>
+  <Text>
+    <b>Tip</b>: When you add liquidity, you will receive pool tokens representing your position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.
+  </Text>
+</InfoTextBox>
 
+}
     <LiquidityFromBox
       label="input"
       fromValue={fromValue}
@@ -86,6 +106,7 @@ const AddLiquidity = ({
       handleFromAmount={handleFromAmount}
       fromSelectedToken={fromSelectedToken}
       setFromSelectedToken={setFromSelectedToken}
+      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
     />
     <Flex justifyContent="center" my={3}>
       <Plus />
@@ -96,6 +117,9 @@ const AddLiquidity = ({
       setToAddress={setToAddress}
       toSelectedToken={toSelectedToken}
       setToSelectedToken={setToSelectedToken}
+      disableToSelectInputBox={disableToSelectInputBox}
+      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+      setToValue={setToValue}
     />
     {toSelectedToken.symbol !== 'SELECT A TOKEN' && fromValue > 0 ? (
       <LiquidityPriceBox
@@ -103,12 +127,21 @@ const AddLiquidity = ({
         fromValue={fromValue}
         toValue={toValue}
         fromSelectedToken={fromSelectedToken}
+        newTokenPairButton={newTokenPairButton}
       />
     ) : (
       <div />
     )}
+      {newTokenPairButton &&
+    <InfoTextBox>
+    <Text>
+ Please note that creating a new pool may result in a higher amount of gas fee
+  </Text>
+    
+    </InfoTextBox>
+}
     <Box mt={5} p={5}>
-      {!hasAllowedToToken && (toSelectedToken.symbol !== "SELECT A TOKEN") && (toSelectedToken.symbol !== "BNB") && (
+      {!hasAllowedToToken && (toSelectedToken.symbol !== "SELECT A TOKEN")  && (
         <Button
           d="block"
           w="100%"
@@ -129,7 +162,7 @@ const AddLiquidity = ({
           Approve {toSelectedToken.symbol}
         </Button>
       )}
-      {!hasAllowedFromToken && (fromSelectedToken.symbol !== "SELECT A TOKEN") && (fromSelectedToken.symbol !== "BNB") && (
+      {!hasAllowedFromToken && (fromSelectedToken.symbol !== "SELECT A TOKEN") && (
         <Button
           d="block"
           w="100%"
@@ -155,23 +188,24 @@ const AddLiquidity = ({
           d="block"
           w="100%"
           h="50px"
-          color={openSupplyButton ? '#BEBEBE' : 'rgba(64, 186, 213, 1)'}
+          color={openSupplyButton ? 'rgba(64, 186, 213, 1)' : '#BEBEBE'}
           border="none"
           fontWeight="regular"
           fontSize="lg"
           cursor="pointer"
           rounded="2xl"
-          bg={openSupplyButton ? '#444159' : 'rgba(64, 186, 213, 0.1)'}
+          bg={openSupplyButton ? 'rgba(64, 186, 213, 0.1)' : '#444159'}
           borderColor="#40BAD5"
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
-          // disabled={openSupplyButton}
-          onClick={open}
+          disabled={!openSupplyButton}
+          onClick={()=>newTokenPairButton ? open("new") : open("old")}
         >
           {buttonValue}
         </Button>
       )}
     </Box>
+  
     {/* modal 1 summary */}
     <Modal isOpen={modal1Disclosure.isOpen} onClose={closeModal1} isCentered>
       <ModalOverlay />
@@ -226,7 +260,7 @@ const AddLiquidity = ({
               <Text> Share of Pool </Text>
               <Box>
                 <Text>
-                  {fromValue > 0 && toValue > 0
+                  {newTokenPairButton ? "100" : fromValue > 0 && toValue > 0
                     ? (parseFloat(fromValue) * 3) / 100
                     : 0.0}
                   %
@@ -272,7 +306,7 @@ const AddLiquidity = ({
             Waiting for Confirmation
           </Text>
           <Text fontSize="16px" fontWeight="bold">
-            Supplying {fromValue} {fromSelectedToken.symbol} to {toValue}{' '}
+            Supplying {fromValue} {fromSelectedToken.symbol} and {toValue}{' '}
             {toSelectedToken.symbol}
           </Text>
         </ModalBody>
@@ -427,6 +461,43 @@ const AddLiquidity = ({
         </ModalBody>
       </ModalContent>
     </Modal>
+    <Modal isOpen={modal7Disclosure.isOpen} onClose={closeModal7} isCentered>
+      <ModalOverlay />
+      <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
+ <ModalHeader fontSize="18px" fontWeight="regular" align="center">
+          Add Pairs
+        </ModalHeader>
+      <ModalBody>
+          <Text color="gray.400">
+            There is no liquidity on this pair, will you like to add Liquidity.
+          </Text>
+          <Flex justifyContent="space-between">
+              <Button
+               d="block"
+               w="90%"
+               margin="20px auto"
+               h="50px"
+               color="#40BAD5"
+               border="none"
+               fontWeight="regular"
+               fontSize="lg"
+               cursor="pointer"
+               rounded="2xl"
+               bg="rgba(64, 186, 213,0.25)"
+               borderColor="#40BAD5"
+               _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+               _active={{ outline: '#29235E', background: '#29235E' }}
+                onClick={changeButtonCreateNewTokenPair}
+              >
+                OK
+              </Button>
+        
+          </Flex>
+         </ModalBody>
+      
+      </ModalContent>
+    </Modal>
+  
     
   <SpinModal
      isOpenModal={isOpenModal}
@@ -452,8 +523,11 @@ AddLiquidity.propTypes = {
   approveFromToken: PropTypes.func,
   setToAddress: PropTypes.func,
   fromValue: PropTypes.string.isRequired,
+  addLiquidityPageHeading: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
-  setFromSelectedToken: PropTypes.func.isRequired,
+  setToValue: PropTypes.func.isRequired,
+  setFromSelectedToken: PropTypes.func.isRequired, 
+  checkIfLiquidityPairExist: PropTypes.func.isRequired,
   fromSelectedToken: PropTypes.object.isRequired,
   toValue: PropTypes.string.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
@@ -463,6 +537,8 @@ AddLiquidity.propTypes = {
   confirmingSupply: PropTypes.func.isRequired,
   buttonValue: PropTypes.string.isRequired,
   openSupplyButton: PropTypes.bool.isRequired,
+  disableToSelectInputBox: PropTypes.bool.isRequired,
+  newTokenPairButton: PropTypes.bool.isRequired,
   open: PropTypes.func.isRequired,
   closeModal1: PropTypes.func.isRequired,
   closeModal2: PropTypes.func.isRequired,
@@ -470,6 +546,8 @@ AddLiquidity.propTypes = {
   closeModal4: PropTypes.func.isRequired,
   closeModal5: PropTypes.func.isRequired,
   closeModal6: PropTypes.func.isRequired,
+  closeModal7: PropTypes.func.isRequired,
+  changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   isOpenModal:PropTypes.func.isRequired, 
   modal1Disclosure: PropTypes.object,
@@ -478,7 +556,7 @@ AddLiquidity.propTypes = {
   modal4Disclosure: PropTypes.object,
   modal5Disclosure: PropTypes.object,
   modal6Disclosure: PropTypes.object,
-  approveLiquidityToken: PropTypes.func.isRequired,
+  modal7Disclosure: PropTypes.object,
   tokenFromValue: PropTypes.string.isRequired,
   tokenToValue: PropTypes.string.isRequired,
   handleFromAmount: PropTypes.func,

@@ -2,6 +2,7 @@ import React from 'react';
 import {
     Modal,
     ModalOverlay,
+    ModalCloseButton,
     ModalContent,
     ModalHeader,
     ModalFooter,
@@ -14,12 +15,19 @@ import {
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 
 const InfoModal = ({ onCloseModal, isOpenModal, title, children }) => {
-
     return (
         <>
             <Modal onClose={onCloseModal} isOpen={isOpenModal} isCentered>
                 <ModalOverlay />
                 <ModalContent bg="#120136" color="#fff" borderRadius="20px">
+                <ModalCloseButton
+                onClick={onCloseModal} 
+          bg="none"
+          border="0px"
+          color="#fff"
+          cursor="pointer"
+          _focus={{ outline: 'none' }}
+        />
                     <ModalHeader>{title}</ModalHeader>
 
                     <ModalBody>
@@ -31,7 +39,7 @@ const InfoModal = ({ onCloseModal, isOpenModal, title, children }) => {
                             mx="auto"
                             color="#40BAD5"
                             width="100%"
-                            background="#120136"
+                            background="rgba(64, 186, 213, 0.15)"
                             cursor="pointer"
                             border="none"
                             borderRadius="13px"

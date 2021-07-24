@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 // @ts-nocheck
 /* eslint-disable prettier/prettier */
 /*

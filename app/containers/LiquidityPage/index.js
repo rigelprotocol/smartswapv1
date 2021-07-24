@@ -14,7 +14,8 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { connect } from 'react-redux';
 import { Flex } from '@chakra-ui/layout';
-import { useDisclosure } from '@chakra-ui/react';
+import { Button, useDisclosure } from '@chakra-ui/react';
+import { useHistory } from "react-router-dom";
 import Layout from 'components/layout/index';
 import Index from 'components/liquidity/index';
 import AddLiquidity from 'components/liquidity/addLiquidity';
@@ -22,14 +23,17 @@ import RemoveALiquidity from 'components/liquidity/removeALiquidity';
 import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
-import { tokenList, tokenWhere, SMART_SWAP } from '../../utils/constants';
+import { tokenList, tokenWhere, SMART_SWAP,  checkIfTokenIsListed } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
-import { isNotEmpty, getDeadline } from "../../utils/UtilFunc";
+import { isNotEmpty } from "../../utils/UtilFunc";
+import {getTokenList } from "../../utils/tokens"
+import { getDeadline } from "../../utils/UtilFunc";
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
 // 35,200
 export function LiquidityPage(props) {
+  const history = useHistory()
   const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('0');
@@ -45,7 +49,7 @@ export function LiquidityPage(props) {
   const [displayButton, setDisplayButton] = useState(false);
   const [approveBNBPopup, setApproveBNBPopup] = useState(false);
   const [buttonValue, setButtonValue] = useState('Supply');
-  const [openSupplyButton, setOpenSupplyButton] = useState(true);
+  const [openSupplyButton, setOpenSupplyButton] = useState(false);
   const [approveTokenSpending, setApproveTokenSpending] = useState(false);
   const [percentValue, setPercentValue] = useState(0)
   const [liquidityToRemove, setLiquidityToRemove] = useState({})
@@ -53,16 +57,21 @@ export function LiquidityPage(props) {
   const [hasAllowedFromToken, setHasAllowedFromToken] = useState(false)
   const [hasAllowedToToken, setHasAllowedToToken] = useState(false)
   const [showApprovalBox, setShowApprovalBox] = useState(true)
-  const [tokenFromValue, setTokenFromValue] = useState("0")
+  const [tokenFromValue, setTokenFromValue] = useState("")
   const [trxHashed, setTrxHashed] = useState({})
   const [sendingTransaction, setSendingTransaction] = useState(false)
-  const [tokenToValue, setTokenToValue] = useState("0")
+  const [tokenToValue, setTokenToValue] = useState("")
   const [fromTokenAllowance, setFromTokenAllowance] = useState('')
   const [toTokenAllowance, setToTokenAllowance] = useState('')
   const [liquidityLoading, setLiquidityLoading] = useState(false)
   const [liquidityPairRatio, setLiquidityPairRatio] = useState(0)
   const [hasApprovedLPTokens, setHasApprovedLPTokens] = useState(false)
   const [approving, setApproving] = useState(false)
+  const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
+  const [newTokenPairButton, setNewTokenPairButton] = useState(false)
+  const [fromURL, setFromURL] = useState("")
+  const [toURL, setToURL] = useState("")
+  const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   let timer1
@@ -71,30 +80,83 @@ export function LiquidityPage(props) {
   ), [liquidityTab])
   useEffect(() => {
     displayBNBbutton();
-    // calculateToValue()
-    //  changeButtonValue();
   }, [toSelectedToken, liquidities]);
   const handleFromAmount = (value) => {
-    setToValue((value * liquidityPairRatio).toString());
-    // calculateToValue(value, 'from');
+    if(!newTokenPairButton){
+      setToValue((value * liquidityPairRatio).toString());
+    }
   }
 
-
   useEffect(() => {
-    if (fromAddress && toAddress) {
-      getLiquidityPairRatio();
-
+    if (props.match.params.pair !== undefined) {
+      const { pair } = props.match.params;
+      const pairArray = pair.split('-');
+      setLiquidityTab("ADDLIQUIDITY")
+      if(pairArray.length===2 ){
+        setFromURL(pairArray[0])
+        setToURL(pairArray[1])
+ getTokensListed(pairArray)
+      }else{
+        history.push("/liquidity")
+      }
     }
+  }, [wallet])
 
+  
+  useEffect(() => {
+    setUpUrl(fromSelectedToken,toSelectedToken)
+   checkIfLiquidityPairExist(fromSelectedToken.address,toSelectedToken.address)
+   
   }, [fromSelectedToken, toSelectedToken])
 
+
+const getTokensListed = async (pairArray) => {
+ let selection0 = await getTokenList(pairArray[0],wallet)
+ let selection1 = await getTokenList(pairArray[1],wallet)
+ if(selection0 !== []) {
+   setFromSelectedToken(selection0[0])
+   setFromAddress(selection0[0].address)
+  }
+ if(selection1 !== []) {
+   setToSelectedToken(selection1[0])
+   setToAddress(selection1[0].address)
+  }
+ if(selection0 !== [] && selection1[0]!== []){
+   checkIfLiquidityPairExist() 
+  //  checkIfLiquidityPairExist(selection0[0].address,selection1[0].address) 
+ }
+}
+const setUpUrl = () => {
+  if (fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN") {
+    let toTokenURL = checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address
+    let fromTokenURL = checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address
+    setFromURL(fromTokenURL)
+        setToURL(toTokenURL)
+    history.push(`/liquidity/${toTokenURL}-${fromTokenURL}`)
+  }else{
+    history.push('/liquidity')
+  }
+}
+
+  const checkIfLiquidityPairExist = async (fromAddress = fromSelectedToken.address,toAddress = toSelectedToken.address) => {
+      const factory = await SmartFactory();
+    const fromPath = ethers.utils.getAddress(fromAddress);
+    const toPath = ethers.utils.getAddress(toAddress);
+    const LPAddress = await factory.getPair(toPath,fromPath)
+if (LPAddress !== "0x0000000000000000000000000000000000000000" ){ 
+   setNewTokenPairButton(false)
+   setButtonValue("Supply")
+  getLiquidityPairRatio()
+}else{
+  openModal7()
+}
+  }
   const getLiquidityPairRatio = async () => {
     try {
       const factory = await SmartFactory();
       const fromPath = ethers.utils.getAddress(fromAddress);
       const toPath = ethers.utils.getAddress(toAddress);
       const LPAddress = await factory.getPair(toPath, fromPath);
-      console.log(LPAddress);
       const LPcontract = await LPTokenContract(LPAddress)
       const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
       const token0 = await LPcontract.token0();
@@ -111,7 +173,14 @@ export function LiquidityPage(props) {
 
   }
 
-
+  const changeButtonCreateNewTokenPair = async () =>{
+    closeModal7()
+    setNewTokenPairButton(true)
+    setDisableToSelectInputBox(false)
+    setButtonValue("Create a new pool")
+    
+    
+  }
   useEffect(() => {
     const checkData = async () => {
       if (wallet.signer !== 'signer') {
@@ -122,20 +191,16 @@ export function LiquidityPage(props) {
   }, [fromAddress])
 
 
-
   useEffect(async () => {
     if (!isNotEmpty(fromSelectedToken) && fromValue != '') {
+     
       const tokenAllowance = await runApproveCheck(fromSelectedToken, wallet.address, wallet.signer);
       setFromTokenAllowance(tokenAllowance);
 
       if (Number(tokenAllowance) > Number(fromValue)) {
         setHasAllowedFromToken(true);
-        setShowApprovalBox(false);
-        setOpenSupplyButton(true);
       } else {
         setHasAllowedFromToken(false);
-        setShowApprovalBox(true);
-        setOpenSupplyButton(false);
       }
 
     }
@@ -143,17 +208,13 @@ export function LiquidityPage(props) {
       const tokenAllowance = await runApproveCheck(toSelectedToken, wallet.address, wallet.signer);
       setToTokenAllowance(tokenAllowance);
 
-
       if (Number(tokenAllowance) > Number(toValue)) {
         setHasAllowedToToken(true)
-        setShowApprovalBox(false);
-        setOpenSupplyButton(true);
       } else {
         setHasAllowedToToken(false);
-        setShowApprovalBox(true);
-        setOpenSupplyButton(false);
       }
     }
+checkIfTokensHasBeenApproved()
   }, [fromValue, toValue])
 
   useEffect(() => {
@@ -161,6 +222,11 @@ export function LiquidityPage(props) {
       getAllLiquidities();
     }
   }, [wallet])
+  useEffect(() => {
+    if (wallet.address != "0x") {
+     checkIfTokensHasBeenApproved()
+    }
+  }, [hasAllowedFromToken,hasAllowedToToken])
 
 
 
@@ -256,22 +322,28 @@ export function LiquidityPage(props) {
     }
 
   }
+const checkIfTokensHasBeenApproved =() => {
 
-
-
-
-
-
-
+  if(hasAllowedFromToken && hasAllowedToToken ){ 
+    setShowApprovalBox(false);
+    setOpenSupplyButton(true);
+  }else{
+    setShowApprovalBox(true);
+    setOpenSupplyButton(false);
+  }
+}
   const approveToToken = async () => {
     try {
       if (!isNotEmpty(toSelectedToken)) {
         const balance = await tokenBalance(toSelectedToken.address, wallet.address)
         const approveResponse = await approveToken(wallet.address, toSelectedToken.address, wallet.signer, balance);
-        if (approveResponse.hash !== undefined) {
+        const { confirmations, status } = await fetchTransactionData(approveResponse)
+        if (confirmations >= 1 && status) {
+          closeModal6();
           setShowApprovalBox(false);
           setHasAllowedToToken(true);
-          setOpenSupplyButton(false);
+          // setOpenSupplyButton(false);
+          // checkIfTokensHasBeenApproved()
         }
       }
     } catch (error) {
@@ -295,10 +367,13 @@ export function LiquidityPage(props) {
     if (!isNotEmpty(fromSelectedToken)) {
       const balance = await tokenBalance(fromSelectedToken.address, wallet.address)
       const approveResponse = await approveToken(wallet.address, fromSelectedToken.address, wallet.signer, balance);
-      if (approveResponse.hash !== undefined) {
+      const { confirmations, status } = await fetchTransactionData(approveResponse)
+      if (confirmations >= 1 && status) {
+        closeModal6();
         setShowApprovalBox(false);
         setHasAllowedFromToken(true);
-        setOpenSupplyButton(false);
+        // setOpenSupplyButton(false);
+        // checkIfTokensHasBeenApproved()
       }
     }
   }
@@ -309,35 +384,31 @@ export function LiquidityPage(props) {
   const modal4Disclosure = useDisclosure();
   const modal5Disclosure = useDisclosure();
   const modal6Disclosure = useDisclosure();
+  const modal7Disclosure = useDisclosure();
 
-  function addData(data) {
-    setLiquidities([...liquidities, data])
-    // close all opened values
-
-  }
   function closeInput() {
     setApproveBNBPopup(false)
     setFromValue("")
     setToValue("")
-    setOpenSupplyButton(true)
+    setOpenSupplyButton(false)
     setPopupText("Approve")
-    // setButtonValue("Invalid pair")
     setDisplayButton(false)
     setFromSelectedToken(tokenWhere('rgp'))
     setToSelectedToken(tokenWhere("SELECT A TOKEN"))
+    setNewTokenPairButton(false)
+    setButtonValue("Supply")
+    onCloseModal()
   }
 
   const addingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
-
       try {
         const rout = await router();
         const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toString())
-        const amountAMin = Web3.utils.toWei((fromValue * 0.8).toString())
+        const amountAMin =Web3.utils.toWei((fromValue * 0.8).toString())
         const amountBMin = Web3.utils.toWei((toValue * 0.8).toString())
-
         closeModal1()
         modal2Disclosure.onOpen()
         const data = await rout.addLiquidity(
@@ -351,7 +422,7 @@ export function LiquidityPage(props) {
           deadLine,
           {
             from: wallet.address,
-            gasLimit: 390000,
+            gasLimit: newTokenPairButton ? 5900008 : 390000,
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
@@ -365,7 +436,6 @@ export function LiquidityPage(props) {
       }
     }
   };
-
   const fetchTransactionData = async (sendTransaction) => {
     modal6Disclosure.onOpen();
     const { confirmations, status } = await sendTransaction.wait(1);
@@ -399,7 +469,7 @@ export function LiquidityPage(props) {
           deadLine,
           {
             value: Web3.utils.toWei(EthValue.toString()),
-            gasLimit: 1000000,
+            gasLimit: newTokenPairButton ? 5900008 : 1000000,
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           }
         );
@@ -496,8 +566,19 @@ export function LiquidityPage(props) {
     }
   }
 
-  const open = async () => {
-    await getPriceForToken()
+  const open = async (value) => {
+    // CHECK IF THERE IS LIQUIDITY ON THIS, BY CALLING THE GETPATR FUNCTION ON SMARTFACTORY
+    // IF IT DOES CONTINUE WITH THE PROCESS
+    // IF NOT SHOW A MODAL THAT TELLS THE USER TO ADD LIQUIDITY TO THIS SET OF PAIRS 
+    if(value === "new"){
+      const value1 = (parseFloat(fromValue) / parseFloat(toValue)).toFixed(5)
+      const value2 = (parseFloat(toValue) / parseFloat(fromValue)).toFixed(5)
+      setTokenFromValue(value1)
+      setTokenToValue(value2)
+    }else{
+      await getPriceForToken()
+    }
+    
     modal1Disclosure.onOpen();
   };
 
@@ -524,10 +605,8 @@ export function LiquidityPage(props) {
   };
   const getAllCurrentLiquities = async () => {
     await getAllLiquidities()
-
     props.changeRGPValue(wallet)
     const liquid = liquidities.filter(liquid => (liquid.path[0].token === fromSelectedToken.symbol && liquid.path[1].token === toSelectedToken.symbol) || (liquid.path[0].token === toSelectedToken.symbol && liquid.path[1].token === fromSelectedToken.symbol))[0]
-    console.log(liquid)
     closeInput()
     if (liquid) {
       removeALiquidity(liquid.pairAddress)
@@ -549,13 +628,19 @@ export function LiquidityPage(props) {
     modal4Disclosure.onOpen();
   };
 
+  const openModal7 = () =>{
+    modal7Disclosure.onOpen()
+  }
+  const closeModal7 = () =>{
+    modal7Disclosure.onClose()
+  }
+
   const closeAllModals = async (val = false) => {
 
     setPopupText("Waiting for confirmation from metamask. It is better you don't leave this page");
     setApproveBNBPopup(true);
     try {
       const { confirmations, status } = await fetchTransactionData(trxHashed)
-      console.log(confirmations, status)
       if (confirmations >= 1 && status) {
         closeModal6();
         openModal4()
@@ -583,8 +668,10 @@ export function LiquidityPage(props) {
   const back = (tab) => {
     setLiquidityTab(tab)
   }
-  const addLiquidityPage = () => {
+  const addLiquidityPage = (head,newPair) => {
     setLiquidityTab("ADDLIQUIDITY")
+setAddLiquidityPageHeading(head)
+newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
   }
   const getAmountForLiquidity = async (value) => {
     const convertToEther = ethers.utils.parseEther(value.toString())
@@ -596,7 +683,6 @@ export function LiquidityPage(props) {
     })
   };
   const removeALiquidity = async (pairAddress) => {
-    console.log(pairAddress)
     const liquidity = liquidities.filter(liquidity => liquidity.pairAddress === pairAddress)
     setLiquidityToRemove(liquidity[0])
     await getAmountForLiquidity(smartSwapLPBalance)
@@ -637,7 +723,6 @@ export function LiquidityPage(props) {
         const factory = await SmartFactory();
 
         const LPAddress = await factory.getPair(toPath, fromPath);
-        console.log(LPAddress);
         const LPcontract = await LPTokenContract(LPAddress)
         const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
         const liqidityRatio = tokenAReserve.toString() / tokenBreserve.toString();
@@ -741,22 +826,6 @@ export function LiquidityPage(props) {
     }
     return false
   };
-  // approve token
-  const approveLiquidityToken = async () => {
-    if (fromSelectedToken.symbol === "RGP") {
-      checkUser()
-      await rgpApproval()
-      // checkUser()
-    } else if (fromSelectedToken.symbol === "BUSD") {
-      checkUser()
-      await bnbApproval()
-      // checkUser()
-    } else if (fromSelectedToken.symbol === "WBNB") {
-      checkUser()
-      await ETHApproval()
-      // checkUser()
-    }
-  }
 
   async function checkUser() {
     if (wallet.signer !== 'signer') {
@@ -764,33 +833,33 @@ export function LiquidityPage(props) {
         const allowAmount = await RGPCheckAllowance();
         if (allowAmount.toString() !== "0") {
           setIsNewUser(true)
-          setOpenSupplyButton(false)
+          setOpenSupplyButton(true)
           setApproveTokenSpending(true)
         } else {
           setIsNewUser(false)
-          setOpenSupplyButton(true)
+          setOpenSupplyButton(false)
           setApproveTokenSpending(false)
         }
       } else if (fromSelectedToken.symbol === "BUSD") {
         const allowAmount = await BUSDcheckAllowance();
         if (allowAmount.toString() !== "0") {
           setIsNewUser(true)
-          setOpenSupplyButton(false)
+          setOpenSupplyButton(true)
           setApproveTokenSpending(true)
         } else {
           setIsNewUser(false)
-          setOpenSupplyButton(true)
+          setOpenSupplyButton(false)
           setApproveTokenSpending(false)
         }
       } else if (fromSelectedToken.symbol === "WBNB") {
         const allowAmount = await ETHcheckAllowance();
         if (allowAmount.toString() !== "0") {
           setIsNewUser(true)
-          setOpenSupplyButton(false)
+          setOpenSupplyButton(true)
           setApproveTokenSpending(true)
         } else {
           setIsNewUser(false)
-          setOpenSupplyButton(true)
+          setOpenSupplyButton(false)
           setApproveTokenSpending(false)
         }
       }
@@ -853,7 +922,10 @@ export function LiquidityPage(props) {
               closeModal4={closeModal4}
               closeModal5={closeModal5}
               closeModal6={closeModal6}
+              closeModal7={closeModal7}
+              changeButtonCreateNewTokenPair={changeButtonCreateNewTokenPair}
               buttonValue={buttonValue}
+              newTokenPairButton={newTokenPairButton}
               setToAddress={setToAddress}
               approveToToken={approveToToken}
               approveFromToken={approveFromToken}
@@ -862,6 +934,7 @@ export function LiquidityPage(props) {
               setFromAddress={setFromAddress}
               selectingToken={selectingToken}
               toSelectedToken={toSelectedToken}
+              addLiquidityPageHeading={addLiquidityPageHeading}
               approveBNBPopup={approveBNBPopup}
               displayBNBbutton={displayBNBbutton}
               modal1Disclosure={modal1Disclosure}
@@ -870,14 +943,15 @@ export function LiquidityPage(props) {
               modal4Disclosure={modal4Disclosure}
               modal5Disclosure={modal5Disclosure}
               modal6Disclosure={modal6Disclosure}
+              modal7Disclosure={modal7Disclosure}
               openSupplyButton={openSupplyButton}
+              checkIfLiquidityPairExist={checkIfLiquidityPairExist}
               approveTokenSpending={approveTokenSpending}
               confirmingSupply={confirmingSupply}
               fromSelectedToken={fromSelectedToken}
               setToSelectedToken={setToSelectedToken}
               setOpenSupplyButton={setOpenSupplyButton}
               setFromSelectedToken={setFromSelectedToken}
-              approveLiquidityToken={approveLiquidityToken}
               showApprovalBox={showApprovalBox}
               hasAllowedToToken={hasAllowedToToken}
               hasAllowedFromToken={hasAllowedFromToken}
@@ -885,8 +959,10 @@ export function LiquidityPage(props) {
               tokenToValue={tokenToValue}
               handleFromAmount={handleFromAmount}
               sendingTransaction={sendingTransaction}
-              onCloseModal={onCloseModal}
-              isOpenModal={isOpenModal}
+              onCloseModal ={onCloseModal}
+              setToValue={setToValue}
+              isOpenModal ={isOpenModal}
+              disableToSelectInputBox={disableToSelectInputBox}
             />
           }
 
