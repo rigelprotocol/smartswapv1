@@ -143,8 +143,8 @@ export const getTokenAddress = (chainId) => {
   if (chainId === '0x38' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
     return '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
   }
-  if (chainId === '0x61') {
+  if (chainId === '0x61' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
     return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
   }
-  return window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38' && '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
+  return (window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38') ? '0xFA262F303Aa244f9CC66f312F0755d89C3793192' : null;
 }
