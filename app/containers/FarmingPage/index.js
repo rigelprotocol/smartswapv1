@@ -49,7 +49,6 @@ export function FarmingPage(props) {
   const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState('');
   const [BNBTotalTokStake, setBNBTotalTokStake] = useState('');
   const [ETHTotalTokStake, setETHTotalTokStake] = useState('');
-  const [farmingData, setFarmingData] = useState([]);
   const [farmingModal, setFarmingModal] = useState(false);
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true)
@@ -115,16 +114,30 @@ export function FarmingPage(props) {
     initialLoad ? setFarmingModal(true) : setFarmingModal(false)
   }
 
+  const getSpecialPoolAPY = async () => {
+    try {
+      const specialPool = await RGPSpecialPool()
+      const totalStaking = await specialPool.totalStaking();
+      return totalStaking;
+    } catch (error) {
+
+    }
+
+  }
+
   const getYieldFarmingData = async () => {
     try {
+      const rgpTotal = await getSpecialPoolAPY()
       props.farmDataLoading(true)
       const masterChef = await masterChefContract();
-      const poolLength = await masterChef.poolLength();
       let poolsData = [];
       const rgpAddress = await masterChef.poolInfo(0);
-      const rgpContract = await LiquidityPairInstance(rgpAddress[0]);
-      // const rgpSpecialPool = await RGPSpecialPool();
-      const totalStaking = ethers.BigNumber.from('200000000000000000000000');
+      let totalStaking;
+      if (rgpTotal) {
+        totalStaking = rgpTotal;
+      } else {
+        totalStaking = ethers.BigNumber.from('200000000000000000000000');
+      }
       const rgpSpecial = {
         poolAddress: '',
         poolSymbol: 'RGP',
@@ -138,7 +151,7 @@ export function FarmingPage(props) {
       poolsData = [...poolsData, rgpSpecial];
       let RGPprice;
       let BNBprice;
-      for (let i = 1; i < poolLength; i++) {
+      for (let i = 1; i < 4; i++) {
         const poolInfo = await masterChef.poolInfo(i);
         const poolContract = await LiquidityPairInstance(poolInfo[0]);
         const poolReserves = await poolContract.getReserves();
@@ -185,8 +198,6 @@ export function FarmingPage(props) {
         }
         poolsData = [...poolsData, pools];
       }
-      console.log(poolsData, BNBprice);
-      setFarmingData(poolsData);
       const RGPLiquidity = ethers.utils
         .formatUnits(totalStaking.mul(1000 * RGPprice), 21)
         .toString();
@@ -228,20 +239,24 @@ export function FarmingPage(props) {
     } catch (error) {
       console.log(error);
       if (!toast.isActive(id)) {
-        toast({
-          id,
-          title: "Unable to load data",
-          description: "Ensure your wallet is on BSC network and reload page",
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-          position: "bottom-right",
-        })
+        showErrorToast()
       }
     } finally {
       props.farmDataLoading(false)
     }
   };
+
+  const showErrorToast = () => {
+    return toast({
+      id,
+      title: "Unable to load data",
+      description: "Ensure your wallet is on BSC network and reload page",
+      status: "error",
+      duration: 9000,
+      isClosable: true,
+      position: "bottom-right",
+    })
+  }
 
   const getTokenStaked = async () => {
     try {
