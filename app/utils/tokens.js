@@ -117,7 +117,6 @@ var web3 = new Web3(window.ethereum)
 export const getTokenList =async (searchToken,account) =>{
    const filteredTokenList = filterAvailableTokenList(searchToken)
    if(filteredTokenList.length>0){
-      console.log(filteredTokenList)
       return filteredTokenList
    }else{
       let addressOfToken = isItAddress(searchToken)

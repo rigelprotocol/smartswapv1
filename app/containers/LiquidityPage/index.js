@@ -74,10 +74,9 @@ export function LiquidityPage(props) {
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
-  let timer1
-  useEffect(() => (
-    clearTimeout(timer1)
-  ), [liquidityTab])
+  useEffect(() => {
+      setPopupText("")
+  },[liquidityTab,showApprovalBox,openSupplyButton])
   useEffect(() => {
     displayBNBbutton();
   }, [toSelectedToken, liquidities]);
@@ -323,7 +322,6 @@ checkIfTokensHasBeenApproved()
 
   }
 const checkIfTokensHasBeenApproved =() => {
-
   if(hasAllowedFromToken && hasAllowedToToken ){ 
     setShowApprovalBox(false);
     setOpenSupplyButton(true);
@@ -343,7 +341,7 @@ const checkIfTokensHasBeenApproved =() => {
           setShowApprovalBox(false);
           setHasAllowedToToken(true);
           // setOpenSupplyButton(false);
-          // checkIfTokensHasBeenApproved()
+        checkIfTokensHasBeenApproved()
         }
       }
     } catch (error) {
@@ -373,7 +371,7 @@ const checkIfTokensHasBeenApproved =() => {
         setShowApprovalBox(false);
         setHasAllowedFromToken(true);
         // setOpenSupplyButton(false);
-        // checkIfTokensHasBeenApproved()
+      checkIfTokensHasBeenApproved()
       }
     }
   }
