@@ -29,7 +29,6 @@ import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import {getTokenList } from "utils/tokens"
-import NullImage48 from '../../assets/Null-48.svg';
 import NewTokenModal from './NewTokenModal';
 
 function TokenListBox({

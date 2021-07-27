@@ -113,7 +113,6 @@ import { filter } from 'lodash';
 // }
 
 // SEARCH TOKENS
-var web3 = new Web3(window.ethereum)
 export const getTokenList =async (searchToken,account) =>{
    const filteredTokenList = filterAvailableTokenList(searchToken)
    if(filteredTokenList.length>0){
@@ -121,7 +120,6 @@ export const getTokenList =async (searchToken,account) =>{
    }else{
       let addressOfToken = isItAddress(searchToken)
      let tokenData = addressOfToken ? await getTokenWithContract(searchToken,account) :  getTokenWithoutContract(searchToken,account)
-   // let tokenData = await getTokenWithWeb3(searchToken,account)
       return tokenData.length > 0 ? tokenData : []
    }
 }
