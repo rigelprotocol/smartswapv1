@@ -10,7 +10,8 @@ import BUSDImage from '../../assets/busd.svg'
 import LiquidityDetails from './liquidityDetails';
 const Liquidities = ({
   value,
-  addLiquidity,
+  addMoreLiquidity,
+  addMoreLiquidityButton,
   removeLiquidity,
   removeALiquidity,
 }) => {
@@ -52,7 +53,8 @@ const Liquidities = ({
       {showDetails ? (
         <LiquidityDetails
           value={value}
-          addLiquidity={addLiquidity}
+          addMoreLiquidity={addMoreLiquidity}
+          addMoreLiquidityButton={addMoreLiquidityButton}
           removeLiquidity={removeLiquidity}
           removeALiquidity={removeALiquidity}
         />
@@ -67,6 +69,7 @@ Liquidities.propTypes = {
   value: PropTypes.object.isRequired,
   removeALiquidity: PropTypes.func.isRequired,
   removeLiquidity: PropTypes.func.isRequired,
-  addLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidityButton: PropTypes.func.isRequired,
 };
 export default Liquidities;

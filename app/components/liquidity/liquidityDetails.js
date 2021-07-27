@@ -10,7 +10,8 @@ import NullImage from '../../assets/Null-24.svg';
 
 const LiquidityDetails = ({
   value,
-  addLiquidity,
+  addMoreLiquidity,
+  addMoreLiquidityButton,
   removeLiquidity,
   removeALiquidity,
 }) => (
@@ -65,8 +66,9 @@ const LiquidityDetails = ({
           mb="4"
           mr="6"
           cursor="pointer"
+          disabled={addMoreLiquidityButton}
           _hover={{ color: '#423a85' }}
-          onClick={() => addLiquidity()}
+          onClick={() => addMoreLiquidity(value)}
         >
           Add
       </Button>
@@ -93,6 +95,7 @@ LiquidityDetails.propTypes = {
   value: PropTypes.object.isRequired,
   removeALiquidity: PropTypes.func.isRequired,
   removeLiquidity: PropTypes.func.isRequired,
-  addLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidityButton: PropTypes.bool.isRequired,
 };
 export default LiquidityDetails;

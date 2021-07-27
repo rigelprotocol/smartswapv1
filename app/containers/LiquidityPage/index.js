@@ -69,6 +69,7 @@ export function LiquidityPage(props) {
   const [approving, setApproving] = useState(false)
   const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
   const [newTokenPairButton, setNewTokenPairButton] = useState(false)
+  const [addMoreLiquidityButton, setAddMoreLiquidityButton] = useState(false)
   const [fromURL, setFromURL] = useState("")
   const [toURL, setToURL] = useState("")
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
@@ -104,25 +105,81 @@ export function LiquidityPage(props) {
   
   useEffect(() => {
     setUpUrl(fromSelectedToken,toSelectedToken)
+    if (fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN") {
    checkIfLiquidityPairExist(fromSelectedToken.address,toSelectedToken.address)
-   
-  }, [fromSelectedToken, toSelectedToken])
+    }
+  }, [fromSelectedToken, toSelectedToken,fromAddress,toAddress])
 
+  useEffect(async () => {
+    if (!isNotEmpty(fromSelectedToken) && fromValue != '') {
+      const tokenAllowance = await runApproveCheck(fromSelectedToken, wallet.address, wallet.signer);
+      setFromTokenAllowance(tokenAllowance);
+
+      if (Number(tokenAllowance) > Number(fromValue)) {
+        setHasAllowedFromToken(true);
+      } else {
+        setHasAllowedFromToken(false);
+      }
+
+    }
+    if (!isNotEmpty(toSelectedToken) && toValue != '') {
+      const tokenAllowance = await runApproveCheck(toSelectedToken, wallet.address, wallet.signer);
+      setToTokenAllowance(tokenAllowance);
+
+      if (Number(tokenAllowance) > Number(toValue)) {
+        setHasAllowedToToken(true)
+      } else {
+        setHasAllowedToToken(false);
+      }
+    }
+checkIfTokensHasBeenApproved()
+  }, [fromValue, toValue])
+
+  useEffect(() => {
+    if (wallet.address != "0x") {
+      getAllLiquidities();
+    }
+  }, [wallet])
+  useEffect(() => {
+    if (wallet.address != "0x") {
+     checkIfTokensHasBeenApproved()
+    }
+  }, [hasAllowedFromToken,hasAllowedToToken])
+  useEffect(() => {
+    const balanceOfUserLPs = async () => {
+
+      if (wallet.address != "0x") {
+        try {
+          const smartSwapLP = await smartSwapLPToken();
+          const walletBal = await smartSwapLP.balanceOf(wallet.address);
+          const checkWalletBal = ethers.utils.formatEther(walletBal, 'ether');
+          const liquidityValue = liquidities.length && (liquidities[0].path[0].fromPath);
+          const convertValue = ethers.utils.formatEther(liquidityValue, 'ether');
+          const stateValue = Number((convertValue.toString() * percentValue) / 100) / 1e+18;
+          const value = (checkWalletBal.toString() * percentValue) / 100;
+          setSmartSwapLPBalance(stateValue)
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+
+
+    const getBalance = async () => {
+      await balanceOfUserLPs()
+      if (smartSwapLPBalance) {
+        await getAmountForLiquidity(smartSwapLPBalance)
+      }
+    }
+    getBalance()
+  }, [percentValue, wallet])
 
 const getTokensListed = async (pairArray) => {
  let selection0 = await getTokenList(pairArray[0],wallet)
  let selection1 = await getTokenList(pairArray[1],wallet)
- if(selection0 !== []) {
-   setFromSelectedToken(selection0[0])
-   setFromAddress(selection0[0].address)
-  }
- if(selection1 !== []) {
-   setToSelectedToken(selection1[0])
-   setToAddress(selection1[0].address)
-  }
+setFromAndToToken(selection0,selection1)
  if(selection0 !== [] && selection1[0]!== []){
-   checkIfLiquidityPairExist() 
-  //  checkIfLiquidityPairExist(selection0[0].address,selection1[0].address) 
+   checkIfLiquidityPairExist()  
  }
 }
 const setUpUrl = () => {
@@ -132,9 +189,10 @@ const setUpUrl = () => {
     setFromURL(fromTokenURL)
         setToURL(toTokenURL)
     history.push(`/liquidity/${toTokenURL}-${fromTokenURL}`)
-  }else{
+  } else{
     history.push('/liquidity')
   }
+ 
 }
 
   const checkIfLiquidityPairExist = async (fromAddress = fromSelectedToken.address,toAddress = toSelectedToken.address) => {
@@ -171,14 +229,22 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
     }
 
   }
-
+const setFromAndToToken =(selection0,selection1)=>{
+ 
+  if(selection0 !== []) {
+    setFromSelectedToken(selection0[0])
+    setFromAddress(selection0[0].address)
+   }
+  if(selection1 !== []) {
+    setToSelectedToken(selection1[0])
+    setToAddress(selection1[0].address)
+   }
+}
   const changeButtonCreateNewTokenPair = async () =>{
     closeModal7()
     setNewTokenPairButton(true)
     setDisableToSelectInputBox(false)
     setButtonValue("Create a new pool")
-    
-    
   }
   useEffect(() => {
     const checkData = async () => {
@@ -190,73 +256,7 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
   }, [fromAddress])
 
 
-  useEffect(async () => {
-    if (!isNotEmpty(fromSelectedToken) && fromValue != '') {
-     
-      const tokenAllowance = await runApproveCheck(fromSelectedToken, wallet.address, wallet.signer);
-      setFromTokenAllowance(tokenAllowance);
-
-      if (Number(tokenAllowance) > Number(fromValue)) {
-        setHasAllowedFromToken(true);
-      } else {
-        setHasAllowedFromToken(false);
-      }
-
-    }
-    if (!isNotEmpty(toSelectedToken) && toValue != '') {
-      const tokenAllowance = await runApproveCheck(toSelectedToken, wallet.address, wallet.signer);
-      setToTokenAllowance(tokenAllowance);
-
-      if (Number(tokenAllowance) > Number(toValue)) {
-        setHasAllowedToToken(true)
-      } else {
-        setHasAllowedToToken(false);
-      }
-    }
-checkIfTokensHasBeenApproved()
-  }, [fromValue, toValue])
-
-  useEffect(() => {
-    if (wallet.address != "0x") {
-      getAllLiquidities();
-    }
-  }, [wallet])
-  useEffect(() => {
-    if (wallet.address != "0x") {
-     checkIfTokensHasBeenApproved()
-    }
-  }, [hasAllowedFromToken,hasAllowedToToken])
-
-
-
-  useEffect(() => {
-    const balanceOfUserLPs = async () => {
-
-      if (wallet.address != "0x") {
-        try {
-          const smartSwapLP = await smartSwapLPToken();
-          const walletBal = await smartSwapLP.balanceOf(wallet.address);
-          const checkWalletBal = ethers.utils.formatEther(walletBal, 'ether');
-          const liquidityValue = liquidities.length && (liquidities[0].path[0].fromPath);
-          const convertValue = ethers.utils.formatEther(liquidityValue, 'ether');
-          const stateValue = Number((convertValue.toString() * percentValue) / 100) / 1e+18;
-          const value = (checkWalletBal.toString() * percentValue) / 100;
-          setSmartSwapLPBalance(stateValue)
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    }
-
-
-    const getBalance = async () => {
-      await balanceOfUserLPs()
-      if (smartSwapLPBalance) {
-        await getAmountForLiquidity(smartSwapLPBalance)
-      }
-    }
-    getBalance()
-  }, [percentValue, wallet])
+ 
 
   const getAllPairs = (length, allPairs) => {
     let pairs = [];
@@ -434,6 +434,24 @@ const checkIfTokensHasBeenApproved =() => {
       }
     }
   };
+  const addMoreLiquidity = async (liquidity) =>{
+    setAddMoreLiquidityButton(true)
+    clearAllPreviousData()
+    let { path } = liquidity
+    let selection0 = await getTokenList(path[1].toPath,wallet)
+    let selection1 = await getTokenList(path[0].fromPath,wallet)
+    setFromAndToToken(selection0,selection1)
+    setAddMoreLiquidityButton(false)
+    setLiquidityTab("ADDLIQUIDITY")
+
+  }
+  const clearAllPreviousData = () =>{
+    history.push("/liquidity")
+    setFromSelectedToken(tokenWhere('SELECT A TOKEN'))
+    setToSelectedToken(tokenWhere('SELECT A TOKEN'))
+    setFromValue("")
+    setToValue("0")
+  }
   const fetchTransactionData = async (sendTransaction) => {
     modal6Disclosure.onOpen();
     const { confirmations, status } = await sendTransaction.wait(1);
@@ -880,9 +898,9 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
             <Index
               liquidities={liquidities}
               addLiquidityPage={addLiquidityPage}
-              addLiquidity={addingLiquidity}
+              addMoreLiquidity={addMoreLiquidity}
               removeLiquidity={removingLiquidity}
-              // removeLiquidityForETH={removingLiquidityForETH}
+              addMoreLiquidityButton={addMoreLiquidityButton}
               removeALiquidity={removeALiquidity}
               liquidityLoading={liquidityLoading}
             />
