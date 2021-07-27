@@ -221,7 +221,7 @@ export function FarmingPage(props) {
       props.updateTotalLiquidity([
         {
           liquidity: RGPLiquidity,
-          apy: calculateApy(RGPprice, RGPLiquidity, 1333.33),
+          apy: calculateApy(RGPprice, RGPLiquidity, 250),
         },
         {
           liquidity: RGP_BNBLiquidity,
@@ -258,23 +258,54 @@ export function FarmingPage(props) {
     })
   }
 
+  const specialPoolStaked = async () => {
+    if (wallet.address != '0x') {
+      try {
+        const specialPool = await RGPSpecialPool();
+        const RGPStakedEarned = await Promise.all([
+          specialPool.userData(wallet.address),
+          specialPool.calculateRewards(wallet.address)
+        ])
+        return RGPStakedEarned;
+      } catch (error) {
+        console.log(error)
+      }
+
+    }
+  }
+
   const getTokenStaked = async () => {
     try {
       if (wallet.address != '0x') {
-        // const specialPool = await RGPSpecialPool();
         const masterChef = await masterChefContract();
-        const poolOneEarned = await masterChef.pendingRigel(1, wallet.address);
-        const poolTwoEarned = await masterChef.pendingRigel(2, wallet.address);
-        const poolThreeEarned = await masterChef.pendingRigel(
-          3,
-          wallet.address,
-        );
-        const poolOneStaked = await masterChef.userInfo(1, wallet.address);
-        const poolTwoStaked = await masterChef.userInfo(2, wallet.address);
-        const poolThreeStaked = await masterChef.userInfo(3, wallet.address);
-        // console.log(formatBigNumber(poolTwoEarned),formatBigNumber(poolOneEarned),formatBigNumber(poolThreeEarned) )
+
+        const [
+          poolOneEarned,
+          poolTwoEarned,
+          poolThreeEarned,
+          poolOneStaked,
+          poolTwoStaked,
+          poolThreeStaked] = await Promise.all([
+            masterChef.pendingRigel(1, wallet.address),
+            masterChef.pendingRigel(2, wallet.address),
+            masterChef.pendingRigel(3, wallet.address),
+            masterChef.userInfo(1, wallet.address),
+            masterChef.userInfo(2, wallet.address),
+            masterChef.userInfo(3, wallet.address)
+          ])
+
+        const RGPStakedEarned = await specialPoolStaked()
+        let RGPStaked, RGPEarned;
+        if (RGPStakedEarned) {
+          const [specialPoolStaked, specialPoolEarned] = RGPStakedEarned;
+          RGPStaked = formatBigNumber(specialPoolStaked.tokenQuantity);
+          RGPEarned = formatBigNumber(specialPoolEarned);
+        } else {
+          RGPStaked = 0;
+          RGPEarned = 0;
+        }
         props.updateTokenStaked([
-          { staked: 0.0, earned: 0.0 },
+          { staked: RGPStaked, earned: RGPEarned },
           {
             staked: formatBigNumber(poolTwoStaked.amount),
             earned: formatBigNumber(poolTwoEarned),

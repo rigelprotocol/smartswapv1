@@ -111,8 +111,8 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked, loadingTo
               mb="4"
 
               _hover={{ color: '#423a85' }}
-              // onClick={() => setShowYieldFarm(!showYieldfarm)}
-              onClick={onOpenModal}
+              onClick={() => wallet.chainId == "0x61" ? setShowYieldFarm(!showYieldfarm) : onOpenModal()}
+            // onClick={onOpenModal}
 
             >
               Unlock
