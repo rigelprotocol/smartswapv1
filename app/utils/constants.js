@@ -1,8 +1,5 @@
 // @ts-nocheck
 import Web3 from 'web3';
-import RigelToken from 'utils/abis/RigelToken.json';
-import BUSD from 'utils/abis/BUSD.json';
-import WETH9 from 'utils/abis/WETH9.json';
 
 export const checkNetVersion = () => {
   if (window.ethereum && window.ethereum.chainId !== null) {
@@ -46,7 +43,6 @@ const BSCmainnetTokens = {
 };
 const BSC_MAIN_NET_ID =
   window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
-
 export const TOKENS_CONTRACT =
   checkNetVersion() === BSC_MAIN_NET_ID.toString()
     ? BSCmainnetTokens
@@ -87,9 +83,16 @@ export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
 export const tokenList = [
-  { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '' },
+  {
+    name: 'Select a token',
+    symbol: 'SELECT A TOKEN',
+    img: '',
+    available: true,
+  },
   {
     symbol: 'RGP',
+    available: true,
+    imported: false,
     name: 'Rigel Protocol',
     logoURI: '../../assets/rgp.svg',
     address:
@@ -99,6 +102,8 @@ export const tokenList = [
   },
   {
     symbol: 'BUSD',
+    available: true,
+    imported: false,
     name: 'Binance USD',
     logoURI:
       'https://tokens.pancakeswap.finance/images/0xe9e7cea3dedca5984780bafc599bd69add087d56.png',
@@ -117,6 +122,8 @@ export const tokenList = [
   // },
   {
     symbol: 'WBNB',
+    available: true,
+    imported: false,
     name: 'Wrapped BNB',
     logoURI: '../../assets/eth.svg',
     address:
@@ -126,6 +133,8 @@ export const tokenList = [
   },
   {
     symbol: 'BNB',
+    available: true,
+    imported: false,
     name: 'BNB',
     logoURI:
       'https://tokens.pancakeswap.finance/images/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
@@ -166,6 +175,9 @@ export const convertToNumber = (hex, decimals) => {
   }
   return balanceDecimal.toLocaleString();
 };
+
+export const checkIfTokenIsListed = symbol =>
+  tokenList.find(token => token.symbol === symbol);
 
 // export const convertIndexToAlphetString = number =>
 //   number
@@ -242,6 +254,17 @@ export const balanceAbi = [
         type: 'uint256',
       },
     ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
+export const decimalAbi = [
+  {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{ name: '', type: 'uint8' }],
+    payable: false,
     stateMutability: 'view',
     type: 'function',
   },

@@ -1,5 +1,6 @@
 import { ethers, BigNumber } from 'ethers';
-import BN from 'bignumber.js'
+import BN from 'bignumber.js';
+import Web3 from 'web3';
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 
@@ -15,6 +16,23 @@ export const formatBalance = balance => {
     .toString();
 };
 
+export const convertFromWei = (balance, decimals) => {
+  const decimalValue = decimals || 18;
+  const { unitMap } = Web3.utils;
+  const unit = Object.keys(unitMap).find(
+    unit => unitMap[unit] === Math.pow(10, decimalValue).toString(),
+  );
+  return Web3.utils.fromWei(balance.toString(), unit);
+};
+export const convertToWei = (balance, decimals) => {
+  const decimalValue = decimals || 18;
+  const { unitMap } = Web3.utils;
+  const unit = Object.keys(unitMap).find(
+    unit => unitMap[unit] === Math.pow(10, decimalValue).toString(),
+  );
+  return Web3.utils.toWei(balance.toString(), unit);
+};
+
 export const isNotEmpty = objectToCheck =>
   objectToCheck &&
   Object.keys(objectToCheck).length === 0 &&
@@ -25,11 +43,10 @@ export const changeTransactionDeadline = val => {
     const time = Math.floor(new Date().getTime() / 1000.0 + 1200);
     return time;
   }
-}
+};
 
-export const getDeadline = (deadlineInMinutes = 20) => {
-  return Math.floor((new Date()).getTime() + (Number(deadlineInMinutes) * 60))
-}
+export const getDeadline = (deadlineInMinutes = 20) =>
+  Math.floor(new Date().getTime() + Number(deadlineInMinutes) * 60);
 // export const calculateSlippage = (amountIn,slippageValue) => {
 //   let calculatedVal
 
@@ -47,8 +64,8 @@ export const getDeadline = (deadlineInMinutes = 20) => {
 //    return calculatedVal.toString()
 // }
 export const clearInputInfo = (setInput, setButton = false, value) => {
-  setInput('')
+  setInput('');
   if (setButton) {
-    setButton(value)
+    setButton(value);
   }
-}
+};

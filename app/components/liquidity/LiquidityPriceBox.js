@@ -7,6 +7,7 @@ function LiquidityPriceBox({
   fromValue,
   toValue,
   fromSelectedToken,
+  newTokenPairButton
 }) {
   return (
     <Box
@@ -22,12 +23,16 @@ function LiquidityPriceBox({
       <Text align="center" fontSize="lg" color="gray.200" mx={3}>
         PRICE POOL SHARE
       </Text>
+      <Text fontSize="sm" color="white" my={3}>
+          {newTokenPairButton && "You will determine the price"}
+          </Text>
       <Flex
         justifyContent="space-between"
         px={2}
         bg="background: rgba(41, 35, 94, 1);
 "
-      >
+      >  
+      
         <Box>
           <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
             {fromValue > 0 && toValue > 0
@@ -58,7 +63,7 @@ function LiquidityPriceBox({
         </Box>
         <Box>
           <Text fontSize="sm" color="gray.200" my={3} textAlign="center">
-            {fromValue > 0 && toValue > 0
+            {newTokenPairButton ? "100" : fromValue > 0 && toValue > 0
               ? ((parseFloat(fromValue) * 3) / 100).toFixed(4)
               : 0.0}
             %

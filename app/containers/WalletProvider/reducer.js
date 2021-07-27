@@ -13,8 +13,7 @@ import {
   CLOSE_LOADING_WALLET,
   CHANGE_DEADLINE,
   CHANGE_BNB,
-  UPDATE_CHAINID,
-  GET_ALL_TOKEN,
+  UPDATE_CHAIN_ID,
 } from './constants';
 
 export const initialState = {
@@ -72,11 +71,8 @@ const walletProviderReducer = (state = initialState, action) =>
         draft.transactionDeadLine = action.payload.actualTransactionDeadline;
         draft.slippageValue = action.payload.slippageValue;
         break;
-      case UPDATE_CHAINID:
+      case UPDATE_CHAIN_ID:
         draft.wallet.chainId = action.payload;
-        break;
-      case GET_ALL_TOKEN:
-        draft.tokenList = action.payload;
         break;
       default:
         return state;

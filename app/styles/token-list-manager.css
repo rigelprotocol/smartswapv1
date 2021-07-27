@@ -1,0 +1,33 @@
+.tabContainer {
+  width: 100%;
+  height: 40px;
+  top: 50px;
+  background: #181538;
+  border: 1px solid #29235e;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  border-radius: 50px;
+  text-align: center;
+  line-height: 0.5em;
+}
+
+.activeToggleButton {
+  width: 50%;
+  height: 40px;
+  background: #29235e;
+  border-radius: 50px;
+  cursor: pointer;
+}
+.logo {
+  width: 45%;
+  height: 100%;
+}
+.inactiveToggleButton {
+  width: 50%;
+  height: 40px;
+  background: transparent;
+  border-radius: 50px;
+  text-align: center;
+  cursor: pointer;
+}

@@ -11,12 +11,14 @@ const SendTo = (props) => {
   const {
     amountIn,
     handleChangeToAmount,
+    checkIfLiquidityPairExist,
     setPathToArray,
     selectedToToken,
     setSelectedToToken,
     wallet,
   } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   // move this to the actually state created
   // useEffect(() => {
   //   setSelectedToToken(tokenWhere('SELECT A TOKEN'));
@@ -53,6 +55,10 @@ const SendTo = (props) => {
         setPathToArray={setPathToArray}
         isOpen={isOpen}
         onClose={onClose}
+        checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+        isOpenModal={isOpenModal}
+        onOpenModal={onOpenModal}
+        onCloseModal={onCloseModal}
       />
     </>
   );

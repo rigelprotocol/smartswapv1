@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import BUSD from 'utils/abis/BUSD.json';
 import LiquidityPairAbi from 'utils/abis/smartSwapLPToken.json';
 import RigelToken from 'utils/abis/RigelToken.json';
+import ERC20Token from 'utils/abis/ERC20Token.json';
 import SmartSwapFactoryForSwap from 'utils/abis/SmartSwapFactoryForSwap.json';
 import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 import SmartSwapLPToken from 'utils/abis/smartSwapLPToken.json';

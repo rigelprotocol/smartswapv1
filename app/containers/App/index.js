@@ -31,7 +31,7 @@ import {
   getTokenList,
 } from '../WalletProvider/actions';
 import TrustWallet from '../../components/TrustWallet/index';
-import { isSupportedNetwork } from '../../utils/wallet-wiget/connection';
+import { isSupportedNetwork, switchToBSC } from '../../utils/wallet-wiget/connection';
 
 const breakpoints = {
   sm: '360px',
@@ -79,13 +79,15 @@ const App = props => {
   const checkchain = async () => {
     const chainID = await window.ethereum.request({
       method: 'eth_chainId',
-    });
-    props.updateChainId(chainID);
+    })
+    props.updateChainId(chainID)
     if (isSupportedNetwork(chainID)) {
       listener(wallet, props);
       reConnector(props);
+    } else {
+      switchToBSC();
     }
-  };
+  }
 
   return (
     <ToastProvider placement="bottom-right">
@@ -145,3 +147,4 @@ function listener(wallet, props) {
     });
   }
 }
+

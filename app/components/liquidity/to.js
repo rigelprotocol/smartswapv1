@@ -17,8 +17,13 @@ const Manual = ({
   toSelectedToken,
   setToSelectedToken,
   label,
+  checkIfLiquidityPairExist,
+  disableToSelectInputBox,
+  setToValue
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
+
   return (
     <>
       <Box
@@ -49,8 +54,14 @@ const Manual = ({
             border="1px solid rgba(255, 255, 255,0.25)"
             fontSize="lg"
             color="rgb(255, 255, 255)"
-            disabled
-            onChange={event => event.preventDefault()}
+            disabled ={disableToSelectInputBox}
+            onChange={event =>disableToSelectInputBox? event.preventDefault(): 
+              setToValue(event.target.value)
+            }
+            // onChange={event => {
+            //   setFromValue(event.target.value);
+            //   handleFromAmount(event.target.value);
+            // }}
           />
           <Flex alignItems="center">
             <Menu>
@@ -77,6 +88,10 @@ const Manual = ({
                 setPathArray={setToAddress}
                 isOpen={isOpen}
                 onClose={onClose}
+                isOpenModal={isOpenModal}
+                checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+                onOpenModal={onOpenModal}
+                onCloseModal={onCloseModal}
               />
             </Menu>
           </Flex>
@@ -91,6 +106,9 @@ Manual.propTypes = {
   setToAddress: PropTypes.func.isRequired,
   toSelectedToken: PropTypes.object.isRequired,
   setToSelectedToken: PropTypes.func.isRequired,
+  checkIfLiquidityPairExist: PropTypes.func.isRequired,
+  setToValue: PropTypes.func.isRequired,
+  disableToSelectInputBox: PropTypes.bool.isRequired,
   label: PropTypes.string,
 };
 export default Manual;

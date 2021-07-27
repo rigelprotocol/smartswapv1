@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 // @ts-nocheck
 /* eslint-disable prettier/prettier */
 /*
@@ -16,7 +15,8 @@ import {
 } from 'utils/wallet-wiget/connection';
 import { ethers } from 'ethers';
 import { getTokens, tokenList } from 'utils/constants';
-import { formatBalance } from 'utils/UtilFunc';
+import { formatBalance, isNotEmpty } from 'utils/UtilFunc';
+import { getTokenDetails } from 'utils/tokens';
 import {
   WALLET_CONNECTED,
   WALLET_PROPS,
@@ -25,8 +25,9 @@ import {
   CLEAR_WALLET,
   CHANGE_DEADLINE,
   CHANGE_BNB,
-  UPDATE_CHAINID,
+  UPDATE_CHAIN_ID,
   GET_ALL_TOKEN,
+  SET_USER_TOKEN
 } from './constants';
 
 export const reConnect = (wallet) => async dispatch => {
@@ -124,7 +125,7 @@ export const changeDeadlineValue = value => dispatch => {
 }
 
 export const updateChainId = chainId => dispatch => {
-  dispatch({ type: UPDATE_CHAINID, payload: chainId })
+  dispatch({ type: UPDATE_CHAIN_ID, payload: chainId })
 }
 
 export const changeRGPValue = wallet => async dispatch => {
@@ -163,11 +164,21 @@ export const getTokenList = () => async (dispatch) => {
     allToken = tokenList.concat(tokens);
   }
   const returnData = allToken.map((token, id) => {
-    const { name, address, symbol, logoURI } = token;
-    const balance = 0;
-    return { id, name, address, symbol, logoURI, balance }
+    const balance = null;
+    const available = true;
+    const imported = false;
+    return { ...token, id, balance, available, imported };
   });
   return dispatch({
     type: GET_ALL_TOKEN, payload: returnData
   })
 }
+
+export const importUserTokenAction = async (userTokenAddress) => {
+  const tokenData = await getTokenDetails(userTokenAddress);
+  return !isNotEmpty(tokenData) && storeUserToken(tokenData);
+}
+
+export const storeUserToken = (tokenData) => async (dispatch) => dispatch({
+  type: SET_USER_TOKEN, payload: tokenData
+})

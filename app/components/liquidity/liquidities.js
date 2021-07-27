@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import BNBImage from '../../assets/bnb.svg';
 import RGPImage from '../../assets/rgp.svg';
 import ETHImage from '../../assets/eth.svg';
+import NullImage from '../../assets/Null-24.svg';
 import BUSDImage from '../../assets/busd.svg'
 import LiquidityDetails from './liquidityDetails';
 const Liquidities = ({
@@ -30,11 +31,11 @@ const Liquidities = ({
           {value.path[0].token === "RGP" ?
             <RGPImage /> : value.path[0].token === "BUSD" ?
               <BUSDImage /> : value.path[0].token === "ETH" ?
-                <ETHImage /> : <BNBImage />
+                <ETHImage /> : <NullImage />
           }  {value.path[1].token === "RGP" ?
             <RGPImage /> : value.path[1].token === "BUSD" ?
               <BUSDImage /> : value.path[1].token === "ETH" ?
-                <ETHImage /> : <BNBImage />
+                <ETHImage /> : <NullImage />
           }{' '}
           {value.path[0].token == "WBNB" ? 'BNB' : value.path[0].token} /{' '}
           {value.path[1].token == "WBNB" ? 'BNB' : value.path[1].token}
