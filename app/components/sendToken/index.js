@@ -63,8 +63,8 @@ export const Manual = props => {
   const [toURL, setToURL] = useState("")
   const [fromURL, setFromURL] = useState("");
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
-  const [areBothTokensNew,setAreBothTokensNew] = useState(false)
-  const [selectedTokenForModal,setSelectedTokenForModal] = useState({})
+  const [areBothTokensNew, setAreBothTokensNew] = useState(false)
+  const [selectedTokenForModal, setSelectedTokenForModal] = useState({})
   const [slippage, setSlippage] = useLocalStorage("slippage", 1.5)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
 
@@ -78,19 +78,19 @@ export const Manual = props => {
     if (props.match.params.pair !== undefined) {
       const { pair } = props.match.params;
       const pairArray = pair.split('-');
-      if(pairArray.length===2){ 
+      if (pairArray.length === 2) {
         getTokensListed(pairArray)
-             }else{
-              // history.push("/swap")
-             }
+      } else {
+        // history.push("/swap")
+      }
     }
   }, [wallet])
   useEffect(() => {
-     setUpUrl(selectedToken,selectedToToken)
-    if(Object.entries(selectedTokenForModal).length === 0){
+    setUpUrl(selectedToken, selectedToToken)
+    if (Object.entries(selectedTokenForModal).length === 0) {
       checkIfLiquidityPairExist()
     }
-   }, [selectedToken, selectedToToken])
+  }, [selectedToken, selectedToToken])
 
   useEffect(() => {
     changeData()
@@ -107,83 +107,83 @@ export const Manual = props => {
   }, [selectedToken, wallet]);
 
   useEffect(() => {
-    if(!newTokenPair){
+    if (!newTokenPair) {
       if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
-      setFromAmount(selectedToken.balance)
+        setFromAmount(selectedToken.balance)
+      }
+      if (parseFloat(tokenAllowance) < parseFloat(fromAmount) && selectedToken.symbol !== 'BNB') {
+        setUserHasApproveToken(false)
+      }
     }
-    if (parseFloat(tokenAllowance) < parseFloat(fromAmount) && selectedToken.symbol !== 'BNB') {
-      setUserHasApproveToken(false)
-    }
-    }
-    
+
   }, [fromAmount, amountIn]);
-  const importToken = (token) =>{
-    token.available=true
+  const importToken = (token) => {
+    token.available = true
     token.imported = true
     onCloseModal()
-    if(areBothTokensNew){
-      setTimeout(()=>onOpenModal(),300)
+    if (areBothTokensNew) {
+      setTimeout(() => onOpenModal(), 300)
       setSelectedTokenForModal(selectedToToken)
       setAreBothTokensNew(false)
-    }else{
+    } else {
       setSelectedTokenForModal({})
       checkIfLiquidityPairExist()
     }
-    
+
   }
   const getTokensListed = async (pairArray) => {
-    let selection0 = await getTokenList(pairArray[0],wallet)
-    let selection1 = await getTokenList(pairArray[1],wallet)
+    let selection0 = await getTokenList(pairArray[0], wallet)
+    let selection1 = await getTokenList(pairArray[1], wallet)
     setPathArray(selection0[0].address, selection0[0].name);
-      
+
     setPathToArray(selection1[0].address, selection1[0].name);
     setSelectedToken(selection0[0]);
     setSelectedToToken(selection1[0]);
-    setUpUrl(selection0[0],selection1[0])
-    displayModalsForNewToken(selection0[0],selection1[0])
-   }
+    setUpUrl(selection0[0], selection1[0])
+    displayModalsForNewToken(selection0[0], selection1[0])
+  }
   const setUpUrl = () => {
 
     if (selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN") {
-      let toURLToken = checkIfTokenIsListed(selectedToken.symbol) ? selectedToken.symbol : selectedToken.address 
-        setToURL(toURLToken)
+      let toURLToken = checkIfTokenIsListed(selectedToken.symbol) ? selectedToken.symbol : selectedToken.address
+      setToURL(toURLToken)
       let fromURLToken = checkIfTokenIsListed(selectedToToken.symbol) ? selectedToToken.symbol : selectedToToken.address
       setFromURL(fromURLToken)
       history.push(`/swap/${toURLToken}-${fromURLToken}`)
-    }else{
+    } else {
       history.push('/swap')
     }
   }
-   const displayModalsForNewToken = (selectedToken,selectedToToken) =>{
+  const displayModalsForNewToken = (selectedToken, selectedToToken) => {
     if (selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN") {
-      if(!checkIfTokenIsListed(selectedToken.symbol) && !checkIfTokenIsListed(selectedToToken.symbol)){
-        setDataForModal(true,selectedToken)
-      }else if(!checkIfTokenIsListed(selectedToken.symbol)){
-        setDataForModal(false,selectedToken)
-      }else if(!checkIfTokenIsListed(selectedToToken.symbol)){
-        setDataForModal(false,selectedToToken)
-      }else{
+      if (!checkIfTokenIsListed(selectedToken.symbol) && !checkIfTokenIsListed(selectedToToken.symbol)) {
+        setDataForModal(true, selectedToken)
+      } else if (!checkIfTokenIsListed(selectedToken.symbol)) {
+        setDataForModal(false, selectedToken)
+      } else if (!checkIfTokenIsListed(selectedToToken.symbol)) {
+        setDataForModal(false, selectedToToken)
+      } else {
         checkIfLiquidityPairExist()
       }
-      } else {
-       history.push("/swap")
+    } else {
+      history.push("/swap")
     }
-   }
-   const setDataForModal = (value,token) =>{
+  }
+  const setDataForModal = (value, token) => {
     setAreBothTokensNew(value)
     setSelectedTokenForModal(token)
     onOpenModal()
-   }
+  }
   const checkIfLiquidityPairExist = async () => {
     const factory = await SmartFactory();
-  const fromPath = ethers.utils.getAddress(selectedToken.address);
-  const toPath = ethers.utils.getAddress(selectedToToken.address);
-  const LPAddress = await factory.getPair(toPath,fromPath)
-if (LPAddress === "0x0000000000000000000000000000000000000000" ){ 
- setNewTokenPair(true)
- openModal5()
-}
-}
+    const fromPath = ethers.utils.getAddress(selectedToken.address);
+    const toPath = ethers.utils.getAddress(selectedToToken.address);
+    const LPAddress = await factory.getPair(toPath, fromPath)
+    if (LPAddress === "0x0000000000000000000000000000000000000000") {
+      setNewTokenPair(true)
+      openModal5()
+    }
+  }
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const modal3Disclosure = useDisclosure();
@@ -541,9 +541,9 @@ if (LPAddress === "0x0000000000000000000000000000000000000000" ){
   const closeModal5 = () => {
     modal5Disclosure.onClose();
   };
- const openLiquidityPage = () =>{
-  props.history.push(`/liquidity/${toURL}-${fromURL}`)
- }
+  const openLiquidityPage = () => {
+    props.history.push(`/liquidity/${toURL}-${fromURL}`)
+  }
   const closeAllModals = () => {
     setTimeout(() => closeModal2(), 500)
     setTimeout(() => closeModal1(), 1200)
@@ -596,12 +596,12 @@ if (LPAddress === "0x0000000000000000000000000000000000000000" ){
           getToAmount={getToAmount}
         />
         <NewTokenModal
-onCloseModal ={onCloseModal}
-isOpenModal ={isOpenModal}
-selectedTokenForModal={selectedTokenForModal}
-importToken={importToken}
+          onCloseModal={onCloseModal}
+          isOpenModal={isOpenModal}
+          selectedTokenForModal={selectedTokenForModal}
+          importToken={importToken}
         />
-        
+
         {/* } */}
         {showBox && <ShowMessageBox boxMessage={boxMessage} />}
         <Box mt={14}>

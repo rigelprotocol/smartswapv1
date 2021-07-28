@@ -7,8 +7,9 @@ import { routerMiddleware } from 'connected-react-router';
 import { persistStore, persistReducer, createTransform } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
+import { enableMapSet } from 'immer';
 import createReducer from './reducers';
-
+enableMapSet();
 export const SetTransform = createTransform(
   // transform state on its way to being serialized and persisted.
   (inboundState, key) =>
@@ -27,7 +28,7 @@ export default function configureStore(initialState = {}, history) {
     // configuration object for redux-persist
     key: 'root',
     storage, // define which storage to use
-    transforms: [SetTransform],
+    // transforms: [SetTransform],
     whitelist: ['ExtendedTokenList'],
     // blacklist : []
   };

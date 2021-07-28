@@ -128,12 +128,19 @@ export const addUserToken = address =>
 
 export const getTokenDetails = async tokenAddress => {
   const smartContract = new Contract(tokenAddress, ERC20Token, getProvider());
-  const name = await smartContract.name();
-  const symbol = await smartContract.symbol();
+  const name = smartContract.name();
+  const symbol = smartContract.symbol();
   const { address } = smartContract;
-  const decimal = await smartContract.decimal();
-  console.log({ name, symbol, address, decimal })
-  return address !== '0x' ? { name, symbol, address, decimal } : null;
+  const decimals = smartContract.decimals();
+  const token = await Promise.all([name, symbol, address, decimals]);
+  const resolveToken = {
+    name: token[0],
+    symbol: token[1],
+    address: token[2],
+    decimals: token[3],
+    imported: true,
+  };
+  return address !== '0x' ? resolveToken : null;
 };
 
 export const getTokenWithContract = async (searchToken, account, list) => {

@@ -69,3 +69,26 @@ export const clearInputInfo = (setInput, setButton = false, value) => {
     setButton(value);
   }
 };
+
+export const isValidJson = jsonObject => {
+  jsonObject =
+    typeof jsonObject !== 'string' ? JSON.stringify(jsonObject) : jsonObject;
+  try {
+    jsonObject = JSON.parse(jsonObject);
+  } catch (e) {
+    return false;
+  }
+
+  if (typeof jsonObject === 'object' && jsonObject !== null) {
+    return (
+      objectHasProperty(jsonObject, 'name') &&
+      objectHasProperty(jsonObject, 'tokens') &&
+      objectHasProperty(jsonObject, 'logoURI')
+    );
+  }
+
+  return false;
+};
+
+export const objectHasProperty = (object, props) =>
+  Object.prototype.hasOwnProperty.call(object, props);

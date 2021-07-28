@@ -17,12 +17,18 @@ import { Flex, Text } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
-import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
-import { isFunc } from 'utils/UtilFunc';
-import { getTokenList, getTokenDetails } from 'utils/tokens';
+import { isFunc, isNotEmpty, isValidJson } from 'utils/UtilFunc';
+import { getTokenList, getTokenDetails, isItAddress } from 'utils/tokens';
+import {
+  storeUserToken,
+  deleteUserTokenList,
+  importUriTokenList,
+} from 'containers/WalletProvider/actions';
+import { ethers } from 'ethers';
 import NewTokenModal from './NewTokenModal';
 import CurrencyList from './components/CurrencyList';
 import ManageToken from './components/ManageToken';
+import { balanceAbi } from '../../utils/constants';
 
 function TokenListBox({
   setSelectedToken,
@@ -38,10 +44,13 @@ function TokenListBox({
   onCloseModal,
   ExtendedTokenList,
   checkIfLiquidityPairExist,
+  storeUserToken,
+  deleteUserTokenList,
+  importUriTokenList,
 }) {
   const account = wallet.wallet;
-  const { tokenList } = ExtendedTokenList;
-  const [list, setList] = useState(tokenList);
+  const { tokenList, userTokenList, allTokenList } = ExtendedTokenList;
+  const [list, setList] = useState([]);
   const [searchToken, setSearchToken] = useState('');
   const [manageToken, setManageToken] = useState(false);
   const [balanceIsSet, setBalanceIsSet] = useState(false);
@@ -52,32 +61,51 @@ function TokenListBox({
   const [userTokenAddress, setUserTokenAddress] = useState('');
   const [showCurrencyList, setShowCurrencyList] = useState(true);
   const [selectedTokenForModal, setSelectedTokenForModal] = useState({});
+  const [userCustomTokenList, setUserCustomTokenList] = useState(userTokenList);
+  const [userCustomURIList, setUserCustomURIList] = useState({});
+  const [updatedToken, setUpdatedToken] = useState(false);
+  const [deletedToken, setDeletedToken] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     (async () => {
       try {
-        const updatedToken = await list.map(async (token, index) => {
-          const { signer } = account;
-          let { balance, symbol, address } = token;
-          balance =
-            symbol === 'BNB' && signer !== 'signer'
-              ? account.balance
-              : address !== undefined &&
-              signer !== 'signer' &&
-              (await getAddressTokenBalance(
-                account.address,
-                address,
-                signer,
-              ));
-          return { ...token, balance };
-        });
+        setList(
+          await Promise.all(
+            tokenList.map(async (token, index) => {
+              const { signer } = account;
+              let { balance } = token;
+              const { symbol, address } = token;
+              if (symbol === 'BNB' && signer !== 'signer') {
+                ({ balance } = account);
+              }
+              if (
+                address !== undefined &&
+                signer !== 'signer' &&
+                symbol !== 'BNB'
+              ) {
+                balance = (await new ethers.Contract(
+                  address,
+                  balanceAbi,
+                  signer,
+                ).balanceOf(account.address)).toString();
+              }
+              return { ...token, balance };
+            }),
+          ),
+        );
         setBalanceIsSet(true);
-        setList(await Promise.all(updatedToken));
       } catch (e) {
         console.log(e);
       }
     })();
   }, [isOpen, account]);
+
+  const deleteToken = address => {
+    deleteUserTokenList(address);
+    setDeletedToken(true);
+  };
 
   useEffect(() => {
     searchTokens();
@@ -85,15 +113,30 @@ function TokenListBox({
   }, [searchToken]);
 
   useEffect(() => {
+    setShowErrorMessage(false);
     if (userTokenAddress !== '') {
       (async () => {
-        const tokenData = await getTokenDetails(userTokenAddress);
-        if (!isNotEmpty(tokenData) && tokenData !== null) {
-          setUserCustomToken(tokenData);
-          return setImportCustomToken(true);
+        try {
+          if (!isItAddress(userTokenAddress)) {
+            setUserCustomToken({});
+            setImportCustomToken(false);
+            throw new Error(
+              'Invalid address, please the check address and try again',
+            );
+          }
+          const tokenData = await getTokenDetails(userTokenAddress);
+          if (!isNotEmpty(tokenData) && tokenData !== null) {
+            setUserCustomToken(tokenData);
+            return setImportCustomToken(true);
+          }
+        } catch (e) {
+          setShowErrorMessage(true);
+          return setErrorMessage(e.message);
         }
       })();
     }
+    setUserCustomToken({});
+    return setImportCustomToken(false);
   }, [userTokenAddress]);
 
   const searchTokens = async () => {
@@ -103,9 +146,31 @@ function TokenListBox({
     }
   };
 
+  useEffect(() => {
+    if (updatedToken || deletedToken) {
+      setUserCustomTokenList(userTokenList);
+    }
+  }, [updatedToken, deletedToken]);
+
+  useEffect(() => {
+    if (tokenImportUri) {
+      (async () => {
+        const resolveTokenList = await loadImportData(tokenImportUri);
+        if (isValidJson(resolveTokenList)) {
+          setUserCustomURIList(resolveTokenList);
+        }
+      })();
+    }
+  }, [tokenImportUri]);
+
+  const loadImportData = async uri => ethers.utils.fetchJson(uri);
   const importToken = token => {
     if (importCustomToken) {
       storeUserToken(token);
+      setUpdatedToken(true);
+      setImportCustomToken(false);
+      setUserTokenAddress('');
+      onCloseModal();
       return;
     }
     token.available = true;
@@ -123,6 +188,13 @@ function TokenListBox({
     }
     checkIfLiquidityPairExist();
   };
+
+  const importUriToken = newList => {
+    importUriTokenList(newList);
+    setTokenImportUri('');
+    setUserCustomURIList({});
+  };
+
   const Row = ({ index, key, style }) => (
     <Flex
       key={key}
@@ -172,6 +244,7 @@ function TokenListBox({
       </Text>
     </Flex>
   );
+
   return (
     <>
       {showCurrencyList && (
@@ -202,6 +275,13 @@ function TokenListBox({
           importCustomToken={importCustomToken}
           setSelectedTokenForModal={setSelectedTokenForModal}
           onOpenModal={onOpenModal}
+          userCustomTokenList={userTokenList}
+          deleteToken={deleteToken}
+          showErrorMessage={showErrorMessage}
+          errorMessage={errorMessage}
+          userCustomURIList={userCustomURIList}
+          importUriToken={importUriToken}
+          allTokenList={allTokenList}
         />
       )}
       <NewTokenModal
@@ -222,7 +302,6 @@ TokenListBox.propTypes = {
   setSelectedToToken: PropTypes.func,
   setPathToArray: PropTypes.func,
   wallet: PropTypes.object,
-  ExtendedTokenList: PropTypes.object,
 };
 const mapStateToProps = ({ wallet, ExtendedTokenList }) => ({
   wallet,
@@ -231,5 +310,5 @@ const mapStateToProps = ({ wallet, ExtendedTokenList }) => ({
 
 export default connect(
   mapStateToProps,
-  {},
+  { storeUserToken, deleteUserTokenList, importUriTokenList },
 )(TokenListBox);

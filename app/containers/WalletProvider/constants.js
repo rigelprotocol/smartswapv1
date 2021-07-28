@@ -15,3 +15,5 @@ export const CHANGE_BNB = 'app/WalletProvider/CHANGE_BNB';
 export const UPDATE_CHAIN_ID = 'app/WalletProvider/UPDATE_CHAIN_ID';
 export const GET_ALL_TOKEN = 'app/WalletProvider/GET_ALL_TOKEN';
 export const SET_USER_TOKEN = 'app/WalletProvider/SET_USER_TOKEN';
+export const DELETE_USER_TOKEN = 'app/WalletProvider/DELETE_USER_TOKEN';
+export const ADD_NEW_TOKEN_LIST = 'app/WalletProvider/ADD_NEW_TOKEN_LIST';

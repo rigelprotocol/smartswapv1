@@ -27,7 +27,9 @@ import {
   CHANGE_BNB,
   UPDATE_CHAIN_ID,
   GET_ALL_TOKEN,
-  SET_USER_TOKEN
+  SET_USER_TOKEN,
+  DELETE_USER_TOKEN,
+  ADD_NEW_TOKEN_LIST
 } from './constants';
 
 export const reConnect = (wallet) => async dispatch => {
@@ -179,6 +181,17 @@ export const importUserTokenAction = async (userTokenAddress) => {
   return !isNotEmpty(tokenData) && storeUserToken(tokenData);
 }
 
-export const storeUserToken = (tokenData) => async (dispatch) => dispatch({
+export const storeUserToken = (tokenData) => (dispatch) => dispatch({
   type: SET_USER_TOKEN, payload: tokenData
 })
+
+
+export const deleteUserTokenList = (address) => (dispatch) => dispatch({
+  type: DELETE_USER_TOKEN, payload: address
+})
+
+export const importUriTokenList = (list) => (dispatch) => {
+  dispatch({
+    type: ADD_NEW_TOKEN_LIST, payload: list
+  })
+};
