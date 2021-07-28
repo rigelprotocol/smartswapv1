@@ -49,9 +49,12 @@ export function FarmingPage(props) {
   const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState('');
   const [BNBTotalTokStake, setBNBTotalTokStake] = useState('');
   const [ETHTotalTokStake, setETHTotalTokStake] = useState('');
+  const [isAddressWhitelist, setIsAddressWhitelist] = useState(false);
+  const [dataInputToGetWhiteListed, setDataInputToGetWhiteListed] = useState("");
   const [farmingModal, setFarmingModal] = useState(false);
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true)
+  const [showModalWithInput, setShowModalWithInput] = useState(false)
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useModalDisclosure()
   const toast = useToast()
   const id = "totalLiquidityToast"
@@ -59,7 +62,6 @@ export function FarmingPage(props) {
   useEffect(() => {
     const harvestSubscription = async () => {
       const rigelEarned = await rigelToken();
-
       if (wallet.address != "0x") {
 
         const filter = rigelEarned.filters.Transfer(SMART_SWAP.masterChef, wallet.address, null);
@@ -85,6 +87,10 @@ export function FarmingPage(props) {
 
 
   useEffect(() => {
+    if(wallet.chainId == "0x61"){
+      checkIfUserAddressHasBeenWhiteListed()
+    }
+    
     refreshTokenStaked();
   }, [wallet]);
 
@@ -114,6 +120,29 @@ export function FarmingPage(props) {
     initialLoad ? setFarmingModal(true) : setFarmingModal(false)
   }
 
+  const checkIfUserAddressHasBeenWhiteListed =async ()=>{
+    try{
+      const specialPool = await RGPSpecialPool();
+      const isItWhiteListed =await specialPool.isWhitelist(wallet.address)
+      setIsAddressWhitelist(isItWhiteListed)
+    }catch(e){
+      console.error(e)
+    }
+    
+  }
+  const submitDataToGetWhitelisted = () =>{
+    console.log({dataInputToGetWhiteListed})
+    onCloseModal()
+    toast({
+      title: "Address successfully submitted",
+      description: "You will be notified if you are eligible for this pool",
+      status: "success",
+      position: "bottom-right",
+      duration: 4000,
+      // isClosable: true,
+
+    })
+  }
   const getSpecialPoolAPY = async () => {
     try {
       const specialPool = await RGPSpecialPool()
@@ -613,6 +642,11 @@ export function FarmingPage(props) {
         <InfoModal
           isOpenModal={isOpenModal}
           onCloseModal={onCloseModal}
+          // showModalWithInput={showModalWithInput}
+          // setShowModalWithInput={setShowModalWithInput}
+          // submitData={submitDataToGetWhitelisted}
+          // InputData={dataInputToGetWhiteListed}
+          // setInputData={setDataInputToGetWhiteListed}
           title="RGP STAKING POOL IS COMING SOON..."
         >
           <RGPFarmInfo />
@@ -655,8 +689,9 @@ export function FarmingPage(props) {
               </Flex>
               {props.farming.contents.map(content => (
                 <YieldFarm
-
+                  isAddressWhitelist = {isAddressWhitelist}
                   onOpenModal={onOpenModal}
+                  setShowModalWithInput={setShowModalWithInput}
                   content={content}
                   key={content.id}
                   wallet={wallet}

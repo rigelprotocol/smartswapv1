@@ -63,8 +63,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
   const [approvalLoading, setApprovalLoading] = useState(false)
 
   const toast = useToast()
-
-
   useEffect(() => {
     const stakeSubscription = async () => {
       const specialPool = await RGPSpecialPool();
@@ -115,8 +113,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
 
   }, [wallet.address])
 
-
-
   const getAllowances = async () => {
     try {
       const [rigel, pool1, pool2, pool3] = await Promise.all(
@@ -138,7 +134,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
           rigelAllowance = pool1Allowance
         }
 
-        updateFarmAllowances([
+         updateFarmAllowances([
           rigelAllowance,
           pool2Allowance,
           pool1Allowance,
@@ -320,7 +316,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
 
   // withdrawal of funds
   const RGPUnstake = async () => {
-
     if (wallet.signer !== 'signer') {
       const specialPool = await RGPSpecialPool();
       const data = await specialPool.unStake(
@@ -697,7 +692,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
-          await RGPuseStake(depositTokenValue);
+         await RGPuseStake(depositTokenValue);
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpDeposit(depositTokenValue);
         } else if (val === 'BNB-BUSD') {
@@ -723,7 +718,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
-          await RGPUnstake();
+           await RGPUnstake();
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpTokensWithdrawal();
         } else if (val === 'BNB-BUSD') {
