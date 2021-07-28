@@ -62,7 +62,6 @@ export function FarmingPage(props) {
   useEffect(() => {
     const harvestSubscription = async () => {
       const rigelEarned = await rigelToken();
-      console.log(rigelEarned)
       if (wallet.address != "0x") {
 
         const filter = rigelEarned.filters.Transfer(SMART_SWAP.masterChef, wallet.address, null);

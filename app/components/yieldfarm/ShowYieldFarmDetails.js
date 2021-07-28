@@ -17,6 +17,7 @@ import {
   ModalHeader,
   ModalBody,
   Tooltip,
+  useToast
 } from '@chakra-ui/react';
 import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -61,6 +62,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   const [approvalLoading, setApprovalLoading] = useState(false)
 
+  const toast = useToast()
   useEffect(() => {
     const stakeSubscription = async () => {
       const specialPool = await RGPSpecialPool();
@@ -101,18 +103,27 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
 
   const getAllowances = async () => {
     try {
-      const [pool1, pool2, pool3] = await Promise.all(
-        [smartSwapLPTokenPoolOne(),
+      const [rigel, pool1, pool2, pool3] = await Promise.all(
+        [rigelToken(),
+        smartSwapLPTokenPoolOne(),
         smartSwapLPTokenPoolTwo(),
-        smartSwapLPTokenPoolThree(),])
+        smartSwapLPTokenPoolThree(),
+        ])
       if (wallet.address != '0x') {
 
         const [
           pool1Allowance,
           pool2Allowance,
           pool3Allowance] = await Promise.all([allowance(pool1), allowance(pool2), allowance(pool3)])
-        updateFarmAllowances([
-          pool1Allowance,
+        let rigelAllowance;
+        if (SMART_SWAP.specialPool) {
+          rigelAllowance = await rigel.allowance(wallet.address, SMART_SWAP.specialPool)
+        } else {
+          rigelAllowance = pool1Allowance
+        }
+
+         updateFarmAllowances([
+          rigelAllowance,
           pool2Allowance,
           pool1Allowance,
           pool3Allowance])
@@ -293,7 +304,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
 
   // withdrawal of funds
   const RGPUnstake = async () => {
-    console.log('opening usewithdrawal now.');
     if (wallet.signer !== 'signer') {
       const specialPool = await RGPSpecialPool();
       const data = await specialPool.unStake(
@@ -659,7 +669,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
-          // await RGPuseStake(depositTokenValue);
+         await RGPuseStake(depositTokenValue);
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpDeposit(depositTokenValue);
         } else if (val === 'BNB-BUSD') {
@@ -685,7 +695,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
-          // await RGPUnstake();
+           await RGPUnstake();
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpTokensWithdrawal();
         } else if (val === 'BNB-BUSD') {
