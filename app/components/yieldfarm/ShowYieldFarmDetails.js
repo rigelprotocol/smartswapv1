@@ -94,6 +94,18 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
 
           })
         })
+
+        const withdrawRewardFilter = specialPool.filters.withdrawReward(null, null, wallet.address, null);
+        specialPool.on(withdrawRewardFilter, (tokenAmount, from, to, time) => {
+          toast({
+            title: "RGP harvest Successful",
+            description: `${ethers.utils.formatEther(tokenAmount)} RGP has been sent to your address`,
+            status: "success",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+          })
+        })
       }
       return () => {
         specialPool.off()
@@ -587,13 +599,24 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
 
   // ............................................END LP FOR BNB-BUSD TOKENS .........................................
   const harvest = async pId => {
-    if (wallet.signer !== 'signer' && pId != 0) {
+    openSpinModal('Harvest Pending...', `Harvest ${depositTokenValue}`)
+    if (wallet.signer !== 'signer') {
       try {
-        const lpTokens = await masterChefContract();
-        const withdraw = await lpTokens.withdraw(pId, 0);
-        const { confirmations, status } = await fetchTransactionData(withdraw);
-        callRefreshFarm(confirmations, status);
+        if (pId === 0) {
+          const specialPool = await RGPSpecialPool()
+          const specialWithdraw = await specialPool.unStake(0);
+          const { confirmations, status } = await fetchTransactionData(specialWithdraw);
+          callRefreshFarm(confirmations, status);
+        } else {
+          const lpTokens = await masterChefContract();
+          const withdraw = await lpTokens.withdraw(pId, 0);
+          const { confirmations, status } = await fetchTransactionData(withdraw);
+          callRefreshFarm(confirmations, status);
+        }
       } catch (error) {
+        console.log(error)
+      } finally {
+        closeSpinModal()
       }
     }
   };
@@ -670,7 +693,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
   };
   const confirmDeposit = async val => {
     setDepositValue('Pending Confirmation');
-    openSpinModal('Depositing...', `Depositing ${depositTokenValue} ${val}`)
+    openSpinModal('Staking...', `Staking ${depositTokenValue} ${val}`)
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
