@@ -62,7 +62,7 @@ export function FarmingPage(props) {
   useEffect(() => {
     const harvestSubscription = async () => {
       const rigelEarned = await rigelToken();
-
+      console.log(rigelEarned)
       if (wallet.address != "0x") {
 
         const filter = rigelEarned.filters.Transfer(SMART_SWAP.masterChef, wallet.address, null);
@@ -122,7 +122,6 @@ export function FarmingPage(props) {
   }
 
   const checkIfUserAddressHasBeenWhiteListed =async ()=>{
-    console.log({wallet})
     try{
       const specialPool = await RGPSpecialPool();
       const isItWhiteListed =await specialPool.isWhitelist(wallet.address)
@@ -644,11 +643,11 @@ export function FarmingPage(props) {
         <InfoModal
           isOpenModal={isOpenModal}
           onCloseModal={onCloseModal}
-          showModalWithInput={showModalWithInput}
-          setShowModalWithInput={setShowModalWithInput}
-          submitData={submitDataToGetWhitelisted}
-          InputData={dataInputToGetWhiteListed}
-          setInputData={setDataInputToGetWhiteListed}
+          // showModalWithInput={showModalWithInput}
+          // setShowModalWithInput={setShowModalWithInput}
+          // submitData={submitDataToGetWhitelisted}
+          // InputData={dataInputToGetWhiteListed}
+          // setInputData={setDataInputToGetWhiteListed}
           title="RGP STAKING POOL IS COMING SOON..."
         >
           <RGPFarmInfo />

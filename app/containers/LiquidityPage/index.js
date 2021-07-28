@@ -451,6 +451,9 @@ const checkIfTokensHasBeenApproved =() => {
     setToSelectedToken(tokenWhere('SELECT A TOKEN'))
     setFromValue("")
     setToValue("0")
+    setLiquidityPairRatio(0)
+    setToAddress("")
+    setFromAddress("")
   }
   const fetchTransactionData = async (sendTransaction) => {
     modal6Disclosure.onOpen();

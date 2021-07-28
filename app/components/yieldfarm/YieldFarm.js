@@ -36,7 +36,7 @@ const YieldFarm = ({
     if(isAddressWhitelist){
       setShowYieldFarm(!showYieldfarm)
     }else{
-      setShowModalWithInput(true)
+      // setShowModalWithInput(true)
       onOpenModal()
     }
   }

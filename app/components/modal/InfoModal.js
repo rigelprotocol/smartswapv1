@@ -29,7 +29,9 @@ const InfoModal = ({
     return (
         <>
             <Modal onClose={()=>{
-                setShowModalWithInput(false)
+                if(showModalWithInput){
+                     setShowModalWithInput(false)
+                }
                 onCloseModal()
             }}
                  isOpen={isOpenModal} isCentered>
@@ -37,7 +39,9 @@ const InfoModal = ({
                 <ModalContent bg="#120136" color="#fff" borderRadius="20px">
                 <ModalCloseButton
                 onClick={()=>{
-                    setShowModalWithInput(false)
+                    if(showModalWithInput){
+                        setShowModalWithInput(false)
+                   }
                     onCloseModal()
                 }} 
           bg="none"
@@ -101,7 +105,9 @@ const InfoModal = ({
                             _hover={showModalWithInput  ?  { background: '#444159' }
                             : { background: 'rgba(64, 186, 213, 0.15)' }}
                             onClick={()=>{
-                                setShowModalWithInput(false)
+                                if(showModalWithInput){
+                                    setShowModalWithInput(false)
+                               }
                                 onCloseModal()
                             }}>Close</Button>
                     </ModalFooter>

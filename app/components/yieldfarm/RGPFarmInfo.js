@@ -1,11 +1,5 @@
 import React from 'react'
 import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
     Box,
     Button,
     Link,
@@ -30,12 +24,12 @@ const RGPFarmInfo = () => (
             <ListItem>
                 Hold the tokens or keep your liquidity locked for at least 3 weeks on the Rigel Protocol DApp.
             </ListItem>
-            {/* <ListItem>
+            <ListItem>
                 Submit your details through this {" "}
                 <Link color="#40BAD5" href="https://docs.google.com/forms/d/e/1FAIpQLSdu8uewqjgWdcdBPbM2vI65cVLwHYqFyrkWQHqEfeW_Zltr-w/viewform?usp=sf_link" isExternal>
                     form <ExternalLinkIcon mx="2px" />
                 </Link>
-            </ListItem> */}
+            </ListItem>
         </OrderedList>
        
         <Box>All other staking pools are available: (RGP-BUSD, RGP-BNB, BNB-BUSD)</Box>
