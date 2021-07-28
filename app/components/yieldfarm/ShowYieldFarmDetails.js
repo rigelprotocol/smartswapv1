@@ -61,6 +61,44 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   const [approvalLoading, setApprovalLoading] = useState(false)
 
+  useEffect(() => {
+    const stakeSubscription = async () => {
+      const specialPool = await RGPSpecialPool();
+      if (wallet.address != "0x") {
+        const filter = specialPool.filters.Stake(wallet.address, null, null);
+        specialPool.on(filter, (userAddress, stakedAmount, time) => {
+          toast({
+            title: "RGP Staking Successful",
+            description: `${ethers.utils.formatEther(stakedAmount)} RGP has been successfully staked`,
+            status: "success",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+
+          })
+        })
+
+        const unstakeFilter = specialPool.filters.UnStake(wallet.address, null, null);
+        specialPool.on(unstakeFilter, (userAddress, unStakedAmount, time) => {
+          toast({
+            title: "RGP Unstaking Successful",
+            description: `${ethers.utils.formatEther(unStakedAmount)} RGP has been successfully unstaked`,
+            status: "success",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+
+          })
+        })
+      }
+      return () => {
+        specialPool.off()
+      }
+    }
+    return stakeSubscription()
+
+  }, [wallet.address])
+
   const getAllowances = async () => {
     try {
       const [pool1, pool2, pool3] = await Promise.all(
