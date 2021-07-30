@@ -9,8 +9,9 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
+  Tooltip
 } from '@chakra-ui/react';
-import { CheckIcon, CloseIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { CheckIcon, CloseIcon, QuestionIcon } from '@chakra-ui/icons';
 import LiquidityFromBox from 'components/liquidity/from';
 import To from 'components/liquidity/to';
 import InfoTextBox from 'components/TextBox/InfoTextBox';
@@ -20,7 +21,6 @@ import Spinner from '../spinner/spinner';
 import SpinModal from "../modal/SpinModal"
 import ApproveBox from './ApproveBox';
 import LiquidityPriceBox from './LiquidityPriceBox';
-import Question from '../../assets/question.svg';
 import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
@@ -80,10 +80,17 @@ const AddLiquidity = ({
     rounded="lg"
   >
     {isNewUser ? <ApproveBox popupText={popupText} /> : <div />}
-    <Flex justifyContent="space-between" alignItems="center" px={4}>
+    <Flex justifyContent="space-between" alignItems="center" px={4} mt={2}>
       <ArrowLeft cursor="pointer" onClick={() => back('INDEX')} />
       <Text color="gray.200">{addLiquidityPageHeading}</Text>
-      <Question />
+      <Tooltip
+                label="You can create a token pair on a new Token or add on an already existing one."
+                cursor="pointer"
+                fontSize="md"
+                aria-label="A tooltip"
+              >
+                <QuestionIcon color="white"/>
+              </Tooltip>
     </Flex>
 {newTokenPairButton ? <InfoTextBox>
 <Text>
