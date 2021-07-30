@@ -90,8 +90,13 @@ function TokenListBox({
         return { ...token, balance };
       }),
     );
-    updateTokenListAction(updatedList);
-    return updatedList;
+    const sortedList = updatedList.sort(
+      (a, b) =>
+        a.symbol !== 'SELECT A TOKEN' &&
+        (a.symbol !== 'RGP' && a.symbol.localeCompare(b.symbol)),
+    );
+    updateTokenListAction(sortedList);
+    return sortedList;
   };
   useEffect(() => {
     (async () => {
