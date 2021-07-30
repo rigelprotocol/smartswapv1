@@ -132,7 +132,8 @@ const ManageToken = ({
                       <img
                         src={
                           userCustomURIList.logoURI.includes('ipfs')
-                            ? `https://cloudflare-ipfs.com/${userCustomURIList.logoURI.split('://')[0]
+                            ? `https://cloudflare-ipfs.com/${
+                              userCustomURIList.logoURI.split('://')[0]
                             }/${userCustomURIList.logoURI.split('://')[1]}/`
                             : userCustomURIList.logoURI
                         }
@@ -184,7 +185,8 @@ const ManageToken = ({
                         <img
                           src={
                             list.logoURI.includes('ipfs')
-                              ? `https://cloudflare-ipfs.com/${list.logoURI.split('://')[0]
+                              ? `https://cloudflare-ipfs.com/${
+                                list.logoURI.split('://')[0]
                               }/${list.logoURI.split('://')[1]}/`
                               : list.logoURI
                           }
