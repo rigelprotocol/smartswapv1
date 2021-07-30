@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-
 export const useLocalStorage = (key, initialValue) => {
-  const firstValue = window.localStorage.getItem(key) ? window.localStorage.getItem(key) : initialValue;
+  const firstValue = window.localStorage.getItem(key)
+    ? window.localStorage.getItem(key)
+    : initialValue;
   const [value, setValue] = useState(firstValue);
   useEffect(() => {
     const storedValue = window.localStorage.getItem(key);
@@ -14,4 +15,4 @@ export const useLocalStorage = (key, initialValue) => {
     window.localStorage.setItem(key, value);
   }, [key, value]);
   return [value, setValue];
-}
+};

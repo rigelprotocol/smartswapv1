@@ -27,12 +27,12 @@ import Web3 from 'web3';
 import { approveToken, runApproveCheck, getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { getPriceForToken } from 'containers/HomePage/service/swapServices';
 import { tokenWhere, tokenAddressWhere, tokenList, checkIfTokenIsListed } from 'utils/constants';
+import NewTokenModal from 'components/TokenListBox/NewTokenModal';
 import { router, WETH, updateOutPutAmountForRouter, SmartFactory } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
 import To from './to';
 import SwapSettings from "./SwapSettings";
-import NewTokenModal from 'components/TokenListBox/NewTokenModal';
 import ShowMessageBox from "../Toast/ShowMessageBox";
 import ConfirmSwapBox from './ConfirmSwapBox';
 import { changeDeadlineValue, changeRGPValue } from '../../containers/WalletProvider/actions';
@@ -132,8 +132,8 @@ export const Manual = props => {
 
   }
   const getTokensListed = async (pairArray) => {
-    let selection0 = await getTokenList(pairArray[0], wallet)
-    let selection1 = await getTokenList(pairArray[1], wallet)
+    const selection0 = await getTokenList(pairArray[0], wallet)
+    const selection1 = await getTokenList(pairArray[1], wallet)
     setPathArray(selection0[0].address, selection0[0].name);
 
     setPathToArray(selection1[0].address, selection1[0].name);
@@ -145,9 +145,9 @@ export const Manual = props => {
   const setUpUrl = () => {
 
     if (selectedToken.symbol !== "SELECT A TOKEN" && selectedToToken.symbol !== "SELECT A TOKEN") {
-      let toURLToken = checkIfTokenIsListed(selectedToken.symbol) ? selectedToken.symbol : selectedToken.address
+      const toURLToken = checkIfTokenIsListed(selectedToken.symbol) ? selectedToken.symbol : selectedToken.address
       setToURL(toURLToken)
-      let fromURLToken = checkIfTokenIsListed(selectedToToken.symbol) ? selectedToToken.symbol : selectedToToken.address
+      const fromURLToken = checkIfTokenIsListed(selectedToToken.symbol) ? selectedToToken.symbol : selectedToToken.address
       setFromURL(fromURLToken)
       history.push(`/swap/${toURLToken}-${fromURLToken}`)
     } else {
@@ -236,9 +236,7 @@ export const Manual = props => {
     return calculatedVal.toString()
   }
 
-  const minimumAmountToReceive = useCallback(() => {
-    return ((100 - Number(slippage)) / 100) * Number(amountIn);
-  }, [slippage, amountIn])
+  const minimumAmountToReceive = useCallback(() => ((100 - Number(slippage)) / 100) * Number(amountIn), [slippage, amountIn])
 
   const liquidityProviderFee = () => 0.003 * fromAmount;
 

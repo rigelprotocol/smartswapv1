@@ -62,10 +62,12 @@ const CurrencyList = ({
           <ArrowDownImage />
         </Flex>
         <FixedSizeList
-          width={400}
+          width="100%"
           height={300}
           itemCount={list.length}
           itemSize={10}
+          itemKey={Row.index}
+          useIsScrolling
         >
           {Row}
         </FixedSizeList>

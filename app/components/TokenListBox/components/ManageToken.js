@@ -130,7 +130,8 @@ const ManageToken = ({
                       <img
                         src={
                           userCustomURIList.logoURI.includes('ipfs')
-                            ? `https://cloudflare-ipfs.com/${userCustomURIList.logoURI.split('://')[0]
+                            ? `https://cloudflare-ipfs.com/${
+                              userCustomURIList.logoURI.split('://')[0]
                             }/${userCustomURIList.logoURI.split('://')[1]}/`
                             : userCustomURIList.logoURI
                         }
@@ -168,7 +169,7 @@ const ManageToken = ({
                     </Flex>
                   )}
                   {allTokenList.length > 0 &&
-                    allTokenList.map((list) => (
+                    allTokenList.map(list => (
                       <Flex
                         mt={5}
                         flexDirection="row"
@@ -182,7 +183,8 @@ const ManageToken = ({
                         <img
                           src={
                             list.logoURI.includes('ipfs')
-                              ? `https://cloudflare-ipfs.com/${list.logoURI.split('://')[0]
+                              ? `https://cloudflare-ipfs.com/${
+                                list.logoURI.split('://')[0]
                               }/${list.logoURI.split('://')[1]}/`
                               : list.logoURI
                           }

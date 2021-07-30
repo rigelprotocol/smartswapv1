@@ -123,26 +123,6 @@ export const getTokenList = async (searchToken, account, list) => {
   return tokenData.length > 0 ? tokenData : [];
 };
 
-export const addUserToken = address =>
-  isItAddress(address) && getTokenDetails();
-
-export const getTokenDetails = async tokenAddress => {
-  const smartContract = new Contract(tokenAddress, ERC20Token, getProvider());
-  const name = smartContract.name();
-  const symbol = smartContract.symbol();
-  const { address } = smartContract;
-  const decimals = smartContract.decimals();
-  const token = await Promise.all([name, symbol, address, decimals]);
-  const resolveToken = {
-    name: token[0],
-    symbol: token[1],
-    address: token[2],
-    decimals: token[3],
-    imported: true,
-  };
-  return address !== '0x' ? resolveToken : null;
-};
-
 export const getTokenWithContract = async (searchToken, account, list) => {
   try {
     const contract = new Contract(searchToken, ERC20Token, getProvider());
@@ -195,4 +175,25 @@ export const filterTokenListWithAddress = (symbol, list) => {
     token => token.symbol.toLowerCase() === symbol.toLowerCase(),
   );
   return filteredTokenList;
+};
+
+export const addUserToken = address =>
+  isItAddress(address) && getTokenDetails();
+
+export const getTokenDetails = async tokenAddress => {
+  const smartContract = new Contract(tokenAddress, ERC20Token, getProvider());
+  const name = smartContract.name();
+  const symbol = smartContract.symbol();
+  const { address } = smartContract;
+  const decimals = smartContract.decimals();
+  const token = await Promise.all([name, symbol, address, decimals]);
+  const resolveToken = {
+    name: token[0],
+    symbol: token[1],
+    address: token[2],
+    decimals: token[3],
+    imported: true,
+    available: true,
+  };
+  return address !== '0x' ? resolveToken : null;
 };

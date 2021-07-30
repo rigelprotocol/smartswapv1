@@ -98,14 +98,7 @@ const NewTokenModal = ({
                 color="white"
                 _hover={{ color: 'E8006F' }}
               >
-                {selectedTokenForModal &&
-                  !selectedTokenForModal.available &&
-                  selectedTokenForModal.img ? (
-                  selectedTokenForModal.img
-                ) : (
-                  <NullImage24 />
-                )}{' '}
-                unknown source
+                <NullImage24 /> unknown source
               </Button>
             </Box>
           </Box>
@@ -143,4 +136,4 @@ NewTokenModal.propTypes = {
   setPathToArray: PropTypes.func,
 };
 
-export default React.memo(NewTokenModal);
+export default NewTokenModal;

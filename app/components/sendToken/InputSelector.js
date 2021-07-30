@@ -67,13 +67,15 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                 >
                   {typeof selectedToken.symbol !== 'undefined' && (
                     <>
-                      <Image src={selectedToken.img} />
-                      {selectedToken.imported ===true   ? <NullImage24 /> : <span
-                        className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
-                      />
+                      <Image src={selectedToken.logoURI} />
+                      {selectedToken.imported === true ? (
+                        <NullImage24 />
+                      ) : (
+                        <span
+                          className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
+                        />
+                      )}
 
-                      }
-                      
                       <Text ml={4}>{selectedToken.symbol}</Text>
                     </>
                   )}

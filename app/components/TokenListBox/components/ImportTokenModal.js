@@ -68,7 +68,8 @@ const ImportTokenModal = ({
                 <img
                   src={
                     userCustomURIList.logoURI.includes('ipfs')
-                      ? `https://cloudflare-ipfs.com/${userCustomURIList.logoURI.split('://')[0]
+                      ? `https://cloudflare-ipfs.com/${
+                        userCustomURIList.logoURI.split('://')[0]
                       }/${userCustomURIList.logoURI.split('://')[1]}/`
                       : userCustomURIList.logoURI
                   }

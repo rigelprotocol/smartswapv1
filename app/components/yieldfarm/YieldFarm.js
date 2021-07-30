@@ -7,7 +7,15 @@ import ETHImage from '../../assets/eth.svg';
 import RGPImage from '../../assets/rgp.svg';
 import BUSDImage from '../../assets/busd.svg';
 
-const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked, loadingTotalLiquidity }) => {
+const YieldFarm = ({ 
+  content, 
+  wallet, 
+  onOpenModal,
+  setShowModalWithInput, 
+  refreshTokenStaked, 
+  loadingTotalLiquidity,
+  isAddressWhitelist
+}) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
   const formatAmount = (value) => {
@@ -24,7 +32,14 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked, loadingTo
       return '--'
     }
   }
-
+  const checkIfAddressIsWhiteListed = () =>{
+    if(isAddressWhitelist){
+      setShowYieldFarm(!showYieldfarm)
+    }else{
+      // setShowModalWithInput(true)
+      onOpenModal()
+    }
+  }
   return (
     <>
       <Flex
@@ -111,8 +126,8 @@ const YieldFarm = ({ content, wallet, onOpenModal, refreshTokenStaked, loadingTo
               mb="4"
 
               _hover={{ color: '#423a85' }}
-              // onClick={() => setShowYieldFarm(!showYieldfarm)}
-              onClick={onOpenModal}
+              onClick={() => wallet.chainId == "0x61" ? checkIfAddressIsWhiteListed() : onOpenModal()}
+            // onClick={onOpenModal}
 
             >
               Unlock

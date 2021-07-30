@@ -19,16 +19,19 @@ import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import { isFunc, isNotEmpty, isValidJson } from 'utils/UtilFunc';
 import { getTokenList, getTokenDetails, isItAddress } from 'utils/tokens';
+import { Image, Spinner } from '@chakra-ui/react';
 import {
   storeUserToken,
   deleteUserTokenList,
   importUriTokenList,
+  updateTokenListAction,
 } from 'containers/WalletProvider/actions';
 import { ethers } from 'ethers';
+import { balanceAbi } from 'utils/constants';
 import NewTokenModal from './NewTokenModal';
 import CurrencyList from './components/CurrencyList';
 import ManageToken from './components/ManageToken';
-import { balanceAbi } from '../../utils/constants';
+import NullImage24 from '../../assets/Null-24.svg';
 
 function TokenListBox({
   setSelectedToken,
@@ -45,8 +48,9 @@ function TokenListBox({
   ExtendedTokenList,
   checkIfLiquidityPairExist,
   storeUserToken,
-  deleteUserTokenList,
   importUriTokenList,
+  deleteUserTokenList,
+  updateTokenListAction,
 }) {
   const account = wallet.wallet;
   const { tokenList, userTokenList, allTokenList } = ExtendedTokenList;
@@ -67,34 +71,33 @@ function TokenListBox({
   const [deletedToken, setDeletedToken] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
+  const updateTokenListReducer = async () => {
+    const updatedList = await Promise.all(
+      tokenList.map(async (token, index) => {
+        const { signer } = account;
+        let { balance } = token;
+        const { symbol, address } = token;
+        if (symbol === 'BNB' && signer !== 'signer') {
+          ({ balance } = account);
+        }
+        if (address !== undefined && signer !== 'signer' && symbol !== 'BNB') {
+          balance = (await new ethers.Contract(
+            address,
+            balanceAbi,
+            signer,
+          ).balanceOf(account.address)).toString();
+        }
+        return { ...token, balance };
+      }),
+    );
+    updateTokenListAction(updatedList);
+    return updatedList;
+  };
   useEffect(() => {
     (async () => {
       try {
-        setList(
-          await Promise.all(
-            tokenList.map(async (token, index) => {
-              const { signer } = account;
-              let { balance } = token;
-              const { symbol, address } = token;
-              if (symbol === 'BNB' && signer !== 'signer') {
-                ({ balance } = account);
-              }
-              if (
-                address !== undefined &&
-                signer !== 'signer' &&
-                symbol !== 'BNB'
-              ) {
-                balance = (await new ethers.Contract(
-                  address,
-                  balanceAbi,
-                  signer,
-                ).balanceOf(account.address)).toString();
-              }
-              return { ...token, balance };
-            }),
-          ),
-        );
+        const updateTokenListBalance = await updateTokenListReducer();
+        setList(updateTokenListBalance);
         setBalanceIsSet(true);
       } catch (e) {
         console.log(e);
@@ -109,7 +112,6 @@ function TokenListBox({
 
   useEffect(() => {
     searchTokens();
-    return setList(tokenList);
   }, [searchToken]);
 
   useEffect(() => {
@@ -141,9 +143,14 @@ function TokenListBox({
 
   const searchTokens = async () => {
     if (searchToken !== '') {
-      const tokenArrayList = await getTokenList(searchToken, account, list);
+      const tokenArrayList = await getTokenList(
+        searchToken,
+        account,
+        tokenList,
+      );
       return setList(tokenArrayList);
     }
+    setList(tokenList);
   };
 
   useEffect(() => {
@@ -164,17 +171,23 @@ function TokenListBox({
   }, [tokenImportUri]);
 
   const loadImportData = async uri => ethers.utils.fetchJson(uri);
+
   const importToken = token => {
     if (importCustomToken) {
       storeUserToken(token);
       setUpdatedToken(true);
       setImportCustomToken(false);
       setUserTokenAddress('');
+      isFunc(setSelectedToken) && setSelectedToken(token);
+      isFunc(setSelectedToToken) && setSelectedToToken(token);
+      isFunc(setPathToArray) && setPathToArray(token.address, token.symbol);
+      isFunc(setPathArray) && setPathArray(token.address, token.symbol);
+      isFunc(getToAmount) && getToAmount();
       onCloseModal();
       return;
     }
-    token.available = true;
-    token.imported = true;
+    const changeTokenAvailable = { ...token, available: true, imported: true };
+    storeUserToken(changeTokenAvailable);
     isFunc(setSelectedToken) && setSelectedToken(token);
     isFunc(setSelectedToToken) && setSelectedToToken(token);
     isFunc(setPathToArray) && setPathToArray(token.address, token.symbol);
@@ -212,22 +225,38 @@ function TokenListBox({
         isFunc(onClose) && onClose();
       }}
     >
-      <Flex alignItems="center">
-        <img style={{ width: '7%' }} src={list[index].logoURI} alt=" " />
-        <Text fontSize="md" fontWeight="regular" color="#fff" ml={2}>
+      {list[index].imported ? (
+        <NullImage24 />
+      ) : (
+        <Image width="10%" margin="17px" src={list[index].logoURI} alt=" " />
+      )}
+      <Flex flexDirection="column" width="100%" justifyContent="space-around">
+        <Text fontSize="md" fontWeight="regular" color="#fff" m={1}>
           {list[index].symbol}
         </Text>
-        <Text mx={3}>
-          <small style={{ display: 'block', color: '#b3b3b3' }}>
-            {list[index].name}
-          </small>
+        <Text m={1} style={{ display: 'block', color: '#b3b3b3' }}>
+          {list[index].imported && (
+            <small style={{ fontSize: 'x-small' }}>
+              <em>Added by User </em>
+            </small>
+          )}
+          {list[index].name}
         </Text>
       </Flex>
-      <Text fontSize="md" fontWeight="regular" color="#fff">
-        {!balanceIsSet && list[index].available ? '0.0' : list[index].balance}
+      <Text fontSize="md" fontWeight="regular" textAlign="left" color="#fff">
+        {!balanceIsSet && list[index].available ? (
+          '0.0'
+        ) : list[index].balance == null && list[index].address !== undefined ? (
+          <Spinner size="xs" color="blue.500" />
+        ) : (
+          list[index].name !== 'Select a token' &&
+          list[index].available &&
+          `${list[index].balance}`
+        )}
         {!list[index].available && (
           <Button
             border="0"
+            ml="1"
             bg="#29235eda"
             color="rgba(255, 255, 255, 0.555)"
             borderRadius="15px"
@@ -310,5 +339,10 @@ const mapStateToProps = ({ wallet, ExtendedTokenList }) => ({
 
 export default connect(
   mapStateToProps,
-  { storeUserToken, deleteUserTokenList, importUriTokenList },
+  {
+    storeUserToken,
+    deleteUserTokenList,
+    importUriTokenList,
+    updateTokenListAction,
+  },
 )(TokenListBox);

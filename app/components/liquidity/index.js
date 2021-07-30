@@ -8,7 +8,8 @@ import Liquidities from './liquidities';
 const Index = ({
   liquidities,
   addLiquidityPage,
-  addLiquidity,
+  addMoreLiquidity,
+  addMoreLiquidityButton,
   removeLiquidity,
   removeALiquidity,
   liquidityLoading,
@@ -115,7 +116,8 @@ const Index = ({
               <Liquidities
                 key={index + "key"}
                 value={liquid}
-                addLiquidity={addLiquidity}
+                addMoreLiquidity={addMoreLiquidity}
+                addMoreLiquidityButton={addMoreLiquidityButton}
                 removeLiquidity={removeLiquidity}
                 removeALiquidity={removeALiquidity}
 
@@ -143,6 +145,7 @@ Index.propTypes = {
   addLiquidityPage: PropTypes.func.isRequired,
   removeALiquidity: PropTypes.func.isRequired,
   removeLiquidity: PropTypes.func.isRequired,
-  addLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidityButton: PropTypes.bool.isRequired,
 };
 export default Index;

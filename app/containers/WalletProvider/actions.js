@@ -29,7 +29,8 @@ import {
   GET_ALL_TOKEN,
   SET_USER_TOKEN,
   DELETE_USER_TOKEN,
-  ADD_NEW_TOKEN_LIST
+  ADD_NEW_TOKEN_LIST,
+  UPDATE_TOKEN_LIST,
 } from './constants';
 
 export const reConnect = (wallet) => async dispatch => {
@@ -148,7 +149,7 @@ export const getTokenAddress = (chainId) => {
   if (chainId === '0x38' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
     return '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
   }
-  if (chainId === '0x61') {
+  if (chainId === '0x61' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
     return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
   }
   return window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38' && '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
@@ -168,7 +169,7 @@ export const getTokenList = () => async (dispatch) => {
   const returnData = allToken.map((token, id) => {
     const balance = null;
     const available = true;
-    const imported = false;
+    const imported = token.imported ? true : false;
     return { ...token, id, balance, available, imported };
   });
   return dispatch({
@@ -195,3 +196,7 @@ export const importUriTokenList = (list) => (dispatch) => {
     type: ADD_NEW_TOKEN_LIST, payload: list
   })
 };
+
+export const updateTokenListAction = (list) => (dispatch) => dispatch({
+  type: UPDATE_TOKEN_LIST, payload: list
+});

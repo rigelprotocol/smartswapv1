@@ -14,11 +14,19 @@ export const SetTransform = createTransform(
   // transform state on its way to being serialized and persisted.
   (inboundState, key) =>
     // convert mySet to an Array.
-    ({ ...inboundState, tokenList: [...inboundState.tokenList], userTokenList: [...inboundState.userTokenList] }),
+    ({
+      ...inboundState,
+      tokenList: [...inboundState.tokenList],
+      userTokenList: [...inboundState.userTokenList],
+    }),
   // transform state being rehydrated
   (outboundState, key) =>
     // convert tokenList back to a Set.
-    ({ ...outboundState, tokenList: new Set(outboundState.tokenList), userTokenList: new Set(outboundState.userTokenList) }),
+    ({
+      ...outboundState,
+      tokenList: new Set(outboundState.tokenList),
+      userTokenList: new Set(outboundState.userTokenList),
+    }),
   // define which reducers this transform gets called for.
   { whitelist: ['ExtendedTokenList'] },
 );

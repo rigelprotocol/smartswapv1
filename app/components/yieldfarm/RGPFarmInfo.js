@@ -1,11 +1,5 @@
 import React from 'react'
 import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
     Box,
     Button,
     Link,
@@ -37,6 +31,7 @@ const RGPFarmInfo = () => (
                 </Link>
             </ListItem>
         </OrderedList>
+       
         <Box>All other staking pools are available: (RGP-BUSD, RGP-BNB, BNB-BUSD)</Box>
     </>
 )
