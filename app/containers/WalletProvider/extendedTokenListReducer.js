@@ -5,12 +5,14 @@ import {
   DELETE_USER_TOKEN,
   ADD_NEW_TOKEN_LIST,
   UPDATE_TOKEN_LIST,
+  TOGGLE_LIST_SHOW,
 } from './constants';
 
 export const initialState = {
+  toggleDisplay: true,
   tokenList: [],
-  userTokenList: [],
   allTokenList: [],
+  userTokenList: [],
 };
 let userToken;
 let filterList;
@@ -49,6 +51,9 @@ const ExtendedTokenList = (state = initialState, action) =>
         );
         filterList.push(action.payload);
         draft.allTokenList = filterList;
+        break;
+      case TOGGLE_LIST_SHOW:
+        draft.toggleDisplay = action.payload;
         break;
       default:
         return state;

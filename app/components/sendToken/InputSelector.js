@@ -68,9 +68,8 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                 >
                   {typeof selectedToken.symbol !== 'undefined' && (
                     <>
-                      <Image w="14%" src={selectedToken.logoURI} />
+                      <Image w="100%" src={selectedToken.logoURI} />
                       {selectedToken.imported === true && <NullImage24 />}
-
                       <Text ml={4}>{selectedToken.symbol}</Text>
                     </>
                   )}

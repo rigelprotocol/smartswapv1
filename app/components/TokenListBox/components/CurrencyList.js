@@ -20,6 +20,7 @@ const CurrencyList = ({
   isOpen,
   onClose,
   searchToken,
+  toggleDisplay,
   setSearchToken,
   setManageToken,
   setShowCurrencyList,
@@ -61,16 +62,18 @@ const CurrencyList = ({
           </Text>
           <ArrowDownImage />
         </Flex>
-        <FixedSizeList
-          width="100%"
-          height={300}
-          itemCount={list.length}
-          itemSize={10}
-          itemKey={Row.index}
-          useIsScrolling
-        >
-          {Row}
-        </FixedSizeList>
+        {toggleDisplay && (
+          <FixedSizeList
+            width="100%"
+            height={300}
+            itemCount={list.length}
+            itemSize={10}
+            itemKey={Row.index}
+            useIsScrolling
+          >
+            {Row}
+          </FixedSizeList>
+        )}
       </ModalBody>
       <ModalFooter justifyContent="center">
         <div>
@@ -94,6 +97,7 @@ CurrencyList.propTypes = {
   onClose: PropTypes.func,
   Row: PropTypes.func,
   list: PropTypes.array,
+  toggleDisplay: PropTypes.bool,
   searchToken: PropTypes.string,
   setSearchToken: PropTypes.func,
   setManageToken: PropTypes.func,

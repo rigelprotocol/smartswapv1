@@ -25,6 +25,7 @@ import {
   deleteUserTokenList,
   importUriTokenList,
   updateTokenListAction,
+  toggleDefaultTokenList,
 } from 'containers/WalletProvider/actions';
 import { ethers } from 'ethers';
 import { balanceAbi } from 'utils/constants';
@@ -51,9 +52,15 @@ function TokenListBox({
   importUriTokenList,
   deleteUserTokenList,
   updateTokenListAction,
+  toggleDefaultTokenList,
 }) {
   const account = wallet.wallet;
-  const { tokenList, userTokenList, allTokenList } = ExtendedTokenList;
+  const {
+    tokenList,
+    userTokenList,
+    allTokenList,
+    toggleDisplay,
+  } = ExtendedTokenList;
   const [list, setList] = useState([]);
   const [searchToken, setSearchToken] = useState('');
   const [manageToken, setManageToken] = useState(false);
@@ -118,7 +125,9 @@ function TokenListBox({
   useEffect(() => {
     searchTokens();
   }, [searchToken]);
-
+  const offDefaultTokenList = option => {
+    toggleDefaultTokenList(option);
+  };
   useEffect(() => {
     setShowErrorMessage(false);
     if (userTokenAddress !== '') {
@@ -291,6 +300,7 @@ function TokenListBox({
           setSearchToken={setSearchToken}
           setManageToken={setManageToken}
           setShowCurrencyList={setShowCurrencyList}
+          toggleDisplay={toggleDisplay}
         />
       )}
       {manageToken && (
@@ -316,6 +326,8 @@ function TokenListBox({
           userCustomURIList={userCustomURIList}
           importUriToken={importUriToken}
           allTokenList={allTokenList}
+          toggleDisplay={toggleDisplay}
+          offDefaultTokenList={offDefaultTokenList}
         />
       )}
       <NewTokenModal
@@ -349,5 +361,6 @@ export default connect(
     deleteUserTokenList,
     importUriTokenList,
     updateTokenListAction,
+    toggleDefaultTokenList,
   },
 )(TokenListBox);

@@ -14,7 +14,7 @@ import {
   signer,
 } from 'utils/wallet-wiget/connection';
 import { ethers } from 'ethers';
-import { getTokens, tokenList } from 'utils/constants';
+import { tokenList } from 'utils/constants';
 import { formatBalance, isNotEmpty } from 'utils/UtilFunc';
 import { getTokenDetails } from 'utils/tokens';
 import {
@@ -31,7 +31,9 @@ import {
   DELETE_USER_TOKEN,
   ADD_NEW_TOKEN_LIST,
   UPDATE_TOKEN_LIST,
+  TOGGLE_LIST_SHOW,
 } from './constants';
+import defaultTokenList from '../../utils/default-token.json';
 
 export const reConnect = (wallet) => async dispatch => {
   try {
@@ -163,8 +165,8 @@ export const getTokenList = () => async (dispatch) => {
     allToken = reducerWallet.tokenList;
   }
   if (allToken === undefined || allToken.length == 0 || storedReducer === undefined) {
-    const { tokens } = await getTokens();
-    allToken = tokenList.concat(tokens);
+    console.log(defaultTokenList)
+    allToken = tokenList.concat(defaultTokenList);
   }
   const returnData = allToken.map((token, id) => {
     const balance = null;
@@ -200,3 +202,7 @@ export const importUriTokenList = (list) => (dispatch) => {
 export const updateTokenListAction = (list) => (dispatch) => dispatch({
   type: UPDATE_TOKEN_LIST, payload: list
 });
+
+export const toggleDefaultTokenList = (option) => (dispatch) => dispatch({
+  type: TOGGLE_LIST_SHOW, payload: option
+})

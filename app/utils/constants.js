@@ -112,25 +112,6 @@ export const tokenList = [
         ? '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
         : '0x10249e900b919fdee9e2ed38b4cd83c4df857254',
   },
-  // WE CAN USE THIS
-  // {
-  //   abi: BNB,
-  //   symbol: 'BNB',
-  //   name: 'Binance SmartChain USD',
-  //   logoURI: '../../assets/bnb.svg',
-  //   address: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
-  // },
-  {
-    symbol: 'WBNB',
-    available: true,
-    imported: false,
-    name: 'Wrapped BNB',
-    logoURI: '../../assets/eth.svg',
-    address:
-      checkNetVersion() === BSC_MAIN_NET_ID.toString()
-        ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-        : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
-  },
   {
     symbol: 'BNB',
     available: true,
@@ -143,23 +124,7 @@ export const tokenList = [
         ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
         : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   },
-  // {
-  //   abi: WETH9,
-  //   symbol: 'ETH',
-  //   name: 'Ethereum',
-
-  //   img: '../../assets/eth.svg',
-  //   address: '0x492Df17f202e36525151Ce7BcD49d5637Dc10659',
-  // },
 ];
-const tokenSource =
-  'https://tokens.pancakeswap.finance/pancakeswap-extended.json';
-
-export const getTokens = () =>
-  fetch(tokenSource, {
-    methods: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  }).then(data => data.json());
 
 export const tokenWhere = field =>
   field !== null &&

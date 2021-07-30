@@ -48,6 +48,8 @@ const ManageToken = ({
   userCustomURIList,
   importUriToken,
   allTokenList,
+  offDefaultTokenList,
+  toggleDisplay,
 }) => {
   const {
     isOpen: isOpenImportModal,
@@ -130,8 +132,7 @@ const ManageToken = ({
                       <img
                         src={
                           userCustomURIList.logoURI.includes('ipfs')
-                            ? `https://cloudflare-ipfs.com/${
-                              userCustomURIList.logoURI.split('://')[0]
+                            ? `https://cloudflare-ipfs.com/${userCustomURIList.logoURI.split('://')[0]
                             }/${userCustomURIList.logoURI.split('://')[1]}/`
                             : userCustomURIList.logoURI
                         }
@@ -183,8 +184,7 @@ const ManageToken = ({
                         <img
                           src={
                             list.logoURI.includes('ipfs')
-                              ? `https://cloudflare-ipfs.com/${
-                                list.logoURI.split('://')[0]
+                              ? `https://cloudflare-ipfs.com/${list.logoURI.split('://')[0]
                               }/${list.logoURI.split('://')[1]}/`
                               : list.logoURI
                           }
@@ -224,9 +224,14 @@ const ManageToken = ({
                     <RGP className={styles.logo} width="45%" height="100%" />
                     <FormControl display="flex" alignItems="center">
                       <FormLabel htmlFor="top-ten" mb="0">
-                        Rigel Top 10 Token List
+                        Rigel Default Token List
                       </FormLabel>
-                      <Switch defaultChecked id="top-ten" size="lg" />
+                      <Switch
+                        onChange={e => offDefaultTokenList(e.target.checked)}
+                        isChecked={toggleDisplay}
+                        id="top-ten"
+                        size="lg"
+                      />
                     </FormControl>
                   </Flex>
                   <Flex
@@ -244,7 +249,7 @@ const ManageToken = ({
                       <FormLabel htmlFor="extended-list" mb="0">
                         Rigel Extended Token List
                       </FormLabel>
-                      <Switch id="extended-list" size="lg" />
+                      <Switch id="extended-list" size="lg" disabled />
                     </FormControl>
                   </Flex>
                 </>
@@ -362,6 +367,7 @@ ManageToken.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   customTokenBox: PropTypes.bool,
+  toggleDisplay: PropTypes.bool,
   setManageToken: PropTypes.func,
   tokenImportUri: PropTypes.string,
   setTokenImportUri: PropTypes.func,
@@ -380,6 +386,7 @@ ManageToken.propTypes = {
   showErrorMessage: PropTypes.bool,
   errorMessage: PropTypes.string,
   importUriToken: PropTypes.func,
+  offDefaultTokenList: PropTypes.func,
 };
 
 export default ManageToken;
