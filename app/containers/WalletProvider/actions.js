@@ -169,7 +169,7 @@ export const getTokenList = () => async (dispatch) => {
   const returnData = allToken.map((token, id) => {
     const balance = null;
     const available = true;
-    const imported = token.imported ? true : false;
+    const imported = !!token.imported;
     return { ...token, id, balance, available, imported };
   });
   return dispatch({

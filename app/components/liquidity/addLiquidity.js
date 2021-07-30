@@ -17,7 +17,7 @@ import InfoTextBox from 'components/TextBox/InfoTextBox';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/spinner';
-import SpinModal from "../modal/SpinModal"
+import SpinModal from '../modal/SpinModal';
 import ApproveBox from './ApproveBox';
 import LiquidityPriceBox from './LiquidityPriceBox';
 import Question from '../../assets/question.svg';
@@ -71,7 +71,7 @@ const AddLiquidity = ({
   tokenToValue,
   handleFromAmount,
   onCloseModal,
-  isOpenModal 
+  isOpenModal,
 }) => (
   <Box
     bg="#120136"
@@ -85,19 +85,25 @@ const AddLiquidity = ({
       <Text color="gray.200">{addLiquidityPageHeading}</Text>
       <Question />
     </Flex>
-{newTokenPairButton ? <InfoTextBox>
-<Text>
-  <h4>You are the first Liquidity Provider</h4>
-   <Text>The ratio of tokens you add will set the price of this pool</Text>
-  </Text>
-</InfoTextBox> : 
-<InfoTextBox>
-  <Text>
-    <b>Tip</b>: When you add liquidity, you will receive pool tokens representing your position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.
-  </Text>
-</InfoTextBox>
-
-}
+    {newTokenPairButton ? (
+      <InfoTextBox>
+        <Text>
+          <h4>You are the first Liquidity Provider</h4>
+          <Text>
+            The ratio of tokens you add will set the price of this pool
+          </Text>
+        </Text>
+      </InfoTextBox>
+    ) : (
+      <InfoTextBox>
+        <Text>
+          <b>Tip</b>: When you add liquidity, you will receive pool tokens
+          representing your position. These tokens automatically earn fees
+          proportional to your share of the pool, and can be redeemed at any
+          time.
+        </Text>
+      </InfoTextBox>
+    )}
     <LiquidityFromBox
       label="input"
       fromValue={fromValue}
@@ -132,16 +138,16 @@ const AddLiquidity = ({
     ) : (
       <div />
     )}
-      {newTokenPairButton &&
-    <InfoTextBox>
-    <Text>
- Please note that creating a new pool may result in a higher amount of gas fee
-  </Text>
-    
-    </InfoTextBox>
-}
+    {newTokenPairButton && (
+      <InfoTextBox>
+        <Text>
+          Please note that creating a new pool may result in a higher amount of
+          gas fee
+        </Text>
+      </InfoTextBox>
+    )}
     <Box mt={5} p={5}>
-      {!hasAllowedToToken && (toSelectedToken.symbol !== "SELECT A TOKEN")  && (
+      {!hasAllowedToToken && toSelectedToken.symbol !== 'SELECT A TOKEN' && (
         <Button
           d="block"
           w="100%"
@@ -162,7 +168,7 @@ const AddLiquidity = ({
           Approve {toSelectedToken.symbol}
         </Button>
       )}
-      {!hasAllowedFromToken && (fromSelectedToken.symbol !== "SELECT A TOKEN") && (
+      {!hasAllowedFromToken && fromSelectedToken.symbol !== 'SELECT A TOKEN' && (
         <Button
           d="block"
           w="100%"
@@ -199,13 +205,13 @@ const AddLiquidity = ({
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
           disabled={!openSupplyButton}
-          onClick={()=>newTokenPairButton ? open("new") : open("old")}
+          onClick={() => (newTokenPairButton ? open('new') : open('old'))}
         >
           {buttonValue}
         </Button>
       )}
     </Box>
-  
+
     {/* modal 1 summary */}
     <Modal isOpen={modal1Disclosure.isOpen} onClose={closeModal1} isCentered>
       <ModalOverlay />
@@ -240,7 +246,7 @@ const AddLiquidity = ({
               <Box>{fromValue}</Box>
             </Flex>
             <Flex m="1" justifyContent="space-between">
-              <Text mt={-1}> {toSelectedToken.symbol}  </Text>
+              <Text mt={-1}> {toSelectedToken.symbol} </Text>
               <Box>{toValue}</Box>
             </Flex>
             <Flex m="1" justifyContent="space-between">
@@ -260,9 +266,11 @@ const AddLiquidity = ({
               <Text> Share of Pool </Text>
               <Box>
                 <Text>
-                  {newTokenPairButton ? "100" : fromValue > 0 && toValue > 0
-                    ? (parseFloat(fromValue) * 3) / 100
-                    : 0.0}
+                  {newTokenPairButton
+                    ? '100'
+                    : fromValue > 0 && toValue > 0
+                      ? (parseFloat(fromValue) * 3) / 100
+                      : 0.0}
                   %
                 </Text>
               </Box>
@@ -464,54 +472,48 @@ const AddLiquidity = ({
     <Modal isOpen={modal7Disclosure.isOpen} onClose={closeModal7} isCentered>
       <ModalOverlay />
       <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
- <ModalHeader fontSize="18px" fontWeight="regular" align="center">
+        <ModalHeader fontSize="18px" fontWeight="regular" align="center">
           Add Pairs
         </ModalHeader>
-      <ModalBody>
+        <ModalBody>
           <Text color="gray.400">
             There is no liquidity on this pair, will you like to add Liquidity.
           </Text>
           <Flex justifyContent="space-between">
-              <Button
-               d="block"
-               w="90%"
-               margin="20px auto"
-               h="50px"
-               color="#40BAD5"
-               border="none"
-               fontWeight="regular"
-               fontSize="lg"
-               cursor="pointer"
-               rounded="2xl"
-               bg="rgba(64, 186, 213,0.25)"
-               borderColor="#40BAD5"
-               _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-               _active={{ outline: '#29235E', background: '#29235E' }}
-                onClick={changeButtonCreateNewTokenPair}
-              >
-                OK
-              </Button>
-        
+            <Button
+              d="block"
+              w="90%"
+              margin="20px auto"
+              h="50px"
+              color="#40BAD5"
+              border="none"
+              fontWeight="regular"
+              fontSize="lg"
+              cursor="pointer"
+              rounded="2xl"
+              bg="rgba(64, 186, 213,0.25)"
+              borderColor="#40BAD5"
+              _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+              _active={{ outline: '#29235E', background: '#29235E' }}
+              onClick={changeButtonCreateNewTokenPair}
+            >
+              OK
+            </Button>
           </Flex>
-         </ModalBody>
-      
+        </ModalBody>
       </ModalContent>
     </Modal>
-  
-    
-  <SpinModal
-     isOpenModal={isOpenModal}
-     onCloseModal={onCloseModal}
-     title="Success"
-  >
-    <Box
-    textAlign="center"
-    mt={3} 
-    mb={8}
+
+    <SpinModal
+      isOpenModal={isOpenModal}
+      onCloseModal={onCloseModal}
+      title="Success"
     >
-  Providing {fromValue} {fromSelectedToken.symbol} and {toValue} {toSelectedToken.symbol}
-    </Box>
-      </SpinModal>
+      <Box textAlign="center" mt={3} mb={8}>
+        Providing {fromValue} {fromSelectedToken.symbol} and {toValue}{' '}
+        {toSelectedToken.symbol}
+      </Box>
+    </SpinModal>
   </Box>
 );
 AddLiquidity.propTypes = {
@@ -526,7 +528,7 @@ AddLiquidity.propTypes = {
   addLiquidityPageHeading: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
   setToValue: PropTypes.func.isRequired,
-  setFromSelectedToken: PropTypes.func.isRequired, 
+  setFromSelectedToken: PropTypes.func.isRequired,
   checkIfLiquidityPairExist: PropTypes.func.isRequired,
   fromSelectedToken: PropTypes.object.isRequired,
   toValue: PropTypes.string.isRequired,
@@ -549,7 +551,7 @@ AddLiquidity.propTypes = {
   closeModal7: PropTypes.func.isRequired,
   changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
-  isOpenModal:PropTypes.func.isRequired, 
+  isOpenModal: PropTypes.func.isRequired,
   modal1Disclosure: PropTypes.object,
   modal2Disclosure: PropTypes.object,
   modal3Disclosure: PropTypes.object,

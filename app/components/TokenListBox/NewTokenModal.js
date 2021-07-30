@@ -70,8 +70,8 @@ const NewTokenModal = ({
               padding="15px"
             >
               {selectedTokenForModal &&
-                !selectedTokenForModal.available &&
-                selectedTokenForModal.img ? (
+              !selectedTokenForModal.available &&
+              selectedTokenForModal.img ? (
                 selectedTokenForModal.img
               ) : (
                 <NullImage48 />

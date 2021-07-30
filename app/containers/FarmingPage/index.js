@@ -12,7 +12,7 @@ import Web3 from 'web3';
 import { Box, Flex, Text, useDisclosure } from '@chakra-ui/layout';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm/YieldFarm';
-import InfoModal from 'components/modal/InfoModal'
+import InfoModal from 'components/modal/InfoModal';
 import FarmingPageModal from 'components/yieldfarm/FarmingPageModal';
 import RGPFarmInfo from 'components/yieldfarm/RGPFarmInfo';
 import { notify } from 'containers/NoticeProvider/actions';
@@ -29,8 +29,11 @@ import {
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
 } from 'utils/SwapConnect';
+import {
+  useDisclosure as useModalDisclosure,
+  useToast,
+} from '@chakra-ui/react';
 import { tokenList, SMART_SWAP } from '../../utils/constants';
-import { useDisclosure as useModalDisclosure, useToast } from "@chakra-ui/react";
 import { changeRGPValue } from '../WalletProvider/actions';
 import {
   changeFarmingContent,
@@ -39,7 +42,7 @@ import {
   updateTotalLiquidity,
   updateTokenStaked,
   updateFarmBalances,
-  farmDataLoading
+  farmDataLoading,
 } from './actions';
 // import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
@@ -50,47 +53,55 @@ export function FarmingPage(props) {
   const [BNBTotalTokStake, setBNBTotalTokStake] = useState('');
   const [ETHTotalTokStake, setETHTotalTokStake] = useState('');
   const [isAddressWhitelist, setIsAddressWhitelist] = useState(false);
-  const [dataInputToGetWhiteListed, setDataInputToGetWhiteListed] = useState("");
+  const [dataInputToGetWhiteListed, setDataInputToGetWhiteListed] = useState(
+    '',
+  );
   const [farmingModal, setFarmingModal] = useState(false);
   const [farmingFee, setFarmingFee] = useState(10);
-  const [initialLoad, setInitialLoad] = useState(true)
-  const [showModalWithInput, setShowModalWithInput] = useState(false)
-  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useModalDisclosure()
-  const toast = useToast()
-  const id = "totalLiquidityToast"
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [showModalWithInput, setShowModalWithInput] = useState(false);
+  const {
+    isOpen: isOpenModal,
+    onOpen: onOpenModal,
+    onClose: onCloseModal,
+  } = useModalDisclosure();
+  const toast = useToast();
+  const id = 'totalLiquidityToast';
 
   useEffect(() => {
     const harvestSubscription = async () => {
       const rigelEarned = await rigelToken();
-      if (wallet.address != "0x") {
-
-        const filter = rigelEarned.filters.Transfer(SMART_SWAP.masterChef, wallet.address, null);
+      if (wallet.address != '0x') {
+        const filter = rigelEarned.filters.Transfer(
+          SMART_SWAP.masterChef,
+          wallet.address,
+          null,
+        );
         rigelEarned.on(filter, (sender, receiver, amount) => {
           toast({
-            title: "RGP Harvest Successful",
-            description: `${ethers.utils.formatEther(amount)} RGP has been transfered to your address`,
-            status: "success",
-            position: "top-right",
+            title: 'RGP Harvest Successful',
+            description: `${ethers.utils.formatEther(
+              amount,
+            )} RGP has been transfered to your address`,
+            status: 'success',
+            position: 'top-right',
             duration: 9000,
             isClosable: true,
-
-          })
-        })
+          });
+        });
       }
       return () => {
-        rigelEarned.off()
-      }
-    }
-    return harvestSubscription()
-
-  }, [wallet.address])
-
+        rigelEarned.off();
+      };
+    };
+    return harvestSubscription();
+  }, [wallet.address]);
 
   useEffect(() => {
-    if(wallet.chainId == "0x61"){
-      checkIfUserAddressHasBeenWhiteListed()
+    if (wallet.chainId == '0x61') {
+      checkIfUserAddressHasBeenWhiteListed();
     }
-    
+
     refreshTokenStaked();
   }, [wallet]);
 
@@ -107,57 +118,51 @@ export function FarmingPage(props) {
       }
     };
     RGPfarmingFee();
-    checkIfInitialLoading()
-
+    checkIfInitialLoading();
   }, [wallet]);
   const refreshTokenStaked = () => {
     getYieldFarmingData();
     getFarmTokenBalance();
     getTokenStaked();
-    props.changeRGPValue(wallet)
-  }
+    props.changeRGPValue(wallet);
+  };
   const checkIfInitialLoading = () => {
-    initialLoad ? setFarmingModal(true) : setFarmingModal(false)
-  }
+    initialLoad ? setFarmingModal(true) : setFarmingModal(false);
+  };
 
-  const checkIfUserAddressHasBeenWhiteListed =async ()=>{
-    try{
+  const checkIfUserAddressHasBeenWhiteListed = async () => {
+    try {
       const specialPool = await RGPSpecialPool();
-      const isItWhiteListed =await specialPool.isWhitelist(wallet.address)
-      setIsAddressWhitelist(isItWhiteListed)
-    }catch(e){
-      console.error(e)
+      const isItWhiteListed = await specialPool.isWhitelist(wallet.address);
+      setIsAddressWhitelist(isItWhiteListed);
+    } catch (e) {
+      console.error(e);
     }
-    
-  }
-  const submitDataToGetWhitelisted = () =>{
-    console.log({dataInputToGetWhiteListed})
-    onCloseModal()
+  };
+  const submitDataToGetWhitelisted = () => {
+    console.log({ dataInputToGetWhiteListed });
+    onCloseModal();
     toast({
-      title: "Address successfully submitted",
-      description: "You will be notified if you are eligible for this pool",
-      status: "success",
-      position: "bottom-right",
+      title: 'Address successfully submitted',
+      description: 'You will be notified if you are eligible for this pool',
+      status: 'success',
+      position: 'bottom-right',
       duration: 4000,
       // isClosable: true,
-
-    })
-  }
+    });
+  };
   const getSpecialPoolAPY = async () => {
     try {
-      const specialPool = await RGPSpecialPool()
+      const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) {
-
-    }
-
-  }
+    } catch (error) {}
+  };
 
   const getYieldFarmingData = async () => {
     try {
-      const rgpTotal = await getSpecialPoolAPY()
-      props.farmDataLoading(true)
+      const rgpTotal = await getSpecialPoolAPY();
+      props.farmDataLoading(true);
       const masterChef = await masterChefContract();
       let poolsData = [];
       const rgpAddress = await masterChef.poolInfo(0);
@@ -268,24 +273,23 @@ export function FarmingPage(props) {
     } catch (error) {
       console.log(error);
       if (!toast.isActive(id)) {
-        showErrorToast()
+        showErrorToast();
       }
     } finally {
-      props.farmDataLoading(false)
+      props.farmDataLoading(false);
     }
   };
 
-  const showErrorToast = () => {
-    return toast({
+  const showErrorToast = () =>
+    toast({
       id,
-      title: "Unable to load data",
-      description: "Ensure your wallet is on BSC network and reload page",
-      status: "error",
+      title: 'Unable to load data',
+      description: 'Ensure your wallet is on BSC network and reload page',
+      status: 'error',
       duration: 9000,
       isClosable: true,
-      position: "bottom-right",
-    })
-  }
+      position: 'bottom-right',
+    });
 
   const specialPoolStaked = async () => {
     if (wallet.address != '0x') {
@@ -293,15 +297,14 @@ export function FarmingPage(props) {
         const specialPool = await RGPSpecialPool();
         const RGPStakedEarned = await Promise.all([
           specialPool.userData(wallet.address),
-          specialPool.calculateRewards(wallet.address)
-        ])
+          specialPool.calculateRewards(wallet.address),
+        ]);
         return RGPStakedEarned;
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-
     }
-  }
+  };
 
   const getTokenStaked = async () => {
     try {
@@ -314,17 +317,19 @@ export function FarmingPage(props) {
           poolThreeEarned,
           poolOneStaked,
           poolTwoStaked,
-          poolThreeStaked] = await Promise.all([
-            masterChef.pendingRigel(1, wallet.address),
-            masterChef.pendingRigel(2, wallet.address),
-            masterChef.pendingRigel(3, wallet.address),
-            masterChef.userInfo(1, wallet.address),
-            masterChef.userInfo(2, wallet.address),
-            masterChef.userInfo(3, wallet.address)
-          ])
+          poolThreeStaked,
+        ] = await Promise.all([
+          masterChef.pendingRigel(1, wallet.address),
+          masterChef.pendingRigel(2, wallet.address),
+          masterChef.pendingRigel(3, wallet.address),
+          masterChef.userInfo(1, wallet.address),
+          masterChef.userInfo(2, wallet.address),
+          masterChef.userInfo(3, wallet.address),
+        ]);
 
-        const RGPStakedEarned = await specialPoolStaked()
-        let RGPStaked, RGPEarned;
+        const RGPStakedEarned = await specialPoolStaked();
+        let RGPStaked;
+        let RGPEarned;
         if (RGPStakedEarned) {
           const [specialPoolStaked, specialPoolEarned] = RGPStakedEarned;
           RGPStaked = formatBigNumber(specialPoolStaked.tokenQuantity);
@@ -348,7 +353,7 @@ export function FarmingPage(props) {
             earned: formatBigNumber(poolThreeEarned),
           },
         ]);
-        setInitialLoad(false)
+        setInitialLoad(false);
       }
     } catch (error) {
       console.error(error);
@@ -356,7 +361,6 @@ export function FarmingPage(props) {
   };
 
   const formatBigNumber = bigNumber => {
-
     const number = Number.parseFloat(ethers.utils.formatEther(bigNumber));
     if (number % 1 === 0) {
       return number.toFixed(3);
@@ -377,13 +381,7 @@ export function FarmingPage(props) {
   const getFarmTokenBalance = async () => {
     if (wallet.address != '0x') {
       try {
-        const [
-          RGPToken,
-          poolOne,
-          poolTwo,
-          poolThree,
-
-        ] = await Promise.all([
+        const [RGPToken, poolOne, poolTwo, poolThree] = await Promise.all([
           rigelToken(),
           smartSwapLPTokenPoolOne(),
           smartSwapLPTokenPoolTwo(),
@@ -394,11 +392,13 @@ export function FarmingPage(props) {
           RGPbalance,
           poolOneBalance,
           poolTwoBalance,
-          poolThreeBalance] = await Promise.all([
-            RGPToken.balanceOf(wallet.address),
-            poolOne.balanceOf(wallet.address),
-            poolTwo.balanceOf(wallet.address),
-            poolThree.balanceOf(wallet.address)])
+          poolThreeBalance,
+        ] = await Promise.all([
+          RGPToken.balanceOf(wallet.address),
+          poolOne.balanceOf(wallet.address),
+          poolTwo.balanceOf(wallet.address),
+          poolThree.balanceOf(wallet.address),
+        ]);
 
         props.updateFarmBalances([
           formatBigNumber(RGPbalance),
@@ -411,7 +411,6 @@ export function FarmingPage(props) {
       }
     }
   };
-
 
   const getRGPPrice = async () => {
     const rgpBalance = await getAddressTokenBalance(
@@ -633,7 +632,7 @@ export function FarmingPage(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   return (
@@ -650,7 +649,7 @@ export function FarmingPage(props) {
           title="RGP STAKING POOL IS COMING SOON..."
         >
           <RGPFarmInfo />
-        </ InfoModal>
+        </InfoModal>
         <Flex
           mx={5}
           justifyContent="center"
@@ -689,7 +688,7 @@ export function FarmingPage(props) {
               </Flex>
               {props.farming.contents.map(content => (
                 <YieldFarm
-                  isAddressWhitelist = {isAddressWhitelist}
+                  isAddressWhitelist={isAddressWhitelist}
                   onOpenModal={onOpenModal}
                   setShowModalWithInput={setShowModalWithInput}
                   content={content}
@@ -735,6 +734,6 @@ export default connect(
     updateFarmBalances,
     changeRGPValue,
     farmDataLoading,
-    notify
+    notify,
   },
 )(FarmingPage);
