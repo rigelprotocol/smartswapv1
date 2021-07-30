@@ -25,7 +25,7 @@ import Toast from '../../components/Toast';
 import { reConnect, disconnectWallet, updateChainId } from '../WalletProvider/actions';
 import TrustWallet from './../../components/TrustWallet/index';
 import { setWallet } from 'containers/WalletProvider/saga';
-import { isSupportedNetwork } from './../../utils/wallet-wiget/connection'
+import { isSupportedNetwork, switchToBSC } from './../../utils/wallet-wiget/connection'
 import { notify } from 'containers/NoticeProvider/actions';
 
 
@@ -52,31 +52,32 @@ const newTheme = {
 
 const App = props => {
   const { wallet } = props.state;
-
-  useEffect(() => {
-    if (window.ethereum) {
-
-      checkchain()
-      const obj = ethereum.on('chainChanged', chainId => {
-        console.log(chainId)
-        window.location.reload();
-      });
-
-    }
-  }, [])
-
   useEffect(() => {
     checkchain()
   }, [wallet]);
 
+  useEffect(() => {
+    if (window.ethereum) {
+      const obj = ethereum.on('chainChanged', chainId => {
+        console.log(chainId)
+        window.location.reload();
+      });
+    }
+  }, [])
+
+
   const checkchain = async () => {
-    const chainID = await window.ethereum.request({
-      method: 'eth_chainId',
-    })
-    props.updateChainId(chainID)
-    if (isSupportedNetwork(chainID)) {
-      listener(wallet, props);
-      reConnector(props);
+    if (window.ethereum) {
+      const chainID = await window.ethereum.request({
+        method: 'eth_chainId',
+      })
+      props.updateChainId(chainID)
+      if (isSupportedNetwork(chainID)) {
+        listener(wallet, props);
+        reConnector(props);
+      } else {
+        switchToBSC();
+      }
     }
   }
 
@@ -89,6 +90,7 @@ const App = props => {
           <Route exact path="/" component={Splash} />
           <Route exact path="/farming" component={FarmingPage} />
           <Route exact path="/liquidity" component={LiquidityPage} />
+          <Route exact path="/liquidity/:pair" component={LiquidityPage} />
           <Route exact path="/swap/" component={HomePage} />
           <Route exact path="/swap/:pair" component={HomePage} />
           <Route exact path="/margin-trading" component={MarginTradingPage} />

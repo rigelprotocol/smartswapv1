@@ -6,10 +6,12 @@ import BNBImage from '../../assets/bnb.svg';
 import RGPImage from '../../assets/rgp.svg';
 import ETHImage from '../../assets/eth.svg';
 import BUSDImage from '../../assets/busd.svg';
+import NullImage from '../../assets/Null-24.svg';
 
 const LiquidityDetails = ({
   value,
-  addLiquidity,
+  addMoreLiquidity,
+  addMoreLiquidityButton,
   removeLiquidity,
   removeALiquidity,
 }) => (
@@ -28,7 +30,7 @@ const LiquidityDetails = ({
           {value.path[0].token === "RGP" ?
             <RGPImage /> : value.path[0].token === "BUSD" ?
               <BUSDImage /> : value.path[0].token === "ETH" ?
-                <ETHImage /> : <BNBImage />
+                <ETHImage /> : <NullImage />
           }
           {value.pooledToken0}
         </Box>
@@ -40,7 +42,7 @@ const LiquidityDetails = ({
           {value.path[1].token === "RGP" ?
             <RGPImage /> : value.path[1].token === "BUSD" ?
               <BUSDImage /> : value.path[1].token === "ETH" ?
-                <ETHImage /> : <BNBImage />
+                <ETHImage /> : <NullImage />
           }
           {value.pooledToken1}
         </Box>
@@ -64,8 +66,9 @@ const LiquidityDetails = ({
           mb="4"
           mr="6"
           cursor="pointer"
+          disabled={addMoreLiquidityButton}
           _hover={{ color: '#423a85' }}
-          onClick={() => addLiquidity()}
+          onClick={() => addMoreLiquidity(value)}
         >
           Add
       </Button>
@@ -92,6 +95,7 @@ LiquidityDetails.propTypes = {
   value: PropTypes.object.isRequired,
   removeALiquidity: PropTypes.func.isRequired,
   removeLiquidity: PropTypes.func.isRequired,
-  addLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidityButton: PropTypes.bool.isRequired,
 };
 export default LiquidityDetails;

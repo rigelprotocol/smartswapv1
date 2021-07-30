@@ -46,7 +46,6 @@ const BSCmainnetTokens = {
 };
 const BSC_MAIN_NET_ID =
   window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
-
 export const TOKENS_CONTRACT =
   checkNetVersion() === BSC_MAIN_NET_ID.toString()
     ? BSCmainnetTokens
@@ -72,7 +71,7 @@ const BSCTestnet = {
   SmartFactory: '0x7B14Ab51fAF91926a2214c91Ce9CDaB5C0E1A1c3',
   SMART_SWAPPING: '0x00749e00Af4359Df5e8C156aF6dfbDf30dD53F44',
   ETHRGPSMARTSWAPPAIR: '0xca01606438556b299005b36B86B38Fe506eadF9F',
-  specialPool: '0x7eB7792959cbEDDf44E199397105F4dE39928bAF',
+  specialPool: '0x4Be275eF94AF45E163c6b3182467191025E883B4',
   RigelSmartContract: '0x9f0227A21987c1fFab1785BA3eBa60578eC1501B',
   masterChef: '0x71C07230dF8b60aef6e3821CA2Dee530966EFc2D',
   masterChefPoolOne: '0x0B0a1E07931bD7991a104218eE15BAA682c05e01',
@@ -87,10 +86,12 @@ export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
 export const tokenList = [
-  { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '' },
+  { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '',available:true },
   {
     symbol: 'RGP',
     abi: RigelToken,
+    available:true,
+    imported:false,
     name: 'Rigel Protocol',
     img: '../../assets/rgp.svg',
     address:
@@ -101,6 +102,8 @@ export const tokenList = [
   {
     abi: BUSD,
     symbol: 'BUSD',
+    available:true,
+    imported:false,
     name: 'Binance USD',
     img: '../../assets/bnb.svg',
     address:
@@ -119,6 +122,8 @@ export const tokenList = [
   {
     abi: WETH9,
     symbol: 'WBNB',
+    available:true,
+    imported:false,
     name: 'Wrapped BNB',
     img: '../../assets/eth.svg',
     address:
@@ -129,6 +134,8 @@ export const tokenList = [
   {
     abi: WETH9,
     symbol: 'BNB',
+    available:true,
+    imported:false,
     name: 'BNB',
 
     img: '../../assets/eth.svg',
@@ -161,6 +168,8 @@ export const convertToNumber = (hex, decimals) => {
   }
   return balanceDecimal.toLocaleString();
 };
+
+export const checkIfTokenIsListed = symbol => tokenList.find(token => token.symbol === symbol)
 
 // export const convertIndexToAlphetString = number =>
 //   number
@@ -239,6 +248,17 @@ export const balanceAbi = [
     ],
     stateMutability: 'view',
     type: 'function',
+  },
+];
+export const decimalAbi = [
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [{ "name": "", "type": "uint8" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
 ];
 // export const balanceAbi = [

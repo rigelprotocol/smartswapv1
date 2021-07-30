@@ -17,6 +17,7 @@ import {
   ModalHeader,
   ModalBody,
   Tooltip,
+  useToast
 } from '@chakra-ui/react';
 import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -61,23 +62,85 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   const [approvalLoading, setApprovalLoading] = useState(false)
 
+  const toast = useToast()
+  useEffect(() => {
+    const stakeSubscription = async () => {
+      const specialPool = await RGPSpecialPool();
+      if (wallet.address != "0x") {
+        const filter = specialPool.filters.Stake(wallet.address, null, null);
+        specialPool.on(filter, (userAddress, stakedAmount, time) => {
+          toast({
+            title: "RGP Staking Successful",
+            description: `${ethers.utils.formatEther(stakedAmount)} RGP has been successfully staked`,
+            status: "success",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+
+          })
+        })
+
+        const unstakeFilter = specialPool.filters.UnStake(wallet.address, null, null);
+        specialPool.on(unstakeFilter, (userAddress, unStakedAmount, time) => {
+          toast({
+            title: "RGP Unstaking Successful",
+            description: `${ethers.utils.formatEther(unStakedAmount)} RGP has been successfully unstaked`,
+            status: "success",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+
+          })
+        })
+
+        const withdrawRewardFilter = specialPool.filters.withdrawReward(null, null, wallet.address, null);
+        specialPool.on(withdrawRewardFilter, (tokenAmount, from, to, time) => {
+          toast({
+            title: "RGP harvest Successful",
+            description: `${ethers.utils.formatEther(tokenAmount)} RGP has been sent to your address`,
+            status: "success",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+          })
+        })
+      }
+      return () => {
+        specialPool.off()
+      }
+    }
+    return stakeSubscription()
+
+  }, [wallet.address])
+
   const getAllowances = async () => {
     try {
-      const [pool1, pool2, pool3] = await Promise.all(
-        [smartSwapLPTokenPoolOne(),
+      const [rigel, pool1, pool2, pool3] = await Promise.all(
+        [rigelToken(),
+        smartSwapLPTokenPoolOne(),
         smartSwapLPTokenPoolTwo(),
-        smartSwapLPTokenPoolThree(),])
+        smartSwapLPTokenPoolThree(),
+        ])
       if (wallet.address != '0x') {
 
         const [
           pool1Allowance,
           pool2Allowance,
           pool3Allowance] = await Promise.all([allowance(pool1), allowance(pool2), allowance(pool3)])
-        updateFarmAllowances([
-          pool1Allowance,
+        let rigelAllowance;
+        if (SMART_SWAP.specialPool) {
+          rigelAllowance = await rigel.allowance(wallet.address, SMART_SWAP.specialPool)
+        } else {
+          rigelAllowance = pool1Allowance
+        }
+
+         updateFarmAllowances([
+          rigelAllowance,
           pool2Allowance,
           pool1Allowance,
           pool3Allowance])
+
+
       }
     } catch (error) {
       console.error(error, "something went wrong")
@@ -253,7 +316,6 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
 
   // withdrawal of funds
   const RGPUnstake = async () => {
-    console.log('opening usewithdrawal now.');
     if (wallet.signer !== 'signer') {
       const specialPool = await RGPSpecialPool();
       const data = await specialPool.unStake(
@@ -532,13 +594,24 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
 
   // ............................................END LP FOR BNB-BUSD TOKENS .........................................
   const harvest = async pId => {
-    if (wallet.signer !== 'signer' && pId != 0) {
+    openSpinModal('Harvest Pending...', `Harvest ${depositTokenValue}`)
+    if (wallet.signer !== 'signer') {
       try {
-        const lpTokens = await masterChefContract();
-        const withdraw = await lpTokens.withdraw(pId, 0);
-        const { confirmations, status } = await fetchTransactionData(withdraw);
-        callRefreshFarm(confirmations, status);
+        if (pId === 0) {
+          const specialPool = await RGPSpecialPool()
+          const specialWithdraw = await specialPool.unStake(0);
+          const { confirmations, status } = await fetchTransactionData(specialWithdraw);
+          callRefreshFarm(confirmations, status);
+        } else {
+          const lpTokens = await masterChefContract();
+          const withdraw = await lpTokens.withdraw(pId, 0);
+          const { confirmations, status } = await fetchTransactionData(withdraw);
+          callRefreshFarm(confirmations, status);
+        }
       } catch (error) {
+        console.log(error)
+      } finally {
+        closeSpinModal()
       }
     }
   };
@@ -615,11 +688,11 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
   };
   const confirmDeposit = async val => {
     setDepositValue('Pending Confirmation');
-    openSpinModal('Depositing...', `Depositing ${depositTokenValue} ${val}`)
+    openSpinModal('Staking...', `Staking ${depositTokenValue} ${val}`)
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
-          // await RGPuseStake(depositTokenValue);
+         await RGPuseStake(depositTokenValue);
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpDeposit(depositTokenValue);
         } else if (val === 'BNB-BUSD') {
@@ -645,7 +718,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
-          // await RGPUnstake();
+           await RGPUnstake();
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpTokensWithdrawal();
         } else if (val === 'BNB-BUSD') {
@@ -763,10 +836,14 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
               h="50px"
               borderRadius="12px"
               bg={
-                'rgba(64, 186,213, 0.1)'
+                approveValueForRGP && approveValueForOtherToken
+                  ? '#444159'
+                  : 'rgba(64, 186,213, 0.1)'
               }
               color={
-                '#40BAD5'
+                approveValueForRGP && approveValueForOtherToken
+                  ? 'rgba(190, 190, 190, 1)'
+                  : '#40BAD5'
               }
               border="0"
               mb="4"
@@ -812,13 +889,13 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
             w="100%"
             h="50px"
             borderRadius="12px"
-            bg="rgba(64, 186,213, 0.1)"
-            color="#40BAD5"
+            bg="#444159"
+            color="rgba(190, 190, 190, 1)"
             border="0"
             mb="4"
             mr="6"
             cursor="pointer"
-            _hover={{ color: 'white' }}
+            _hover={{ bg: '#444159' }}
             onClick={() => harvest(content.pId)}
           >
             Harvest

@@ -1,3 +1,12 @@
+import { tokenList } from 'utils/constants';
+import { convertFromWei } from 'utils/UtilFunc';
+import Web3 from 'web3'
+import { getAddress } from '@ethersproject/address'
+import { Contract } from '@ethersproject/contracts'
+import ERC20Token from 'utils/abis/ERC20Token.json';
+import { getProvider } from 'utils/SwapConnect';
+import { filter } from 'lodash';
+
 // import { SmartFactory } from './SwapConnect';
 // list all transactions here
 // export default async function Tokens() {
@@ -102,3 +111,72 @@
 //     );
 //   };
 // }
+
+// SEARCH TOKENS
+export const getTokenList =async (searchToken,account) =>{
+   const filteredTokenList = filterAvailableTokenList(searchToken)
+   if(filteredTokenList.length>0){
+      return filteredTokenList
+   }else{
+      let addressOfToken = isItAddress(searchToken)
+     let tokenData = addressOfToken ? await getTokenWithContract(searchToken,account) :  getTokenWithoutContract(searchToken,account)
+      return tokenData.length > 0 ? tokenData : []
+   }
+}
+
+export const getTokenWithContract = async (searchToken,account) =>{
+  
+   try{
+       let contract =new Contract(searchToken, ERC20Token, getProvider())
+      let name = await contract.name()
+      let symbol = await contract.symbol()
+      let balance = account.address == "0x" ? "" : await contract.balanceOf(account.address)
+      let decimals = await contract.decimals()
+      let address =  contract.address
+      let filteredTokenList = filterTokenListWithAddress(symbol)
+      if(filteredTokenList.length>0){
+         return filteredTokenList
+      }else{
+      let tokenObject = [{
+      name: name.toString(),
+      balance: convertFromWei(balance,decimals),
+      available:false,
+      imported:false,
+      symbol,
+      img:"",
+      address
+   }] 
+   return tokenObject 
+}
+    
+   }catch(e){
+      console.log(e)
+   }
+
+}
+export const getTokenWithoutContract = (searchToken) =>{
+return []
+}
+export const isItAddress  = (token) => {
+   try {
+      return getAddress(token)
+    } catch {
+      return false
+    }
+}
+
+export const filterAvailableTokenList =(searchToken) =>{
+ const filteredTokenList = tokenList.filter(
+        token =>
+          token.symbol.toLowerCase().includes(searchToken.toLowerCase()) ||
+          token.name.toLowerCase().includes(searchToken.toLowerCase()),
+      );
+     return filteredTokenList
+}
+export const filterTokenListWithAddress =(symbol) =>{
+ const filteredTokenList = tokenList.filter(
+        token =>
+          token.symbol.toLowerCase() ===symbol.toLowerCase()
+      );
+     return filteredTokenList
+}

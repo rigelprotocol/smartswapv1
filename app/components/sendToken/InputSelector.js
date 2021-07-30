@@ -7,6 +7,7 @@ import { Input } from '@chakra-ui/input';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useMediaQuery, Image } from '@chakra-ui/react';
 import { tokenList, tokenWhere } from '../../utils/constants';
+import NullImage24 from '../../assets/Null-24.svg';
 
 const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
@@ -67,9 +68,12 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                   {typeof selectedToken.symbol !== 'undefined' && (
                     <>
                       <Image src={selectedToken.img} />
-                      <span
+                      {selectedToken.imported ===true   ? <NullImage24 /> : <span
                         className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
                       />
+
+                      }
+                      
                       <Text ml={4}>{selectedToken.symbol}</Text>
                     </>
                   )}

@@ -6,7 +6,8 @@
 
 import {
   DEFAULT_ACTION, CHANGE_FARMING_CONTENT, CHANGE_FARMING_CONTENT_TOKEN, CHANGE_RGP_FARMING_FEE,
-  UPDATE_TOTAL_LIQUIDITY, UPDATE_TOKEN_STAKED, UPDATE_FARM_BALANCES, UPDATE_FARM_ALLOWANCE
+  UPDATE_TOTAL_LIQUIDITY, UPDATE_TOKEN_STAKED, UPDATE_FARM_BALANCES, UPDATE_FARM_ALLOWANCE, FARM_DATA_LOADING,
+
 } from './constants';
 
 export function defaultAction() {
@@ -39,6 +40,10 @@ export const updateFarmBalances = value => dispatch => {
 
 export const updateFarmAllowances = value => dispatch => {
   dispatch({ type: UPDATE_FARM_ALLOWANCE, payload: value })
+}
+
+export const farmDataLoading = value => dispatch => {
+  dispatch({ type: FARM_DATA_LOADING, payload: value })
 }
 
 

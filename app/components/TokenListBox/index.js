@@ -7,7 +7,6 @@
  * TokenListBox
  *
  */
-
 import {
   Modal,
   ModalBody,
@@ -21,42 +20,69 @@ import React, { useEffect, useState } from 'react';
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 import { Input } from '@chakra-ui/react';
-import { Flex, Text } from '@chakra-ui/layout';
+import { Flex, Text, Box } from '@chakra-ui/layout';
+import { Button } from '@chakra-ui/button';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import { tokenList } from 'utils/constants';
 import { getTokenListBalance } from 'utils/wallet-wiget/TokensUtils';
 import { isFunc } from 'utils/UtilFunc';
 import ArrowDownImage from '../../assets/arrow-down.svg';
+import {getTokenList } from "utils/tokens"
+import NewTokenModal from './NewTokenModal';
+
 function TokenListBox({
   setSelectedToken,
   setPathArray,
   getToAmount,
   setSelectedToToken,
   setPathToArray,
+  checkIfLiquidityPairExist,
   isOpen,
   onClose,
+  isOpenModal,
+  onOpenModal,
+  onCloseModal,
   wallet,
 }) {
   const [list, setList] = useState(tokenList);
   const [balanceIsSet, setBalanceIsSet] = useState(false);
   const [searchToken, setSearchToken] = useState('');
+  const [selectedTokenForModal, setSelectedTokenForModal] = useState({});
   const account = wallet.wallet;
   useEffect(() => {
     getTokenListBalance(list, account, setBalanceIsSet);
   }, [isOpen, account]);
   useEffect(() => {
-    if (searchToken !== '') {
-      const filteredTokenList = tokenList.filter(
-        token =>
-          token.symbol.toLowerCase().includes(searchToken.toLowerCase()) ||
-          token.name.toLowerCase().includes(searchToken.toLowerCase()),
-      );
-      return setList(filteredTokenList);
-    }
+    searchTokens()
     return setList(tokenList);
   }, [searchToken]);
+  const searchTokens =async ()=>{
+    if (searchToken !== '') {
+      let tokenArrayList =await getTokenList(searchToken,account)
+      return setList(tokenArrayList);
+    }
+  }
+  const importToken = (token) =>{
+    token.available=true
+    token.imported = true
+    isFunc(setSelectedToken) && setSelectedToken(token);
+    isFunc(setSelectedToToken) && setSelectedToToken(token);
+    isFunc(setPathToArray) &&
+      setPathToArray(token.address, token.symbol);
+    isFunc(setPathArray) &&
+      setPathArray(token.address, token.symbol);
+    isFunc(getToAmount) && getToAmount();
+    onCloseModal()
+    if(isFunc(onClose)){
+      onClose();
+      setSearchToken('')
+      setSelectedTokenForModal({})
+    }
+ checkIfLiquidityPairExist()
+  }
   return (
+    <>
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent
@@ -95,23 +121,32 @@ function TokenListBox({
             <ArrowDownImage />
           </Flex>
           {list.map((token,index) => (
+            <>
             <Flex
+            
               justifyContent="space-between"
               mt={1}
               cursor="pointer"
               onClick={() => {
-                isFunc(setSelectedToken) && setSelectedToken(token);
+                if(token.available){
+                    isFunc(setSelectedToken) && setSelectedToken(token);
                 isFunc(setSelectedToToken) && setSelectedToToken(token);
                 isFunc(setPathToArray) &&
                   setPathToArray(token.address, token.symbol);
                 isFunc(setPathArray) &&
                   setPathArray(token.address, token.symbol);
                 isFunc(getToAmount) && getToAmount();
-                isFunc(onClose) && onClose();
+                if(isFunc(onClose)){
+                  onClose();
+                  setSearchToken('')
+                }  
+              checkIfLiquidityPairExist()
+                }
+              
               }}
               key={index}
             >
-              <Flex alignItems="center">
+              <Flex alignItems="center" opacity={!token.available ? "0.2":""}>
                 <span className={`icon icon-${token.symbol.toLowerCase()}`} />
                 <Text fontSize="md" fontWeight="regular" color="#ffinf" ml={2}>
                   {token.symbol}
@@ -123,14 +158,43 @@ function TokenListBox({
                 </Text>
               </Flex>
               <Text fontSize="md" fontWeight="regular" color="#fff">
-                {!balanceIsSet ? '0.0' : token.balance}
+                {token.available ?
+                 !balanceIsSet ? '0.0' : 
+                 token.balance :
+                 <Button 
+                 border="0" 
+                 bg="#29235eda" 
+                 color="rgba(255, 255, 255, 0.555)" 
+                 borderRadius="15px" cursor="pointer" 
+                 _hover={{ color: 'white' }}
+                 onClick={()=> {
+                   setSelectedTokenForModal(token)
+                   React.useMemo(onOpenModal())
+                  }}
+                 >
+                  Import
+                  </Button>
+                  }
+                
               </Text>
-            </Flex>
+        
+            </Flex>  
+             {token.imported && <Text fontSize="10px" mt="-12px" color= '#b3b3b3' ml="10px">imported by user</Text>}
+          </>
           ))}
         </ModalBody>
         <ModalFooter />
       </ModalContent>
     </Modal>
+    
+    <NewTokenModal 
+    onCloseModal={onCloseModal}
+    isOpenModal={isOpenModal}
+    selectedTokenForModal={selectedTokenForModal}
+    importToken={importToken}
+    />
+  
+    </>
   );
 }
 TokenListBox.propTypes = {

@@ -3,8 +3,9 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import { notify } from 'containers/NoticeProvider/actions';
 import configureStore from 'configureStore';
 import { WALLET_CONNECTED } from 'containers/WalletProvider/constants';
-import { formatBalance } from 'utils/UtilFunc';
-import { balanceAbi } from '../constants';
+import { formatBalance,convertFromWei } from 'utils/UtilFunc';
+import { balanceAbi,decimalAbi } from '../constants';
+import { add } from 'lodash';
 const store = configureStore();
 
 export const provider = async () => {
@@ -37,12 +38,17 @@ export const getAddressTokenBalance = async (
   walletSigner,
 ) =>
   formatBalance(
-    ethers.utils.formatEther(
+    convertFromWei(
       await new ethers.Contract(
         tokenAddress,
         balanceAbi,
         walletSigner,
       ).balanceOf(address),
+      await new ethers.Contract(
+        tokenAddress,
+        decimalAbi,
+        walletSigner,
+      ).decimals()
     ),
   );
 /**
@@ -89,7 +95,6 @@ export const connectionEventListener = wallet => dispatch => {
 
 export function disconnectUser() {
 }
-// Object.fromEntries( Object.entries(TOKENS_CONTRACT).filter(([key, value]) => key === symbol))
 export const setupNetwork = async () => {
   const walletProvider = window.ethereum;
   if (walletProvider !== undefined && walletProvider.isTrust) {
@@ -128,4 +133,50 @@ const supportedNetworks = ["0x61", '0x38', 'chainId']
 
 export const isSupportedNetwork = (chainId) => {
   return supportedNetworks.includes(chainId);
+}
+
+
+const checkMetamask = async () => {
+  const provider = await detectEthereumProvider();
+  return !!provider;
+}
+
+export const switchToBSC = async () => {
+  if (checkMetamask()) {
+    try {
+      await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x38' }],
+      });
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        addBSCToMetamask()
+      }
+      // handle other  errors codes
+    }
+  }
+}
+
+const addBSCToMetamask = async () => {
+  try {
+    await ethereum.request({
+      method: 'wallet_addEthereumChain',
+      params: [
+        {
+          chainId: '0x38',
+          chainName: 'Smart Chain',
+          nativeCurrency: {
+            name: 'BSC Mainet',
+            symbol: 'BNB',
+            decimals: 18,
+          },
+          rpcUrls: ['https://bsc-dataseed.binance.org/'],
+          blockExplorerUrls: ['https://bscscan.com/'],
+        },
+      ],
+    });
+  } catch (addError) {
+    console.log(addError)
+  }
 }
