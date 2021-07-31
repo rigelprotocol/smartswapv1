@@ -18,7 +18,7 @@ import specialPool from 'utils/abis/specialPool.json';
 import configureStore from 'configureStore';
 import { SMART_SWAP, checkNetVersion } from './constants';
 
-const store = configureStore();
+const { store } = configureStore();
 export const getProvider = () => {
   try {
     return new ethers.providers.Web3Provider(window.ethereum);
@@ -36,7 +36,6 @@ export const getSigner = () => {
     return signer;
   } catch (e) { }
 };
-
 // ----------------------------------------------------------------- LIVE DEPLOYMENT CONTRACT -----------------------------------------
 
 //
@@ -55,7 +54,7 @@ export const updateOutPutAmountForRouter = async () =>
     getSigner(),
   );
 
-  export const masterChefContract = async () =>
+export const masterChefContract = async () =>
   new ethers.Contract(SMART_SWAP.masterChef, masterChef, getSigner());
 
 export const smartSwapLPTokenPoolOne = async () =>
