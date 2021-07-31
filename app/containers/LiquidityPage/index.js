@@ -215,8 +215,10 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
       const toPath = ethers.utils.getAddress(toAddress);
       const LPAddress = await factory.getPair(toPath, fromPath);
       const LPcontract = await LPTokenContract(LPAddress)
+      
       const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
       const token0 = await LPcontract.token0();
+      console.log({token0,tokenAReserve,tokenBreserve})
       let liquidityRatio;
       if (token0.toString() == fromPath.toString()) {
         liquidityRatio = tokenBreserve.toString() / tokenAReserve.toString();
@@ -393,6 +395,8 @@ const checkIfTokensHasBeenApproved =() => {
     setDisplayButton(false)
     setFromSelectedToken(tokenWhere('rgp'))
     setToSelectedToken(tokenWhere("SELECT A TOKEN"))
+    setFromAddress("")
+    setToAddress("")
     setNewTokenPairButton(false)
     setButtonValue("Supply")
     onCloseModal()
