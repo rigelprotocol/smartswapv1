@@ -70,7 +70,11 @@ export const Manual = props => {
 
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   useEffect(() => {
-
+    // setPath();
+    // setSelectedToken();
+    // setSelectedToToken();
+  }, []);
+  useEffect(() => {
     (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])

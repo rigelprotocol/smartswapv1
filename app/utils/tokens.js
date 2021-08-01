@@ -3,6 +3,7 @@ import { getAddress } from '@ethersproject/address';
 import { Contract } from '@ethersproject/contracts';
 import ERC20Token from 'utils/abis/ERC20Token.json';
 import { getProvider } from 'utils/SwapConnect';
+import { tokenList } from 'utils/constants';
 
 // import { SmartFactory } from './SwapConnect';
 // list all transactions here
@@ -111,13 +112,17 @@ import { getProvider } from 'utils/SwapConnect';
 
 // SEARCH TOKENS
 export const getTokenList = async (searchToken, account, list) => {
-  const filteredTokenList = filterAvailableTokenList(searchToken, list);
+  let tokens = list;
+  if (tokens === undefined) {
+    tokens = tokenList();
+  }
+  const filteredTokenList = filterAvailableTokenList(searchToken, tokens);
   if (filteredTokenList.length > 0) {
     return filteredTokenList;
   }
   const addressOfToken = isItAddress(searchToken);
   const tokenData = addressOfToken
-    ? await getTokenWithContract(searchToken, account, list)
+    ? await getTokenWithContract(searchToken, account, tokens)
     : getTokenWithoutContract();
   // let tokenData = await getTokenWithWeb3(searchToken,account)
   return tokenData.length > 0 ? tokenData : [];

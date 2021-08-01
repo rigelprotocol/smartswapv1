@@ -63,7 +63,7 @@ const App = props => {
     (async () => {
       await props.getTokenList();
     })();
-  }, []);
+  }, [wallet]);
 
   useEffect(() => {
     if (window.ethereum) {
@@ -90,6 +90,7 @@ const App = props => {
     } else {
       switchToBSC();
     }
+    await props.getTokenList();
   };
 
   return (

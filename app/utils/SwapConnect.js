@@ -22,7 +22,7 @@ const { store } = configureStore();
 export const getProvider = () => {
   try {
     return new ethers.providers.Web3Provider(window.ethereum);
-  } catch (Exception) { }
+  } catch (Exception) {}
 };
 export const getSigner = () => {
   try {
@@ -34,7 +34,7 @@ export const getSigner = () => {
       }
     }
     return signer;
-  } catch (e) { }
+  } catch (e) {}
 };
 // ----------------------------------------------------------------- LIVE DEPLOYMENT CONTRACT -----------------------------------------
 
@@ -58,13 +58,25 @@ export const masterChefContract = async () =>
   new ethers.Contract(SMART_SWAP.masterChef, masterChef, getSigner());
 
 export const smartSwapLPTokenPoolOne = async () =>
-  new ethers.Contract(SMART_SWAP.masterChefPoolOne, SmartSwapLPTokenOne, getSigner());
+  new ethers.Contract(
+    SMART_SWAP.masterChefPoolOne,
+    SmartSwapLPTokenOne,
+    getSigner(),
+  );
 
 export const smartSwapLPTokenPoolTwo = async () =>
-  new ethers.Contract(SMART_SWAP.masterChefPoolTwo, SmartSwapLPTokenTwo, getSigner());
+  new ethers.Contract(
+    SMART_SWAP.masterChefPoolTwo,
+    SmartSwapLPTokenTwo,
+    getSigner(),
+  );
 
 export const smartSwapLPTokenPoolThree = async () =>
-  new ethers.Contract(SMART_SWAP.masterChefPoolThree, SmartSwapLPTokenThree, getSigner());
+  new ethers.Contract(
+    SMART_SWAP.masterChefPoolThree,
+    SmartSwapLPTokenThree,
+    getSigner(),
+  );
 
 // router contract where trx is made for both liquidity and swap
 export const smartSwapLPToken = async () =>
@@ -105,7 +117,10 @@ export const BNBTOKEN = async () =>
 
 // WETH (ETH)
 export const WETH = async () => {
-  const WETH9Address = (checkNetVersion() == 56) ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A';
+  const WETH9Address =
+    checkNetVersion() == 56
+      ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+      : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A';
   return new ethers.Contract(WETH9Address, WETH9, getSigner());
 };
 

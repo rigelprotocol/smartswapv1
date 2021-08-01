@@ -29,6 +29,7 @@ import {
 } from 'containers/WalletProvider/actions';
 import { ethers } from 'ethers';
 import { balanceAbi } from 'utils/constants';
+import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
 import NewTokenModal from './NewTokenModal';
 import CurrencyList from './components/CurrencyList';
 import ManageToken from './components/ManageToken';
@@ -88,11 +89,11 @@ function TokenListBox({
           ({ balance } = account);
         }
         if (address !== undefined && signer !== 'signer' && symbol !== 'BNB') {
-          balance = (await new ethers.Contract(
+          balance = await getAddressTokenBalance(
+            account.address,
             address,
-            balanceAbi,
             signer,
-          ).balanceOf(account.address)).toString();
+          );
         }
         return { ...token, balance };
       }),

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import Web3 from 'web3';
+import configureStore from 'configureStore';
 
 export const checkNetVersion = () => {
   if (window.ethereum && window.ethereum.chainId !== null) {
@@ -81,54 +82,42 @@ const BSCTestnet = {
 
 export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
+const { store } = configureStore();
+console.log(configureStore().store.getState().ExtendedTokenList);
+export const tokenList = () => {
+  let allToken = [];
+  const storedReducer = JSON.parse(localStorage.getItem('persist:root'));
+  if (storedReducer != null) {
+    const reducerWallet = JSON.parse(storedReducer.ExtendedTokenList);
+    allToken =
+      reducerWallet !== undefined && reducerWallet.tokenList.length > 0
+        ? reducerWallet.tokenList
+        : [];
+  }
+  if (allToken.length === 0) {
+    setTimeout(() => tokenList(), 1000);
+  }
+  return allToken;
+};
+const tokenSource =
+  'https://tokens.pancakeswap.finance/pancakeswap-extended.json';
 
-export const tokenList = [
-  {
-    name: 'Select a token',
-    symbol: 'SELECT A TOKEN',
-    img: '',
-    available: true,
-  },
-  {
-    symbol: 'RGP',
-    available: true,
-    imported: false,
-    name: 'Rigel Protocol',
-    logoURI: '../../assets/rgp.svg',
-    address:
-      checkNetVersion() === BSC_MAIN_NET_ID.toString()
-        ? '0xFA262F303Aa244f9CC66f312F0755d89C3793192'
-        : '0x9f0227a21987c1ffab1785ba3eba60578ec1501b',
-  },
-  {
-    symbol: 'BUSD',
-    available: true,
-    imported: false,
-    name: 'Binance USD',
-    logoURI:
-      'https://tokens.pancakeswap.finance/images/0xe9e7cea3dedca5984780bafc599bd69add087d56.png',
-    address:
-      checkNetVersion() === BSC_MAIN_NET_ID.toString()
-        ? '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
-        : '0x10249e900b919fdee9e2ed38b4cd83c4df857254',
-  },
-  {
-    symbol: 'BNB',
-    available: true,
-    imported: false,
-    name: 'BNB',
-    logoURI:
-      'https://tokens.pancakeswap.finance/images/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
-    address:
-      checkNetVersion() === BSC_MAIN_NET_ID.toString()
-        ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-        : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
-  },
-];
+export const getTokens = () =>
+  fetch(tokenSource, {
+    methods: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  }).then(data => data.json());
 
-export const tokenWhere = field =>
-  field !== null &&
-  tokenList.filter(fields => fields.symbol === field.toUpperCase())[0];
+export const tokenWhere = field => {
+  const list = tokenList();
+  if (list.length > 0) {
+    return (
+      field !== null &&
+      list.filter(fields => fields.symbol === field.toUpperCase())[0]
+    );
+  }
+  tokenWhere(field);
+};
 
 export const tokenAddressWhere = symbol => tokenWhere(symbol).address;
 
@@ -142,7 +131,7 @@ export const convertToNumber = (hex, decimals) => {
 };
 
 export const checkIfTokenIsListed = symbol =>
-  tokenList.find(token => token.symbol === symbol);
+  tokenList().find(token => token.symbol === symbol);
 
 // export const convertIndexToAlphetString = number =>
 //   number

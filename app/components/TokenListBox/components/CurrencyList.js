@@ -70,6 +70,7 @@ const CurrencyList = ({
             itemSize={10}
             itemKey={Row.index}
             useIsScrolling
+            itemData={list}
           >
             {Row}
           </FixedSizeList>
@@ -104,3 +105,4 @@ CurrencyList.propTypes = {
   setShowCurrencyList: PropTypes.func,
 };
 export default CurrencyList;
+

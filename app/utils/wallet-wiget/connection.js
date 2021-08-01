@@ -5,7 +5,7 @@ import configureStore from 'configureStore';
 import { WALLET_CONNECTED } from 'containers/WalletProvider/constants';
 import { formatBalance, convertFromWei } from 'utils/UtilFunc';
 import { balanceAbi, decimalAbi } from '../constants';
-const store = configureStore();
+const { store } = configureStore();
 
 export const provider = async () => {
   try {

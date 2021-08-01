@@ -34,6 +34,7 @@ import {
   TOGGLE_LIST_SHOW,
 } from './constants';
 import defaultTokenList from '../../utils/default-token.json';
+import test_netTokenList from '../../utils/test-net-tokens.json';
 
 export const reConnect = (wallet) => async dispatch => {
   try {
@@ -158,17 +159,11 @@ export const getTokenAddress = (chainId) => {
 }
 
 export const getTokenList = () => async (dispatch) => {
-  let allToken;
-  const storedReducer = JSON.parse(await localStorage.getItem("persist:root"));
-  if (storedReducer != null) {
-    const reducerWallet = JSON.parse(storedReducer.ExtendedTokenList)
-    allToken = reducerWallet.tokenList;
-  }
-  if (allToken === undefined || allToken.length == 0 || storedReducer === undefined) {
-    console.log(defaultTokenList)
-    allToken = tokenList.concat(defaultTokenList);
-  }
-  const returnData = allToken.map((token, id) => {
+  const chainID = await window.ethereum.request({
+    method: 'eth_chainId',
+  });
+  const tokenByNetwork = chainID === '0x38' ? defaultTokenList : chainID === '0x61' ? test_netTokenList : [];
+  const returnData = tokenByNetwork.map((token, id) => {
     const balance = null;
     const available = true;
     const imported = !!token.imported;
