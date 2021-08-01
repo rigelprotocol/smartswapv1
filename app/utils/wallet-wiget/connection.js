@@ -92,7 +92,7 @@ export const connectionEventListener = wallet => dispatch => {
   return true;
 };
 
-export function disconnectUser() { }
+export function disconnectUser() {}
 // Object.fromEntries( Object.entries(TOKENS_CONTRACT).filter(([key, value]) => key === symbol))
 export const setupNetwork = async () => {
   const walletProvider = window.ethereum;

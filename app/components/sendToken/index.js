@@ -68,12 +68,7 @@ export const Manual = props => {
   const [slippage, setSlippage] = useLocalStorage("slippage", 1.5)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
 
-  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
-  useEffect(() => {
-    // setPath();
-    // setSelectedToken();
-    // setSelectedToToken();
-  }, []);
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure();
   useEffect(() => {
     (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()

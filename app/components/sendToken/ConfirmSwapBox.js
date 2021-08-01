@@ -11,6 +11,7 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
+  Image,
 } from '@chakra-ui/react';
 import { QuestionIcon, ArrowUpIcon, CloseIcon } from '@chakra-ui/icons';
 import { Box, Flex } from '@chakra-ui/layout';
@@ -40,7 +41,7 @@ const ConfirmSwapBox = props => {
     selectedToken,
     selectedToToken,
     openLoadingSpinnerAndSwap,
-    liquidityProviderFee
+    liquidityProviderFee,
   } = props;
 
   return (
@@ -68,13 +69,10 @@ const ConfirmSwapBox = props => {
               <Box>
                 <Text>
                   {!isNotEmpty(selectedToken) && (
-                    <span
-                      className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
-                    />
+                    <Image src={selectedToken.logoURI} />
                   )}
                   {` `}
                   {!isNotEmpty(selectedToken) && selectedToken.symbol}
-                  {path[0] !== undefined && path[0].token}
                 </Text>
               </Box>
             </Flex>
@@ -88,9 +86,7 @@ const ConfirmSwapBox = props => {
               <Box>
                 <Text>
                   {!isNotEmpty(selectedToToken) && (
-                    <span
-                      className={`icon icon-${selectedToToken.symbol.toLowerCase()}`}
-                    />
+                    <Image src={selectedToToken.logoURI} />
                   )}
                   {` `}
                   {path[1] !== undefined && path[1].token !== undefined
@@ -276,9 +272,13 @@ const ConfirmSwapBox = props => {
           </ModalHeader>
           <ModalBody>
             <Text color="gray.400">
-              There is no liquidity on this pair, will you like to add Liquidity.
+              There is no liquidity on this pair, will you like to add
+              Liquidity.
             </Text>
-            <Flex justifyContent="space-between" flexDirection={['column', 'row', 'column', 'row']}>
+            <Flex
+              justifyContent="space-between"
+              flexDirection={['column', 'row', 'column', 'row']}
+            >
               <Button
                 d="block"
                 w="48%"
@@ -318,13 +318,10 @@ const ConfirmSwapBox = props => {
               >
                 NO
               </Button>
-
             </Flex>
           </ModalBody>
-
         </ModalContent>
       </Modal>
-
     </>
   );
 };

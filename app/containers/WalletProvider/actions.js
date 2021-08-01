@@ -34,7 +34,7 @@ import {
   TOGGLE_LIST_SHOW,
 } from './constants';
 import defaultTokenList from '../../utils/default-token.json';
-import test_netTokenList from '../../utils/test-net-tokens.json';
+import testNetTokenList from '../../utils/test-net-tokens.json';
 
 export const reConnect = (wallet) => async dispatch => {
   try {
@@ -162,7 +162,7 @@ export const getTokenList = () => async (dispatch) => {
   const chainID = await window.ethereum.request({
     method: 'eth_chainId',
   });
-  const tokenByNetwork = chainID === '0x38' ? defaultTokenList : chainID === '0x61' ? test_netTokenList : [];
+  const tokenByNetwork = chainID === '0x38' ? defaultTokenList : chainID === '0x61' ? testNetTokenList : [];
   const returnData = tokenByNetwork.map((token, id) => {
     const balance = null;
     const available = true;

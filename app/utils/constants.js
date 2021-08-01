@@ -1,6 +1,7 @@
 // @ts-nocheck
 import Web3 from 'web3';
-import configureStore from 'configureStore';
+import defaultTokenList from './default-token.json';
+import testNetTokenList from './test-net-tokens.json';
 
 export const checkNetVersion = () => {
   if (window.ethereum && window.ethereum.chainId !== null) {
@@ -82,42 +83,29 @@ const BSCTestnet = {
 
 export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
-const { store } = configureStore();
-console.log(configureStore().store.getState().ExtendedTokenList);
+
 export const tokenList = () => {
   let allToken = [];
   const storedReducer = JSON.parse(localStorage.getItem('persist:root'));
   if (storedReducer != null) {
-    const reducerWallet = JSON.parse(storedReducer.ExtendedTokenList);
+    const extendedList = JSON.parse(storedReducer.ExtendedTokenList);
     allToken =
-      reducerWallet !== undefined && reducerWallet.tokenList.length > 0
-        ? reducerWallet.tokenList
+      extendedList !== undefined && extendedList.tokenList.length > 0
+        ? extendedList.tokenList
         : [];
   }
-  if (allToken.length === 0) {
-    setTimeout(() => tokenList(), 1000);
+  if (allToken.length > 0) {
+    return allToken;
   }
-  return allToken;
+  return checkNetVersion() === BSC_MAIN_NET_ID.toString()
+    ? defaultTokenList
+    : testNetTokenList;
 };
-const tokenSource =
-  'https://tokens.pancakeswap.finance/pancakeswap-extended.json';
 
-export const getTokens = () =>
-  fetch(tokenSource, {
-    methods: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  }).then(data => data.json());
-
-export const tokenWhere = field => {
-  const list = tokenList();
-  if (list.length > 0) {
-    return (
-      field !== null &&
-      list.filter(fields => fields.symbol === field.toUpperCase())[0]
-    );
-  }
-  tokenWhere(field);
-};
+export const tokenWhere = field =>
+  tokenList().length > 0 &&
+  field !== null &&
+  tokenList().filter(fields => fields.symbol === field.toUpperCase())[0];
 
 export const tokenAddressWhere = symbol => tokenWhere(symbol).address;
 

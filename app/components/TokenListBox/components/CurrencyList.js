@@ -12,6 +12,8 @@ import { FixedSizeList } from 'react-window';
 import { Input } from '@chakra-ui/react';
 import { Flex, Text } from '@chakra-ui/layout';
 import PropTypes from 'prop-types';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import ReactList from 'react-list';
 import ArrowDownImage from '../../../assets/arrow-down.svg';
 
 const CurrencyList = ({
@@ -24,75 +26,81 @@ const CurrencyList = ({
   setSearchToken,
   setManageToken,
   setShowCurrencyList,
-}) => (
-  <Modal isOpen={isOpen} onClose={onClose} isCentered>
-    <ModalOverlay />
-    <ModalContent
-      bg="#120136"
-      color="#fff"
-      borderRadius="20px"
-      width="90vw"
-      minHeight="60vh"
-    >
-      <ModalCloseButton
-        bg="none"
-        border="0px"
+}) => {
+  const isItemLoaded = ({ index }) => !!list[index];
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent
+        bg="#120136"
         color="#fff"
-        cursor="pointer"
-        _focus={{ outline: 'none' }}
-      />
-      <ModalHeader fontWeight="light">Select a token</ModalHeader>
-      <ModalBody mt={4}>
-        <Input
-          placeholder="Search by name or paste address"
-          borderColor="#40BAD5"
-          color="gray.500"
-          rounded="2xl"
-          h="50px"
-          fontSize="sm"
-          variant="outline"
-          value={searchToken}
-          onChange={e => {
-            setSearchToken(e.target.value);
-          }}
+        borderRadius="20px"
+        width="90vw"
+        minHeight="60vh"
+      >
+        <ModalCloseButton
+          bg="none"
+          border="0px"
+          color="#fff"
+          cursor="pointer"
+          _focus={{ outline: 'none' }}
         />
-        <Flex justifyContent="space-between" mt={5}>
-          <Text fontSize="sm" fontWeight="light" color="#fff">
-            Token
-          </Text>
-          <ArrowDownImage />
-        </Flex>
-        {toggleDisplay && (
-          <FixedSizeList
-            width="100%"
-            height={300}
-            itemCount={list.length}
-            itemSize={10}
-            itemKey={Row.index}
-            useIsScrolling
-            itemData={list}
-          >
-            {Row}
-          </FixedSizeList>
-        )}
-      </ModalBody>
-      <ModalFooter justifyContent="center">
-        <div>
-          {' '}
-          <Text
-            onClick={() => {
-              setManageToken(true);
-              setShowCurrencyList(false);
+        <ModalHeader fontWeight="light">Select a token</ModalHeader>
+        <ModalBody mt={4}>
+          <Input
+            placeholder="Search by name or paste address"
+            borderColor="#40BAD5"
+            color="gray.500"
+            rounded="2xl"
+            h="50px"
+            fontSize="sm"
+            variant="outline"
+            value={searchToken}
+            onChange={e => {
+              setSearchToken(e.target.value);
             }}
-            cursor="pointer"
-          >
-            Manage Token
-          </Text>
-        </div>
-      </ModalFooter>
-    </ModalContent>
-  </Modal>
-);
+          />
+          <Flex justifyContent="space-between" mt={5}>
+            <Text fontSize="sm" fontWeight="light" color="#fff">
+              Token
+            </Text>
+            <ArrowDownImage />
+          </Flex>
+          {toggleDisplay && (
+            <div
+              style={{
+                overflow: 'auto',
+                maxHeight: 300,
+                marginRight: '-10px',
+                paddingRight: '10px',
+              }}
+            >
+              <ReactList
+                itemRenderer={Row}
+                length={list.length}
+                type="uniform"
+              />
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter justifyContent="center">
+          <div>
+            {' '}
+            <Text
+              onClick={() => {
+                setManageToken(true);
+                setShowCurrencyList(false);
+              }}
+              cursor="pointer"
+            >
+              Manage Token
+            </Text>
+          </div>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
 CurrencyList.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
@@ -105,4 +113,3 @@ CurrencyList.propTypes = {
   setShowCurrencyList: PropTypes.func,
 };
 export default CurrencyList;
-

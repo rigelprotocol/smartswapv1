@@ -223,7 +223,7 @@ function TokenListBox({
     setUserCustomURIList({});
   };
 
-  const Row = ({ index, key, style }) => (
+  const Row = (index, key, style) => (
     <Flex
       key={key}
       justifyContent="space-between"
@@ -239,6 +239,9 @@ function TokenListBox({
         isFunc(getToAmount) && getToAmount();
         isFunc(onClose) && onClose();
       }}
+      height="63px"
+      borderRadius="10px"
+      background="rgba(55, 38, 91, 0.15)"
     >
       {list[index].imported ? (
         <NullImage24 />
