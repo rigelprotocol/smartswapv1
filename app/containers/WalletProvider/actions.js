@@ -159,10 +159,10 @@ export const getTokenAddress = (chainId) => {
 }
 
 export const getTokenList = () => async (dispatch) => {
-  const chainID = await window.ethereum.request({
+  const chainID = window.ethereum !== undefined ? await window.ethereum.request({
     method: 'eth_chainId',
-  });
-  const tokenByNetwork = chainID === '0x38' ? defaultTokenList : chainID === '0x61' ? testNetTokenList : testNetTokenList;
+  }) : null;
+  const tokenByNetwork = getChainId() === MAINNET.toString() ? defaultTokenList : testNetTokenList;
   const returnData = tokenByNetwork.map((token, id) => {
     const balance = null;
     const available = true;
@@ -173,6 +173,14 @@ export const getTokenList = () => async (dispatch) => {
     type: GET_ALL_TOKEN, payload: returnData
   })
 }
+export const getChainId = () => {
+  if (window.ethereum && window.ethereum.chainId !== null) {
+    return window.ethereum.chainId.toString();
+  }
+  return null;
+};
+const MAINNET =
+  window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
 
 export const importUserTokenAction = async (userTokenAddress) => {
   const tokenData = await getTokenDetails(userTokenAddress);
