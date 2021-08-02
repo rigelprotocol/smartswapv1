@@ -1,9 +1,9 @@
 import { Box, Flex } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
-import { Text,Tooltip } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { QuestionIcon } from '@chakra-ui/icons';
+import Question from '../../assets/question.svg';
 import Liquidities from './liquidities';
 const Index = ({
   liquidities,
@@ -74,14 +74,7 @@ const Index = ({
         <Text color="gray.200" fontSize="md">
           Your liquidity
         </Text>
-         <Tooltip
-                label="This is a list of Liquidity of several token pairs as provided by you"
-                fontSize="md"
-                cursor="pointer"
-                aria-label="A tooltip"
-              >
-                <QuestionIcon color="white"/>
-              </Tooltip>
+        <Question />
       </Flex>
       {liquidityLoading ? <Flex
         color="#fff"

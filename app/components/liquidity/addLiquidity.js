@@ -9,9 +9,8 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  Tooltip
 } from '@chakra-ui/react';
-import { CheckIcon, CloseIcon, QuestionIcon } from '@chakra-ui/icons';
+import { CheckIcon, CloseIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import LiquidityFromBox from 'components/liquidity/from';
 import To from 'components/liquidity/to';
 import InfoTextBox from 'components/TextBox/InfoTextBox';
@@ -21,6 +20,7 @@ import Spinner from '../spinner/spinner';
 import SpinModal from "../modal/SpinModal"
 import ApproveBox from './ApproveBox';
 import LiquidityPriceBox from './LiquidityPriceBox';
+import Question from '../../assets/question.svg';
 import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
@@ -44,6 +44,7 @@ const AddLiquidity = ({
   confirmingSupply,
   isNewUser,
   buttonValue,
+  insufficientBalanceButton,
   openSupplyButton,
   open,
   back,
@@ -70,6 +71,9 @@ const AddLiquidity = ({
   tokenFromValue,
   tokenToValue,
   handleFromAmount,
+  setDetermineInputChange,
+  setFromInputMax,
+  setToInputMax,
   onCloseModal,
   isOpenModal 
 }) => (
@@ -80,17 +84,10 @@ const AddLiquidity = ({
     rounded="lg"
   >
     {isNewUser ? <ApproveBox popupText={popupText} /> : <div />}
-    <Flex justifyContent="space-between" alignItems="center" px={4} mt={2}>
+    <Flex justifyContent="space-between" alignItems="center" px={4}>
       <ArrowLeft cursor="pointer" onClick={() => back('INDEX')} />
       <Text color="gray.200">{addLiquidityPageHeading}</Text>
-      <Tooltip
-                label="You can create a token pair on a new Token or add on an already existing one."
-                cursor="pointer"
-                fontSize="md"
-                aria-label="A tooltip"
-              >
-                <QuestionIcon color="white"/>
-              </Tooltip>
+      <Question />
     </Flex>
 {newTokenPairButton ? <InfoTextBox>
 <Text>
@@ -111,7 +108,9 @@ const AddLiquidity = ({
       setFromAddress={setFromAddress}
       setFromValue={setFromValue}
       handleFromAmount={handleFromAmount}
+      setDetermineInputChange={setDetermineInputChange}
       fromSelectedToken={fromSelectedToken}
+      setFromInputMax={setFromInputMax}
       setFromSelectedToken={setFromSelectedToken}
       checkIfLiquidityPairExist={checkIfLiquidityPairExist}
     />
@@ -124,6 +123,8 @@ const AddLiquidity = ({
       setToAddress={setToAddress}
       toSelectedToken={toSelectedToken}
       setToSelectedToken={setToSelectedToken}
+      setToInputMax={setToInputMax}
+      setDetermineInputChange={setDetermineInputChange}
       disableToSelectInputBox={disableToSelectInputBox}
       checkIfLiquidityPairExist={checkIfLiquidityPairExist}
       setToValue={setToValue}
@@ -148,7 +149,10 @@ const AddLiquidity = ({
     </InfoTextBox>
 }
     <Box mt={5} p={5}>
-      {!hasAllowedToToken && (toSelectedToken.symbol !== "SELECT A TOKEN")  && (
+      {!hasAllowedToToken &&
+      (toSelectedToken.symbol !== "SELECT A TOKEN") && 
+      !insufficientBalanceButton &&
+      (toValue >= 0) && (
         <Button
           d="block"
           w="100%"
@@ -169,7 +173,12 @@ const AddLiquidity = ({
           Approve {toSelectedToken.symbol}
         </Button>
       )}
-      {!hasAllowedFromToken && (fromSelectedToken.symbol !== "SELECT A TOKEN") && (
+      {!hasAllowedFromToken && 
+      (fromSelectedToken.symbol !== "SELECT A TOKEN") && 
+      (fromValue >= 0) && 
+      (fromValue !== "") && 
+      (!insufficientBalanceButton) && 
+      (
         <Button
           d="block"
           w="100%"
@@ -190,7 +199,10 @@ const AddLiquidity = ({
           Approve {fromSelectedToken.symbol}
         </Button>
       )}
-      {!showApprovalBox && (
+      {!showApprovalBox &&
+      (fromValue >= 0 && toValue >= 0) && 
+      !insufficientBalanceButton &&
+      (
         <Button
           d="block"
           w="100%"
@@ -209,6 +221,26 @@ const AddLiquidity = ({
           onClick={()=>newTokenPairButton ? open("new") : open("old")}
         >
           {buttonValue}
+        </Button>
+      )}
+      {insufficientBalanceButton &&
+      (
+        <Button
+          d="block"
+          w="100%"
+          h="50px"
+          color='#BEBEBE'
+          border="none"
+          fontWeight="regular"
+          fontSize="lg"
+          cursor="pointer"
+          rounded="2xl"
+          bg='#444159'
+          borderColor="#40BAD5"
+          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+          _active={{ outline: '#29235E', background: '#29235E' }}
+        >
+          Insufficient Balance
         </Button>
       )}
     </Box>
@@ -520,7 +552,8 @@ const AddLiquidity = ({
     </Box>
       </SpinModal>
   </Box>
-);
+); 
+
 AddLiquidity.propTypes = {
   showApprovalBox: PropTypes.bool,
   hasAllowedToToken: PropTypes.bool,
