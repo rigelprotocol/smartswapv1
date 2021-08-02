@@ -162,7 +162,7 @@ export const getTokenList = () => async (dispatch) => {
   const chainID = await window.ethereum.request({
     method: 'eth_chainId',
   });
-  const tokenByNetwork = chainID === '0x38' ? defaultTokenList : chainID === '0x61' ? testNetTokenList : [];
+  const tokenByNetwork = chainID === '0x38' ? defaultTokenList : chainID === '0x61' ? testNetTokenList : testNetTokenList;
   const returnData = tokenByNetwork.map((token, id) => {
     const balance = null;
     const available = true;
