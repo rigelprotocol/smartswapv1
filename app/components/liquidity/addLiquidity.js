@@ -9,8 +9,9 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
+  Tooltip
 } from '@chakra-ui/react';
-import { CheckIcon, CloseIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { CheckIcon, CloseIcon, QuestionIcon } from '@chakra-ui/icons';
 import LiquidityFromBox from 'components/liquidity/from';
 import To from 'components/liquidity/to';
 import InfoTextBox from 'components/TextBox/InfoTextBox';
@@ -20,7 +21,6 @@ import Spinner from '../spinner/spinner';
 import SpinModal from "../modal/SpinModal"
 import ApproveBox from './ApproveBox';
 import LiquidityPriceBox from './LiquidityPriceBox';
-import Question from '../../assets/question.svg';
 import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
@@ -44,7 +44,6 @@ const AddLiquidity = ({
   confirmingSupply,
   isNewUser,
   buttonValue,
-  insufficientBalanceButton,
   openSupplyButton,
   open,
   back,
@@ -70,8 +69,8 @@ const AddLiquidity = ({
   hasAllowedFromToken,
   tokenFromValue,
   tokenToValue,
-  handleFromAmount,
   setDetermineInputChange,
+  insufficientBalanceButton,
   setFromInputMax,
   setToInputMax,
   onCloseModal,
@@ -84,10 +83,17 @@ const AddLiquidity = ({
     rounded="lg"
   >
     {isNewUser ? <ApproveBox popupText={popupText} /> : <div />}
-    <Flex justifyContent="space-between" alignItems="center" px={4}>
+    <Flex justifyContent="space-between" alignItems="center" px={4} mt={2}>
       <ArrowLeft cursor="pointer" onClick={() => back('INDEX')} />
       <Text color="gray.200">{addLiquidityPageHeading}</Text>
-      <Question />
+      <Tooltip
+                label="You can create a token pair on a new Token or add on an already existing one."
+                cursor="pointer"
+                fontSize="md"
+                aria-label="A tooltip"
+              >
+                <QuestionIcon color="white"/>
+              </Tooltip>
     </Flex>
 {newTokenPairButton ? <InfoTextBox>
 <Text>
@@ -103,31 +109,30 @@ const AddLiquidity = ({
 
 }
     <LiquidityFromBox
-      label="input"
-      fromValue={fromValue}
-      setFromAddress={setFromAddress}
-      setFromValue={setFromValue}
-      handleFromAmount={handleFromAmount}
-      setDetermineInputChange={setDetermineInputChange}
-      fromSelectedToken={fromSelectedToken}
-      setFromInputMax={setFromInputMax}
-      setFromSelectedToken={setFromSelectedToken}
-      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+     label="input"
+     fromValue={fromValue}
+     setFromAddress={setFromAddress}
+     setFromValue={setFromValue}
+     setDetermineInputChange={setDetermineInputChange}
+     fromSelectedToken={fromSelectedToken}
+     setFromInputMax={setFromInputMax}
+     setFromSelectedToken={setFromSelectedToken}
+     checkIfLiquidityPairExist={checkIfLiquidityPairExist}
     />
     <Flex justifyContent="center" my={3}>
       <Plus />
     </Flex>
     <To
-      label="input"
-      toValue={toValue}
-      setToAddress={setToAddress}
-      toSelectedToken={toSelectedToken}
-      setToSelectedToken={setToSelectedToken}
-      setToInputMax={setToInputMax}
-      setDetermineInputChange={setDetermineInputChange}
-      disableToSelectInputBox={disableToSelectInputBox}
-      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
-      setToValue={setToValue}
+        label="input"
+        toValue={toValue}
+        setToAddress={setToAddress}
+        toSelectedToken={toSelectedToken}
+        setToSelectedToken={setToSelectedToken}
+        setToInputMax={setToInputMax}
+        setDetermineInputChange={setDetermineInputChange}
+        disableToSelectInputBox={disableToSelectInputBox}
+        checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+        setToValue={setToValue}
     />
     {toSelectedToken.symbol !== 'SELECT A TOKEN' && fromValue > 0 ? (
       <LiquidityPriceBox
@@ -148,7 +153,7 @@ const AddLiquidity = ({
     
     </InfoTextBox>
 }
-    <Box mt={5} p={5}>
+<Box mt={5} p={5}>
       {!hasAllowedToToken &&
       (toSelectedToken.symbol !== "SELECT A TOKEN") && 
       !insufficientBalanceButton &&
@@ -552,8 +557,7 @@ const AddLiquidity = ({
     </Box>
       </SpinModal>
   </Box>
-); 
-
+);
 AddLiquidity.propTypes = {
   showApprovalBox: PropTypes.bool,
   hasAllowedToToken: PropTypes.bool,
@@ -590,6 +594,10 @@ AddLiquidity.propTypes = {
   changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   isOpenModal:PropTypes.func.isRequired, 
+  insufficientBalanceButton:PropTypes.bool.isRequired, 
+  setDetermineInputChange:PropTypes.func.isRequired, 
+  setFromInputMax:PropTypes.func.isRequired, 
+  setToInputMax :PropTypes.func.isRequired, 
   modal1Disclosure: PropTypes.object,
   modal2Disclosure: PropTypes.object,
   modal3Disclosure: PropTypes.object,
@@ -599,7 +607,6 @@ AddLiquidity.propTypes = {
   modal7Disclosure: PropTypes.object,
   tokenFromValue: PropTypes.string.isRequired,
   tokenToValue: PropTypes.string.isRequired,
-  handleFromAmount: PropTypes.func,
 };
 
 export default AddLiquidity;

@@ -134,7 +134,7 @@ export function LiquidityPage(props) {
         setHasAllowedToToken(false);
       }
     }
-     if((parseInt(fromValue) > parseInt(fromSelectedToken.balance)) || (parseInt(toValue) > parseInt(toSelectedToken.balance))){
+    if((parseInt(fromValue) > parseInt(fromSelectedToken.balance)) || (parseInt(toValue) > parseInt(toSelectedToken.balance))){
       setInsufficientBalanceButton(true)
     }else{
       setInsufficientBalanceButton(false)
@@ -232,6 +232,7 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
       const toPath = ethers.utils.getAddress(toAddress);
       const LPAddress = await factory.getPair(toPath, fromPath);
       const LPcontract = await LPTokenContract(LPAddress)
+      
       const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
       const token0 = await LPcontract.token0();
       let liquidityRatio;
@@ -410,6 +411,7 @@ setDetermineInputChange("to")
     }
     
   }
+
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
   const modal3Disclosure = useDisclosure();
@@ -427,6 +429,8 @@ setDetermineInputChange("to")
     setDisplayButton(false)
     setFromSelectedToken(tokenWhere('rgp'))
     setToSelectedToken(tokenWhere("SELECT A TOKEN"))
+    setFromAddress("")
+    setToAddress("")
     setNewTokenPairButton(false)
     setButtonValue("Supply")
     setInsufficientBalanceButton(false)
@@ -965,6 +969,8 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               toValue={toValue}
               fromValue={fromValue}
               popupText={popupText}
+              approveBNB={approveBNB}
+              checkUser={checkUser}
               approveToken={approveToken}
               isNewUser={isNewUser}
               openModal3={openModal3}
@@ -1014,7 +1020,6 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               hasAllowedFromToken={hasAllowedFromToken}
               tokenFromValue={tokenFromValue}
               tokenToValue={tokenToValue}
-              handleFromAmount={handleFromAmount}
               setDetermineInputChange={setDetermineInputChange}
               sendingTransaction={sendingTransaction}
               onCloseModal ={onCloseModal}

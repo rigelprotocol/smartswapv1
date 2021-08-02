@@ -44,7 +44,7 @@ const LiquidityFromBox = ({
           </Text>
         </Flex>
         <Flex justifyContent="space-between">
-          <InputGroup>
+        <InputGroup>
           <Input
             type="number"
             id="input__field"
@@ -58,7 +58,7 @@ const LiquidityFromBox = ({
               setDetermineInputChange("from")
             }}
           />
-           <InputRightElement marginRight="5px">
+             <InputRightElement marginRight="5px">
               <Text
               cursor="pointer" 
               color="rgba(64, 186, 213, 1)"
@@ -107,10 +107,8 @@ const LiquidityFromBox = ({
 LiquidityFromBox.propTypes = {
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
-  handleFromAmount: PropTypes.func,
   fromSelectedToken: PropTypes.object.isRequired,
   setFromAddress: PropTypes.func.isRequired,
-  setFromInputMax: PropTypes.func.isRequired,
   setFromSelectedToken: PropTypes.func.isRequired,
   checkIfLiquidityPairExist: PropTypes.func.isRequired,
   label: PropTypes.string,
