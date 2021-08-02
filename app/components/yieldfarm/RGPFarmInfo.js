@@ -31,8 +31,8 @@ const RGPFarmInfo = () => (
                 </Link>
             </ListItem>
         </OrderedList>
-       
-        <Box>All other staking pools are available: (RGP-BUSD, RGP-BNB, BNB-BUSD)</Box>
+
+        <Box>Other staking pools do not require address whitelist</Box>
     </>
 )
 

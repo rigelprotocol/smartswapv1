@@ -7,12 +7,12 @@ import ETHImage from '../../assets/eth.svg';
 import RGPImage from '../../assets/rgp.svg';
 import BUSDImage from '../../assets/busd.svg';
 
-const YieldFarm = ({ 
-  content, 
-  wallet, 
+const YieldFarm = ({
+  content,
+  wallet,
   onOpenModal,
-  setShowModalWithInput, 
-  refreshTokenStaked, 
+  setShowModalWithInput,
+  refreshTokenStaked,
   loadingTotalLiquidity,
   isAddressWhitelist
 }) => {
@@ -32,11 +32,10 @@ const YieldFarm = ({
       return '--'
     }
   }
-  const checkIfAddressIsWhiteListed = () =>{
-    if(isAddressWhitelist){
+  const checkIfAddressIsWhiteListed = () => {
+    if (isAddressWhitelist) {
       setShowYieldFarm(!showYieldfarm)
-    }else{
-      // setShowModalWithInput(true)
+    } else {
       onOpenModal()
     }
   }
@@ -114,7 +113,7 @@ const YieldFarm = ({
           </Box>
         </Flex>
         <Box align="right" mt={['4', '0']} ml="2">
-          {content.id == 1 ? (<Tooltip label="Coming soon" >
+          {content.id == 1 ? (
 
             <Button
               w={['100%', '100%', '146px']}
@@ -124,15 +123,12 @@ const YieldFarm = ({
               color="#40BAD5"
               border="0"
               mb="4"
-
               _hover={{ color: '#423a85' }}
-              onClick={() => wallet.chainId == "0x61" ? checkIfAddressIsWhiteListed() : onOpenModal()}
-            // onClick={onOpenModal}
-
+              onClick={checkIfAddressIsWhiteListed}
             >
               Unlock
             </Button>
-          </Tooltip>
+
           ) :
             (<Button
               w={['100%', '100%', '146px']}
