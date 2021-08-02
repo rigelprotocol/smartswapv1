@@ -87,10 +87,7 @@ export function FarmingPage(props) {
 
 
   useEffect(() => {
-    if(wallet.chainId == "0x61"){
-      checkIfUserAddressHasBeenWhiteListed()
-    }
-    
+    checkIfUserAddressHasBeenWhiteListed()
     refreshTokenStaked();
   }, [wallet]);
 
@@ -120,18 +117,18 @@ export function FarmingPage(props) {
     initialLoad ? setFarmingModal(true) : setFarmingModal(false)
   }
 
-  const checkIfUserAddressHasBeenWhiteListed =async ()=>{
-    try{
+  const checkIfUserAddressHasBeenWhiteListed = async () => {
+    try {
       const specialPool = await RGPSpecialPool();
-      const isItWhiteListed =await specialPool.isWhitelist(wallet.address)
+      const isItWhiteListed = await specialPool.isWhitelist(wallet.address)
       setIsAddressWhitelist(isItWhiteListed)
-    }catch(e){
+    } catch (e) {
       console.error(e)
     }
-    
+
   }
-  const submitDataToGetWhitelisted = () =>{
-    console.log({dataInputToGetWhiteListed})
+  const submitDataToGetWhitelisted = () => {
+    console.log({ dataInputToGetWhiteListed })
     onCloseModal()
     toast({
       title: "Address successfully submitted",
@@ -647,7 +644,7 @@ export function FarmingPage(props) {
           // submitData={submitDataToGetWhitelisted}
           // InputData={dataInputToGetWhiteListed}
           // setInputData={setDataInputToGetWhiteListed}
-          title="RGP STAKING POOL IS COMING SOON..."
+          title="YOUR ADDRESS IS NOT WHITELISTED FOR RGP STAKING"
         >
           <RGPFarmInfo />
         </ InfoModal>
@@ -689,7 +686,7 @@ export function FarmingPage(props) {
               </Flex>
               {props.farming.contents.map(content => (
                 <YieldFarm
-                  isAddressWhitelist = {isAddressWhitelist}
+                  isAddressWhitelist={isAddressWhitelist}
                   onOpenModal={onOpenModal}
                   setShowModalWithInput={setShowModalWithInput}
                   content={content}

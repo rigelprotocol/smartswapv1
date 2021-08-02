@@ -134,7 +134,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
           rigelAllowance = pool1Allowance
         }
 
-         updateFarmAllowances([
+        updateFarmAllowances([
           rigelAllowance,
           pool2Allowance,
           pool1Allowance,
@@ -305,7 +305,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
         ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
         {
           from: wallet.address,
-          gasLimit: 150000,
+          gasLimit: 200000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
@@ -692,7 +692,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
-         await RGPuseStake(depositTokenValue);
+          await RGPuseStake(depositTokenValue);
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpDeposit(depositTokenValue);
         } else if (val === 'BNB-BUSD') {
@@ -718,7 +718,7 @@ const ShowYieldFarmDetails = ({ content, wallet, refreshTokenStaked, updateFarmA
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
-           await RGPUnstake();
+          await RGPUnstake();
         } else if (val === 'RGP-BNB') {
           await BNBRGPlpTokensWithdrawal();
         } else if (val === 'BNB-BUSD') {
