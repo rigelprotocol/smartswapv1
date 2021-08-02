@@ -76,7 +76,9 @@ const App = props => {
   }, []);
 
   useEffect(() => {
-    checkchain();
+    if (window.ethereum) {
+      checkchain();
+    }
   }, [wallet]);
 
   const checkchain = async () => {
