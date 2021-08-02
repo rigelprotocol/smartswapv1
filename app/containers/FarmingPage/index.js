@@ -87,10 +87,7 @@ export function FarmingPage(props) {
 
 
   useEffect(() => {
-    if (wallet.chainId == "0x61") {
-      checkIfUserAddressHasBeenWhiteListed()
-    }
-
+    checkIfUserAddressHasBeenWhiteListed()
     refreshTokenStaked();
   }, [wallet]);
 
