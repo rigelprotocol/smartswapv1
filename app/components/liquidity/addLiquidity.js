@@ -69,7 +69,10 @@ const AddLiquidity = ({
   hasAllowedFromToken,
   tokenFromValue,
   tokenToValue,
-  handleFromAmount,
+  setDetermineInputChange,
+  insufficientBalanceButton,
+  setFromInputMax,
+  setToInputMax,
   onCloseModal,
   isOpenModal 
 }) => (
@@ -106,27 +109,30 @@ const AddLiquidity = ({
 
 }
     <LiquidityFromBox
-      label="input"
-      fromValue={fromValue}
-      setFromAddress={setFromAddress}
-      setFromValue={setFromValue}
-      handleFromAmount={handleFromAmount}
-      fromSelectedToken={fromSelectedToken}
-      setFromSelectedToken={setFromSelectedToken}
-      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+     label="input"
+     fromValue={fromValue}
+     setFromAddress={setFromAddress}
+     setFromValue={setFromValue}
+     setDetermineInputChange={setDetermineInputChange}
+     fromSelectedToken={fromSelectedToken}
+     setFromInputMax={setFromInputMax}
+     setFromSelectedToken={setFromSelectedToken}
+     checkIfLiquidityPairExist={checkIfLiquidityPairExist}
     />
     <Flex justifyContent="center" my={3}>
       <Plus />
     </Flex>
     <To
-      label="input"
-      toValue={toValue}
-      setToAddress={setToAddress}
-      toSelectedToken={toSelectedToken}
-      setToSelectedToken={setToSelectedToken}
-      disableToSelectInputBox={disableToSelectInputBox}
-      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
-      setToValue={setToValue}
+        label="input"
+        toValue={toValue}
+        setToAddress={setToAddress}
+        toSelectedToken={toSelectedToken}
+        setToSelectedToken={setToSelectedToken}
+        setToInputMax={setToInputMax}
+        setDetermineInputChange={setDetermineInputChange}
+        disableToSelectInputBox={disableToSelectInputBox}
+        checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+        setToValue={setToValue}
     />
     {toSelectedToken.symbol !== 'SELECT A TOKEN' && fromValue > 0 ? (
       <LiquidityPriceBox
@@ -147,8 +153,11 @@ const AddLiquidity = ({
     
     </InfoTextBox>
 }
-    <Box mt={5} p={5}>
-      {!hasAllowedToToken && (toSelectedToken.symbol !== "SELECT A TOKEN")  && (
+<Box mt={5} p={5}>
+      {!hasAllowedToToken &&
+      (toSelectedToken.symbol !== "SELECT A TOKEN") && 
+      !insufficientBalanceButton &&
+      (toValue >= 0) && (
         <Button
           d="block"
           w="100%"
@@ -169,7 +178,12 @@ const AddLiquidity = ({
           Approve {toSelectedToken.symbol}
         </Button>
       )}
-      {!hasAllowedFromToken && (fromSelectedToken.symbol !== "SELECT A TOKEN") && (
+      {!hasAllowedFromToken && 
+      (fromSelectedToken.symbol !== "SELECT A TOKEN") && 
+      (fromValue >= 0) && 
+      (fromValue !== "") && 
+      (!insufficientBalanceButton) && 
+      (
         <Button
           d="block"
           w="100%"
@@ -190,7 +204,10 @@ const AddLiquidity = ({
           Approve {fromSelectedToken.symbol}
         </Button>
       )}
-      {!showApprovalBox && (
+      {!showApprovalBox &&
+      (fromValue >= 0 && toValue >= 0) && 
+      !insufficientBalanceButton &&
+      (
         <Button
           d="block"
           w="100%"
@@ -209,6 +226,26 @@ const AddLiquidity = ({
           onClick={()=>newTokenPairButton ? open("new") : open("old")}
         >
           {buttonValue}
+        </Button>
+      )}
+      {insufficientBalanceButton &&
+      (
+        <Button
+          d="block"
+          w="100%"
+          h="50px"
+          color='#BEBEBE'
+          border="none"
+          fontWeight="regular"
+          fontSize="lg"
+          cursor="pointer"
+          rounded="2xl"
+          bg='#444159'
+          borderColor="#40BAD5"
+          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+          _active={{ outline: '#29235E', background: '#29235E' }}
+        >
+          Insufficient Balance
         </Button>
       )}
     </Box>
@@ -557,6 +594,10 @@ AddLiquidity.propTypes = {
   changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   isOpenModal:PropTypes.func.isRequired, 
+  insufficientBalanceButton:PropTypes.bool.isRequired, 
+  setDetermineInputChange:PropTypes.func.isRequired, 
+  setFromInputMax:PropTypes.func.isRequired, 
+  setToInputMax :PropTypes.func.isRequired, 
   modal1Disclosure: PropTypes.object,
   modal2Disclosure: PropTypes.object,
   modal3Disclosure: PropTypes.object,
@@ -566,7 +607,6 @@ AddLiquidity.propTypes = {
   modal7Disclosure: PropTypes.object,
   tokenFromValue: PropTypes.string.isRequired,
   tokenToValue: PropTypes.string.isRequired,
-  handleFromAmount: PropTypes.func,
 };
 
 export default AddLiquidity;

@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Input, Button } from '@chakra-ui/react';
+import { Input, Button, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
 
@@ -18,7 +18,8 @@ const Manual = ({
   setToSelectedToken,
   label,
   checkIfLiquidityPairExist,
-  disableToSelectInputBox,
+  setDetermineInputChange,
+  setToInputMax,
   setToValue
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -46,6 +47,7 @@ const Manual = ({
           </Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
+          <InputGroup>
           <Input
             type="number"
             id="input__field"
@@ -54,15 +56,20 @@ const Manual = ({
             border="1px solid rgba(255, 255, 255,0.25)"
             fontSize="lg"
             color="rgb(255, 255, 255)"
-            disabled ={disableToSelectInputBox}
-            onChange={event =>disableToSelectInputBox? event.preventDefault(): 
-              setToValue(event.target.value)
-            }
-            // onChange={event => {
-            //   setFromValue(event.target.value);
-            //   handleFromAmount(event.target.value);
-            // }}
+            onChange={event => {
+              setToValue(event.target.value);
+              setDetermineInputChange("to")
+            }}
           />
+             <InputRightElement marginRight="5px">
+              <Text
+              cursor="pointer" 
+              color="rgba(64, 186, 213, 1)"
+              onClick={()=>setToInputMax()}>
+                max
+              </Text>
+          </InputRightElement>
+          </InputGroup>
           <Flex alignItems="center">
             <Menu>
               <Button

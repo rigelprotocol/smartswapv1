@@ -36,7 +36,7 @@ export function LiquidityPage(props) {
   const history = useHistory()
   const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
-  const [toValue, setToValue] = useState('0');
+  const [toValue, setToValue] = useState('');
   const [isNewUser, setIsNewUser] = useState(false)
   const [selectingToken, setSelectingToken] = useState(tokenList);
   const [fromSelectedToken, setFromSelectedToken] = useState(tokenWhere('rgp'))
@@ -70,22 +70,19 @@ export function LiquidityPage(props) {
   const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
   const [newTokenPairButton, setNewTokenPairButton] = useState(false)
   const [addMoreLiquidityButton, setAddMoreLiquidityButton] = useState(false)
+  const [insufficientBalanceButton, setInsufficientBalanceButton] = useState(false)
   const [fromURL, setFromURL] = useState("")
   const [toURL, setToURL] = useState("")
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
+  const [determineInputChange, setDetermineInputChange] = useState("");
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   useEffect(() => {
       setPopupText("")
-  },[liquidityTab,showApprovalBox,openSupplyButton])
+  },[liquidityTab,showApprovalBox,openSupplyButton,insufficientBalanceButton])
   useEffect(() => {
     displayBNBbutton();
   }, [toSelectedToken, liquidities]);
-  const handleFromAmount = (value) => {
-    if(!newTokenPairButton){
-      setToValue((value * liquidityPairRatio).toString());
-    }
-  }
 
   useEffect(() => {
     if (props.match.params.pair !== undefined) {
@@ -111,6 +108,11 @@ export function LiquidityPage(props) {
   }, [fromSelectedToken, toSelectedToken,fromAddress,toAddress])
 
   useEffect(async () => {
+    if(determineInputChange==="from"){
+      handleFromAmount()
+   }else if(determineInputChange==="to"){
+     handleToAmount()
+   }
     if (!isNotEmpty(fromSelectedToken) && fromValue != '') {
       const tokenAllowance = await runApproveCheck(fromSelectedToken, wallet.address, wallet.signer);
       setFromTokenAllowance(tokenAllowance);
@@ -132,7 +134,11 @@ export function LiquidityPage(props) {
         setHasAllowedToToken(false);
       }
     }
-checkIfTokensHasBeenApproved()
+    if((parseInt(fromValue) > parseInt(fromSelectedToken.balance)) || (parseInt(toValue) > parseInt(toSelectedToken.balance))){
+      setInsufficientBalanceButton(true)
+    }else{
+      setInsufficientBalanceButton(false)
+    } 
   }, [fromValue, toValue])
 
   useEffect(() => {
@@ -173,6 +179,17 @@ checkIfTokensHasBeenApproved()
     }
     getBalance()
   }, [percentValue, wallet])
+
+  const handleFromAmount = () => {
+    if(!newTokenPairButton){
+      setToValue((fromValue * liquidityPairRatio).toString());
+    }
+  }
+  const handleToAmount = () => {
+    if(!newTokenPairButton){
+      setFromValue((toValue / liquidityPairRatio).toString());
+    }
+  }
 
 const getTokensListed = async (pairArray) => {
  let selection0 = await getTokenList(pairArray[0],wallet)
@@ -218,7 +235,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
       
       const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
       const token0 = await LPcontract.token0();
-      console.log({token0,tokenAReserve,tokenBreserve})
       let liquidityRatio;
       if (token0.toString() == fromPath.toString()) {
         liquidityRatio = tokenBreserve.toString() / tokenAReserve.toString();
@@ -377,6 +393,24 @@ const checkIfTokensHasBeenApproved =() => {
       }
     }
   }
+  const setFromInputMax = () =>{
+    try{
+setDetermineInputChange("from")
+    setFromValue(fromSelectedToken.balance)
+    }catch(e){
+      console.log(e)
+    }
+    
+  }
+  const setToInputMax = () =>{
+    try{
+setDetermineInputChange("to")
+    setToValue(toSelectedToken.balance)
+    }catch(e){
+      console.log(e)
+    }
+    
+  }
 
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
@@ -399,6 +433,9 @@ const checkIfTokensHasBeenApproved =() => {
     setToAddress("")
     setNewTokenPairButton(false)
     setButtonValue("Supply")
+    setInsufficientBalanceButton(false)
+    setHasAllowedFromToken(false)
+    setHasAllowedToToken(false)
     onCloseModal()
   }
 
@@ -948,6 +985,7 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               closeModal7={closeModal7}
               changeButtonCreateNewTokenPair={changeButtonCreateNewTokenPair}
               buttonValue={buttonValue}
+              insufficientBalanceButton={insufficientBalanceButton}
               newTokenPairButton={newTokenPairButton}
               setToAddress={setToAddress}
               approveToToken={approveToToken}
@@ -972,6 +1010,8 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               approveTokenSpending={approveTokenSpending}
               confirmingSupply={confirmingSupply}
               fromSelectedToken={fromSelectedToken}
+              setFromInputMax={setFromInputMax}
+              setToInputMax={setToInputMax}
               setToSelectedToken={setToSelectedToken}
               setOpenSupplyButton={setOpenSupplyButton}
               setFromSelectedToken={setFromSelectedToken}
@@ -980,7 +1020,7 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               hasAllowedFromToken={hasAllowedFromToken}
               tokenFromValue={tokenFromValue}
               tokenToValue={tokenToValue}
-              handleFromAmount={handleFromAmount}
+              setDetermineInputChange={setDetermineInputChange}
               sendingTransaction={sendingTransaction}
               onCloseModal ={onCloseModal}
               setToValue={setToValue}
