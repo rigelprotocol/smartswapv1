@@ -114,12 +114,14 @@ export const Manual = props => {
       if (parseFloat(tokenAllowance) < parseFloat(fromAmount) && selectedToken.symbol !== 'BNB') {
         setUserHasApproveToken(false)
       }
-     if(fromAmount !== ""){
-       console.log(parseFloat(fromAmount) ,selectedToken.balance)
-       if(parseFloat(fromAmount) > parseFloat(selectedToken.balance)){
-         setInsufficientBalanceButton(true)
-       }
-     }
+      if(fromAmount !== ""){
+        console.log(parseFloat(fromAmount) ,selectedToken.balance)
+        if(parseFloat(fromAmount) > parseFloat(selectedToken.balance)){
+          setInsufficientBalanceButton(true)
+        }else{
+          setInsufficientBalanceButton(false)
+        }
+      }
     }
 
   }, [fromAmount, amountIn]);
@@ -638,8 +640,8 @@ export const Manual = props => {
                       : typeof wallet.signer === 'object' &&
                         fromAmount != parseFloat(0.0) && selectedToToken.name !== 'Select a token'
                         ? selectedToken.symbol == selectedToToken.symbol ? sendNotice('Improper token selection, you selected the same token') : (insufficientBalanceButton) ? 
-                        sendNotice(`Insufficient ${selectedToken.symbol} balance`)
-                        : triggerAccountCheck() : null
+                          sendNotice(`Insufficient ${selectedToken.symbol} balance`)
+                          : triggerAccountCheck() : null
               }
             >
               {wallet.signer === 'signer' ?
@@ -651,8 +653,8 @@ export const Manual = props => {
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken.name !== 'Select a token'
                       ? (selectedToken.symbol == selectedToToken.symbol ? 'Improper token selection' : 
-                      (insufficientBalanceButton) ? `Insufficient ${selectedToken.symbol} balance` :
-                        (!userHasApproveToken) ? 'Approve Transaction' : 'Swap Tokens')
+                        (insufficientBalanceButton) ? `Insufficient ${selectedToken.symbol} balance` :
+                          (!userHasApproveToken) ? 'Approve Transaction' : 'Swap Tokens')
                       : ''
               }
             </Button>
