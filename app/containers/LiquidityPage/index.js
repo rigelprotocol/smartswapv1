@@ -26,9 +26,9 @@ import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { tokenList, tokenWhere, SMART_SWAP,  checkIfTokenIsListed } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
-import { isNotEmpty } from "../../utils/UtilFunc";
+import { isNotEmpty , getDeadline } from "../../utils/UtilFunc";
 import {getTokenList } from "../../utils/tokens"
-import { getDeadline } from "../../utils/UtilFunc";
+
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
 // 35,200
@@ -192,8 +192,8 @@ export function LiquidityPage(props) {
   }
 
 const getTokensListed = async (pairArray) => {
- let selection0 = await getTokenList(pairArray[0],wallet)
- let selection1 = await getTokenList(pairArray[1],wallet)
+ const selection0 = await getTokenList(pairArray[0],wallet)
+ const selection1 = await getTokenList(pairArray[1],wallet)
 setFromAndToToken(selection0,selection1)
  if(selection0 !== [] && selection1[0]!== []){
    checkIfLiquidityPairExist()  
@@ -201,8 +201,8 @@ setFromAndToToken(selection0,selection1)
 }
 const setUpUrl = () => {
   if (fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN") {
-    let toTokenURL = checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address
-    let fromTokenURL = checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address
+    const toTokenURL = checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address
+    const fromTokenURL = checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address
     setFromURL(fromTokenURL)
         setToURL(toTokenURL)
     history.push(`/liquidity/${toTokenURL}-${fromTokenURL}`)
@@ -277,7 +277,7 @@ const setFromAndToToken =(selection0,selection1)=>{
  
 
   const getAllPairs = (length, allPairs) => {
-    let pairs = [];
+    const pairs = [];
     for (let i = 0; i < length; i++) {
       pairs.push(allPairs(i))
     }
@@ -326,9 +326,7 @@ const setFromAndToToken =(selection0,selection1)=>{
       const smartFactory = await SmartFactory();
       const allLiquidityPairs = await smartFactory.allPairsLength();
       const allExchange = await Promise.all(getAllPairs(allLiquidityPairs.toNumber(), smartFactory.allPairs))
-      const pairsData = await Promise.all(allExchange.map((address) => {
-        return getPoolData(address);
-      }))
+      const pairsData = await Promise.all(allExchange.map((address) => getPoolData(address)))
       const userPairs = pairsData.filter(pair => pair.poolToken != 0)
       setLiquidities(userPairs)
 
@@ -478,9 +476,9 @@ setDetermineInputChange("to")
   const addMoreLiquidity = async (liquidity) =>{
     setAddMoreLiquidityButton(true)
     clearAllPreviousData()
-    let { path } = liquidity
-    let selection0 = await getTokenList(path[1].toPath,wallet)
-    let selection1 = await getTokenList(path[0].fromPath,wallet)
+    const { path } = liquidity
+    const selection0 = await getTokenList(path[1].toPath,wallet)
+    const selection1 = await getTokenList(path[0].fromPath,wallet)
     setFromAndToToken(selection0,selection1)
     setAddMoreLiquidityButton(false)
     setLiquidityTab("ADDLIQUIDITY")
@@ -506,7 +504,7 @@ setDetermineInputChange("to")
   const addingLiquidityForETH = async () => {
     if (wallet.signer !== 'signer') {
       try {
-        let EthValue, amountTokenDesired, tokenSelected;
+        let EthValue; let amountTokenDesired; let tokenSelected;
         if (fromSelectedToken.symbol === "BNB") {
           EthValue = fromValue;
           amountTokenDesired = toValue;

@@ -13,7 +13,7 @@ import {
   CLOSE_LOADING_WALLET,
   CHANGE_DEADLINE,
   CHANGE_BNB,
-  UPDATE_CHAINID
+  UPDATE_CHAIN_ID,
 } from './constants';
 
 export const initialState = {
@@ -28,7 +28,8 @@ export const initialState = {
   connected: false,
   loading: false,
   transactionDeadLine: '1378747',
-  slippageValue: '383993939993'
+  slippageValue: '383993939993',
+  tokenList: [],
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -70,7 +71,7 @@ const walletProviderReducer = (state = initialState, action) =>
         draft.transactionDeadLine = action.payload.actualTransactionDeadline;
         draft.slippageValue = action.payload.slippageValue;
         break;
-      case UPDATE_CHAINID:
+      case UPDATE_CHAIN_ID:
         draft.wallet.chainId = action.payload;
         break;
       default:

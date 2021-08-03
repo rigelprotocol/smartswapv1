@@ -3,10 +3,9 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import { notify } from 'containers/NoticeProvider/actions';
 import configureStore from 'configureStore';
 import { WALLET_CONNECTED } from 'containers/WalletProvider/constants';
-import { formatBalance,convertFromWei } from 'utils/UtilFunc';
-import { balanceAbi,decimalAbi } from '../constants';
-import { add } from 'lodash';
-const store = configureStore();
+import { formatBalance, convertFromWei } from 'utils/UtilFunc';
+import { balanceAbi, decimalAbi } from '../constants';
+const { store } = configureStore();
 
 export const provider = async () => {
   try {
@@ -48,7 +47,7 @@ export const getAddressTokenBalance = async (
         tokenAddress,
         decimalAbi,
         walletSigner,
-      ).decimals()
+      ).decimals(),
     ),
   );
 /**
@@ -93,8 +92,8 @@ export const connectionEventListener = wallet => dispatch => {
   return true;
 };
 
-export function disconnectUser() {
-}
+export function disconnectUser() {}
+// Object.fromEntries( Object.entries(TOKENS_CONTRACT).filter(([key, value]) => key === symbol))
 export const setupNetwork = async () => {
   const walletProvider = window.ethereum;
   if (walletProvider !== undefined && walletProvider.isTrust) {
@@ -128,18 +127,15 @@ export const setupNetwork = async () => {
   }
 };
 
-const supportedNetworks = ["0x61", '0x38', 'chainId']
+const supportedNetworks = ['0x61', '0x38', 'chainId'];
 
-
-export const isSupportedNetwork = (chainId) => {
-  return supportedNetworks.includes(chainId);
-}
-
+export const isSupportedNetwork = chainId =>
+  supportedNetworks.includes(chainId);
 
 const checkMetamask = async () => {
   const provider = await detectEthereumProvider();
   return !!provider;
-}
+};
 
 export const switchToBSC = async () => {
   if (checkMetamask()) {
@@ -151,12 +147,12 @@ export const switchToBSC = async () => {
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
-        addBSCToMetamask()
+        addBSCToMetamask();
       }
       // handle other  errors codes
     }
   }
-}
+};
 
 const addBSCToMetamask = async () => {
   try {
@@ -177,6 +173,6 @@ const addBSCToMetamask = async () => {
       ],
     });
   } catch (addError) {
-    console.log(addError)
+    console.log(addError);
   }
-}
+};

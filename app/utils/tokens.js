@@ -1,27 +1,25 @@
-import { tokenList } from 'utils/constants';
 import { convertFromWei } from 'utils/UtilFunc';
-import Web3 from 'web3'
-import { getAddress } from '@ethersproject/address'
-import { Contract } from '@ethersproject/contracts'
+import { getAddress } from '@ethersproject/address';
+import { Contract } from '@ethersproject/contracts';
 import ERC20Token from 'utils/abis/ERC20Token.json';
 import { getProvider } from 'utils/SwapConnect';
-import { filter } from 'lodash';
+import { tokenList } from 'utils/constants';
 
 // import { SmartFactory } from './SwapConnect';
 // list all transactions here
 // export default async function Tokens() {
-   // const tokens = {
-   //     tokens: [
-   //         'BNB',
-   //         'ETH',
-   //         'RGP',
-   //     ],
-   //     listTokens: ''
-   // }
+// const tokens = {
+//     tokens: [
+//         'BNB',
+//         'ETH',
+//         'RGP',
+//     ],
+//     listTokens: ''
+// }
 
 //   const swap = async e => {
 //     const { SmartSwapContractAddress } = await SmartFactory();
-     // adding liquidity
+// adding liquidity
 
 //     const addLiquid = await SmartSwapContractAddress.addLiquidity(
 //       tokenA,
@@ -113,70 +111,94 @@ import { filter } from 'lodash';
 // }
 
 // SEARCH TOKENS
-export const getTokenList =async (searchToken,account) =>{
-   const filteredTokenList = filterAvailableTokenList(searchToken)
-   if(filteredTokenList.length>0){
-      return filteredTokenList
-   }else{
-      let addressOfToken = isItAddress(searchToken)
-     let tokenData = addressOfToken ? await getTokenWithContract(searchToken,account) :  getTokenWithoutContract(searchToken,account)
-      return tokenData.length > 0 ? tokenData : []
-   }
-}
+export const getTokenList = async (searchToken, account, list) => {
+  let tokens = list;
+  if (tokens === undefined) {
+    tokens = tokenList();
+  }
+  const filteredTokenList = filterAvailableTokenList(searchToken, tokens);
+  if (filteredTokenList.length > 0) {
+    return filteredTokenList;
+  }
+  const addressOfToken = isItAddress(searchToken);
+  const tokenData = addressOfToken
+    ? await getTokenWithContract(searchToken, account, tokens)
+    : getTokenWithoutContract();
+  // let tokenData = await getTokenWithWeb3(searchToken,account)
+  return tokenData.length > 0 ? tokenData : [];
+};
 
-export const getTokenWithContract = async (searchToken,account) =>{
-  
-   try{
-       let contract =new Contract(searchToken, ERC20Token, getProvider())
-      let name = await contract.name()
-      let symbol = await contract.symbol()
-      let balance = account.address == "0x" ? "" : await contract.balanceOf(account.address)
-      let decimals = await contract.decimals()
-      let address =  contract.address
-      let filteredTokenList = filterTokenListWithAddress(symbol)
-      if(filteredTokenList.length>0){
-         return filteredTokenList
-      }else{
-      let tokenObject = [{
-      name: name.toString(),
-      balance: convertFromWei(balance,decimals),
-      available:false,
-      imported:false,
-      symbol,
-      img:"",
-      address
-   }] 
-   return tokenObject 
-}
-    
-   }catch(e){
-      console.log(e)
-   }
-
-}
-export const getTokenWithoutContract = (searchToken) =>{
-return []
-}
-export const isItAddress  = (token) => {
-   try {
-      return getAddress(token)
-    } catch {
-      return false
+export const getTokenWithContract = async (searchToken, account, list) => {
+  try {
+    const contract = new Contract(searchToken, ERC20Token, getProvider());
+    const name = await contract.name();
+    const symbol = await contract.symbol();
+    const balance =
+      account.address == '0x' ? '' : await contract.balanceOf(account.address);
+    const decimals = await contract.decimals();
+    const { address } = contract;
+    const filteredTokenList = filterTokenListWithAddress(symbol, list);
+    if (filteredTokenList.length > 0) {
+      return filteredTokenList;
     }
-}
+    const tokenObject = [
+      {
+        name: name.toString(),
+        balance: convertFromWei(balance, decimals),
+        available: false,
+        imported: false,
+        symbol,
+        img: '',
+        address,
+      },
+    ];
+    return tokenObject;
+  } catch (e) {
+    console.log(e);
+  }
+};
+export const getTokenWithoutContract = () => [];
+export const isItAddress = token => {
+  try {
+    return getAddress(token);
+  } catch {
+    return false;
+  }
+};
 
-export const filterAvailableTokenList =(searchToken) =>{
- const filteredTokenList = tokenList.filter(
-        token =>
-          token.symbol.toLowerCase().includes(searchToken.toLowerCase()) ||
-          token.name.toLowerCase().includes(searchToken.toLowerCase()),
-      );
-     return filteredTokenList
-}
-export const filterTokenListWithAddress =(symbol) =>{
- const filteredTokenList = tokenList.filter(
-        token =>
-          token.symbol.toLowerCase() ===symbol.toLowerCase()
-      );
-     return filteredTokenList
-}
+export const filterAvailableTokenList = (searchToken, list) => {
+  const filteredTokenList = list.filter(
+    token =>
+      token.symbol.toLowerCase().includes(searchToken.toLowerCase()) ||
+      token.name.toLowerCase().includes(searchToken.toLowerCase()),
+  );
+  return filteredTokenList;
+};
+
+export const filterTokenListWithAddress = (symbol, list) => {
+  const filteredTokenList = list.filter(
+    token => token.symbol.toLowerCase() === symbol.toLowerCase(),
+  );
+  return filteredTokenList;
+};
+
+export const addUserToken = address =>
+  isItAddress(address) && getTokenDetails();
+
+export const getTokenDetails = async tokenAddress => {
+  const smartContract = new Contract(tokenAddress, ERC20Token, getProvider());
+  const name = smartContract.name();
+  const symbol = smartContract.symbol();
+  const { address } = smartContract;
+  const decimals = smartContract.decimals();
+  const token = await Promise.all([name, symbol, address, decimals]);
+  const resolveToken = {
+    name: token[0],
+    symbol: token[1],
+    address: token[2],
+    decimals: token[3],
+    imported: true,
+    available: true,
+  };
+  return address !== '0x' ? resolveToken : null;
+};

@@ -9,7 +9,7 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react';
 import { CheckIcon, CloseIcon, QuestionIcon } from '@chakra-ui/icons';
 import LiquidityFromBox from 'components/liquidity/from';
@@ -18,7 +18,7 @@ import InfoTextBox from 'components/TextBox/InfoTextBox';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/spinner';
-import SpinModal from "../modal/SpinModal"
+import SpinModal from '../modal/SpinModal';
 import ApproveBox from './ApproveBox';
 import LiquidityPriceBox from './LiquidityPriceBox';
 import Plus from '../../assets/plus-c.svg';
@@ -74,7 +74,7 @@ const AddLiquidity = ({
   setFromInputMax,
   setToInputMax,
   onCloseModal,
-  isOpenModal 
+  isOpenModal,
 }) => (
   <Box
     bg="#120136"
@@ -87,52 +87,58 @@ const AddLiquidity = ({
       <ArrowLeft cursor="pointer" onClick={() => back('INDEX')} />
       <Text color="gray.200">{addLiquidityPageHeading}</Text>
       <Tooltip
-                label="You can create a token pair on a new Token or add on an already existing one."
-                cursor="pointer"
-                fontSize="md"
-                aria-label="A tooltip"
-              >
-                <QuestionIcon color="white"/>
-              </Tooltip>
+        label="You can create a token pair on a new Token or add on an already existing one."
+        cursor="pointer"
+        fontSize="md"
+        aria-label="A tooltip"
+      >
+        <QuestionIcon color="white" />
+      </Tooltip>
     </Flex>
-{newTokenPairButton ? <InfoTextBox>
-<Text>
-  <h4>You are the first Liquidity Provider</h4>
-   <Text>The ratio of tokens you add will set the price of this pool</Text>
-  </Text>
-</InfoTextBox> : 
-<InfoTextBox>
-  <Text>
-    <b>Tip</b>: When you add liquidity, you will receive pool tokens representing your position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.
-  </Text>
-</InfoTextBox>
-
-}
+    {newTokenPairButton ? (
+      <InfoTextBox>
+        <Text>
+          <h4>You are the first Liquidity Provider</h4>
+          <Text>
+            The ratio of tokens you add will set the price of this pool
+          </Text>
+        </Text>
+      </InfoTextBox>
+    ) : (
+      <InfoTextBox>
+        <Text>
+          <b>Tip</b>: When you add liquidity, you will receive pool tokens
+          representing your position. These tokens automatically earn fees
+          proportional to your share of the pool, and can be redeemed at any
+          time.
+        </Text>
+      </InfoTextBox>
+    )}
     <LiquidityFromBox
-     label="input"
-     fromValue={fromValue}
-     setFromAddress={setFromAddress}
-     setFromValue={setFromValue}
-     setDetermineInputChange={setDetermineInputChange}
-     fromSelectedToken={fromSelectedToken}
-     setFromInputMax={setFromInputMax}
-     setFromSelectedToken={setFromSelectedToken}
-     checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+      label="input"
+      fromValue={fromValue}
+      setFromAddress={setFromAddress}
+      setFromValue={setFromValue}
+      setDetermineInputChange={setDetermineInputChange}
+      fromSelectedToken={fromSelectedToken}
+      setFromInputMax={setFromInputMax}
+      setFromSelectedToken={setFromSelectedToken}
+      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
     />
     <Flex justifyContent="center" my={3}>
       <Plus />
     </Flex>
     <To
-        label="input"
-        toValue={toValue}
-        setToAddress={setToAddress}
-        toSelectedToken={toSelectedToken}
-        setToSelectedToken={setToSelectedToken}
-        setToInputMax={setToInputMax}
-        setDetermineInputChange={setDetermineInputChange}
-        disableToSelectInputBox={disableToSelectInputBox}
-        checkIfLiquidityPairExist={checkIfLiquidityPairExist}
-        setToValue={setToValue}
+      label="input"
+      toValue={toValue}
+      setToAddress={setToAddress}
+      toSelectedToken={toSelectedToken}
+      setToSelectedToken={setToSelectedToken}
+      setToInputMax={setToInputMax}
+      setDetermineInputChange={setDetermineInputChange}
+      disableToSelectInputBox={disableToSelectInputBox}
+      checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+      setToValue={setToValue}
     />
     {toSelectedToken.symbol !== 'SELECT A TOKEN' && fromValue > 0 ? (
       <LiquidityPriceBox
@@ -145,102 +151,99 @@ const AddLiquidity = ({
     ) : (
       <div />
     )}
-      {newTokenPairButton &&
-    <InfoTextBox>
-    <Text>
- Please note that creating a new pool may result in a higher amount of gas fee
-  </Text>
-    
-    </InfoTextBox>
-}
-<Box mt={5} p={5}>
+    {newTokenPairButton && (
+      <InfoTextBox>
+        <Text>
+          Please note that creating a new pool may result in a higher amount of
+          gas fee
+        </Text>
+      </InfoTextBox>
+    )}
+    <Box mt={5} p={5}>
       {!hasAllowedToToken &&
-      (toSelectedToken.symbol !== "SELECT A TOKEN") && 
-      !insufficientBalanceButton &&
-      (toValue >= 0) && (
-        <Button
-          d="block"
-          w="100%"
-          h="50px"
-          color="rgba(64, 186, 213, 1)"
-          border="none"
-          fontWeight="regular"
-          fontSize="lg"
-          cursor="pointer"
-          rounded="2xl"
-          bg="rgba(64, 186, 213, 0.1)"
-          my="3"
-          borderColor="#40BAD5"
-          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-          _active={{ outline: '#29235E', background: '#29235E' }}
-          onClick={approveToToken}
-        >
-          Approve {toSelectedToken.symbol}
-        </Button>
-      )}
-      {!hasAllowedFromToken && 
-      (fromSelectedToken.symbol !== "SELECT A TOKEN") && 
-      (fromValue >= 0) && 
-      (fromValue !== "") && 
-      (!insufficientBalanceButton) && 
-      (
-        <Button
-          d="block"
-          w="100%"
-          h="50px"
-          color="rgba(64, 186, 213, 1)"
-          border="none"
-          fontWeight="regular"
-          fontSize="lg"
-          cursor="pointer"
-          rounded="2xl"
-          bg="rgba(64, 186, 213, 0.1)"
-          my="3"
-          borderColor="#40BAD5"
-          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-          _active={{ outline: '#29235E', background: '#29235E' }}
-          onClick={approveFromToken}
-        >
-          Approve {fromSelectedToken.symbol}
-        </Button>
-      )}
+        toSelectedToken.symbol !== 'SELECT A TOKEN' &&
+        !insufficientBalanceButton &&
+        toValue >= 0 && (
+          <Button
+            d="block"
+            w="100%"
+            h="50px"
+            color="rgba(64, 186, 213, 1)"
+            border="none"
+            fontWeight="regular"
+            fontSize="lg"
+            cursor="pointer"
+            rounded="2xl"
+            bg="rgba(64, 186, 213, 0.1)"
+            my="3"
+            borderColor="#40BAD5"
+            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+            _active={{ outline: '#29235E', background: '#29235E' }}
+            onClick={approveToToken}
+          >
+            Approve {toSelectedToken.symbol}
+          </Button>
+        )}
+      {!hasAllowedFromToken &&
+        fromSelectedToken.symbol !== 'SELECT A TOKEN' &&
+        fromValue >= 0 &&
+        fromValue !== '' &&
+        !insufficientBalanceButton && (
+          <Button
+            d="block"
+            w="100%"
+            h="50px"
+            color="rgba(64, 186, 213, 1)"
+            border="none"
+            fontWeight="regular"
+            fontSize="lg"
+            cursor="pointer"
+            rounded="2xl"
+            bg="rgba(64, 186, 213, 0.1)"
+            my="3"
+            borderColor="#40BAD5"
+            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+            _active={{ outline: '#29235E', background: '#29235E' }}
+            onClick={approveFromToken}
+          >
+            Approve {fromSelectedToken.symbol}
+          </Button>
+        )}
       {!showApprovalBox &&
-      (fromValue >= 0 && toValue >= 0) && 
-      !insufficientBalanceButton &&
-      (
+        (fromValue >= 0 && toValue >= 0) &&
+        !insufficientBalanceButton && (
+          <Button
+            d="block"
+            w="100%"
+            h="50px"
+            color={openSupplyButton ? 'rgba(64, 186, 213, 1)' : '#BEBEBE'}
+            border="none"
+            fontWeight="regular"
+            fontSize="lg"
+            cursor="pointer"
+            rounded="2xl"
+            bg={openSupplyButton ? 'rgba(64, 186, 213, 0.1)' : '#444159'}
+            borderColor="#40BAD5"
+            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+            _active={{ outline: '#29235E', background: '#29235E' }}
+            disabled={!openSupplyButton}
+            onClick={() => (newTokenPairButton ? open('new') : open('old'))}
+          >
+            {buttonValue}
+          </Button>
+        )}
+      {insufficientBalanceButton && (
         <Button
           d="block"
           w="100%"
           h="50px"
-          color={openSupplyButton ? 'rgba(64, 186, 213, 1)' : '#BEBEBE'}
+          color="#BEBEBE"
           border="none"
           fontWeight="regular"
           fontSize="lg"
           cursor="pointer"
           rounded="2xl"
-          bg={openSupplyButton ? 'rgba(64, 186, 213, 0.1)' : '#444159'}
-          borderColor="#40BAD5"
-          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-          _active={{ outline: '#29235E', background: '#29235E' }}
-          disabled={!openSupplyButton}
-          onClick={()=>newTokenPairButton ? open("new") : open("old")}
-        >
-          {buttonValue}
-        </Button>
-      )}
-      {insufficientBalanceButton &&
-      (
-        <Button
-          d="block"
-          w="100%"
-          h="50px"
-          color='#BEBEBE'
-          border="none"
-          fontWeight="regular"
-          fontSize="lg"
-          cursor="pointer"
-          rounded="2xl"
-          bg='#444159'
+          bg="#444159"
           borderColor="#40BAD5"
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
@@ -249,7 +252,7 @@ const AddLiquidity = ({
         </Button>
       )}
     </Box>
-  
+
     {/* modal 1 summary */}
     <Modal isOpen={modal1Disclosure.isOpen} onClose={closeModal1} isCentered>
       <ModalOverlay />
@@ -284,7 +287,7 @@ const AddLiquidity = ({
               <Box>{fromValue}</Box>
             </Flex>
             <Flex m="1" justifyContent="space-between">
-              <Text mt={-1}> {toSelectedToken.symbol}  </Text>
+              <Text mt={-1}> {toSelectedToken.symbol} </Text>
               <Box>{toValue}</Box>
             </Flex>
             <Flex m="1" justifyContent="space-between">
@@ -304,9 +307,11 @@ const AddLiquidity = ({
               <Text> Share of Pool </Text>
               <Box>
                 <Text>
-                  {newTokenPairButton ? "100" : fromValue > 0 && toValue > 0
-                    ? (parseFloat(fromValue) * 3) / 100
-                    : 0.0}
+                  {newTokenPairButton
+                    ? '100'
+                    : fromValue > 0 && toValue > 0
+                      ? (parseFloat(fromValue) * 3) / 100
+                      : 0.0}
                   %
                 </Text>
               </Box>
@@ -508,54 +513,48 @@ const AddLiquidity = ({
     <Modal isOpen={modal7Disclosure.isOpen} onClose={closeModal7} isCentered>
       <ModalOverlay />
       <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
- <ModalHeader fontSize="18px" fontWeight="regular" align="center">
+        <ModalHeader fontSize="18px" fontWeight="regular" align="center">
           Add Pairs
         </ModalHeader>
-      <ModalBody>
+        <ModalBody>
           <Text color="gray.400">
             There is no liquidity on this pair, will you like to add Liquidity.
           </Text>
           <Flex justifyContent="space-between">
-              <Button
-               d="block"
-               w="90%"
-               margin="20px auto"
-               h="50px"
-               color="#40BAD5"
-               border="none"
-               fontWeight="regular"
-               fontSize="lg"
-               cursor="pointer"
-               rounded="2xl"
-               bg="rgba(64, 186, 213,0.25)"
-               borderColor="#40BAD5"
-               _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-               _active={{ outline: '#29235E', background: '#29235E' }}
-                onClick={changeButtonCreateNewTokenPair}
-              >
-                OK
-              </Button>
-        
+            <Button
+              d="block"
+              w="90%"
+              margin="20px auto"
+              h="50px"
+              color="#40BAD5"
+              border="none"
+              fontWeight="regular"
+              fontSize="lg"
+              cursor="pointer"
+              rounded="2xl"
+              bg="rgba(64, 186, 213,0.25)"
+              borderColor="#40BAD5"
+              _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+              _active={{ outline: '#29235E', background: '#29235E' }}
+              onClick={changeButtonCreateNewTokenPair}
+            >
+              OK
+            </Button>
           </Flex>
-         </ModalBody>
-      
+        </ModalBody>
       </ModalContent>
     </Modal>
-  
-    
-  <SpinModal
-     isOpenModal={isOpenModal}
-     onCloseModal={onCloseModal}
-     title="Success"
-  >
-    <Box
-    textAlign="center"
-    mt={3} 
-    mb={8}
+
+    <SpinModal
+      isOpenModal={isOpenModal}
+      onCloseModal={onCloseModal}
+      title="Success"
     >
-  Providing {fromValue} {fromSelectedToken.symbol} and {toValue} {toSelectedToken.symbol}
-    </Box>
-      </SpinModal>
+      <Box textAlign="center" mt={3} mb={8}>
+        Providing {fromValue} {fromSelectedToken.symbol} and {toValue}{' '}
+        {toSelectedToken.symbol}
+      </Box>
+    </SpinModal>
   </Box>
 );
 AddLiquidity.propTypes = {
@@ -570,7 +569,7 @@ AddLiquidity.propTypes = {
   addLiquidityPageHeading: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
   setToValue: PropTypes.func.isRequired,
-  setFromSelectedToken: PropTypes.func.isRequired, 
+  setFromSelectedToken: PropTypes.func.isRequired,
   checkIfLiquidityPairExist: PropTypes.func.isRequired,
   fromSelectedToken: PropTypes.object.isRequired,
   toValue: PropTypes.string.isRequired,
@@ -593,11 +592,11 @@ AddLiquidity.propTypes = {
   closeModal7: PropTypes.func.isRequired,
   changeButtonCreateNewTokenPair: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
-  isOpenModal:PropTypes.func.isRequired, 
-  insufficientBalanceButton:PropTypes.bool.isRequired, 
-  setDetermineInputChange:PropTypes.func.isRequired, 
-  setFromInputMax:PropTypes.func.isRequired, 
-  setToInputMax :PropTypes.func.isRequired, 
+  isOpenModal: PropTypes.func.isRequired,
+  insufficientBalanceButton: PropTypes.bool.isRequired,
+  setDetermineInputChange: PropTypes.func.isRequired,
+  setFromInputMax: PropTypes.func.isRequired,
+  setToInputMax: PropTypes.func.isRequired,
   modal1Disclosure: PropTypes.object,
   modal2Disclosure: PropTypes.object,
   modal3Disclosure: PropTypes.object,

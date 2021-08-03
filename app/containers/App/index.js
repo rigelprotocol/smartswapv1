@@ -21,13 +21,20 @@ import LiquidityPage from 'containers/LiquidityPage/index';
 import NotFoundPage from 'containers/NotFoundPage/index';
 import Splash from 'components/splash/index';
 import '../../styles/globals.css';
-import Toast from '../../components/Toast';
-import { reConnect, disconnectWallet, updateChainId } from '../WalletProvider/actions';
-import TrustWallet from './../../components/TrustWallet/index';
 import { setWallet } from 'containers/WalletProvider/saga';
-import { isSupportedNetwork, switchToBSC } from './../../utils/wallet-wiget/connection'
 import { notify } from 'containers/NoticeProvider/actions';
-
+import Toast from '../../components/Toast';
+import {
+  reConnect,
+  disconnectWallet,
+  updateChainId,
+  getTokenList,
+} from '../WalletProvider/actions';
+import TrustWallet from '../../components/TrustWallet/index';
+import {
+  isSupportedNetwork,
+  switchToBSC,
+} from '../../utils/wallet-wiget/connection';
 
 const breakpoints = {
   sm: '360px',
@@ -53,33 +60,40 @@ const newTheme = {
 const App = props => {
   const { wallet } = props.state;
   useEffect(() => {
-    checkchain()
+    (async () => {
+      await props.getTokenList();
+    })();
   }, [wallet]);
 
   useEffect(() => {
     if (window.ethereum) {
+      checkchain();
       const obj = ethereum.on('chainChanged', chainId => {
-        console.log(chainId)
+        console.log(chainId);
         window.location.reload();
       });
     }
-  }, [])
+  }, []);
 
+  useEffect(() => {
+    if (window.ethereum) {
+      checkchain();
+    }
+  }, [wallet]);
 
   const checkchain = async () => {
-    if (window.ethereum) {
-      const chainID = await window.ethereum.request({
-        method: 'eth_chainId',
-      })
-      props.updateChainId(chainID)
-      if (isSupportedNetwork(chainID)) {
-        listener(wallet, props);
-        reConnector(props);
-      } else {
-        switchToBSC();
-      }
+    const chainID = await window.ethereum.request({
+      method: 'eth_chainId',
+    });
+    props.updateChainId(chainID);
+    if (isSupportedNetwork(chainID)) {
+      listener(wallet, props);
+      reConnector(props);
+    } else {
+      switchToBSC();
     }
-  }
+    await props.getTokenList();
+  };
 
   return (
     <ToastProvider placement="bottom-right">
@@ -104,7 +118,7 @@ const mapStateToProps = state => ({ state });
 
 export default connect(
   mapStateToProps,
-  { reConnect, disconnectWallet, notify, updateChainId },
+  { reConnect, disconnectWallet, notify, updateChainId, getTokenList },
 )(App);
 
 function reConnector(props) {

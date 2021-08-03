@@ -37,8 +37,9 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                 p="5px 10px"
                 rounded="lg"
                 mt="10px"
-                mr="15px"
                 fontSize="sm"
+                width="50%"
+                textAlign="center"
                 color="#72cfe4"
                 _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
                 onClick={e => {
@@ -67,13 +68,8 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                 >
                   {typeof selectedToken.symbol !== 'undefined' && (
                     <>
-                      <Image src={selectedToken.img} />
-                      {selectedToken.imported ===true   ? <NullImage24 /> : <span
-                        className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
-                      />
-
-                      }
-                      
+                      <Image src={selectedToken.logoURI} />
+                      {selectedToken.imported === true && <NullImage24 />}
                       <Text ml={4}>{selectedToken.symbol}</Text>
                     </>
                   )}
