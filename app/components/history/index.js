@@ -2,7 +2,8 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 import React, { useState } from 'react';
 import styles from '../../styles/history.css';
-import Empty from './EmptyHistory';
+// import Empty from './EmptyHistory';
+import OrderHistory from './OrderHistory';
 
 export default function Home() {
   const [show, setShow] = useState(false);
@@ -36,20 +37,20 @@ export default function Home() {
               className={styles.icon}
             />
           ) : (
-              <AddIcon
-                w={6}
-                h={6}
-                color="gray.400"
-                cursor="pointer"
-                onClick={() => {
-                  setShow(true);
-                }}
-                className={styles.icon}
-              />
-            )}
+            <AddIcon
+              w={6}
+              h={6}
+              color="gray.400"
+              cursor="pointer"
+              onClick={() => {
+                setShow(true);
+              }}
+              className={styles.icon}
+            />
+          )}
         </Flex>
       </Flex>
-      {show && <Empty />}
+      {show && <OrderHistory />}
     </Box>
   );
 }
