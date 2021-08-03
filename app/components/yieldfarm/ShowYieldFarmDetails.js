@@ -326,7 +326,7 @@ const ShowYieldFarmDetails = ({
         ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
         {
           from: wallet.address,
-          gasLimit: 150000,
+          gasLimit: 200000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );

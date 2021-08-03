@@ -46,7 +46,7 @@
 	height: 70px;
 	padding: 10px;
 	display: flex;
-	z-index: 2;
+	z-index: 20;
 	border: 1px solid #362f75;
 	background: #29235e;
 	justify-content: space-between;

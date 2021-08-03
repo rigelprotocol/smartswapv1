@@ -98,10 +98,7 @@ export function FarmingPage(props) {
   }, [wallet.address]);
 
   useEffect(() => {
-    if (wallet.chainId == '0x61') {
-      checkIfUserAddressHasBeenWhiteListed();
-    }
-
+    checkIfUserAddressHasBeenWhiteListed()
     refreshTokenStaked();
   }, [wallet]);
 
@@ -133,15 +130,16 @@ export function FarmingPage(props) {
   const checkIfUserAddressHasBeenWhiteListed = async () => {
     try {
       const specialPool = await RGPSpecialPool();
-      const isItWhiteListed = await specialPool.isWhitelist(wallet.address);
-      setIsAddressWhitelist(isItWhiteListed);
+      const isItWhiteListed = await specialPool.isWhitelist(wallet.address)
+      setIsAddressWhitelist(isItWhiteListed)
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+
+  }
   const submitDataToGetWhitelisted = () => {
-    console.log({ dataInputToGetWhiteListed });
-    onCloseModal();
+    console.log({ dataInputToGetWhiteListed })
+    onCloseModal()
     toast({
       title: 'Address successfully submitted',
       description: 'You will be notified if you are eligible for this pool',
@@ -156,7 +154,7 @@ export function FarmingPage(props) {
       const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const getYieldFarmingData = async () => {
@@ -632,7 +630,7 @@ export function FarmingPage(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return (
@@ -646,7 +644,7 @@ export function FarmingPage(props) {
           // submitData={submitDataToGetWhitelisted}
           // InputData={dataInputToGetWhiteListed}
           // setInputData={setDataInputToGetWhiteListed}
-          title="RGP STAKING POOL IS COMING SOON..."
+          title="YOUR ADDRESS IS NOT WHITELISTED FOR RGP STAKING"
         >
           <RGPFarmInfo />
         </InfoModal>

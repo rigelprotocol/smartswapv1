@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Link, ListItem, OrderedList } from '@chakra-ui/react';
+import { Box, Link, ListItem, OrderedList } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 const RGPFarmInfo = () => (
@@ -27,14 +27,12 @@ const RGPFarmInfo = () => (
           href="https://docs.google.com/forms/d/e/1FAIpQLSdu8uewqjgWdcdBPbM2vI65cVLwHYqFyrkWQHqEfeW_Zltr-w/viewform?usp=sf_link"
           isExternal
         >
-          > > form <ExternalLinkIcon mx="2px" />
+          form <ExternalLinkIcon mx="2px" />
         </Link>
       </ListItem>
     </OrderedList>
 
-    <Box>
-      All other staking pools are available: (RGP-BUSD, RGP-BNB, BNB-BUSD)
-    </Box>
+    <Box>Other staking pools do not require address whitelist</Box>
   </>
 );
 

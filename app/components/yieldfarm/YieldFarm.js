@@ -27,13 +27,11 @@ const YieldFarm = ({
     if (content.totalLiquidity) {
       return `$ ${formatAmount(content.totalLiquidity)}`;
     }
-    return '--';
   };
   const checkIfAddressIsWhiteListed = () => {
     if (isAddressWhitelist) {
       setShowYieldFarm(!showYieldfarm);
     } else {
-      // setShowModalWithInput(true)
       onOpenModal();
     }
   };
@@ -116,26 +114,19 @@ const YieldFarm = ({
         </Flex>
         <Box align="right" mt={['4', '0']} ml="2">
           {content.id == 1 ? (
-            <Tooltip label="Coming soon">
-              <Button
-                w={['100%', '100%', '146px']}
-                h="40px"
-                borderRadius="12px"
-                bg="rgba(64, 186, 213, 0.1);"
-                color="#40BAD5"
-                border="0"
-                mb="4"
-                _hover={{ color: '#423a85' }}
-                onClick={() =>
-                  wallet.chainId == '0x61'
-                    ? checkIfAddressIsWhiteListed()
-                    : onOpenModal()
-                }
-                // onClick={onOpenModal}
-              >
-                Unlock
-              </Button>
-            </Tooltip>
+            <Button
+              w={['100%', '100%', '146px']}
+              h="40px"
+              borderRadius="12px"
+              bg="rgba(64, 186, 213, 0.1);"
+              color="#40BAD5"
+              border="0"
+              mb="4"
+              _hover={{ color: '#423a85' }}
+              onClick={checkIfAddressIsWhiteListed}
+            >
+              Unlock
+            </Button>
           ) : (
             <Button
               w={['100%', '100%', '146px']}
