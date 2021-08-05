@@ -137,16 +137,20 @@ export const updateChainId = chainId => dispatch => {
 }
 
 export const changeRGPValue = wallet => async dispatch => {
-  try {
-    const { address } = wallet;
-    const ethProvider = await provider();
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    const rgpBalance = await getAddressTokenBalance(wallet.address, getTokenAddress(chainId), wallet.signer);
-    const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(address))).toString();
-    dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
-    dispatch({ type: CHANGE_BNB, payload: { balance } })
-  } catch {
-    console.log("error while trying to refresh data")
+  if (wallet.signer != 'signer') {
+
+    try {
+      const { address } = wallet;
+      const ethProvider = await provider();
+
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const rgpBalance = await getAddressTokenBalance(wallet.address, getTokenAddress(chainId), wallet.signer);
+      const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(address))).toString();
+      dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
+      dispatch({ type: CHANGE_BNB, payload: { balance } })
+    } catch (error) {
+      console.log("error while trying to refresh data", error)
+    }
   }
 }
 

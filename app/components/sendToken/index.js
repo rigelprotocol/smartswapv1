@@ -60,6 +60,7 @@ export const Manual = props => {
   const [actualTransactionDeadline, setActualTransactionDeadline] = useState(Math.floor(new Date().getTime() / 1000.0 + 1200))
   const [slippageValue, setSlippageValue] = useState("0.5")
   const [tokenAllowance, setTokenAllowance] = useState('');
+  const [insufficientBalanceButton, setInsufficientBalanceButton] = useState(false);
   const [toURL, setToURL] = useState("")
   const [fromURL, setFromURL] = useState("");
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true)
@@ -76,7 +77,7 @@ export const Manual = props => {
   }, [selectedToken, selectedToToken]);
 
   useEffect(() => {
-    (fromAmount.length > 0) && callTransformFunction(fromAmount, 'from');
+    (fromAmount !== "") && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
   }, [path, selectedToken, selectedToToken, wallet, slippageValue])
   useEffect(() => {
@@ -113,11 +114,19 @@ export const Manual = props => {
 
   useEffect(() => {
     if (!newTokenPair) {
-      if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
-        setFromAmount(selectedToken.balance)
-      }
+      // if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
+      //   setFromAmount(selectedToken.balance)
+      // }
       if (parseFloat(tokenAllowance) < parseFloat(fromAmount) && selectedToken.symbol !== 'BNB') {
         setUserHasApproveToken(false)
+      }
+      if(fromAmount !== ""){
+        console.log(parseFloat(fromAmount) ,selectedToken.balance)
+        if(parseFloat(fromAmount) > parseFloat(selectedToken.balance)){
+          setInsufficientBalanceButton(true)
+        }else{
+          setInsufficientBalanceButton(false)
+        }
       }
     }
 
@@ -636,7 +645,9 @@ export const Manual = props => {
                       ? sendNotice('Select the designated token')
                       : typeof wallet.signer === 'object' &&
                         fromAmount != parseFloat(0.0) && selectedToToken.name !== 'Select a token'
-                        ? selectedToken.symbol == selectedToToken.symbol ? sendNotice('Improper token selection, you selected the same token') : triggerAccountCheck() : null
+                        ? selectedToken.symbol == selectedToToken.symbol ? sendNotice('Improper token selection, you selected the same token') : (insufficientBalanceButton) ? 
+                          sendNotice(`Insufficient ${selectedToken.symbol} balance`)
+                          : triggerAccountCheck() : null
               }
             >
               {wallet.signer === 'signer' ?
@@ -647,8 +658,9 @@ export const Manual = props => {
                     ? 'Click Select a Token'
                     : typeof wallet.signer === 'object' &&
                       fromAmount != parseFloat(0.0) && selectedToToken.name !== 'Select a token'
-                      ? (selectedToken.symbol == selectedToToken.symbol ? 'Improper token selection' :
-                        (!userHasApproveToken) ? 'Approve Transaction' : 'Swap Tokens')
+                      ? (selectedToken.symbol == selectedToToken.symbol ? 'Improper token selection' : 
+                        (insufficientBalanceButton) ? `Insufficient ${selectedToken.symbol} balance` :
+                          (!userHasApproveToken) ? 'Approve Transaction' : 'Swap Tokens')
                       : ''
               }
             </Button>
