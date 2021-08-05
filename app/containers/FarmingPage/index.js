@@ -162,6 +162,7 @@ export function FarmingPage(props) {
       const rgpTotal = await getSpecialPoolAPY();
       props.farmDataLoading(true);
       const masterChef = await masterChefContract();
+
       let poolsData = [];
       const rgpAddress = await masterChef.poolInfo(0);
       let totalStaking;
