@@ -1,8 +1,7 @@
 // @ts-nocheck
 import Web3 from 'web3';
-import RigelToken from 'utils/abis/RigelToken.json';
-import BUSD from 'utils/abis/BUSD.json';
-import WETH9 from 'utils/abis/WETH9.json';
+import defaultTokenList from './default-token.json';
+import testNetTokenList from './test-net-tokens.json';
 
 export const checkNetVersion = () => {
   if (window.ethereum && window.ethereum.chainId !== null) {
@@ -55,7 +54,7 @@ const BSCMainnet = {
   SmartFactory: '0x655333A1cD74232C404049AF9d2d6cF1244E71F6',
   SMART_SWAPPING: '0xf78234E21f1F34c4D8f65faF1BC82bfc0fa24920',
   ETHRGPSMARTSWAPPAIR: '0x9218BFB996A9385C3b9633f87e9D68304Ef5a1e5',
-  specialPool: '',
+  specialPool: '0x100514759DCD6e2Ccbb9EB87481b96de28C4b77F',
   SmartSwap_LP_Token: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
   RigelSmartContract: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
   masterChef: '0x7d59AAD43Cef13Cd077308D37C3A39D3b4B6C924',
@@ -71,7 +70,7 @@ const BSCTestnet = {
   SmartFactory: '0x7B14Ab51fAF91926a2214c91Ce9CDaB5C0E1A1c3',
   SMART_SWAPPING: '0x00749e00Af4359Df5e8C156aF6dfbDf30dD53F44',
   ETHRGPSMARTSWAPPAIR: '0xca01606438556b299005b36B86B38Fe506eadF9F',
-  specialPool: '0x4Be275eF94AF45E163c6b3182467191025E883B4',
+  specialPool: '0x7fE2Ec631716FeF3657BcB8d80CffBB2A34F7617',
   RigelSmartContract: '0x9f0227A21987c1fFab1785BA3eBa60578eC1501B',
   masterChef: '0x71C07230dF8b60aef6e3821CA2Dee530966EFc2D',
   masterChefPoolOne: '0x0B0a1E07931bD7991a104218eE15BAA682c05e01',
@@ -85,78 +84,28 @@ const BSCTestnet = {
 export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
-export const tokenList = [
-  { name: 'Select a token', symbol: 'SELECT A TOKEN', img: '',available:true },
-  {
-    symbol: 'RGP',
-    abi: RigelToken,
-    available:true,
-    imported:false,
-    name: 'Rigel Protocol',
-    img: '../../assets/rgp.svg',
-    address:
-      checkNetVersion() === BSC_MAIN_NET_ID.toString()
-        ? '0xFA262F303Aa244f9CC66f312F0755d89C3793192'
-        : '0x9f0227a21987c1ffab1785ba3eba60578ec1501b',
-  },
-  {
-    abi: BUSD,
-    symbol: 'BUSD',
-    available:true,
-    imported:false,
-    name: 'Binance USD',
-    img: '../../assets/bnb.svg',
-    address:
-      checkNetVersion() === BSC_MAIN_NET_ID.toString()
-        ? '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
-        : '0x10249e900b919fdee9e2ed38b4cd83c4df857254',
-  },
-  // WE CAN USE THIS
-  // {
-  //   abi: BNB,
-  //   symbol: 'BNB',
-  //   name: 'Binance SmartChain USD',
-  //   img: '../../assets/bnb.svg',
-  //   address: '0xd848ed7f625165d7ffa9e3b3b0661d6074902fd4',
-  // },
-  {
-    abi: WETH9,
-    symbol: 'WBNB',
-    available:true,
-    imported:false,
-    name: 'Wrapped BNB',
-    img: '../../assets/eth.svg',
-    address:
-      checkNetVersion() === BSC_MAIN_NET_ID.toString()
-        ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-        : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
-  },
-  {
-    abi: WETH9,
-    symbol: 'BNB',
-    available:true,
-    imported:false,
-    name: 'BNB',
-
-    img: '../../assets/eth.svg',
-    address:
-      checkNetVersion() === BSC_MAIN_NET_ID.toString()
-        ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-        : '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
-  },
-  // {
-  //   abi: WETH9,
-  //   symbol: 'ETH',
-  //   name: 'Ethereum',
-
-  //   img: '../../assets/eth.svg',
-  //   address: '0x492Df17f202e36525151Ce7BcD49d5637Dc10659',
-  // },
-];
+export const tokenList = () => {
+  let allToken = [];
+  const storedReducer = JSON.parse(localStorage.getItem('persist:root'));
+  if (storedReducer != null) {
+    const extendedList = JSON.parse(storedReducer.ExtendedTokenList);
+    allToken =
+      extendedList !== undefined && extendedList.tokenList.length > 0
+        ? extendedList.tokenList
+        : [];
+  }
+  if (allToken.length > 0) {
+    return allToken;
+  }
+  return checkNetVersion() === BSC_MAIN_NET_ID.toString()
+    ? defaultTokenList
+    : testNetTokenList;
+};
 
 export const tokenWhere = field =>
+  tokenList().length > 0 &&
   field !== null &&
-  tokenList.filter(fields => fields.symbol === field.toUpperCase())[0];
+  tokenList().filter(fields => fields.symbol === field.toUpperCase())[0];
 
 export const tokenAddressWhere = symbol => tokenWhere(symbol).address;
 
@@ -169,7 +118,8 @@ export const convertToNumber = (hex, decimals) => {
   return balanceDecimal.toLocaleString();
 };
 
-export const checkIfTokenIsListed = symbol => tokenList.find(token => token.symbol === symbol)
+export const checkIfTokenIsListed = symbol =>
+  tokenList().find(token => token.symbol === symbol);
 
 // export const convertIndexToAlphetString = number =>
 //   number
@@ -252,13 +202,13 @@ export const balanceAbi = [
 ];
 export const decimalAbi = [
   {
-    "constant": true,
-    "inputs": [],
-    "name": "decimals",
-    "outputs": [{ "name": "", "type": "uint8" }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{ name: '', type: 'uint8' }],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
   },
 ];
 // export const balanceAbi = [

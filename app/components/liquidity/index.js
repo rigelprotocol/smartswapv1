@@ -1,14 +1,15 @@
 import { Box, Flex } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
-import { Text } from '@chakra-ui/react';
+import { Text,Tooltip } from '@chakra-ui/react';
 import React from 'react';
 import PropTypes from 'prop-types';
-import Question from '../../assets/question.svg';
+import { QuestionIcon } from '@chakra-ui/icons';
 import Liquidities from './liquidities';
 const Index = ({
   liquidities,
   addLiquidityPage,
-  addLiquidity,
+  addMoreLiquidity,
+  addMoreLiquidityButton,
   removeLiquidity,
   removeALiquidity,
   liquidityLoading,
@@ -21,45 +22,48 @@ const Index = ({
       rounded="lg"
     >
       <Box mt={5} p={5}>
-        <Flex justifyContent="space-between" flexDirection={["column","row","column","row"]}>
-        <Button
-          d="block"
-          w={["100%","48%","100%","48%"]}
-          marginTop={["20px","0px","20px","0px"]}
-          h="50px"
-          color="#40BAD5"
-          border="none"
-          fontWeight="regular"
-          fontSize="lg"
-          cursor="pointer"
-          rounded="2xl"
-          bg="rgba(64, 186, 213,0.25)"
-          borderColor="#40BAD5"
-          _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-          _active={{ outline: '#29235E', background: '#29235E' }}
-          onClick={() => addLiquidityPage("Add Liquidity",false)}
+        <Flex
+          justifyContent="space-between"
+          flexDirection={['column', 'row', 'column', 'row']}
         >
-          Add Liquidity
-        </Button>
-        <Button
-         d="block"
-         w={["100%","48%","100%","48%"]}
-         marginTop={["20px","0px","20px","0px"]}
-         _hover={{ borderColor: 'rgba(64, 186, 213,0.35)' }}
-         h="50px"
-         color="#40BAD5"
-         border="2px solid #40BAD5"
-         fontWeight="regular"
-         fontSize="lg"
-         cursor="pointer"
-         rounded="2xl"
-         bg="transparent"
-         onClick={() => addLiquidityPage("Create a new pair",true)}
-         >
-          Create a pair
-        </Button>
+          <Button
+            d="block"
+            w={['100%', '48%', '100%', '48%']}
+            marginTop={['20px', '0px', '20px', '0px']}
+            h="50px"
+            color="#40BAD5"
+            border="none"
+            fontWeight="regular"
+            fontSize="lg"
+            cursor="pointer"
+            rounded="2xl"
+            bg="rgba(64, 186, 213,0.25)"
+            borderColor="#40BAD5"
+            _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+            _active={{ outline: '#29235E', background: '#29235E' }}
+            onClick={() => addLiquidityPage('Add Liquidity', false)}
+          >
+            Add Liquidity
+          </Button>
+          <Button
+            d="block"
+            w={['100%', '48%', '100%', '48%']}
+            marginTop={['20px', '0px', '20px', '0px']}
+            _hover={{ borderColor: 'rgba(64, 186, 213,0.35)' }}
+            h="50px"
+            color="#40BAD5"
+            border="2px solid #40BAD5"
+            fontWeight="regular"
+            fontSize="lg"
+            cursor="pointer"
+            rounded="2xl"
+            bg="transparent"
+            onClick={() => addLiquidityPage('Create a new pair', true)}
+          >
+            Create a pair
+          </Button>
         </Flex>
-        
+
         {/* CREATE A NEW BUTTON TO ALLOW USERS CREATE NEW PAIR, THIS WILL STILL LEAD TO THE ADDLIQUIDITYPAGE */}
       </Box>
 
@@ -73,56 +77,61 @@ const Index = ({
         <Text color="gray.200" fontSize="md">
           Your liquidity
         </Text>
-        <Question />
+         <Tooltip
+                label="This is a list of Liquidity of several token pairs as provided by you"
+                fontSize="md"
+                cursor="pointer"
+                aria-label="A tooltip"
+              >
+                <QuestionIcon color="white"/>
+              </Tooltip>
       </Flex>
-      {liquidityLoading ? <Flex
-        color="#fff"
-        bg="#29235E"
-        h="100px"
-        mb="10px"
-        justifyContent="center"
-        alignItems="center"
-        px={4}
-        mx={5}
-        rounded="2xl"
-      >
-        <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-          Loading...
+      {liquidityLoading ? (
+        <Flex
+          color="#fff"
+          bg="#29235E"
+          h="100px"
+          mb="10px"
+          justifyContent="center"
+          alignItems="center"
+          px={4}
+          mx={5}
+          rounded="2xl"
+        >
+          <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+            Loading...
           </Text>
-      </Flex> :
-
-
-
-        (liquidities.length === 0 ? (
-          <Flex
-            color="#fff"
-            bg="#29235E"
-            h="100px"
-            mb="10px"
-            justifyContent="center"
-            alignItems="center"
-            px={4}
-            mx={5}
-            rounded="2xl"
-          >
-            <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
-              No Liquidity Found.
+        </Flex>
+      ) : liquidities.length === 0 ? (
+        <Flex
+          color="#fff"
+          bg="#29235E"
+          h="100px"
+          mb="10px"
+          justifyContent="center"
+          alignItems="center"
+          px={4}
+          mx={5}
+          rounded="2xl"
+        >
+          <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+            No Liquidity Found.
           </Text>
-          </Flex>
-        ) : (
-          <Box>
-            {liquidities.map((liquid, index) => (
-              <Liquidities
-                key={index + "key"}
-                value={liquid}
-                addLiquidity={addLiquidity}
-                removeLiquidity={removeLiquidity}
-                removeALiquidity={removeALiquidity}
-
-              />
-            ))}
-          </Box>)
-        )}
+        </Flex>
+      ) : (
+        <Box>
+          {liquidities.map((liquid, index) => (
+            <Liquidities
+              key={`${index}key`}
+              value={liquid}
+              addMoreLiquidity={addMoreLiquidity}
+              addMoreLiquidityButton={addMoreLiquidityButton}
+              removeLiquidity={removeLiquidity}
+              removeALiquidity={removeALiquidity}
+            />
+          ))}
+        </Box>
+      )}
 
       {/* LIQUIDITY */}
 
@@ -143,6 +152,7 @@ Index.propTypes = {
   addLiquidityPage: PropTypes.func.isRequired,
   removeALiquidity: PropTypes.func.isRequired,
   removeLiquidity: PropTypes.func.isRequired,
-  addLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidity: PropTypes.func.isRequired,
+  addMoreLiquidityButton: PropTypes.bool.isRequired,
 };
 export default Index;

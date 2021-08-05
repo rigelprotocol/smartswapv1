@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Rigel Protocol",
+    "symbol": "rgp",
+    "C_supply": "805,000.00",
+    "t_supply": "20,000,000",
+    "details": "Rigel Protocol is a Blockchain Decentralized protocol for a diverse set of DeFi products. A protocol built to improve and touch up existing Decentralized Finance (DEFI) features while introducing several innovative DEFI products to propel scalability, security in the Blockchain, user experience and adoption"
+  },
+  {
+    "name": "Binance-Peg BUSD Token",
+    "symbol": "BUSD",
+    "C_supply": "11,988,640,421",
+    "t_supply": "11,988,640,421",
+    "details": "BUSD is a 1:1 USD-backed stablecoin approved by the New York State Department of Financial Services (NYDFS), issued in partnership with Paxos."
+  },
+  {
+    "name": "Wrapped BNB",
+    "symbol": "WBNB",
+    "C_supply": "7,710,438",
+    "t_supply": "7,710,438",
+    "details": "As the native coin of Binance Chain, BNB has multiple use cases: fueling transactions on the Chain, paying for transaction fees on Binance Exchange, making in-store payments, and many more."
+  },
+  {
+    "name": "Binance Coin",
+    "symbol": "BNB",
+    "C_supply": "168,137,036",
+    "t_supply": "168,137,036",
+    "details": "Launched in July 2017, Binance is one of the biggest cryptocurrency exchanges globally. By aiming to bring cryptocurrency exchanges to the forefront of financial activity globally. The idea behind Binance’s name is to show this new paradigm in global finance — Binary Finance, or Binance.Aside from being the largest cryptocurrency exchange globally, Binance has launched a whole ecosystem of functionalities for its users. The Binance network includes the Binance Chain, Academy, Trusted Wallet and Research projects, which all employ the powers of blockchain technology to bring new-age finance to the world. Binance Coin is an integral part of the successful functioning of many of the Binance sub-projects"
+  }
+]

@@ -11,6 +11,7 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
+  Image,
 } from '@chakra-ui/react';
 import { QuestionIcon, ArrowUpIcon, CloseIcon } from '@chakra-ui/icons';
 import { Box, Flex } from '@chakra-ui/layout';
@@ -40,7 +41,7 @@ const ConfirmSwapBox = props => {
     selectedToken,
     selectedToToken,
     openLoadingSpinnerAndSwap,
-    liquidityProviderFee
+    liquidityProviderFee,
   } = props;
 
   return (
@@ -67,14 +68,11 @@ const ConfirmSwapBox = props => {
               </Box>
               <Box>
                 <Text>
-                  {isNotEmpty(selectedToken) && (
-                    <span
-                      className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
-                    />
+                  {!isNotEmpty(selectedToken) && (
+                    <Image src={selectedToken.logoURI} />
                   )}
                   {` `}
-                  {isNotEmpty(selectedToken) && selectedToken.symbol}
-                  {path[0].token}
+                  {!isNotEmpty(selectedToken) && selectedToken.symbol}
                 </Text>
               </Box>
             </Flex>
@@ -87,10 +85,8 @@ const ConfirmSwapBox = props => {
               </Box>
               <Box>
                 <Text>
-                  {isNotEmpty(selectedToToken) && (
-                    <span
-                      className={`icon icon-${selectedToToken.symbol.toLowerCase()}`}
-                    />
+                  {!isNotEmpty(selectedToToken) && (
+                    <Image src={selectedToToken.logoURI} />
                   )}
                   {` `}
                   {path[1] !== undefined && path[1].token !== undefined
@@ -107,7 +103,8 @@ const ConfirmSwapBox = props => {
               <Flex m="1" justifyContent="space-between">
                 <Text mt={-1}> Price </Text>
                 <Box>
-                  {tokenPrice} {path[0].token} / {path[1] ? path[1].token : ''}
+                  {tokenPrice} {path[0] && path[0].token} /{' '}
+                  {path[1] ? path[1].token : ''}
                 </Box>
               </Flex>
               <Flex m="1" justifyContent="space-between">
@@ -132,7 +129,9 @@ const ConfirmSwapBox = props => {
                   Liquidity Provider Fee <QuestionIcon />{' '}
                 </Text>
                 <Box>
-                  <Text>{liquidityProviderFee()} {path[0].token}</Text>
+                  <Text>
+                    {liquidityProviderFee()} {path[0] && path[0].token}
+                  </Text>
                 </Box>
               </Flex>
             </Box>
@@ -264,64 +263,65 @@ const ConfirmSwapBox = props => {
           </ModalBody>
         </ModalContent>
       </Modal>
-     {/* modal five, liquidity pair that does not exist */}
+      {/* modal five, liquidity pair that does not exist */}
       <Modal isOpen={modal5Disclosure.isOpen} onClose={closeModal5} isCentered>
-      <ModalOverlay />
-      <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
- <ModalHeader fontSize="18px" fontWeight="regular" align="center">
-          Add Pairs
-        </ModalHeader>
-      <ModalBody>
-          <Text color="gray.400">
-            There is no liquidity on this pair, will you like to add Liquidity.
-          </Text>
-          <Flex justifyContent="space-between" flexDirection={['column','row','column','row']}>
+        <ModalOverlay />
+        <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
+          <ModalHeader fontSize="18px" fontWeight="regular" align="center">
+            Add Pairs
+          </ModalHeader>
+          <ModalBody>
+            <Text color="gray.400">
+              There is no liquidity on this pair, will you like to add
+              Liquidity.
+            </Text>
+            <Flex
+              justifyContent="space-between"
+              flexDirection={['column', 'row', 'column', 'row']}
+            >
               <Button
-               d="block"
-               w="48%"
-               margin="20px auto"
-               h="50px"
-               color="#40BAD5"
-               border="none"
-               fontWeight="regular"
-               fontSize="lg"
-               cursor="pointer"
-               rounded="2xl"
-               bg="rgba(64, 186, 213,0.25)"
-               borderColor="#40BAD5"
-               _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-               _active={{ outline: '#29235E', background: '#29235E' }}
+                d="block"
+                w="48%"
+                margin="20px auto"
+                h="50px"
+                color="#40BAD5"
+                border="none"
+                fontWeight="regular"
+                fontSize="lg"
+                cursor="pointer"
+                rounded="2xl"
+                bg="rgba(64, 186, 213,0.25)"
+                borderColor="#40BAD5"
+                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+                _active={{ outline: '#29235E', background: '#29235E' }}
                 onClick={openLiquidityPage}
               >
                 YES
               </Button>
-        
+
               <Button
-               d="block"
-               w="48%"
-               margin="20px auto"
-               h="50px"
-               color="#BEBEBE"
-               border="none"
-               fontWeight="regular"
-               fontSize="lg"
-               cursor="pointer"
-               rounded="2xl"
-               bg="#444159"
-               borderColor="#40BAD5"
-               _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-               _active={{ outline: '#29235E', background: '#29235E' }}
+                d="block"
+                w="48%"
+                margin="20px auto"
+                h="50px"
+                color="#BEBEBE"
+                border="none"
+                fontWeight="regular"
+                fontSize="lg"
+                cursor="pointer"
+                rounded="2xl"
+                bg="#444159"
+                borderColor="#40BAD5"
+                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+                _active={{ outline: '#29235E', background: '#29235E' }}
                 onClick={closeModal5}
               >
                 NO
               </Button>
-        
-          </Flex>
-         </ModalBody>
-      
-      </ModalContent>
-    </Modal>
-  
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
