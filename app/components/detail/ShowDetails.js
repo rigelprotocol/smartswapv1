@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Detail from './Detail';
 import styles from '../../styles/details.css';
 
-const ShowDetails = () => {
-  const [detail, setDetail] = useState(false);
+const ShowDetails = ({ wallet }) => {
+  const [detail, setDetail] = useState(true);
+  const { swapOutputToken, swapInputToken } = wallet;
   return (
     <Box className={styles.container}>
       <Flex
@@ -29,21 +32,33 @@ const ShowDetails = () => {
               className={styles.icon}
             />
           ) : (
-              <AddIcon
-                w={6}
-                h={6}
-                cursor="pointer"
-                onClick={() => {
-                  setDetail(true);
-                }}
-                className={styles.icon}
-              />
-            )}
+            <AddIcon
+              w={6}
+              h={6}
+              cursor="pointer"
+              onClick={() => {
+                setDetail(true);
+              }}
+              className={styles.icon}
+            />
+          )}
         </Flex>
       </Flex>
-      {detail && <Detail />}
+      {detail && (
+        <Detail
+          swapOutputToken={swapOutputToken}
+          swapInputToken={swapInputToken}
+        />
+      )}
     </Box>
   );
 };
+ShowDetails.propTypes = {
+  wallet: PropTypes.object,
+};
+const mapStateToProps = ({ wallet }) => ({ wallet });
 
-export default ShowDetails;
+export default connect(
+  mapStateToProps,
+  {},
+)(ShowDetails);

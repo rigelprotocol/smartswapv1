@@ -15,7 +15,6 @@ export const TABS = {
   PRICE: 'PRICE',
 };
 export default function HomePage(props) {
-
   const [tab, setTab] = useState(TABS.MANUAL);
   return (
     <Layout title="Rigel Protocol - Smartswap">

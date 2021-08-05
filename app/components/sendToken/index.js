@@ -35,7 +35,7 @@ import To from './to';
 import SwapSettings from "./SwapSettings";
 import ShowMessageBox from "../Toast/ShowMessageBox";
 import ConfirmSwapBox from './ConfirmSwapBox';
-import { changeDeadlineValue, changeRGPValue } from '../../containers/WalletProvider/actions';
+import { changeDeadlineValue, changeRGPValue, updateToToken, updateFromToken } from '../../containers/WalletProvider/actions';
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
 import { getDeadline } from '../../utils/UtilFunc';
 import { getTokenList } from "../../utils/tokens"
@@ -70,6 +70,12 @@ export const Manual = props => {
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
 
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure();
+
+  useEffect(() => {
+    props.updateToToken(selectedToToken);
+    props.updateFromToken(selectedToken);
+  }, [selectedToken, selectedToToken]);
+
   useEffect(() => {
     (fromAmount !== "") && callTransformFunction(fromAmount, 'from');
     checkForAllVariables()
@@ -689,7 +695,7 @@ export const Manual = props => {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 export default connect(
   mapStateToProps,
-  { notify, changeDeadlineValue, changeRGPValue },
+  { notify, changeDeadlineValue, changeRGPValue, updateToToken, updateFromToken },
 )(Manual);
 
 async function updateSendAmount(path, selectedToken, selectedToToken, askAmount, setAmountIn, setShowBox, setBoxMessage, setFromAmount, field, calculateSlippage) {

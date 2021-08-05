@@ -18,4 +18,6 @@ export const SET_USER_TOKEN = 'app/WalletProvider/SET_USER_TOKEN';
 export const DELETE_USER_TOKEN = 'app/WalletProvider/DELETE_USER_TOKEN';
 export const ADD_NEW_TOKEN_LIST = 'app/WalletProvider/ADD_NEW_TOKEN_LIST';
 export const UPDATE_TOKEN_LIST = 'app/WalletProvider/UPDATE_TOKEN_LIST';
+export const UPDATE_TO_TOKEN = 'app/WalletProvider/UPDATE_TO_TOKEN';
+export const UPDATE_FROM_TOKEN = 'app/WalletProvider/UPDATE_FROM_TOKEN';
 export const TOGGLE_LIST_SHOW = 'app/WalletProvider/TOGGLE_LIST_SHOW';

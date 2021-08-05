@@ -32,6 +32,8 @@ import {
   ADD_NEW_TOKEN_LIST,
   UPDATE_TOKEN_LIST,
   TOGGLE_LIST_SHOW,
+  UPDATE_TO_TOKEN,
+  UPDATE_FROM_TOKEN,
 } from './constants';
 import defaultTokenList from '../../utils/default-token.json';
 import testNetTokenList from '../../utils/test-net-tokens.json';
@@ -211,3 +213,11 @@ export const updateTokenListAction = (list) => (dispatch) => dispatch({
 export const toggleDefaultTokenList = (option) => (dispatch) => dispatch({
   type: TOGGLE_LIST_SHOW, payload: option
 })
+
+export const updateToToken = (token) => (dispatch) => dispatch({
+  type: UPDATE_TO_TOKEN, payload: token
+});
+
+export const updateFromToken = (token) => (dispatch) => dispatch({
+  type: UPDATE_FROM_TOKEN, payload: token
+});
