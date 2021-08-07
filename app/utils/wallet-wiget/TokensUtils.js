@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable consistent-return */
 /* eslint-disable no-return-await */
 /* eslint-disable no-param-reassign */
@@ -8,31 +9,13 @@ import Web3 from 'web3';
 import { approveAbi, allowanceAbi, SMART_SWAP } from '../constants';
 
 export const getTokenListBalance = async (tokenList, account, checker) => {
-  tokenList.map(async token => {
-    // typeof token.address !== 'undefined' &&
-    // account.signer !== 'signer' &&
-    if (
-      typeof token.address !== 'undefined' &&
-      account.signer !== 'signer' &&
-      token.symbol === 'BNB'
-    ) {
-      token.balance = account.balance;
-    }
-    if (
-      typeof token.address !== 'undefined' &&
-      account.signer !== 'signer' &&
-      token.symbol !== 'BNB'
-    ) {
-      try {
-        token.balance = await getAddressTokenBalance(
-          account.address,
-          token.address,
-          account.signer,
-        );
-        checker(true);
-      } catch (e) {
-        console.log(e);
-      }
+  return tokenList.map(async (token, index) => {
+    if (typeof token.address !== 'undefined' && account.signer !== 'signer') {
+      const { signer } = account;
+      let { balance, name, symbol, address } = token;
+      balance = symbol === 'BNB' ? account.balance : await getAddressTokenBalance(account.address, address, signer);
+      checker(true);
+      return { balance, name, symbol, address };
     }
   });
 };

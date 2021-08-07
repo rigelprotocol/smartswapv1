@@ -14,8 +14,9 @@ import {
   signer,
 } from 'utils/wallet-wiget/connection';
 import { ethers } from 'ethers';
-import { TOKENS_CONTRACT } from 'utils/constants';
-import { formatBalance } from 'utils/UtilFunc';
+import { tokenList } from 'utils/constants';
+import { formatBalance, isNotEmpty } from 'utils/UtilFunc';
+import { getTokenDetails } from 'utils/tokens';
 import {
   WALLET_CONNECTED,
   WALLET_PROPS,
@@ -24,8 +25,18 @@ import {
   CLEAR_WALLET,
   CHANGE_DEADLINE,
   CHANGE_BNB,
-  UPDATE_CHAINID
+  UPDATE_CHAIN_ID,
+  GET_ALL_TOKEN,
+  SET_USER_TOKEN,
+  DELETE_USER_TOKEN,
+  ADD_NEW_TOKEN_LIST,
+  UPDATE_TOKEN_LIST,
+  TOGGLE_LIST_SHOW,
+  UPDATE_TO_TOKEN,
+  UPDATE_FROM_TOKEN,
 } from './constants';
+import defaultTokenList from '../../utils/default-token.json';
+import testNetTokenList from '../../utils/test-net-tokens.json';
 
 export const reConnect = (wallet) => async dispatch => {
   try {
@@ -122,20 +133,24 @@ export const changeDeadlineValue = value => dispatch => {
 }
 
 export const updateChainId = chainId => dispatch => {
-  dispatch({ type: UPDATE_CHAINID, payload: chainId })
+  dispatch({ type: UPDATE_CHAIN_ID, payload: chainId })
 }
 
 export const changeRGPValue = wallet => async dispatch => {
-  try {
-    const { address } = wallet;
-    const ethProvider = await provider();
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    const rgpBalance = await getAddressTokenBalance(wallet.address, getTokenAddress(chainId), wallet.signer);
-    const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(address))).toString();
-    dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
-    dispatch({ type: CHANGE_BNB, payload: { balance } })
-  } catch {
-    console.log("error while trying to refresh data")
+  if (wallet.signer != 'signer') {
+
+    try {
+      const { address } = wallet;
+      const ethProvider = await provider();
+
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const rgpBalance = await getAddressTokenBalance(wallet.address, getTokenAddress(chainId), wallet.signer);
+      const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(address))).toString();
+      dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
+      dispatch({ type: CHANGE_BNB, payload: { balance } })
+    } catch (error) {
+      console.log("error while trying to refresh data", error)
+    }
   }
 }
 
@@ -146,5 +161,63 @@ export const getTokenAddress = (chainId) => {
   if (chainId === '0x61' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
     return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
   }
-  return (window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38') ? '0xFA262F303Aa244f9CC66f312F0755d89C3793192' : null;
+  return window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38' && '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
 }
+
+
+export const getTokenList = () => async (dispatch) => {
+  const tokenByNetwork = getChainId() === MAINNET.toString() ? defaultTokenList : testNetTokenList;
+  const returnData = tokenByNetwork.map((token, id) => {
+    const balance = null;
+    const available = true;
+    const imported = !!token.imported;
+    return { ...token, id, balance, available, imported };
+  });
+  return dispatch({
+    type: GET_ALL_TOKEN, payload: returnData
+  })
+}
+export const getChainId = () => {
+  if (window.ethereum && window.ethereum.chainId !== null) {
+    return window.ethereum.chainId.toString();
+  }
+  return null;
+};
+const MAINNET =
+  window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
+
+export const importUserTokenAction = async (userTokenAddress) => {
+  const tokenData = await getTokenDetails(userTokenAddress);
+  return !isNotEmpty(tokenData) && storeUserToken(tokenData);
+}
+
+export const storeUserToken = (tokenData) => (dispatch) => dispatch({
+  type: SET_USER_TOKEN, payload: tokenData
+})
+
+
+export const deleteUserTokenList = (address) => (dispatch) => dispatch({
+  type: DELETE_USER_TOKEN, payload: address
+})
+
+export const importUriTokenList = (list) => (dispatch) => {
+  dispatch({
+    type: ADD_NEW_TOKEN_LIST, payload: list
+  })
+};
+
+export const updateTokenListAction = (list) => (dispatch) => dispatch({
+  type: UPDATE_TOKEN_LIST, payload: list
+});
+
+export const toggleDefaultTokenList = (option) => (dispatch) => dispatch({
+  type: TOGGLE_LIST_SHOW, payload: option
+})
+
+export const updateToToken = (token) => (dispatch) => dispatch({
+  type: UPDATE_TO_TOKEN, payload: token
+});
+
+export const updateFromToken = (token) => (dispatch) => dispatch({
+  type: UPDATE_FROM_TOKEN, payload: token
+});

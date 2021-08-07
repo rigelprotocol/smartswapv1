@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Input, Button } from '@chakra-ui/react';
+import { Input, Button, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
 import { useDisclosure } from '@chakra-ui/hooks';
@@ -12,10 +12,11 @@ const LiquidityFromBox = ({
   fromValue,
   setFromValue,
   setFromAddress,
-  handleFromAmount,
+  setDetermineInputChange,
   checkIfLiquidityPairExist,
   fromSelectedToken,
   setFromSelectedToken,
+  setFromInputMax,
   label,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,6 +44,7 @@ const LiquidityFromBox = ({
           </Text>
         </Flex>
         <Flex justifyContent="space-between">
+        <InputGroup>
           <Input
             type="number"
             id="input__field"
@@ -53,9 +55,18 @@ const LiquidityFromBox = ({
             color="rgb(255, 255, 255)"
             onChange={event => {
               setFromValue(event.target.value);
-              handleFromAmount(event.target.value);
+              setDetermineInputChange("from")
             }}
           />
+             <InputRightElement marginRight="5px">
+              <Text
+              cursor="pointer" 
+              color="rgba(64, 186, 213, 1)"
+              onClick={()=>setFromInputMax()}>
+                max
+              </Text>
+          </InputRightElement>
+          </InputGroup>
           <Flex alignItems="center">
             <Menu>
               <Button
@@ -96,7 +107,6 @@ const LiquidityFromBox = ({
 LiquidityFromBox.propTypes = {
   fromValue: PropTypes.string.isRequired,
   setFromValue: PropTypes.func.isRequired,
-  handleFromAmount: PropTypes.func,
   fromSelectedToken: PropTypes.object.isRequired,
   setFromAddress: PropTypes.func.isRequired,
   setFromSelectedToken: PropTypes.func.isRequired,

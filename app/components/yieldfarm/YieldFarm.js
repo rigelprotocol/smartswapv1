@@ -14,36 +14,32 @@ const YieldFarm = ({
   setShowModalWithInput,
   refreshTokenStaked,
   loadingTotalLiquidity,
-  isAddressWhitelist
+  isAddressWhitelist,
 }) => {
   const [showYieldfarm, setShowYieldFarm] = useState(false);
 
-  const formatAmount = (value) => {
-    return (parseFloat(value)).toLocaleString();
-  }
+  const formatAmount = value => parseFloat(value).toLocaleString();
 
   const totalLiquidityValue = () => {
     if (loadingTotalLiquidity) {
-      return <Spinner speed="0.65s"
-        color="blue.500" />
-    } else if (content.totalLiquidity) {
-      return `$ ${formatAmount(content.totalLiquidity)}`
-    } else {
-      return '--'
+      return <Spinner speed="0.65s" color="blue.500" />;
     }
-  }
+    if (content.totalLiquidity) {
+      return `$ ${formatAmount(content.totalLiquidity)}`;
+    }
+  };
   const checkIfAddressIsWhiteListed = () => {
     if (isAddressWhitelist) {
-      setShowYieldFarm(!showYieldfarm)
+      setShowYieldFarm(!showYieldfarm);
     } else {
-      onOpenModal()
+      onOpenModal();
     }
-  }
+  };
   return (
     <>
       <Flex
         justifyContent="space-between"
-        flexDirection={['column', "column", 'row']}
+        flexDirection={['column', 'column', 'row']}
         color="white"
         margin="0 auto"
         background="linear-gradient(
@@ -55,13 +51,13 @@ const YieldFarm = ({
         paddingBottom="4px"
         marginTop="20px"
         borderRadius="10px"
-        width={["95%", "95%", "100%"]}
+        width={['95%', '95%', '100%']}
       >
         <Flex justifyContent="space-between" width="100%">
           <Box
             marginTop="15px"
             align="left"
-            display={['block', "block", 'none']}
+            display={['block', 'block', 'none']}
             opacity="0.5"
           >
             Deposit
@@ -74,7 +70,7 @@ const YieldFarm = ({
           <Box
             marginTop="15px"
             align="left"
-            display={['block', "block", 'none']}
+            display={['block', 'block', 'none']}
             opacity="0.5"
           >
             Earn
@@ -90,7 +86,7 @@ const YieldFarm = ({
           <Box
             marginTop="15px"
             align="left"
-            display={['block', "block", 'none']}
+            display={['block', 'block', 'none']}
             opacity="0.5"
           >
             APY
@@ -99,11 +95,15 @@ const YieldFarm = ({
             {formatAmount(content.ARYValue)} %
           </Box>
         </Flex>
-        <Flex justifyContent="space-between" width="100%" marginBottom={["10px", "10px", "0"]}>
+        <Flex
+          justifyContent="space-between"
+          width="100%"
+          marginBottom={['10px', '10px', '0']}
+        >
           <Box
             marginTop="15px"
             align="left"
-            display={['block', "block", 'none']}
+            display={['block', 'block', 'none']}
             opacity="0.5"
           >
             Total Liquidity
@@ -114,7 +114,6 @@ const YieldFarm = ({
         </Flex>
         <Box align="right" mt={['4', '0']} ml="2">
           {content.id == 1 ? (
-
             <Button
               w={['100%', '100%', '146px']}
               h="40px"
@@ -128,9 +127,8 @@ const YieldFarm = ({
             >
               Unlock
             </Button>
-
-          ) :
-            (<Button
+          ) : (
+            <Button
               w={['100%', '100%', '146px']}
               h="40px"
               borderRadius="12px"
@@ -143,10 +141,9 @@ const YieldFarm = ({
               onClick={() => setShowYieldFarm(!showYieldfarm)}
             >
               Unlock
-            </Button>)
-          }
+            </Button>
+          )}
         </Box>
-
       </Flex>
       {showYieldfarm && (
         <ShowYieldFarmDetails

@@ -1,6 +1,6 @@
-import { ethers, BigNumber } from 'ethers';
-import BN from 'bignumber.js'
-import Web3 from 'web3'
+import Web3 from 'web3';
+import tokenDetails from './default-token-details.json';
+
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 
@@ -16,20 +16,22 @@ export const formatBalance = balance => {
     .toString();
 };
 
-export const convertFromWei = (balance,decimals) => {
-  let decimalValue = decimals ? decimals : 18
-  let unitMap = Web3.utils.unitMap
-  let unit = Object.keys(unitMap).find(unit => unitMap[unit] === Math.pow(10,decimalValue).toString())
- return Web3.utils.fromWei(balance.toString(),unit)
- 
-}
-export const convertToWei = (balance,decimals) => {
-  let decimalValue = decimals ? decimals : 18
-  let unitMap = Web3.utils.unitMap
-  let unit = Object.keys(unitMap).find(unit => unitMap[unit] === Math.pow(10,decimalValue).toString())
- return Web3.utils.toWei(balance.toString(),unit)
- 
-}
+export const convertFromWei = (balance, decimals) => {
+  const decimalValue = decimals || 18;
+  const { unitMap } = Web3.utils;
+  const unit = Object.keys(unitMap).find(
+    unit => unitMap[unit] === Math.pow(10, decimalValue).toString(),
+  );
+  return Web3.utils.fromWei(balance.toString(), unit);
+};
+export const convertToWei = (balance, decimals) => {
+  const decimalValue = decimals || 18;
+  const { unitMap } = Web3.utils;
+  const unit = Object.keys(unitMap).find(
+    unit => unitMap[unit] === Math.pow(10, decimalValue).toString(),
+  );
+  return Web3.utils.toWei(balance.toString(), unit);
+};
 
 export const isNotEmpty = objectToCheck =>
   objectToCheck &&
@@ -41,30 +43,44 @@ export const changeTransactionDeadline = val => {
     const time = Math.floor(new Date().getTime() / 1000.0 + 1200);
     return time;
   }
-}
+};
 
-export const getDeadline = (deadlineInMinutes = 20) => {
-  return Math.floor((new Date()).getTime() + (Number(deadlineInMinutes) * 60))
-}
-// export const calculateSlippage = (amountIn,slippageValue) => {
-//   let calculatedVal
+export const getDeadline = (deadlineInMinutes = 20) =>
+  Math.floor(new Date().getTime() + Number(deadlineInMinutes) * 60);
 
-//   let BNAmountIn = new BN(amountIn || 0)
-//   let val = BNAmountIn.times(slippageValue).div('100')
-
-//   if (slippageValue === "1") {
-// calculatedVal = BNAmountIn.plus(val)
-// console.log(calculatedVal,amountIn)
-//   } else if (slippageValue === "0.1") {
-//     calculatedVal = BNAmountIn.minus(val.toString())
-//   } else if (slippageValue === "0.5") {
-//     calculatedVal = new BN(amountIn)
-//   }
-//    return calculatedVal.toString()
-// }
 export const clearInputInfo = (setInput, setButton = false, value) => {
-  setInput('')
+  setInput('');
   if (setButton) {
-    setButton(value)
+    setButton(value);
   }
-}
+};
+
+export const isValidJson = jsonObject => {
+  jsonObject =
+    typeof jsonObject !== 'string' ? JSON.stringify(jsonObject) : jsonObject;
+  try {
+    jsonObject = JSON.parse(jsonObject);
+  } catch (e) {
+    return false;
+  }
+
+  if (typeof jsonObject === 'object' && jsonObject !== null) {
+    return (
+      objectHasProperty(jsonObject, 'name') &&
+      objectHasProperty(jsonObject, 'tokens') &&
+      objectHasProperty(jsonObject, 'logoURI')
+    );
+  }
+
+  return false;
+};
+
+export const objectHasProperty = (object, props) =>
+  Object.prototype.hasOwnProperty.call(object, props);
+console.log(tokenDetails);
+export const getSelectedTokenDetails = symbol =>
+  tokenDetails.length > 0 &&
+  symbol !== null &&
+  tokenDetails.filter(
+    fields => fields.symbol.toUpperCase() === symbol.toUpperCase(),
+  )[0];

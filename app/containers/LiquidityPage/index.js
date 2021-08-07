@@ -26,9 +26,9 @@ import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { tokenList, tokenWhere, SMART_SWAP,  checkIfTokenIsListed } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
-import { isNotEmpty } from "../../utils/UtilFunc";
+import { isNotEmpty , getDeadline } from "../../utils/UtilFunc";
 import {getTokenList } from "../../utils/tokens"
-import { getDeadline } from "../../utils/UtilFunc";
+
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
 // 35,200
@@ -36,7 +36,7 @@ export function LiquidityPage(props) {
   const history = useHistory()
   const { wallet, wallet_props } = props.wallet;
   const [fromValue, setFromValue] = useState('');
-  const [toValue, setToValue] = useState('0');
+  const [toValue, setToValue] = useState('');
   const [isNewUser, setIsNewUser] = useState(false)
   const [selectingToken, setSelectingToken] = useState(tokenList);
   const [fromSelectedToken, setFromSelectedToken] = useState(tokenWhere('rgp'))
@@ -70,22 +70,19 @@ export function LiquidityPage(props) {
   const [addLiquidityPageHeading, setAddLiquidityPageHeading] = useState(false)
   const [newTokenPairButton, setNewTokenPairButton] = useState(false)
   const [addMoreLiquidityButton, setAddMoreLiquidityButton] = useState(false)
+  const [insufficientBalanceButton, setInsufficientBalanceButton] = useState(false)
   const [fromURL, setFromURL] = useState("")
   const [toURL, setToURL] = useState("")
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
+  const [determineInputChange, setDetermineInputChange] = useState("");
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   useEffect(() => {
       setPopupText("")
-  },[liquidityTab,showApprovalBox,openSupplyButton])
+  },[liquidityTab,showApprovalBox,openSupplyButton,insufficientBalanceButton])
   useEffect(() => {
     displayBNBbutton();
   }, [toSelectedToken, liquidities]);
-  const handleFromAmount = (value) => {
-    if(!newTokenPairButton){
-      setToValue((value * liquidityPairRatio).toString());
-    }
-  }
 
   useEffect(() => {
     if (props.match.params.pair !== undefined) {
@@ -111,6 +108,11 @@ export function LiquidityPage(props) {
   }, [fromSelectedToken, toSelectedToken,fromAddress,toAddress])
 
   useEffect(async () => {
+    if(determineInputChange==="from"){
+      handleFromAmount()
+   }else if(determineInputChange==="to"){
+     handleToAmount()
+   }
     if (!isNotEmpty(fromSelectedToken) && fromValue != '') {
       const tokenAllowance = await runApproveCheck(fromSelectedToken, wallet.address, wallet.signer);
       setFromTokenAllowance(tokenAllowance);
@@ -132,7 +134,11 @@ export function LiquidityPage(props) {
         setHasAllowedToToken(false);
       }
     }
-checkIfTokensHasBeenApproved()
+    if((parseInt(fromValue) > parseInt(fromSelectedToken.balance)) || (parseInt(toValue) > parseInt(toSelectedToken.balance))){
+      setInsufficientBalanceButton(true)
+    }else{
+      setInsufficientBalanceButton(false)
+    } 
   }, [fromValue, toValue])
 
   useEffect(() => {
@@ -174,9 +180,20 @@ checkIfTokensHasBeenApproved()
     getBalance()
   }, [percentValue, wallet])
 
+  const handleFromAmount = () => {
+    if(!newTokenPairButton){
+      setToValue((fromValue * liquidityPairRatio).toString());
+    }
+  }
+  const handleToAmount = () => {
+    if(!newTokenPairButton){
+      setFromValue((toValue / liquidityPairRatio).toString());
+    }
+  }
+
 const getTokensListed = async (pairArray) => {
- let selection0 = await getTokenList(pairArray[0],wallet)
- let selection1 = await getTokenList(pairArray[1],wallet)
+ const selection0 = await getTokenList(pairArray[0],wallet)
+ const selection1 = await getTokenList(pairArray[1],wallet)
 setFromAndToToken(selection0,selection1)
  if(selection0 !== [] && selection1[0]!== []){
    checkIfLiquidityPairExist()  
@@ -184,8 +201,8 @@ setFromAndToToken(selection0,selection1)
 }
 const setUpUrl = () => {
   if (fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN") {
-    let toTokenURL = checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address
-    let fromTokenURL = checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address
+    const toTokenURL = checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address
+    const fromTokenURL = checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address
     setFromURL(fromTokenURL)
         setToURL(toTokenURL)
     history.push(`/liquidity/${toTokenURL}-${fromTokenURL}`)
@@ -218,7 +235,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
       
       const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
       const token0 = await LPcontract.token0();
-      console.log({token0,tokenAReserve,tokenBreserve})
       let liquidityRatio;
       if (token0.toString() == fromPath.toString()) {
         liquidityRatio = tokenBreserve.toString() / tokenAReserve.toString();
@@ -261,7 +277,7 @@ const setFromAndToToken =(selection0,selection1)=>{
  
 
   const getAllPairs = (length, allPairs) => {
-    let pairs = [];
+    const pairs = [];
     for (let i = 0; i < length; i++) {
       pairs.push(allPairs(i))
     }
@@ -310,9 +326,7 @@ const setFromAndToToken =(selection0,selection1)=>{
       const smartFactory = await SmartFactory();
       const allLiquidityPairs = await smartFactory.allPairsLength();
       const allExchange = await Promise.all(getAllPairs(allLiquidityPairs.toNumber(), smartFactory.allPairs))
-      const pairsData = await Promise.all(allExchange.map((address) => {
-        return getPoolData(address);
-      }))
+      const pairsData = await Promise.all(allExchange.map((address) => getPoolData(address)))
       const userPairs = pairsData.filter(pair => pair.poolToken != 0)
       setLiquidities(userPairs)
 
@@ -377,6 +391,24 @@ const checkIfTokensHasBeenApproved =() => {
       }
     }
   }
+  const setFromInputMax = () =>{
+    try{
+setDetermineInputChange("from")
+    setFromValue(fromSelectedToken.balance)
+    }catch(e){
+      console.log(e)
+    }
+    
+  }
+  const setToInputMax = () =>{
+    try{
+setDetermineInputChange("to")
+    setToValue(toSelectedToken.balance)
+    }catch(e){
+      console.log(e)
+    }
+    
+  }
 
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
@@ -399,6 +431,9 @@ const checkIfTokensHasBeenApproved =() => {
     setToAddress("")
     setNewTokenPairButton(false)
     setButtonValue("Supply")
+    setInsufficientBalanceButton(false)
+    setHasAllowedFromToken(false)
+    setHasAllowedToToken(false)
     onCloseModal()
   }
 
@@ -441,9 +476,9 @@ const checkIfTokensHasBeenApproved =() => {
   const addMoreLiquidity = async (liquidity) =>{
     setAddMoreLiquidityButton(true)
     clearAllPreviousData()
-    let { path } = liquidity
-    let selection0 = await getTokenList(path[1].toPath,wallet)
-    let selection1 = await getTokenList(path[0].fromPath,wallet)
+    const { path } = liquidity
+    const selection0 = await getTokenList(path[1].toPath,wallet)
+    const selection1 = await getTokenList(path[0].fromPath,wallet)
     setFromAndToToken(selection0,selection1)
     setAddMoreLiquidityButton(false)
     setLiquidityTab("ADDLIQUIDITY")
@@ -469,7 +504,7 @@ const checkIfTokensHasBeenApproved =() => {
   const addingLiquidityForETH = async () => {
     if (wallet.signer !== 'signer') {
       try {
-        let EthValue, amountTokenDesired, tokenSelected;
+        let EthValue; let amountTokenDesired; let tokenSelected;
         if (fromSelectedToken.symbol === "BNB") {
           EthValue = fromValue;
           amountTokenDesired = toValue;
@@ -948,6 +983,7 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               closeModal7={closeModal7}
               changeButtonCreateNewTokenPair={changeButtonCreateNewTokenPair}
               buttonValue={buttonValue}
+              insufficientBalanceButton={insufficientBalanceButton}
               newTokenPairButton={newTokenPairButton}
               setToAddress={setToAddress}
               approveToToken={approveToToken}
@@ -972,6 +1008,8 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               approveTokenSpending={approveTokenSpending}
               confirmingSupply={confirmingSupply}
               fromSelectedToken={fromSelectedToken}
+              setFromInputMax={setFromInputMax}
+              setToInputMax={setToInputMax}
               setToSelectedToken={setToSelectedToken}
               setOpenSupplyButton={setOpenSupplyButton}
               setFromSelectedToken={setFromSelectedToken}
@@ -980,7 +1018,7 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               hasAllowedFromToken={hasAllowedFromToken}
               tokenFromValue={tokenFromValue}
               tokenToValue={tokenToValue}
-              handleFromAmount={handleFromAmount}
+              setDetermineInputChange={setDetermineInputChange}
               sendingTransaction={sendingTransaction}
               onCloseModal ={onCloseModal}
               setToValue={setToValue}
