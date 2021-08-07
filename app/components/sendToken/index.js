@@ -35,7 +35,8 @@ import {
   tokenAddressWhere,
   tokenList,
   checkIfTokenIsListed,
-  BSCTestnetTokens } from 'utils/constants';
+  BSCTestnetTokens,
+} from 'utils/constants';
 import NewTokenModal from 'components/TokenListBox/NewTokenModal';
 import {
   router,
@@ -58,7 +59,6 @@ import {
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
 import { getDeadline } from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
-
 
 export const Manual = props => {
   const history = useHistory();
@@ -200,35 +200,29 @@ export const Manual = props => {
         BSCTestnetTokens.BNB,
       );
 
-      const BUSDAddressTo = await factory.getPair(
+      const BUSDAddressFrom = await factory.getPair(
         fromPath,
         BSCTestnetTokens.BUSD,
       );
 
-      const BUSDAddressFrom = await factory.getPair(
+      const BUSDAddressTo = await factory.getPair(
         toPath,
         BSCTestnetTokens.BUSD,
-      );
-
-      const BNBAddressTo = await factory.getPair(
-        fromPath,
-        BSCTestnetTokens.BNB,
       );
 
       const BNBAddressFrom = await factory.getPair(
-        toPath,
+        fromPath,
         BSCTestnetTokens.BNB,
       );
 
-      const RGPAddressTo = await factory.getPair(
+      const BNBAddressTo = await factory.getPair(toPath, BSCTestnetTokens.BNB);
+
+      const RGPAddressFrom = await factory.getPair(
         fromPath,
         BSCTestnetTokens.RGP,
       );
 
-      const RGPAddressFrom = await factory.getPair(
-        toPath,
-        BSCTestnetTokens.RGP,
-      );
+      const RGPAddressTo = await factory.getPair(toPath, BSCTestnetTokens.RGP);
 
       // checks if both selected tokens have a pair in the factory
       // and if true, routes them directly
@@ -1256,22 +1250,22 @@ export const Manual = props => {
                   : (typeof wallet.signer === 'object' &&
                       fromAmount === undefined) ||
                     fromAmount.length == parseFloat(0.0)
-                    ? sendNotice('Enter the amount of token to exchange')
-                    : typeof wallet.signer === 'object' &&
+                  ? sendNotice('Enter the amount of token to exchange')
+                  : typeof wallet.signer === 'object' &&
                     fromAmount > parseFloat(0) &&
                     selectedToToken.name === 'Select a token'
-                      ? sendNotice('Select the designated token')
-                      : typeof wallet.signer === 'object' &&
+                  ? sendNotice('Select the designated token')
+                  : typeof wallet.signer === 'object' &&
                     fromAmount != parseFloat(0.0) &&
                     selectedToToken.name !== 'Select a token'
-                        ? selectedToken.symbol == selectedToToken.symbol
-                          ? sendNotice(
-                            'Improper token selection, you selected the same token',
-                          )
-                          : insufficientBalanceButton
-                            ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
-                            : triggerAccountCheck()
-                        : null
+                  ? selectedToken.symbol == selectedToToken.symbol
+                    ? sendNotice(
+                        'Improper token selection, you selected the same token',
+                      )
+                    : insufficientBalanceButton
+                    ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
+                    : triggerAccountCheck()
+                  : null
               }
             >
               {wallet.signer === 'signer'
@@ -1279,22 +1273,22 @@ export const Manual = props => {
                 : (typeof wallet.signer === 'object' &&
                     fromAmount === undefined) ||
                   fromAmount.length == parseFloat(0.0)
-                  ? 'Enter Amount'
-                  : typeof wallet.signer === 'object' &&
+                ? 'Enter Amount'
+                : typeof wallet.signer === 'object' &&
                   fromAmount != parseFloat(0.0) &&
                   selectedToToken.name === 'Select a token'
-                    ? 'Click Select a Token'
-                    : typeof wallet.signer === 'object' &&
+                ? 'Click Select a Token'
+                : typeof wallet.signer === 'object' &&
                   fromAmount != parseFloat(0.0) &&
                   selectedToToken.name !== 'Select a token'
-                      ? selectedToken.symbol == selectedToToken.symbol
-                        ? 'Improper token selection'
-                        : insufficientBalanceButton
-                          ? `Insufficient ${selectedToken.symbol} balance`
-                          : !userHasApproveToken
-                            ? 'Approve Transaction'
-                            : 'Swap Tokens'
-                      : ''}
+                ? selectedToken.symbol == selectedToToken.symbol
+                  ? 'Improper token selection'
+                  : insufficientBalanceButton
+                  ? `Insufficient ${selectedToken.symbol} balance`
+                  : !userHasApproveToken
+                  ? 'Approve Transaction'
+                  : 'Swap Tokens'
+                : ''}
             </Button>
           )}
         </Box>
@@ -1363,8 +1357,8 @@ async function updateSendAmount(
       // if(field != 'to' && )
       return field != 'to'
         ? setAmountIn(
-          ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-        )
+            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+          )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
@@ -1400,10 +1394,10 @@ async function update_RGP_ETH_SendAmount(
       // * calculateSlippage()
       return field != 'to'
         ? setAmountIn(
-          ethers.utils
-            .formatEther(calculateSlippage(amount[1].toString()))
-            .toString(),
-        )
+            ethers.utils
+              .formatEther(calculateSlippage(amount[1].toString()))
+              .toString(),
+          )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
