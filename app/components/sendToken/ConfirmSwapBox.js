@@ -272,16 +272,11 @@ const ConfirmSwapBox = props => {
           </ModalHeader>
           <ModalBody>
             <Text color="gray.400">
-              There is no liquidity on this pair, will you like to add
-              Liquidity.
+            There is no swap function for this token pair, you can pick another token pair for swapping
             </Text>
-            <Flex
-              justifyContent="space-between"
-              flexDirection={['column', 'row', 'column', 'row']}
-            >
               <Button
                 d="block"
-                w="48%"
+                w="100%"
                 margin="20px auto"
                 h="50px"
                 color="#40BAD5"
@@ -294,31 +289,17 @@ const ConfirmSwapBox = props => {
                 borderColor="#40BAD5"
                 _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
                 _active={{ outline: '#29235E', background: '#29235E' }}
-                onClick={openLiquidityPage}
-              >
-                YES
-              </Button>
-
-              <Button
-                d="block"
-                w="48%"
-                margin="20px auto"
-                h="50px"
-                color="#BEBEBE"
-                border="none"
-                fontWeight="regular"
-                fontSize="lg"
-                cursor="pointer"
-                rounded="2xl"
-                bg="#444159"
-                borderColor="#40BAD5"
-                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-                _active={{ outline: '#29235E', background: '#29235E' }}
                 onClick={closeModal5}
               >
-                NO
+                OK
               </Button>
-            </Flex>
+               <Text 
+               onClick={openLiquidityPage}
+               cursor="pointer"
+               textAlign="right"
+               opacity="0.5"
+               >Add pair</Text>
+               
           </ModalBody>
         </ModalContent>
       </Modal>

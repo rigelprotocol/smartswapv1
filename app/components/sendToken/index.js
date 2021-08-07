@@ -120,6 +120,11 @@ export const Manual = props => {
       if (parseFloat(tokenAllowance) < parseFloat(fromAmount) && selectedToken.symbol !== 'BNB') {
         setUserHasApproveToken(false)
       }
+    }
+
+  }, [fromAmount, amountIn]);
+  useEffect(() => {
+    if (!newTokenPair) {
       if(fromAmount !== ""){
         console.log(parseFloat(fromAmount) ,selectedToken.balance)
         if(parseFloat(fromAmount) > parseFloat(selectedToken.balance)){
@@ -130,7 +135,7 @@ export const Manual = props => {
       }
     }
 
-  }, [fromAmount, amountIn]);
+  }, [fromAmount, amountIn,selectedToToken,selectedToken]);
   const importToken = (token) => {
     token.available = true
     token.imported = true
@@ -193,7 +198,8 @@ export const Manual = props => {
     const fromPath = ethers.utils.getAddress(selectedToken.address);
     const toPath = ethers.utils.getAddress(selectedToToken.address);
     const LPAddress = await factory.getPair(toPath, fromPath)
-    if (LPAddress === "0x0000000000000000000000000000000000000000") {
+    console.log({fromPath,toPath})
+    if (fromPath!==toPath && LPAddress === "0x0000000000000000000000000000000000000000") {
       setNewTokenPair(true)
       openModal5()
     }
