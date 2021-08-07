@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/prop-types */
 // @ts-nocheck
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Text,
   Circle,
@@ -42,7 +42,20 @@ const ConfirmSwapBox = props => {
     selectedToToken,
     openLoadingSpinnerAndSwap,
     liquidityProviderFee,
+    route,
   } = props;
+
+  // useEffect(() => {
+  //   const load = async () => {
+  //     await checkLiquidityPair();
+  //   };
+
+  //   load();
+  // }, []);
+
+  useEffect(() => {
+    console.log(route);
+  }, []);
 
   return (
     <>
@@ -123,6 +136,8 @@ const ConfirmSwapBox = props => {
                   <Text>1.49%</Text>
                 </Box>
               </Flex>
+              {/* swap route */}
+
               <Flex m="1" justifyContent="space-between">
                 <Text>
                   {' '}
@@ -132,6 +147,17 @@ const ConfirmSwapBox = props => {
                   <Text>
                     {liquidityProviderFee()} {path[0] && path[0].token}
                   </Text>
+                </Box>
+              </Flex>
+
+              <Flex m="0.5" justifyContent="space-between">
+                <Text>
+                  {' '}
+                  Route <QuestionIcon />{' '}
+                </Text>
+                <Box textAlign="right">
+                  {/* <Text>ETH{'>'}RGP</Text> */}
+                  <Text>{route}</Text>
                 </Box>
               </Flex>
             </Box>

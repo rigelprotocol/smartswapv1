@@ -30,7 +30,7 @@ export const TOKENS = {
   RGP: 'RGP',
 };
 
-const BSCTestnetTokens = {
+export const BSCTestnetTokens = {
   BNB: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   BUSD: '0x10249e900b919fdee9e2ed38b4cd83c4df857254', // This can be use
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
