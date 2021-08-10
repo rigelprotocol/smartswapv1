@@ -228,17 +228,21 @@ function TokenListBox({
       key={key}
       justifyContent="space-between"
       mt={1}
-      cursor="pointer"
+      cursor={list[index].symbol !== 'SELECT A TOKEN' ? 'pointer' : 'no-drop'}
       onClick={() => {
-        isFunc(setSelectedToken) && setSelectedToken(list[index]);
-        isFunc(setSelectedToToken) && setSelectedToToken(list[index]);
-        isFunc(setPathToArray) &&
-          setPathToArray(list[index].address, list[index].symbol);
-        isFunc(setPathArray) &&
-          setPathArray(list[index].address, list[index].symbol);
-        isFunc(getToAmount) && getToAmount();
-        isFunc(onClose) && onClose();
+        if (list[index].symbol !== 'SELECT A TOKEN') {
+          isFunc(setSelectedToken) && setSelectedToken(list[index]);
+          isFunc(setSelectedToToken) && setSelectedToToken(list[index]);
+          isFunc(setPathToArray) &&
+            setPathToArray(list[index].address, list[index].symbol);
+          isFunc(setPathArray) &&
+            setPathArray(list[index].address, list[index].symbol);
+          isFunc(getToAmount) && getToAmount();
+          isFunc(onClose) && onClose();
+        }
+        return null;
       }}
+      opacity={list[index].symbol !== 'SELECT A TOKEN' ? 1 : 0.4}
       height="63px"
       borderRadius="10px"
       background="rgba(55, 38, 91, 0.15)"
