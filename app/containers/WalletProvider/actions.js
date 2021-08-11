@@ -32,6 +32,8 @@ import {
   ADD_NEW_TOKEN_LIST,
   UPDATE_TOKEN_LIST,
   TOGGLE_LIST_SHOW,
+  UPDATE_TO_TOKEN,
+  UPDATE_FROM_TOKEN,
 } from './constants';
 import defaultTokenList from '../../utils/default-token.json';
 import testNetTokenList from '../../utils/test-net-tokens.json';
@@ -135,16 +137,20 @@ export const updateChainId = chainId => dispatch => {
 }
 
 export const changeRGPValue = wallet => async dispatch => {
-  try {
-    const { address } = wallet;
-    const ethProvider = await provider();
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    const rgpBalance = await getAddressTokenBalance(wallet.address, getTokenAddress(chainId), wallet.signer);
-    const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(address))).toString();
-    dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
-    dispatch({ type: CHANGE_BNB, payload: { balance } })
-  } catch {
-    console.log("error while trying to refresh data")
+  if (wallet.signer != 'signer') {
+
+    try {
+      const { address } = wallet;
+      const ethProvider = await provider();
+
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const rgpBalance = await getAddressTokenBalance(wallet.address, getTokenAddress(chainId), wallet.signer);
+      const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(address))).toString();
+      dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
+      dispatch({ type: CHANGE_BNB, payload: { balance } })
+    } catch (error) {
+      console.log("error while trying to refresh data", error)
+    }
   }
 }
 
@@ -161,7 +167,6 @@ export const getTokenAddress = (chainId) => {
 
 export const getTokenList = () => async (dispatch) => {
   const tokenByNetwork = getChainId() === MAINNET.toString() ? defaultTokenList : testNetTokenList;
-  console.log(tokenByNetwork);
   const returnData = tokenByNetwork.map((token, id) => {
     const balance = null;
     const available = true;
@@ -208,3 +213,11 @@ export const updateTokenListAction = (list) => (dispatch) => dispatch({
 export const toggleDefaultTokenList = (option) => (dispatch) => dispatch({
   type: TOGGLE_LIST_SHOW, payload: option
 })
+
+export const updateToToken = (token) => (dispatch) => dispatch({
+  type: UPDATE_TO_TOKEN, payload: token
+});
+
+export const updateFromToken = (token) => (dispatch) => dispatch({
+  type: UPDATE_FROM_TOKEN, payload: token
+});

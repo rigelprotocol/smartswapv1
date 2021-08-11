@@ -4,6 +4,7 @@
  *
  */
 import produce from 'immer';
+import { getSelectedTokenDetails } from '../../utils/UtilFunc';
 import {
   DEFAULT_ACTION,
   WALLET_CONNECTED,
@@ -14,6 +15,8 @@ import {
   CHANGE_DEADLINE,
   CHANGE_BNB,
   UPDATE_CHAIN_ID,
+  UPDATE_TO_TOKEN,
+  UPDATE_FROM_TOKEN,
 } from './constants';
 
 export const initialState = {
@@ -29,7 +32,8 @@ export const initialState = {
   loading: false,
   transactionDeadLine: '1378747',
   slippageValue: '383993939993',
-  tokenList: [],
+  swapOutputToken: {},
+  swapInputToken: {},
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -73,6 +77,12 @@ const walletProviderReducer = (state = initialState, action) =>
         break;
       case UPDATE_CHAIN_ID:
         draft.wallet.chainId = action.payload;
+        break;
+      case UPDATE_TO_TOKEN:
+        draft.swapOutputToken = getSelectedTokenDetails(action.payload.symbol);
+        break;
+      case UPDATE_FROM_TOKEN:
+        draft.swapInputToken = getSelectedTokenDetails(action.payload.symbol);
         break;
       default:
         return state;
