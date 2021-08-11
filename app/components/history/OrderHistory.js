@@ -19,14 +19,24 @@ const OrderHistory = () => (
         </Text>
         <Flex>
           <Flex mr={4}>
-            <img src="/rgp.svg" width={20} height={15} alt="logo" />
+            <img
+              src="https://bscscan.com/token/images/rigelprotocol_32.png"
+              width={20}
+              height={15}
+              alt="logo"
+            />
             <Text fontSize="sm" color="#fff" ml={2}>
               20 RGP
             </Text>
           </Flex>
           <img src="/arrow-right.svg" width={15} height={15} alt="logo" />
           <Flex ml={4}>
-            <img src="/bnb.svg" width={20} height={15} alt="logo" />
+            <img
+              src="https://bscscan.com/token/images/binance_32.png"
+              width={20}
+              height={15}
+              alt="logo"
+            />
             <Text fontSize="sm" color="#fff" ml={2}>
               30 BNB
             </Text>
