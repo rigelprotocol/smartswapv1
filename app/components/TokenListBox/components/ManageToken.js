@@ -48,8 +48,12 @@ const ManageToken = ({
   userCustomURIList,
   importUriToken,
   allTokenList,
-  offDefaultTokenList,
-  toggleDisplay,
+  toggleDefaultTokenState,
+  toggleMainTokenState,
+  toggleUserTokenState,
+  userTokenState,
+  defaultTokenState,
+  mainTokenState,
 }) => {
   const {
     isOpen: isOpenImportModal,
@@ -132,8 +136,7 @@ const ManageToken = ({
                       <img
                         src={
                           userCustomURIList.logoURI.includes('ipfs')
-                            ? `https://cloudflare-ipfs.com/${
-                              userCustomURIList.logoURI.split('://')[0]
+                            ? `https://cloudflare-ipfs.com/${userCustomURIList.logoURI.split('://')[0]
                             }/${userCustomURIList.logoURI.split('://')[1]}/`
                             : userCustomURIList.logoURI
                         }
@@ -185,8 +188,7 @@ const ManageToken = ({
                         <img
                           src={
                             list.logoURI.includes('ipfs')
-                              ? `https://cloudflare-ipfs.com/${
-                                list.logoURI.split('://')[0]
+                              ? `https://cloudflare-ipfs.com/${list.logoURI.split('://')[0]
                               }/${list.logoURI.split('://')[1]}/`
                               : list.logoURI
                           }
@@ -229,8 +231,10 @@ const ManageToken = ({
                         Rigel Default Token List
                       </FormLabel>
                       <Switch
-                        onChange={e => offDefaultTokenList(e.target.checked)}
-                        isChecked={toggleDisplay}
+                        onChange={e =>
+                          toggleDefaultTokenState(e.target.checked)
+                        }
+                        defaultChecked={defaultTokenState}
                         id="top-ten"
                         size="lg"
                       />
@@ -248,12 +252,50 @@ const ManageToken = ({
                   >
                     <RGP className={styles.logo} width="45%" height="100%" />
                     <FormControl display="flex" alignItems="center">
-                      <FormLabel htmlFor="extended-list" mb="0">
-                        Rigel Extended Token List
+                      <FormLabel htmlFor="main-list" mb="0">
+                        Rigel Main Token List
                       </FormLabel>
-                      <Switch id="extended-list" size="lg" disabled />
+                      <Switch
+                        onChange={e => toggleMainTokenState(e.target.checked)}
+                        defaultChecked={mainTokenState}
+                        id="main-list"
+                        size="lg"
+                      />
                     </FormControl>
                   </Flex>
+                  {userCustomTokenList[1].token.length > 0 && (
+                    <Flex
+                      mt={5}
+                      flexDirection="row"
+                      backgroundColor="#29235E"
+                      padding="2"
+                      border="1px solid #9790D6"
+                      borderRadius="16px"
+                      justifyContent="space-between"
+                      h="16"
+                    >
+                      <RGP className={styles.logo} width="45%" height="100%" />
+                      <FormControl display="flex" alignItems="center">
+                        <FormLabel
+                          htmlFor="user-list"
+                          mb="0"
+                          style={{ margin: '0px auto' }}
+                        >
+                          User Token List
+                          <p style={{ margin: '1px' }}>
+                            {userCustomTokenList[1].token.length} tokens
+                          </p>
+                        </FormLabel>
+                        <Switch
+                          onChange={e => toggleUserTokenState(e.target.checked)}
+                          defaultChecked={userTokenState}
+                          id="user-list"
+                          size="lg"
+                          disabled
+                        />
+                      </FormControl>
+                    </Flex>
+                  )}
                 </>
               ) : (
                 <>
@@ -323,7 +365,7 @@ const ManageToken = ({
                       marginTop="5"
                       paddingTop="4"
                     >
-                      {userCustomTokenList.map((t, index) => (
+                      {userCustomTokenList[1].token.map((t, index) => (
                         <Box
                           key={index}
                           display="flex"
@@ -369,7 +411,12 @@ ManageToken.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   customTokenBox: PropTypes.bool,
-  toggleDisplay: PropTypes.bool,
+  userTokenState: PropTypes.bool,
+  defaultTokenState: PropTypes.bool,
+  mainTokenState: PropTypes.bool,
+  toggleDefaultTokenState: PropTypes.func,
+  toggleMainTokenState: PropTypes.func,
+  toggleUserTokenState: PropTypes.func,
   setManageToken: PropTypes.func,
   tokenImportUri: PropTypes.string,
   setTokenImportUri: PropTypes.func,
@@ -388,7 +435,6 @@ ManageToken.propTypes = {
   showErrorMessage: PropTypes.bool,
   errorMessage: PropTypes.string,
   importUriToken: PropTypes.func,
-  offDefaultTokenList: PropTypes.func,
 };
 
 export default ManageToken;

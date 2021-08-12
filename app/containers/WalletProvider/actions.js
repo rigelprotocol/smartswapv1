@@ -14,7 +14,6 @@ import {
   signer,
 } from 'utils/wallet-wiget/connection';
 import { ethers } from 'ethers';
-import { tokenList } from 'utils/constants';
 import { formatBalance, isNotEmpty } from 'utils/UtilFunc';
 import { getTokenDetails } from 'utils/tokens';
 import {
@@ -31,12 +30,15 @@ import {
   DELETE_USER_TOKEN,
   ADD_NEW_TOKEN_LIST,
   UPDATE_TOKEN_LIST,
-  TOGGLE_LIST_SHOW,
   UPDATE_TO_TOKEN,
   UPDATE_FROM_TOKEN,
+  TOGGLE_MAIN_TOKEN_LIST,
+  TOGGLE_USER_TOKEN_LIST,
+  TOGGLE_DEFAULT_TOKEN_LIST,
 } from './constants';
 import defaultTokenList from '../../utils/default-token.json';
 import testNetTokenList from '../../utils/test-net-tokens.json';
+import mainTokenList from '../../utils/main-token.json';
 
 export const reConnect = (wallet) => async dispatch => {
   try {
@@ -167,16 +169,11 @@ export const getTokenAddress = (chainId) => {
 
 export const getTokenList = () => async (dispatch) => {
   const tokenByNetwork = getChainId() === MAINNET.toString() ? defaultTokenList : testNetTokenList;
-  const returnData = tokenByNetwork.map((token, id) => {
-    const balance = null;
-    const available = true;
-    const imported = !!token.imported;
-    return { ...token, id, balance, available, imported };
-  });
   return dispatch({
-    type: GET_ALL_TOKEN, payload: returnData
+    type: GET_ALL_TOKEN, payload: tokenByNetwork
   })
-}
+};
+
 export const getChainId = () => {
   if (window.ethereum && window.ethereum.chainId !== null) {
     return window.ethereum.chainId.toString();
@@ -211,7 +208,7 @@ export const updateTokenListAction = (list) => (dispatch) => dispatch({
 });
 
 export const toggleDefaultTokenList = (option) => (dispatch) => dispatch({
-  type: TOGGLE_LIST_SHOW, payload: option
+  type: TOGGLE_DEFAULT_TOKEN_LIST, payload: option
 })
 
 export const updateToToken = (token) => (dispatch) => dispatch({
@@ -220,4 +217,15 @@ export const updateToToken = (token) => (dispatch) => dispatch({
 
 export const updateFromToken = (token) => (dispatch) => dispatch({
   type: UPDATE_FROM_TOKEN, payload: token
+});
+
+export const toggleMainTokenList = (option) => (dispatch) => {
+  const list = getChainId() === MAINNET.toString() && option ? mainTokenList : [];
+  dispatch({
+    type: TOGGLE_MAIN_TOKEN_LIST, payload: { option, list }
+  });
+};
+
+export const toggleUserTokenList = (option) => (dispatch) => dispatch({
+  type: TOGGLE_USER_TOKEN_LIST, payload: option
 });

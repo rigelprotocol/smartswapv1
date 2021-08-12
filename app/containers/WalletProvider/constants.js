@@ -20,4 +20,9 @@ export const ADD_NEW_TOKEN_LIST = 'app/WalletProvider/ADD_NEW_TOKEN_LIST';
 export const UPDATE_TOKEN_LIST = 'app/WalletProvider/UPDATE_TOKEN_LIST';
 export const UPDATE_TO_TOKEN = 'app/WalletProvider/UPDATE_TO_TOKEN';
 export const UPDATE_FROM_TOKEN = 'app/WalletProvider/UPDATE_FROM_TOKEN';
-export const TOGGLE_LIST_SHOW = 'app/WalletProvider/TOGGLE_LIST_SHOW';
+export const TOGGLE_DEFAULT_TOKEN_LIST =
+  'app/WalletProvider/TOGGLE_DEFAULT_TOKEN_LIST';
+export const TOGGLE_USER_TOKEN_LIST =
+  'app/WalletProvider/TOGGLE_USER_TOKEN_LIST';
+export const TOGGLE_MAIN_TOKEN_LIST =
+  'app/WalletProvider/TOGGLE_MAIN_TOKEN_LIST';

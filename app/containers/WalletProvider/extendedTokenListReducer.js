@@ -1,3 +1,6 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-param-reassign */
 import produce from 'immer';
 import {
   GET_ALL_TOKEN,
@@ -5,14 +8,18 @@ import {
   DELETE_USER_TOKEN,
   ADD_NEW_TOKEN_LIST,
   UPDATE_TOKEN_LIST,
-  TOGGLE_LIST_SHOW,
+  TOGGLE_DEFAULT_TOKEN_LIST,
+  TOGGLE_USER_TOKEN_LIST,
+  TOGGLE_MAIN_TOKEN_LIST,
 } from './constants';
 
 export const initialState = {
   toggleDisplay: true,
-  tokenList: [],
+  appTokenList: [],
+  defaultTokenList: [{ show: true }, { token: [] }],
   allTokenList: [],
-  userTokenList: [],
+  userTokenList: [{ show: true }, { token: [] }],
+  mainTokenList: [{ show: false }, { token: [] }],
 };
 let userToken;
 let filterList;
@@ -20,30 +27,30 @@ const ExtendedTokenList = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
       case GET_ALL_TOKEN:
-        draft.tokenList = action.payload;
+        draft.defaultTokenList[1].token = action.payload;
         break;
       case UPDATE_TOKEN_LIST:
-        draft.tokenList = action.payload;
+        draft.appTokenList = action.payload;
         break;
       case SET_USER_TOKEN:
-        userToken = draft.userTokenList.filter(
+        userToken = draft.userTokenList[1].token.filter(
           token => token.address !== action.payload.address,
         );
         userToken.push(action.payload);
-        draft.userTokenList = userToken;
-        !draft.tokenList.includes(action.payload)
-          ? draft.tokenList.push(action.payload)
+        draft.userTokenList[1].token = userToken;
+        !draft.appTokenList.includes(action.payload)
+          ? draft.appTokenList.push(action.payload)
           : null;
         break;
       case DELETE_USER_TOKEN:
-        userToken = draft.userTokenList.filter(
+        userToken = draft.userTokenList[1].token.filter(
           token => token.address !== action.payload,
         );
-        draft.userTokenList = userToken;
-        filterList = draft.tokenList.filter(
+        draft.userTokenList[1].token = userToken;
+        filterList = draft.appTokenList.filter(
           token => token.address !== action.payload,
         );
-        draft.tokenList = filterList;
+        draft.appTokenList = filterList;
         break;
       case ADD_NEW_TOKEN_LIST:
         filterList = draft.allTokenList.filter(
@@ -52,8 +59,17 @@ const ExtendedTokenList = (state = initialState, action) =>
         filterList.push(action.payload);
         draft.allTokenList = filterList;
         break;
-      case TOGGLE_LIST_SHOW:
-        draft.toggleDisplay = action.payload;
+      case TOGGLE_DEFAULT_TOKEN_LIST:
+        console.log(action.payload);
+        draft.defaultTokenList[0].show = action.payload;
+        break;
+      case TOGGLE_USER_TOKEN_LIST:
+        draft.userTokenList[0].show = action.payload;
+        break;
+      case TOGGLE_MAIN_TOKEN_LIST:
+        console.log(action.payload, state.defaultTokenList);
+        draft.mainTokenList[0].show = action.payload.option;
+        draft.mainTokenList[1].token = action.payload.list;
         break;
       default:
         return state;
