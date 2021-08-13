@@ -63,12 +63,12 @@ function TokenListBox({
 }) {
   const account = wallet.wallet;
   const {
-    userTokenList,
+    appTokenList,
     allTokenList,
     toggleDisplay,
+    userTokenList,
     mainTokenList,
     defaultTokenList,
-    appTokenList,
   } = ExtendedTokenList;
 
   const [list, setList] = useState([]);
@@ -359,9 +359,9 @@ function TokenListBox({
           errorMessage={errorMessage}
           toggleDisplay={toggleDisplay}
           customTokenBox={customTokenBox}
-          userTokenState={userTokenList[0].show}
-          defaultTokenState={defaultTokenList[0].show}
-          mainTokenState={mainTokenList[0].show}
+          userTokenState={userTokenList}
+          defaultTokenState={defaultTokenList}
+          mainTokenState={mainTokenList}
           tokenImportUri={tokenImportUri}
           userCustomToken={userCustomToken}
           userCustomTokenList={userTokenList}
