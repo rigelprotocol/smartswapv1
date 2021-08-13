@@ -72,22 +72,30 @@ const ShowYieldFarmDetails = ({
   const [approvalLoading, setApprovalLoading] = useState(false);
 
   const toast = useToast();
+  const addPrevBal = 'addPrevBal';
+  const stakeId = 'stakeId';
+
+
   useEffect(() => {
     const stakeSubscription = async () => {
       const specialPool = await RGPSpecialPool();
       if (wallet.address != '0x') {
+        console.log(specialPool)
         const filter = specialPool.filters.Stake(wallet.address, null, null);
         specialPool.on(filter, (userAddress, stakedAmount, time) => {
-          toast({
-            title: 'RGP Staking Successful',
-            description: `${ethers.utils.formatEther(
-              stakedAmount,
-            )} RGP has been successfully staked`,
-            status: 'success',
-            position: 'top-right',
-            duration: 9000,
-            isClosable: true,
-          });
+          if (!toast.isActive(stakeId)) {
+            toast({
+              id: stakeId,
+              title: 'RGP Staking Successful',
+              description: `${ethers.utils.formatEther(
+                stakedAmount,
+              )} RGP has been successfully staked`,
+              status: 'success',
+              position: 'top-right',
+              duration: 9000,
+              isClosable: true,
+            });
+          }
         });
 
         const unstakeFilter = specialPool.filters.UnStake(
@@ -125,6 +133,30 @@ const ShowYieldFarmDetails = ({
             duration: 9000,
             isClosable: true,
           });
+        });
+
+        const addPreviousRewardToUserBal = specialPool.filters.addPreviousRewardToUserBal(
+          null,
+          null,
+          wallet.address,
+          null,
+        );
+        specialPool.on(addPreviousRewardToUserBal, (tokenAmount, from, to, time) => {
+          if (!toast.isActive(addPrevBal) && ethers.utils.formatEther(
+            tokenAmount,
+          ) != '0.0') {
+            toast({
+              id: addPrevBal,
+              title: 'Earned RGP added to deposit',
+              description: `${ethers.utils.formatEther(
+                tokenAmount,
+              )} earned RGP has been added to your deposit`,
+              status: 'success',
+              position: 'top-right',
+              duration: 9000,
+              isClosable: true,
+            });
+          }
         });
       }
       return () => {
@@ -1116,14 +1148,14 @@ const ShowYieldFarmDetails = ({
                 mx="auto"
                 color={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
                 width="100%"
                 background={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? 'rgba(64, 186, 213, 0.15)'
                     : '#444159'
                 }
@@ -1136,7 +1168,7 @@ const ShowYieldFarmDetails = ({
                 fontSize="16px"
                 _hover={
                   unstakeButtonValue === 'Confirm' ||
-                  unstakeButtonValue === 'Confirmed'
+                    unstakeButtonValue === 'Confirmed'
                     ? { background: 'rgba(64, 186, 213, 0.15)' }
                     : { background: '#444159' }
                 }
