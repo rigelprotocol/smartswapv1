@@ -29,13 +29,17 @@ import {
   runApproveCheck,
   getTokenListBalance,
 } from 'utils/wallet-wiget/TokensUtils';
-import { getPriceForToken } from 'containers/HomePage/service/swapServices';
+import {
+  getPriceForToken,
+  getPriceForTokenWithRouteFeatureWithThreePath,
+  getPriceForTokenWithRouteFeatureWithFourPath,
+} from 'containers/HomePage/service/swapServices';
 import {
   tokenWhere,
   tokenAddressWhere,
   tokenList,
   checkIfTokenIsListed,
-  BSCTestnetTokens,
+  TOKENS_CONTRACT,
 } from 'utils/constants';
 import NewTokenModal from 'components/TokenListBox/NewTokenModal';
 import {
@@ -118,6 +122,7 @@ export const Manual = props => {
     fromAmount !== '' && callTransformFunction(fromAmount, 'from');
     checkForAllVariables();
   }, [path, selectedToken, selectedToToken, wallet, slippageValue]);
+
   useEffect(() => {
     if (props.match.params.pair !== undefined) {
       const { pair } = props.match.params;
@@ -179,211 +184,199 @@ export const Manual = props => {
   }, [fromAmount, amountIn]);
 
   useEffect(() => {
-    const checkLiquidityPair = async () => {
-      const factory = await SmartFactory();
-      const fromPath = ethers.utils.getAddress(selectedToken.address);
-      const toPath = ethers.utils.getAddress(selectedToToken.address);
-      const LPAddress = await factory.getPair(toPath, fromPath);
-
-      const RGPBUSDAddress = await factory.getPair(
-        BSCTestnetTokens.RGP,
-        BSCTestnetTokens.BUSD,
-      );
-
-      const RGPBNBAddress = await factory.getPair(
-        BSCTestnetTokens.RGP,
-        BSCTestnetTokens.BNB,
-      );
-
-      const BUSDBNBAddress = await factory.getPair(
-        BSCTestnetTokens.BUSD,
-        BSCTestnetTokens.BNB,
-      );
-
-      const BUSDAddressFrom = await factory.getPair(
-        fromPath,
-        BSCTestnetTokens.BUSD,
-      );
-
-      const BUSDAddressTo = await factory.getPair(
-        toPath,
-        BSCTestnetTokens.BUSD,
-      );
-
-      const BNBAddressFrom = await factory.getPair(
-        fromPath,
-        BSCTestnetTokens.BNB,
-      );
-
-      const BNBAddressTo = await factory.getPair(toPath, BSCTestnetTokens.BNB);
-
-      const RGPAddressFrom = await factory.getPair(
-        fromPath,
-        BSCTestnetTokens.RGP,
-      );
-
-      const RGPAddressTo = await factory.getPair(toPath, BSCTestnetTokens.RGP);
-
-      // checks if both selected tokens have a pair in the factory
-      // and if true, routes them directly
-
-      if (selectedToken.symbol === 'BNB' && selectedToToken.symbol === 'WBNB') {
-        setRoute(`BNB > WBNB`);
-      } else if (
-        selectedToken.symbol === 'WBNB' &&
-        selectedToToken.symbol === 'BNB'
-      ) {
-        setRoute(`WBNB > BNB`);
-      } else if (LPAddress != '0x0000000000000000000000000000000000000000') {
-        console.log(
-          `${await selectedToken.symbol} > ${await selectedToToken.symbol}`,
-        );
-        setRoute(
-          `${await selectedToken.symbol} > ${await selectedToToken.symbol}`,
-        );
-
-        setRouteAddress([selectedToken.address, selectedToToken.address]);
-      } else {
-        // if both selected tokens do not have a pair in the factory
-        // this code checks through th most popular tokens in the factory
-        // to see if there's a pair and then routes a transaction through that link
-        if (
-          BUSDAddressTo != '0x0000000000000000000000000000000000000000' &&
-          BUSDAddressFrom != '0x0000000000000000000000000000000000000000'
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > BUSD > ${await selectedToToken.symbol}`,
-          );
-
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.BUSD,
-            selectedToToken.address,
-          ]);
-        } else if (
-          BNBAddressTo != '0x0000000000000000000000000000000000000000' &&
-          BNBAddressFrom != '0x0000000000000000000000000000000000000000'
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > BNB > ${await selectedToToken.symbol}`,
-          );
-
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.BNB,
-            selectedToToken.address,
-          ]);
-        } else if (
-          RGPAddressTo != '0x0000000000000000000000000000000000000000' &&
-          RGPAddressFrom != '0x0000000000000000000000000000000000000000'
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > RGP > ${await selectedToToken.symbol}`,
-          );
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.RGP,
-            selectedToToken.address,
-          ]);
-        } else if (
-          RGPAddressFrom != '0x0000000000000000000000000000000000000000' &&
-          RGPBUSDAddress != '0x0000000000000000000000000000000000000000' &&
-          (RGPBUSDAddress != '0x0000000000000000000000000000000000000000' &&
-            BUSDAddressTo != '0x0000000000000000000000000000000000000000')
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > RGP > BUSD > ${await selectedToToken.symbol}`,
-          );
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.RGP,
-            BSCTestnetTokens.BUSD,
-            selectedToToken.address,
-          ]);
-        } else if (
-          BUSDAddressFrom != '0x0000000000000000000000000000000000000000' &&
-          RGPBUSDAddress != '0x0000000000000000000000000000000000000000' &&
-          (RGPBUSDAddress != '0x0000000000000000000000000000000000000000' &&
-            RGPAddressTo != '0x0000000000000000000000000000000000000000')
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > BUSD > RGP > ${await selectedToToken.symbol}`,
-          );
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.BUSD,
-            BSCTestnetTokens.RGP,
-            selectedToToken.address,
-          ]);
-        } else if (
-          RGPAddressFrom != '0x0000000000000000000000000000000000000000' &&
-          RGPBNBAddress != '0x0000000000000000000000000000000000000000' &&
-          (RGPBNBAddress != '0x0000000000000000000000000000000000000000' &&
-            BNBAddressTo != '0x0000000000000000000000000000000000000000')
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > RGP > BNB > ${await selectedToToken.symbol}`,
-          );
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.RGP,
-            BSCTestnetTokens.BNB,
-            selectedToToken.address,
-          ]);
-        } else if (
-          BNBAddressFrom != '0x0000000000000000000000000000000000000000' &&
-          RGPBNBAddress != '0x0000000000000000000000000000000000000000' &&
-          (RGPBNBAddress != '0x0000000000000000000000000000000000000000' &&
-            RGPAddressTo != '0x0000000000000000000000000000000000000000')
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > BNB > RGP > ${await selectedToToken.symbol}`,
-          );
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.BNB,
-            BSCTestnetTokens.RGP,
-            selectedToToken.address,
-          ]);
-        } else if (
-          BUSDAddressFrom != '0x0000000000000000000000000000000000000000' &&
-          BUSDBNBAddress != '0x0000000000000000000000000000000000000000' &&
-          (BUSDBNBAddress != '0x0000000000000000000000000000000000000000' &&
-            BNBAddressTo != '0x0000000000000000000000000000000000000000')
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > BUSD > BNB > ${await selectedToToken.symbol}`,
-          );
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.BUSD,
-            BSCTestnetTokens.BNB,
-            selectedToToken.address,
-          ]);
-        } else if (
-          BNBAddressFrom != '0x0000000000000000000000000000000000000000' &&
-          BUSDBNBAddress != '0x0000000000000000000000000000000000000000' &&
-          (BUSDBNBAddress != '0x0000000000000000000000000000000000000000' &&
-            BUSDAddressTo != '0x0000000000000000000000000000000000000000')
-        ) {
-          setRoute(
-            `${await selectedToken.symbol} > BNB > BUSD > ${await selectedToToken.symbol}`,
-          );
-          setRouteAddress([
-            selectedToken.address,
-            BSCTestnetTokens.BNB,
-            BSCTestnetTokens.BUSD,
-            selectedToToken.address,
-          ]);
-        } else {
-          console.log('No trade for this pair, error pop up shows up here');
-        }
-        // console.log('Nothing to see here');
-      }
-    };
-
     checkLiquidityPair();
   }, [selectedToken, selectedToToken]);
+
+  const checkLiquidityPair = async () => {
+    const factory = await SmartFactory();
+    const fromPath = ethers.utils.getAddress(selectedToken.address);
+    const toPath = ethers.utils.getAddress(selectedToToken.address);
+    const LPAddress = await factory.getPair(toPath, fromPath);
+
+    const RGPBUSDAddress = await factory.getPair(
+      TOKENS_CONTRACT.RGP,
+      TOKENS_CONTRACT.BUSD,
+    );
+
+    const RGPBNBAddress = await factory.getPair(
+      TOKENS_CONTRACT.RGP,
+      TOKENS_CONTRACT.BNB,
+    );
+
+    const BUSDBNBAddress = await factory.getPair(
+      TOKENS_CONTRACT.BUSD,
+      TOKENS_CONTRACT.BNB,
+    );
+
+    const BUSDAddressFrom = await factory.getPair(
+      fromPath,
+      TOKENS_CONTRACT.BUSD,
+    );
+
+    const BUSDAddressTo = await factory.getPair(toPath, TOKENS_CONTRACT.BUSD);
+
+    const BNBAddressFrom = await factory.getPair(fromPath, TOKENS_CONTRACT.BNB);
+
+    const BNBAddressTo = await factory.getPair(toPath, TOKENS_CONTRACT.BNB);
+
+    const RGPAddressFrom = await factory.getPair(fromPath, TOKENS_CONTRACT.RGP);
+
+    const RGPAddressTo = await factory.getPair(toPath, TOKENS_CONTRACT.RGP);
+
+    // checks if both selected tokens have a pair in the factory
+    // and if true, routes them directly
+
+    if (selectedToken.symbol === 'BNB' && selectedToToken.symbol === 'WBNB') {
+      setRoute(`BNB > WBNB`);
+    } else if (
+      selectedToken.symbol === 'WBNB' &&
+      selectedToToken.symbol === 'BNB'
+    ) {
+      setRoute(`WBNB > BNB`);
+    } else if (LPAddress != '0x0000000000000000000000000000000000000000') {
+      setRoute(
+        `${await selectedToken.symbol} > ${await selectedToToken.symbol}`,
+      );
+
+      setRouteAddress([selectedToken.address, selectedToToken.address]);
+    } else {
+      // if both selected tokens do not have a pair in the factory
+      // this code checks through th most popular tokens in the factory
+      // to see if there's a pair and then routes a transaction through that link
+      if (
+        BUSDAddressTo != '0x0000000000000000000000000000000000000000' &&
+        BUSDAddressFrom != '0x0000000000000000000000000000000000000000'
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > BUSD > ${await selectedToToken.symbol}`,
+        );
+
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.BUSD,
+          selectedToToken.address,
+        ]);
+      } else if (
+        BNBAddressTo != '0x0000000000000000000000000000000000000000' &&
+        BNBAddressFrom != '0x0000000000000000000000000000000000000000'
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > BNB > ${await selectedToToken.symbol}`,
+        );
+
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.BNB,
+          selectedToToken.address,
+        ]);
+      } else if (
+        RGPAddressTo != '0x0000000000000000000000000000000000000000' &&
+        RGPAddressFrom != '0x0000000000000000000000000000000000000000'
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > RGP > ${await selectedToToken.symbol}`,
+        );
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.RGP,
+          selectedToToken.address,
+        ]);
+      } else if (
+        RGPAddressFrom != '0x0000000000000000000000000000000000000000' &&
+        RGPBUSDAddress != '0x0000000000000000000000000000000000000000' &&
+        (RGPBUSDAddress != '0x0000000000000000000000000000000000000000' &&
+          BUSDAddressTo != '0x0000000000000000000000000000000000000000')
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > RGP > BUSD > ${await selectedToToken.symbol}`,
+        );
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.RGP,
+          TOKENS_CONTRACT.BUSD,
+          selectedToToken.address,
+        ]);
+      } else if (
+        BUSDAddressFrom != '0x0000000000000000000000000000000000000000' &&
+        RGPBUSDAddress != '0x0000000000000000000000000000000000000000' &&
+        (RGPBUSDAddress != '0x0000000000000000000000000000000000000000' &&
+          RGPAddressTo != '0x0000000000000000000000000000000000000000')
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > BUSD > RGP > ${await selectedToToken.symbol}`,
+        );
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.BUSD,
+          TOKENS_CONTRACT.RGP,
+          selectedToToken.address,
+        ]);
+      } else if (
+        RGPAddressFrom != '0x0000000000000000000000000000000000000000' &&
+        RGPBNBAddress != '0x0000000000000000000000000000000000000000' &&
+        (RGPBNBAddress != '0x0000000000000000000000000000000000000000' &&
+          BNBAddressTo != '0x0000000000000000000000000000000000000000')
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > RGP > BNB > ${await selectedToToken.symbol}`,
+        );
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.RGP,
+          TOKENS_CONTRACT.BNB,
+          selectedToToken.address,
+        ]);
+      } else if (
+        BNBAddressFrom != '0x0000000000000000000000000000000000000000' &&
+        RGPBNBAddress != '0x0000000000000000000000000000000000000000' &&
+        (RGPBNBAddress != '0x0000000000000000000000000000000000000000' &&
+          RGPAddressTo != '0x0000000000000000000000000000000000000000')
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > BNB > RGP > ${await selectedToToken.symbol}`,
+        );
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.BNB,
+          TOKENS_CONTRACT.RGP,
+          selectedToToken.address,
+        ]);
+      } else if (
+        BUSDAddressFrom != '0x0000000000000000000000000000000000000000' &&
+        BUSDBNBAddress != '0x0000000000000000000000000000000000000000' &&
+        (BUSDBNBAddress != '0x0000000000000000000000000000000000000000' &&
+          BNBAddressTo != '0x0000000000000000000000000000000000000000')
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > BUSD > BNB > ${await selectedToToken.symbol}`,
+        );
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.BUSD,
+          TOKENS_CONTRACT.BNB,
+          selectedToToken.address,
+        ]);
+      } else if (
+        BNBAddressFrom != '0x0000000000000000000000000000000000000000' &&
+        BUSDBNBAddress != '0x0000000000000000000000000000000000000000' &&
+        (BUSDBNBAddress != '0x0000000000000000000000000000000000000000' &&
+          BUSDAddressTo != '0x0000000000000000000000000000000000000000')
+      ) {
+        setRoute(
+          `${await selectedToken.symbol} > BNB > BUSD > ${await selectedToToken.symbol}`,
+        );
+        setRouteAddress([
+          selectedToken.address,
+          TOKENS_CONTRACT.BNB,
+          TOKENS_CONTRACT.BUSD,
+          selectedToToken.address,
+        ]);
+      } else {
+        setNewTokenPair(true);
+        openModal5();
+      }
+    }
+  };
 
   const importToken = token => {
     token.available = true;
@@ -396,6 +389,7 @@ export const Manual = props => {
     } else {
       setSelectedTokenForModal({});
       checkIfLiquidityPairExist();
+      // checkLiquidityPair()
     }
   };
   const getTokensListed = async pairArray => {
@@ -443,6 +437,7 @@ export const Manual = props => {
         setDataForModal(false, selectedToToken);
       } else {
         checkIfLiquidityPairExist();
+        // checkLiquidityPair()
       }
     } else {
       history.push('/swap');
@@ -458,10 +453,11 @@ export const Manual = props => {
     const fromPath = ethers.utils.getAddress(selectedToken.address);
     const toPath = ethers.utils.getAddress(selectedToToken.address);
     const LPAddress = await factory.getPair(toPath, fromPath);
-    if (LPAddress === '0x0000000000000000000000000000000000000000') {
-      setNewTokenPair(true);
-      openModal5();
-    }
+    // if (LPAddress === '0x0000000000000000000000000000000000000000') {
+    //   setNewTokenPair(true);
+    //   openModal5();
+    // }
+    checkLiquidityPair();
   };
   const modal1Disclosure = useDisclosure();
   const modal2Disclosure = useDisclosure();
@@ -588,19 +584,34 @@ export const Manual = props => {
         );
         setDisableSwapTokenButton(false);
       } else {
-        await updateSendAmount(
-          path,
-          selectedToken,
-          selectedToToken,
-          askAmount,
-          setAmountIn,
-          setShowBox,
-          setBoxMessage,
-          setFromAmount,
-          field,
-          calculateSlippage,
-        );
-        setDisableSwapTokenButton(false);
+        if (routeAddress.length >= 3) {
+          await updateSendAmountForRoute(
+            path,
+            routeAddress,
+            askAmount,
+            setAmountIn,
+            setShowBox,
+            setBoxMessage,
+            setFromAmount,
+            field,
+            calculateSlippage,
+          );
+          setDisableSwapTokenButton(false);
+        } else {
+          await updateSendAmount(
+            path,
+            selectedToken,
+            selectedToToken,
+            askAmount,
+            setAmountIn,
+            setShowBox,
+            setBoxMessage,
+            setFromAmount,
+            field,
+            calculateSlippage,
+          );
+          setDisableSwapTokenButton(false);
+        }
       }
       setDisableSwapTokenButton(false);
     } else {
@@ -675,6 +686,7 @@ export const Manual = props => {
       if (userHasApproveToken) {
         return openModal1();
       }
+
       setIsSendingTransaction(true);
       const sendTransaction = await approveToken(
         wallet.address,
@@ -1118,10 +1130,39 @@ export const Manual = props => {
 
   // open First Modal
   const openModal1 = async () => {
-    const data = await getPriceForToken(wallet, selectedToken, selectedToToken);
-    const convertPriceToEther = Web3.utils.fromWei(data.split(',')[1]);
-    setTokenPrice(convertPriceToEther);
-    modal1Disclosure.onOpen();
+    if (routeAddress.length >= 3) {
+      if (routeAddress.length === 3) {
+        const data = await getPriceForTokenWithRouteFeatureWithThreePath(
+          wallet,
+          routeAddress,
+        );
+        const convertPriceToEther = Web3.utils.fromWei(data.split(',')[1]);
+        setTokenPrice(convertPriceToEther);
+        modal1Disclosure.onOpen();
+      } else {
+        const data = await getPriceForTokenWithRouteFeatureWithFourPath(
+          wallet,
+          routeAddress,
+        );
+        const convertPriceToEther = Web3.utils.fromWei(data.split(',')[1]);
+        setTokenPrice(convertPriceToEther);
+        modal1Disclosure.onOpen();
+      }
+      // const data = await getPriceForTokenWithRouteFeature(wallet, routeAddress);
+
+      // const convertPriceToEther = Web3.utils.fromWei(data.split(',')[1]);
+      // setTokenPrice(convertPriceToEther);
+      // modal1Disclosure.onOpen();
+    } else {
+      const data = await getPriceForToken(
+        wallet,
+        selectedToken,
+        selectedToToken,
+      );
+      const convertPriceToEther = Web3.utils.fromWei(data.split(',')[1]);
+      setTokenPrice(convertPriceToEther);
+      modal1Disclosure.onOpen();
+    }
   };
 
   const closeModal1 = () => {
@@ -1244,7 +1285,7 @@ export const Manual = props => {
               _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
               _active={{ outline: '#29235E', background: '#29235E' }}
               disabled={disableSwapTokenButton}
-              onClick={() =>
+              onClick={() => {
                 wallet.signer === 'signer'
                   ? sendNotice('Please use the Connect button above')
                   : (typeof wallet.signer === 'object' &&
@@ -1265,8 +1306,8 @@ export const Manual = props => {
                     : insufficientBalanceButton
                     ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
                     : triggerAccountCheck()
-                  : null
-              }
+                  : null;
+              }}
             >
               {wallet.signer === 'signer'
                 ? 'connect to Wallet'
@@ -1368,6 +1409,110 @@ async function updateSendAmount(
   }
 }
 
+async function updateSendAmountForRoute(
+  path,
+  routeAddress,
+  askAmount,
+  setAmountIn,
+  setShowBox,
+  setBoxMessage,
+  setFromAmount,
+  field,
+  calculateSlippage,
+) {
+  const rout = await updateOutPutAmountForRouter();
+  if (typeof path[1] != 'undefined') {
+    if (routeAddress.length === 3) {
+      const firstFromPath = routeAddress[0];
+      const firstToPath = routeAddress[1];
+      const lastPath = routeAddress[2];
+      let newArray = [...routeAddress];
+      const reversedArray = newArray.reverse();
+      const reversedFirstFromPath = reversedArray[0];
+      const reversedFirstToPath = reversedArray[1];
+      const reversedLastPath = reversedArray[2];
+      try {
+        setShowBox(false);
+        setBoxMessage('...');
+        const amount1 = await rout.getAmountsOut(
+          Web3.utils.toWei(askAmount.toString()),
+          field != 'to'
+            ? [firstFromPath, firstToPath]
+            : [reversedFirstFromPath, reversedFirstToPath],
+        );
+
+        const amount1String = await amount1.toString().split(',');
+
+        const amount = await rout.getAmountsOut(
+          amount1String[1],
+          field != 'to'
+            ? [firstToPath, lastPath]
+            : [reversedFirstToPath, reversedLastPath],
+        );
+
+        return field != 'to'
+          ? setAmountIn(
+              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+            )
+          : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+      } catch (e) {
+        setAmountIn('');
+        console.log(e);
+        setBoxMessage('Please check your token selection');
+        setShowBox(true);
+      }
+    } else {
+      const firstpath = routeAddress[0];
+      const secondpath = routeAddress[1];
+      const thirdpath = routeAddress[2];
+      const fourthpath = routeAddress[3];
+      let newArray = [...routeAddress];
+      const reversedArray = newArray.reverse();
+      const reversedFirstPath = reversedArray[0];
+      const reversedSecondPath = reversedArray[1];
+      const reversedThirdPath = reversedArray[2];
+      const reversedFourthPath = reversedArray[3];
+      try {
+        setShowBox(false);
+        setBoxMessage('...');
+        const amount1 = await rout.getAmountsOut(
+          Web3.utils.toWei(askAmount.toString()),
+          field != 'to'
+            ? [firstpath, secondpath]
+            : [reversedFirstPath, reversedSecondPath],
+        );
+
+        const amount1String = await amount1.toString().split(',');
+
+        const amount2 = await rout.getAmountsOut(
+          amount1String[1],
+          field != 'to'
+            ? [secondpath, thirdpath]
+            : [reversedSecondPath, reversedThirdPath],
+        );
+
+        const amount2String = await amount2.toString().split(',');
+
+        const amount = await rout.getAmountsOut(
+          amount2String[1],
+          field != 'to'
+            ? [thirdpath, fourthpath]
+            : [reversedThirdPath, reversedFourthPath],
+        );
+        return field != 'to'
+          ? setAmountIn(
+              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+            )
+          : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
+      } catch (e) {
+        setAmountIn('');
+        setBoxMessage('Please check your token selection');
+        setShowBox(true);
+      }
+    }
+  }
+}
+
 async function update_RGP_ETH_SendAmount(
   selectedToken,
   selectedToToken,
@@ -1392,12 +1537,16 @@ async function update_RGP_ETH_SendAmount(
         field != 'to' ? [fromPath, toPath] : [toPath, fromPath],
       );
       // * calculateSlippage()
+
+      console.log(
+        ethers.utils
+          .formatEther(calculateSlippage(amount[1].toString()))
+          .toString(),
+      );
+
+      console.log(ethers.utils.formatEther(amount[1]).toString());
       return field != 'to'
-        ? setAmountIn(
-            ethers.utils
-              .formatEther(calculateSlippage(amount[1].toString()))
-              .toString(),
-          )
+        ? setAmountIn(ethers.utils.formatEther(amount[1]).toString())
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
