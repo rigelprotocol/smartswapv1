@@ -148,6 +148,7 @@ export const getPriceForToken = async (wallet, fromToken, toToken) => {
   }
 };
 
+//gets price equivalent for swaps with 3 routes
 export const getPriceForTokenWithRouteFeatureWithThreePath = async (
   wallet,
   routeAddress,
@@ -175,6 +176,7 @@ export const getPriceForTokenWithRouteFeatureWithThreePath = async (
   }
 };
 
+//gets price equivalent for swaps with 4 routes
 export const getPriceForTokenWithRouteFeatureWithFourPath = async (
   wallet,
   routeAddress,

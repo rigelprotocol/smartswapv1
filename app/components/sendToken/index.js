@@ -63,6 +63,7 @@ import {
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
 import { getDeadline } from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
+import { parseAsync } from '@babel/core';
 
 export const Manual = props => {
   const history = useHistory();
@@ -101,7 +102,7 @@ export const Manual = props => {
   const [slippage, setSlippage] = useLocalStorage('slippage', 1.5);
   const [deadline, setDeadline] = useLocalStorage('deadline', 20);
 
-  // Path route to be displayed in the frontend
+  // Path route to be displayed in the confirmswapbox component
   const [route, setRoute] = useState('');
 
   // Array of path address, based on routes
@@ -183,9 +184,9 @@ export const Manual = props => {
     }
   }, [fromAmount, amountIn]);
 
-  useEffect(() => {
-    checkLiquidityPair();
-  }, [selectedToken, selectedToToken]);
+  useEffect(async () => {
+    await checkLiquidityPair();
+  }, [selectedToken, selectedToToken, path]);
 
   const checkLiquidityPair = async () => {
     const factory = await SmartFactory();
@@ -389,7 +390,7 @@ export const Manual = props => {
     } else {
       setSelectedTokenForModal({});
       checkIfLiquidityPairExist();
-      // checkLiquidityPair()
+      // checkLiquidityPair();
     }
   };
   const getTokensListed = async pairArray => {
@@ -437,7 +438,7 @@ export const Manual = props => {
         setDataForModal(false, selectedToToken);
       } else {
         checkIfLiquidityPairExist();
-        // checkLiquidityPair()
+        // checkLiquidityPair();
       }
     } else {
       history.push('/swap');
@@ -476,6 +477,7 @@ export const Manual = props => {
     setFromAmount(value || balance);
     getToAmount(value || balance, 'from');
   };
+
   const changeData = () => {
     props.changeDeadlineValue({ actualTransactionDeadline, slippageValue });
   };
@@ -584,20 +586,7 @@ export const Manual = props => {
         );
         setDisableSwapTokenButton(false);
       } else {
-        if (routeAddress.length >= 3) {
-          await updateSendAmountForRoute(
-            path,
-            routeAddress,
-            askAmount,
-            setAmountIn,
-            setShowBox,
-            setBoxMessage,
-            setFromAmount,
-            field,
-            calculateSlippage,
-          );
-          setDisableSwapTokenButton(false);
-        } else {
+        if (routeAddress.length === 2) {
           await updateSendAmount(
             path,
             selectedToken,
@@ -611,9 +600,23 @@ export const Manual = props => {
             calculateSlippage,
           );
           setDisableSwapTokenButton(false);
+        } else if (routeAddress.length >= 3) {
+          await updateSendAmountForRoute(
+            path,
+            routeAddress,
+            askAmount,
+            setAmountIn,
+            setShowBox,
+            setBoxMessage,
+            setFromAmount,
+            field,
+            calculateSlippage,
+          );
+          setDisableSwapTokenButton(false);
+        } else {
+          setDisableSwapTokenButton(true);
         }
       }
-      setDisableSwapTokenButton(false);
     } else {
       setAmountIn('');
       setDisableSwapTokenButton(true);
@@ -706,7 +709,8 @@ export const Manual = props => {
     }
   };
 
-  // for three or more routes, swapTokenForThree gets called
+  // for three or more routes, swapUserTokenForRoute gets called if
+  // the route addresses is three or more
 
   const openLoadingSpinnerAndSwap = async () => {
     if (routeAddress.length >= 3) {
@@ -1403,7 +1407,7 @@ async function updateSendAmount(
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
-      setBoxMessage('Please check your token selection');
+      setBoxMessage('Please check your token blabla3');
       setShowBox(true);
     }
   }
@@ -1422,6 +1426,10 @@ async function updateSendAmountForRoute(
 ) {
   const rout = await updateOutPutAmountForRouter();
   if (typeof path[1] != 'undefined') {
+    //checks if route addresses is 3, and then checks the price
+    // by going through routes.
+    // reversed addresses are used to refer to when the path
+    //from the argument is = 'to'
     if (routeAddress.length === 3) {
       const firstFromPath = routeAddress[0];
       const firstToPath = routeAddress[1];
@@ -1457,11 +1465,15 @@ async function updateSendAmountForRoute(
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
-        console.log(e);
         setBoxMessage('Please check your token selection');
         setShowBox(true);
       }
     } else {
+      //this runs only when the route address is not 3, which means it's 4
+      // 4 is the maximum so far, and then checks the price
+      // by going through routes.
+      // reversed addresses are used to refer to when the path
+      //from the argument is = 'to'
       const firstpath = routeAddress[0];
       const secondpath = routeAddress[1];
       const thirdpath = routeAddress[2];
@@ -1506,7 +1518,7 @@ async function updateSendAmountForRoute(
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
-        setBoxMessage('Please check your token selection');
+        setBoxMessage('Please check your token blabla2');
         setShowBox(true);
       }
     }
@@ -1538,19 +1550,14 @@ async function update_RGP_ETH_SendAmount(
       );
       // * calculateSlippage()
 
-      console.log(
-        ethers.utils
-          .formatEther(calculateSlippage(amount[1].toString()))
-          .toString(),
-      );
-
-      console.log(ethers.utils.formatEther(amount[1]).toString());
       return field != 'to'
-        ? setAmountIn(ethers.utils.formatEther(amount[1]).toString())
+        ? setAmountIn(
+            ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
+          )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
-      setBoxMessage('Please check your token selection');
+      setBoxMessage('Please check your token blabla4');
       setShowBox(true);
     }
   }
