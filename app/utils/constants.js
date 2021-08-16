@@ -45,6 +45,7 @@ const BSCmainnetTokens = {
 };
 const BSC_MAIN_NET_ID =
   window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
+
 export const TOKENS_CONTRACT =
   checkNetVersion() === BSC_MAIN_NET_ID.toString()
     ? BSCmainnetTokens
