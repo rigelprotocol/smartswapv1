@@ -18,7 +18,11 @@ const From = ({
   wallet,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
+  const {
+    isOpen: isOpenModal,
+    onOpen: onOpenModal,
+    onClose: onCloseModal,
+  } = useDisclosure();
   // move this to the actually state created
   // useEffect(() => {
   //   setSelectedToken(tokenWhere('rgp'));
