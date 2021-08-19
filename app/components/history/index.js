@@ -2,22 +2,25 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 
 import PropTypes from 'prop-types';
-import OrderHistory from 'components/order/OrderHistory';
 import { connect } from 'react-redux';
 import React, { useState } from 'react';
+import OrderHistory from './OrderHistory';
 import styles from '../../styles/history.css';
+import useGetHistory from './useGetHistory';
 // import Empty from './EmptyHistory';
-import { getWalletHistory } from './getOrderHistory';
 
 export function Home(props) {
   const [show, setShow] = useState(false);
 
   const { wallet } = props.wallet;
 
-  getWalletHistory(wallet.address).then(data => {
-    console.log('History  Transaction Data is : ', data);
-  });
+  // using the useuseGetHistory hook
 
+  const { historyData } = useGetHistory(wallet.provider);
+
+  if (historyData) {
+    console.log('historyData: ', historyData);
+  }
   return (
     <Box className={styles.container}>
       <Flex
