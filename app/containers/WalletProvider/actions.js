@@ -14,7 +14,7 @@ import {
   signer,
 } from 'utils/wallet-wiget/connection';
 import { ethers } from 'ethers';
-import { formatBalance, isNotEmpty } from 'utils/UtilFunc';
+import { formatBalance, isNotEmpty, mergeArrays } from 'utils/UtilFunc';
 import { getTokenDetails } from 'utils/tokens';
 import {
   WALLET_CONNECTED,
@@ -32,6 +32,7 @@ import {
   UPDATE_TOKEN_LIST,
   UPDATE_TO_TOKEN,
   UPDATE_FROM_TOKEN,
+  SET_MAIN_TOKEN_LIST,
   TOGGLE_MAIN_TOKEN_LIST,
   TOGGLE_USER_TOKEN_LIST,
   TOGGLE_DEFAULT_TOKEN_LIST,
@@ -140,7 +141,6 @@ export const updateChainId = chainId => dispatch => {
 
 export const changeRGPValue = wallet => async dispatch => {
   if (wallet.signer != 'signer') {
-
     try {
       const { address } = wallet;
       const ethProvider = await provider();
@@ -169,6 +169,10 @@ export const getTokenAddress = (chainId) => {
 
 export const getTokenList = () => async (dispatch) => {
   const tokenByNetwork = getChainId() === MAINNET.toString() ? defaultTokenList : testNetTokenList;
+  const list = getChainId() === MAINNET.toString() ? mainTokenList : [];
+  dispatch({
+    type: SET_MAIN_TOKEN_LIST, payload: list
+  });
   return dispatch({
     type: GET_ALL_TOKEN, payload: tokenByNetwork
   })
@@ -207,9 +211,6 @@ export const updateTokenListAction = (list) => (dispatch) => dispatch({
   type: UPDATE_TOKEN_LIST, payload: list
 });
 
-export const toggleDefaultTokenList = (option) => (dispatch) => dispatch({
-  type: TOGGLE_DEFAULT_TOKEN_LIST, payload: option
-})
 
 export const updateToToken = (token) => (dispatch) => dispatch({
   type: UPDATE_TO_TOKEN, payload: token
@@ -219,13 +220,56 @@ export const updateFromToken = (token) => (dispatch) => dispatch({
   type: UPDATE_FROM_TOKEN, payload: token
 });
 
-export const toggleMainTokenList = (option) => (dispatch) => {
-  const list = getChainId() === MAINNET.toString() && option ? mainTokenList : [];
-  dispatch({
-    type: TOGGLE_MAIN_TOKEN_LIST, payload: { option, list }
-  });
-};
+export const toggleDefaultTokenList = (option) => (dispatch) => dispatch({
+  type: TOGGLE_DEFAULT_TOKEN_LIST, payload: option
+})
+
+export const toggleMainTokenList = (option) => (dispatch) => dispatch({
+  type: TOGGLE_MAIN_TOKEN_LIST, payload: option
+});
 
 export const toggleUserTokenList = (option) => (dispatch) => dispatch({
   type: TOGGLE_USER_TOKEN_LIST, payload: option
 });
+
+
+export async function setTokenList(ExtendedTokenList, account) {
+  console.log("dagogo")
+  const listWithDuplicate = [];
+  for (const property in ExtendedTokenList) {
+    if (
+      Array.isArray(ExtendedTokenList[property]) &&
+      ExtendedTokenList[property].length > 1
+    ) {
+      const { show } = ExtendedTokenList[property][0];
+      if (show) {
+        listWithDuplicate.push(ExtendedTokenList[property][1].token);
+      }
+    }
+  }
+  const updatedList = await Promise.all(
+    mergeArrays(listWithDuplicate).map(async (token, _index) => {
+      const accountSigner = account.signer;
+      let { balance } = token;
+      const { symbol, address } = token;
+      if (symbol === 'BNB' && accountSigner !== 'signer') {
+        ({ balance } = account);
+      }
+      if (address !== undefined && accountSigner !== 'signer' && symbol !== 'BNB') {
+        balance = await getAddressTokenBalance(
+          account.address,
+          address,
+          accountSigner,
+        );
+      }
+      return { ...token, balance };
+    }),
+  );
+  const sortedList = updatedList.sort((a, b) => {
+    if (a.symbol === 'RGP' || a.symbol === 'SELECT A TOKEN') return -1;
+    if (b.symbol === 'RGP' || b.symbol === 'SELECT A TOKEN') return 1;
+    return a.symbol.localeCompare(b.symbol);
+  });
+  updateTokenListAction(sortedList);
+  return sortedList;
+}
