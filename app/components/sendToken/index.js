@@ -183,7 +183,7 @@ export const Manual = props => {
             const LPContract = await LPTokenContract(LPAddress);
             const [fromPathReserve, toPathReserve] = await LPContract.getReserves();
             ethers.utils.formatEther(fromPathReserve).toString()
-            console.log('To Amount', ethers.utils.formatEther(toPathReserve).toString(), 'From Amount', ethers.utils.formatEther(fromPathReserve).toString())
+            console.log('use the console to Confirm the Code To Amount', ethers.utils.formatEther(toPathReserve).toString(), 'From Amount', ethers.utils.formatEther(fromPathReserve).toString())
             parseFloat(ethers.utils.formatEther(fromPathReserve).toString()) < fromAmount || parseFloat(ethers.utils.formatEther(toPathReserve).toString()) < amountIn ? setLowLiquidity(true) : null;
           }
           if (parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
