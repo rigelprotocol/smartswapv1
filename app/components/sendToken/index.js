@@ -101,6 +101,7 @@ export const Manual = props => {
   const [selectedTokenForModal, setSelectedTokenForModal] = useState({});
   const [slippage, setSlippage] = useLocalStorage('slippage', 1.5);
   const [deadline, setDeadline] = useLocalStorage('deadline', 20);
+  const [noLiquidity, setNoLiquidity] = useState(false)
 
   // Path route to be displayed in the confirmswapbox component
   const [route, setRoute] = useState('');
@@ -189,6 +190,7 @@ export const Manual = props => {
   }, [selectedToken, selectedToToken, path]);
 
   const checkLiquidityPair = async () => {
+    setNoLiquidity(false)
     const factory = await SmartFactory();
     const fromPath = ethers.utils.getAddress(selectedToken.address);
     const toPath = ethers.utils.getAddress(selectedToToken.address);
@@ -374,7 +376,8 @@ export const Manual = props => {
         ]);
       } else {
         setNewTokenPair(true);
-        openModal5();
+        setNoLiquidity(true)
+        console.log("Insufficient liquidity for this trade")
       }
     }
   };
@@ -1271,10 +1274,43 @@ export const Manual = props => {
         <Box mt={14}>
           {isSendingTransaction ? (
             <Stack direction="row" spacing={4}>
-              <Spinner size="xs" color="red.500" />
+              <Button
+                d="block"
+                w="100%"
+                h="50px"
+                color="#40BAD5"
+                border="none"
+                fontWeight="regular"
+                fontSize="lg"
+                cursor="pointer"
+                rounded="2xl"
+                bg="rgba(64, 186, 213,0.25)"
+                borderColor="#40BAD5"
+                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+                _active={{ outline: '#29235E', background: '#29235E' }}
+              >
+                <Spinner size="xs" color="red.500" /> Pending...
+              </Button>
             </Stack>
-          ) : (
+          ) : (noLiquidity ?
             <Button
+              d="block"
+              w="100%"
+              h="50px"
+              color="#40BAD5"
+              border="none"
+              fontWeight="regular"
+              fontSize="lg"
+              cursor="pointer"
+              rounded="2xl"
+              bg="rgba(64, 186, 213,0.25)"
+              borderColor="#40BAD5"
+              _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+              _active={{ outline: '#29235E', background: '#29235E' }}
+            >
+              No liquidity for this trade
+            </Button>
+            : <Button
               d="block"
               w="100%"
               h="50px"
@@ -1293,47 +1329,47 @@ export const Manual = props => {
                 wallet.signer === 'signer'
                   ? sendNotice('Please use the Connect button above')
                   : (typeof wallet.signer === 'object' &&
-                      fromAmount === undefined) ||
+                    fromAmount === undefined) ||
                     fromAmount.length == parseFloat(0.0)
-                  ? sendNotice('Enter the amount of token to exchange')
-                  : typeof wallet.signer === 'object' &&
-                    fromAmount > parseFloat(0) &&
-                    selectedToToken.name === 'Select a token'
-                  ? sendNotice('Select the designated token')
-                  : typeof wallet.signer === 'object' &&
-                    fromAmount != parseFloat(0.0) &&
-                    selectedToToken.name !== 'Select a token'
-                  ? selectedToken.symbol == selectedToToken.symbol
-                    ? sendNotice(
-                        'Improper token selection, you selected the same token',
-                      )
-                    : insufficientBalanceButton
-                    ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
-                    : triggerAccountCheck()
-                  : null;
+                    ? sendNotice('Enter the amount of token to exchange')
+                    : typeof wallet.signer === 'object' &&
+                      fromAmount > parseFloat(0) &&
+                      selectedToToken.name === 'Select a token'
+                      ? sendNotice('Select the designated token')
+                      : typeof wallet.signer === 'object' &&
+                        fromAmount != parseFloat(0.0) &&
+                        selectedToToken.name !== 'Select a token'
+                        ? selectedToken.symbol == selectedToToken.symbol
+                          ? sendNotice(
+                            'Improper token selection, you selected the same token',
+                          )
+                          : insufficientBalanceButton
+                            ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
+                            : triggerAccountCheck()
+                        : null;
               }}
             >
               {wallet.signer === 'signer'
                 ? 'connect to Wallet'
                 : (typeof wallet.signer === 'object' &&
-                    fromAmount === undefined) ||
+                  fromAmount === undefined) ||
                   fromAmount.length == parseFloat(0.0)
-                ? 'Enter Amount'
-                : typeof wallet.signer === 'object' &&
-                  fromAmount != parseFloat(0.0) &&
-                  selectedToToken.name === 'Select a token'
-                ? 'Click Select a Token'
-                : typeof wallet.signer === 'object' &&
-                  fromAmount != parseFloat(0.0) &&
-                  selectedToToken.name !== 'Select a token'
-                ? selectedToken.symbol == selectedToToken.symbol
-                  ? 'Improper token selection'
-                  : insufficientBalanceButton
-                  ? `Insufficient ${selectedToken.symbol} balance`
-                  : !userHasApproveToken
-                  ? 'Approve Transaction'
-                  : 'Swap Tokens'
-                : ''}
+                  ? 'Enter Amount'
+                  : typeof wallet.signer === 'object' &&
+                    fromAmount != parseFloat(0.0) &&
+                    selectedToToken.name === 'Select a token'
+                    ? 'Click Select a Token'
+                    : typeof wallet.signer === 'object' &&
+                      fromAmount != parseFloat(0.0) &&
+                      selectedToToken.name !== 'Select a token'
+                      ? selectedToken.symbol == selectedToToken.symbol
+                        ? 'Improper token selection'
+                        : insufficientBalanceButton
+                          ? `Insufficient ${selectedToken.symbol} balance`
+                          : !userHasApproveToken
+                            ? 'Approve Transaction'
+                            : 'Swap Tokens'
+                      : ''}
             </Button>
           )}
         </Box>
@@ -1402,12 +1438,12 @@ async function updateSendAmount(
       // if(field != 'to' && )
       return field != 'to'
         ? setAmountIn(
-            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-          )
+          ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+        )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
-      setBoxMessage('Please check your token blabla3');
+      setBoxMessage('Please check your token');
       setShowBox(true);
     }
   }
@@ -1460,8 +1496,8 @@ async function updateSendAmountForRoute(
 
         return field != 'to'
           ? setAmountIn(
-              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-            )
+            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+          )
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
@@ -1513,12 +1549,12 @@ async function updateSendAmountForRoute(
         );
         return field != 'to'
           ? setAmountIn(
-              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-            )
+            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+          )
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
-        setBoxMessage('Please check your token blabla2');
+        setBoxMessage('Please check your token ');
         setShowBox(true);
       }
     }
@@ -1552,12 +1588,12 @@ async function update_RGP_ETH_SendAmount(
 
       return field != 'to'
         ? setAmountIn(
-            ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
-          )
+          ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
+        )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
-      setBoxMessage('Please check your token blabla4');
+      setBoxMessage('Please check your token');
       setShowBox(true);
     }
   }
