@@ -16,7 +16,7 @@ export function Home(props) {
 
   // using the useuseGetHistory hook
 
-  const { historyData } = useGetHistory(wallet.provider);
+  const { historyData } = useGetHistory(wallet);
 
   if (historyData) {
     console.log('historyData: ', historyData);
