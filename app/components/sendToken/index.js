@@ -179,12 +179,11 @@ export const Manual = props => {
           const fromPath = ethers.utils.getAddress(selectedToken.address);
           const toPath = ethers.utils.getAddress(selectedToToken.address);
           const LPAddress = await factory.getPair(toPath, fromPath);
-          console.log(LPAddress)
           if (LPAddress != '0x0000000000000000000000000000000000000000') {
             const LPContract = await LPTokenContract(LPAddress);
             const [fromPathReserve, toPathReserve] = await LPContract.getReserves();
             ethers.utils.formatEther(fromPathReserve).toString()
-            console.log(ethers.utils.formatEther(toPathReserve).toString(), ethers.utils.formatEther(fromPathReserve).toString())
+            console.log('To Amount', ethers.utils.formatEther(toPathReserve).toString(), 'From Amount', ethers.utils.formatEther(fromPathReserve).toString())
             parseFloat(ethers.utils.formatEther(fromPathReserve).toString()) < fromAmount || parseFloat(ethers.utils.formatEther(toPathReserve).toString()) < amountIn ? setLowLiquidity(true) : null;
           }
           if (parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
