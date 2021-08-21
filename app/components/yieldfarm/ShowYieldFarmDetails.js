@@ -886,12 +886,14 @@ const ShowYieldFarmDetails = ({
               h="50px"
               borderRadius="12px"
               bg={
-                approveValueForRGP && approveValueForOtherToken
+                approveValueForRGP && approveValueForOtherToken &&
+                  (content.tokensStaked[1] <= 0)
                   ? '#444159'
                   : 'rgba(64, 186,213, 0.1)'
               }
               color={
-                approveValueForRGP && approveValueForOtherToken
+                approveValueForRGP && approveValueForOtherToken &&
+                  (content.tokensStaked[1] <= 0)
                   ? 'rgba(190, 190, 190, 1)'
                   : '#40BAD5'
               }
@@ -901,7 +903,7 @@ const ShowYieldFarmDetails = ({
               cursor="pointer"
               _hover={
                 approveValueForRGP && approveValueForOtherToken
-                  ? { color: 'white       ' }
+                  ? { color: 'white' }
                   : { color: '#423a85' }
               }
               onClick={() => setApprove(content.deposit)}
@@ -939,13 +941,21 @@ const ShowYieldFarmDetails = ({
             w="100%"
             h="50px"
             borderRadius="12px"
-            bg="#444159"
-            color="rgba(190, 190, 190, 1)"
+            bg={
+              content.RGPEarned <= 0
+                ? '#444159'
+                : 'rgba(64, 186,213, 0.1)'
+            }
+            color={
+              content.RGPEarned <= 0
+                ? 'rgba(190, 190, 190, 1)'
+                : '#40BAD5'
+            }
             border="0"
             mb="4"
             mr="6"
             cursor="pointer"
-            _hover={{ bg: '#444159' }}
+            _hover={{ color: 'white' }}
             onClick={() => harvest(content.pId)}
           >
             Harvest
