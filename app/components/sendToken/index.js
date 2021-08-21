@@ -184,7 +184,7 @@ export const Manual = props => {
             const [fromPathReserve, toPathReserve] = await LPContract.getReserves();
             ethers.utils.formatEther(fromPathReserve).toString()
             console.log('use the console to Confirm the Code To Amount', ethers.utils.formatEther(toPathReserve).toString(), 'From Amount', ethers.utils.formatEther(fromPathReserve).toString())
-            parseFloat(ethers.utils.formatEther(fromPathReserve).toString()) < fromAmount || parseFloat(ethers.utils.formatEther(toPathReserve).toString()) < amountIn ? setLowLiquidity(true) : null;
+            parseFloat(ethers.utils.formatEther(fromPathReserve).toString()) < fromAmount || parseFloat(ethers.utils.formatEther(toPathReserve).toString()) < amountIn ? setLowLiquidity(true) : setLowLiquidity(false);
           }
           if (parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
             setInsufficientBalanceButton(true);
