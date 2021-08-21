@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { Flex, Text } from '@chakra-ui/layout';
 import PropTypes from 'prop-types';
-import { DeleteIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, DeleteIcon } from '@chakra-ui/icons';
 import styles from '../../../styles/token-list-manager.css';
 import RGP from '../../../assets/rgp.svg';
 import NullImage24 from '../../../assets/Null-24.svg';
@@ -82,7 +82,22 @@ const ManageToken = ({
               setShowCurrencyList(true);
             }}
           />
-          <ModalHeader fontWeight="light">Manage</ModalHeader>
+          <ModalHeader fontWeight="light">
+            <ArrowBackIcon
+              cursor="pointer"
+              onClick={() => {
+                setManageToken(false);
+                setShowCurrencyList(true);
+              }}
+            />
+            <Flex
+              flexDirection="row"
+              justifyContent="space-evenly"
+              marginTop="-42px"
+            >
+              <Text>Manage</Text>
+            </Flex>
+          </ModalHeader>
           <ModalBody mt={4}>
             <Box className={styles.tabContainer}>
               <Box
@@ -227,14 +242,21 @@ const ManageToken = ({
                   >
                     <RGP className={styles.logo} width="45%" height="100%" />
                     <FormControl display="flex" alignItems="center">
-                      <FormLabel htmlFor="top-ten" mb="0">
+                      <FormLabel
+                        htmlFor="top-ten"
+                        mb="0"
+                        style={{ margin: '0px auto' }}
+                      >
                         Rigel Default Token List
+                        <p style={{ margin: '1px' }}>
+                          {defaultTokenState[1].token.length} tokens
+                        </p>
                       </FormLabel>
                       <Switch
                         onChange={e =>
                           toggleDefaultTokenState(e.target.checked)
                         }
-                        defaultChecked={defaultTokenState}
+                        defaultChecked={defaultTokenState[0].show}
                         id="top-ten"
                         size="lg"
                       />
@@ -252,12 +274,19 @@ const ManageToken = ({
                   >
                     <RGP className={styles.logo} width="45%" height="100%" />
                     <FormControl display="flex" alignItems="center">
-                      <FormLabel htmlFor="main-list" mb="0">
+                      <FormLabel
+                        htmlFor="main-list"
+                        mb="0"
+                        style={{ margin: '0px auto' }}
+                      >
                         Rigel Main Token List
+                        <p style={{ margin: '1px' }}>
+                          {mainTokenState[1].token.length} tokens
+                        </p>
                       </FormLabel>
                       <Switch
                         onChange={e => toggleMainTokenState(e.target.checked)}
-                        defaultChecked={mainTokenState}
+                        defaultChecked={mainTokenState[0].show}
                         id="main-list"
                         size="lg"
                       />
@@ -288,7 +317,7 @@ const ManageToken = ({
                         </FormLabel>
                         <Switch
                           onChange={e => toggleUserTokenState(e.target.checked)}
-                          defaultChecked={userTokenState}
+                          defaultChecked={userTokenState[0].show}
                           id="user-list"
                           size="lg"
                           disabled
@@ -411,9 +440,9 @@ ManageToken.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   customTokenBox: PropTypes.bool,
-  userTokenState: PropTypes.bool,
-  defaultTokenState: PropTypes.bool,
-  mainTokenState: PropTypes.bool,
+  userTokenState: PropTypes.array,
+  defaultTokenState: PropTypes.array,
+  mainTokenState: PropTypes.array,
   toggleDefaultTokenState: PropTypes.func,
   toggleMainTokenState: PropTypes.func,
   toggleUserTokenState: PropTypes.func,

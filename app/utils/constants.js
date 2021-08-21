@@ -91,8 +91,9 @@ export const tokenList = () => {
   if (storedReducer != null) {
     const extendedList = JSON.parse(storedReducer.ExtendedTokenList);
     allToken =
-      extendedList !== undefined && extendedList.appTokenList.length > 0
-        ? extendedList.appTokenList
+      extendedList !== undefined &&
+        extendedList.defaultTokenList[1].token.length > 0
+        ? extendedList.defaultTokenList[1].token
         : [];
   }
   if (allToken.length > 0) {
