@@ -277,65 +277,6 @@ const ConfirmSwapBox = props => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      {/* modal five, liquidity pair that does not exist */}
-      <Modal isOpen={modal5Disclosure.isOpen} onClose={closeModal5} isCentered>
-        <ModalOverlay />
-        <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
-          <ModalHeader fontSize="18px" fontWeight="regular" align="center">
-            Add Pairs
-          </ModalHeader>
-          <ModalBody>
-            <Text color="gray.400">
-              There is no liquidity on this pair, will you like to add
-              Liquidity.
-            </Text>
-            <Flex
-              justifyContent="space-between"
-              flexDirection={['column', 'row', 'column', 'row']}
-            >
-              <Button
-                d="block"
-                w="48%"
-                margin="20px auto"
-                h="50px"
-                color="#40BAD5"
-                border="none"
-                fontWeight="regular"
-                fontSize="lg"
-                cursor="pointer"
-                rounded="2xl"
-                bg="rgba(64, 186, 213,0.25)"
-                borderColor="#40BAD5"
-                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-                _active={{ outline: '#29235E', background: '#29235E' }}
-                onClick={openLiquidityPage}
-              >
-                YES
-              </Button>
-
-              <Button
-                d="block"
-                w="48%"
-                margin="20px auto"
-                h="50px"
-                color="#BEBEBE"
-                border="none"
-                fontWeight="regular"
-                fontSize="lg"
-                cursor="pointer"
-                rounded="2xl"
-                bg="#444159"
-                borderColor="#40BAD5"
-                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-                _active={{ outline: '#29235E', background: '#29235E' }}
-                onClick={closeModal5}
-              >
-                NO
-              </Button>
-            </Flex>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
     </>
   );
 };
