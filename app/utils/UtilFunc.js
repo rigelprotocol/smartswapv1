@@ -99,5 +99,5 @@ export function mergeArrays(arrays) {
     const imported = !!token.imported;
     return { ...token, id, balance, available, imported };
   });
-  return updatedArray;
+  return updatedArray.filter(token => token.symbol !== 'SELECT A TOKEN');
 }

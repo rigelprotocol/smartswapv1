@@ -8,6 +8,7 @@ import {
   DELETE_USER_TOKEN,
   ADD_NEW_TOKEN_LIST,
   UPDATE_TOKEN_LIST,
+  SET_MAIN_TOKEN_LIST,
   TOGGLE_DEFAULT_TOKEN_LIST,
   TOGGLE_USER_TOKEN_LIST,
   TOGGLE_MAIN_TOKEN_LIST,
@@ -60,16 +61,16 @@ const ExtendedTokenList = (state = initialState, action) =>
         draft.allTokenList = filterList;
         break;
       case TOGGLE_DEFAULT_TOKEN_LIST:
-        console.log(action.payload);
         draft.defaultTokenList[0].show = action.payload;
         break;
       case TOGGLE_USER_TOKEN_LIST:
         draft.userTokenList[0].show = action.payload;
         break;
       case TOGGLE_MAIN_TOKEN_LIST:
-        console.log(action.payload, state.defaultTokenList);
-        draft.mainTokenList[0].show = action.payload.option;
-        draft.mainTokenList[1].token = action.payload.list;
+        draft.mainTokenList[0].show = action.payload;
+        break;
+      case SET_MAIN_TOKEN_LIST:
+        draft.mainTokenList[1].token = action.payload;
         break;
       default:
         return state;

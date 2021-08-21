@@ -1,15 +1,5 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-nested-ternary */
 /* eslint-disable no-shadow */
-/* eslint-disable consistent-return */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-param-reassign */
 /* eslint-disable react/prop-types */
-/* eslint-disable import/no-unresolved */
-/* eslint-disable array-callback-return */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
-// @ts-nocheck
 /**
  *
  * TokenListBox
@@ -18,22 +8,21 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isFunc, isNotEmpty, isValidJson, mergeArrays } from 'utils/UtilFunc';
+import { isFunc, isNotEmpty, isValidJson } from 'utils/UtilFunc';
 import { getTokenList, getTokenDetails, isItAddress } from 'utils/tokens';
 import { Image, Spinner } from '@chakra-ui/react';
 import {
   storeUserToken,
   deleteUserTokenList,
   importUriTokenList,
-  updateTokenListAction,
   toggleDefaultTokenList,
   toggleMainTokenList,
   toggleUserTokenList,
+  setTokenList,
 } from 'containers/WalletProvider/actions';
 import { ethers } from 'ethers';
-import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
 import NewTokenModal from './NewTokenModal';
 import CurrencyList from './components/CurrencyList';
 import ManageToken from './components/ManageToken';
@@ -56,19 +45,18 @@ function TokenListBox({
   storeUserToken,
   importUriTokenList,
   deleteUserTokenList,
-  updateTokenListAction,
   toggleDefaultTokenList,
   toggleMainTokenList,
   toggleUserTokenList,
 }) {
   const account = wallet.wallet;
   const {
-    userTokenList,
+    appTokenList,
     allTokenList,
     toggleDisplay,
+    userTokenList,
     mainTokenList,
     defaultTokenList,
-    appTokenList,
   } = ExtendedTokenList;
 
   const [list, setList] = useState([]);
@@ -88,56 +76,20 @@ function TokenListBox({
   const [deletedToken, setDeletedToken] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const updateTokenListReducer = async () => {
-    const listWithDuplicate = [];
-    for (const property in ExtendedTokenList) {
-      if (
-        Array.isArray(ExtendedTokenList[property]) &&
-        ExtendedTokenList[property].length > 1
-      ) {
-        const { show } = ExtendedTokenList[property][0];
-        if (show) {
-          listWithDuplicate.push(ExtendedTokenList[property][1].token);
-        }
-      }
-    }
-    const updatedList = await Promise.all(
-      mergeArrays(listWithDuplicate).map(async (token, index) => {
-        const { signer } = account;
-        let { balance } = token;
-        const { symbol, address } = token;
-        if (symbol === 'BNB' && signer !== 'signer') {
-          ({ balance } = account);
-        }
-        if (address !== undefined && signer !== 'signer' && symbol !== 'BNB') {
-          balance = await getAddressTokenBalance(
-            account.address,
-            address,
-            signer,
-          );
-        }
-        return { ...token, balance };
-      }),
-    );
-    const sortedList = updatedList.sort((a, b) => {
-      if (a.symbol === 'RGP' || a.symbol === 'SELECT A TOKEN') return -1;
-      if (b.symbol === 'RGP' || b.symbol === 'SELECT A TOKEN') return 1;
-      return a.symbol.localeCompare(b.symbol);
-    });
-    updateTokenListAction(sortedList);
-    return sortedList;
-  };
   useEffect(() => {
     (async () => {
       try {
-        const updateTokenListBalance = await updateTokenListReducer();
+        const updateTokenListBalance = await setTokenList(
+          ExtendedTokenList,
+          account,
+        );
         setList(updateTokenListBalance);
         setBalanceIsSet(true);
       } catch (e) {
         console.log(e);
       }
     })();
-  }, [isOpen, account]);
+  }, [isOpen, account, manageToken, showCurrencyList, ExtendedTokenList]);
 
   const deleteToken = address => {
     deleteUserTokenList(address);
@@ -248,7 +200,7 @@ function TokenListBox({
     setUserCustomURIList({});
   };
 
-  const Row = (index, key, style) => (
+  const Row = (index, key, _style) => (
     <Flex
       key={key}
       justifyContent="space-between"
@@ -359,9 +311,9 @@ function TokenListBox({
           errorMessage={errorMessage}
           toggleDisplay={toggleDisplay}
           customTokenBox={customTokenBox}
-          userTokenState={userTokenList[0].show}
-          defaultTokenState={defaultTokenList[0].show}
-          mainTokenState={mainTokenList[0].show}
+          userTokenState={userTokenList}
+          defaultTokenState={defaultTokenList}
+          mainTokenState={mainTokenList}
           tokenImportUri={tokenImportUri}
           userCustomToken={userCustomToken}
           userCustomTokenList={userTokenList}
@@ -412,7 +364,6 @@ export default connect(
     storeUserToken,
     deleteUserTokenList,
     importUriTokenList,
-    updateTokenListAction,
     toggleDefaultTokenList,
     toggleMainTokenList,
     toggleUserTokenList,

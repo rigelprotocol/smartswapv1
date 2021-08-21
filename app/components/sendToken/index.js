@@ -103,6 +103,7 @@ export const Manual = props => {
   const [selectedTokenForModal, setSelectedTokenForModal] = useState({});
   const [slippage, setSlippage] = useLocalStorage('slippage', 1.5);
   const [deadline, setDeadline] = useLocalStorage('deadline', 20);
+  const [noLiquidity, setNoLiquidity] = useState(false)
 
   // Path route to be displayed in the confirmswapbox component
   const [route, setRoute] = useState('');
@@ -201,6 +202,7 @@ export const Manual = props => {
   }, [selectedToken, selectedToToken, path]);
 
   const checkLiquidityPair = async () => {
+    setNoLiquidity(false)
     const factory = await SmartFactory();
     const fromPath = ethers.utils.getAddress(selectedToken.address);
     const toPath = ethers.utils.getAddress(selectedToToken.address);
@@ -385,7 +387,8 @@ export const Manual = props => {
         ]);
       } else {
         setNewTokenPair(true);
-        openModal5();
+        setNoLiquidity(true)
+        console.log("Insufficient liquidity for this trade")
       }
     }
   };
@@ -1282,10 +1285,43 @@ export const Manual = props => {
         <Box mt={14}>
           {isSendingTransaction ? (
             <Stack direction="row" spacing={4}>
-              <Spinner size="xs" color="red.500" />
+              <Button
+                d="block"
+                w="100%"
+                h="50px"
+                color="#40BAD5"
+                border="none"
+                fontWeight="regular"
+                fontSize="lg"
+                cursor="pointer"
+                rounded="2xl"
+                bg="rgba(64, 186, 213,0.25)"
+                borderColor="#40BAD5"
+                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+                _active={{ outline: '#29235E', background: '#29235E' }}
+              >
+                <Spinner size="xs" color="red.500" /> Pending...
+              </Button>
             </Stack>
-          ) : (
+          ) : (noLiquidity ?
             <Button
+              d="block"
+              w="100%"
+              h="50px"
+              color="#40BAD5"
+              border="none"
+              fontWeight="regular"
+              fontSize="lg"
+              cursor="pointer"
+              rounded="2xl"
+              bg="rgba(64, 186, 213,0.25)"
+              borderColor="#40BAD5"
+              _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+              _active={{ outline: '#29235E', background: '#29235E' }}
+            >
+              No liquidity for this trade
+            </Button>
+            : <Button
               d="block"
               w="100%"
               h="50px"
@@ -1320,9 +1356,13 @@ export const Manual = props => {
                           )
                           : insufficientBalanceButton
                             ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
+<<<<<<< HEAD
                             : newTokenPair || lowLiquidity
                               ? sendNotice(`No Liquidity Available for this pair`)
                               : triggerAccountCheck()
+=======
+                            : triggerAccountCheck()
+>>>>>>> 9b6e345f7fd8cfe2107764a45c937c0d8162647e
                         : null;
               }}
             >
@@ -1343,11 +1383,17 @@ export const Manual = props => {
                         ? 'Improper token selection'
                         : insufficientBalanceButton
                           ? `Insufficient ${selectedToken.symbol} balance`
+<<<<<<< HEAD
                           : newTokenPair || lowLiquidity
                             ? 'Insufficient Liquidity'
                             : !userHasApproveToken
                               ? 'Approve Transaction'
                               : 'Swap Tokens'
+=======
+                          : !userHasApproveToken
+                            ? 'Approve Transaction'
+                            : 'Swap Tokens'
+>>>>>>> 9b6e345f7fd8cfe2107764a45c937c0d8162647e
                       : ''}
             </Button>
           )}
@@ -1422,7 +1468,7 @@ async function updateSendAmount(
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
-      setBoxMessage('Please check your token blabla3');
+      setBoxMessage('Please check your token');
       setShowBox(true);
     }
   }
@@ -1533,7 +1579,7 @@ async function updateSendAmountForRoute(
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
-        setBoxMessage('Please check your token blabla2');
+        setBoxMessage('Please check your token ');
         setShowBox(true);
       }
     }
@@ -1572,7 +1618,7 @@ async function update_RGP_ETH_SendAmount(
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
-      setBoxMessage('Please check your token blabla4');
+      setBoxMessage('Please check your token');
       setShowBox(true);
     }
   }
