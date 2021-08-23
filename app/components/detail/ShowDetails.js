@@ -40,7 +40,6 @@ const ShowDetails = ({ wallet }) => {
                 setDetail(true);
               }}
               className={styles.icon}
-              className="add__style"
             />
           )}
         </Flex>
