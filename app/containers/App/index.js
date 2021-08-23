@@ -35,6 +35,7 @@ import {
   isSupportedNetwork,
   switchToBSC,
 } from '../../utils/wallet-wiget/connection';
+import '../../styles/navbar.css';
 
 const breakpoints = {
   sm: '360px',

@@ -14,24 +14,25 @@ import {
   Tooltip,
   ModalCloseButton,
   Spinner,
-
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { connect } from 'react-redux';
 import { connectingWallet } from 'containers/WalletProvider/actions';
 import styles from '../../styles/navbar.css';
-import { isSupportedNetwork, switchToBSC } from '../../utils/wallet-wiget/connection'
+import {
+  isSupportedNetwork,
+  switchToBSC,
+} from '../../utils/wallet-wiget/connection';
 
 import Options from './Options';
 import Loading from './Loading';
 import Binance from '../../assets/bnb.svg';
 import Ethereum from '../../assets/eth.svg';
-import InfoModal from 'components/modal/InfoModal'
-
+import InfoModal from 'components/modal/InfoModal';
 
 const Wallet = ({ loading, show, connectingWallet, chainId }) => {
   const modal1Disclosure = useDisclosure();
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const open = () => {
     modal1Disclosure.onOpen();
@@ -42,13 +43,11 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
   };
   const switchNetwork = () => {
     onOpen();
-    switchToBSC()
-  }
+    switchToBSC();
+  };
 
   if (loading) {
     return (
-
-
       <Button
         as={Button}
         border="none"
@@ -65,20 +64,19 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
       >
         Connecting..
       </Button>
-
-    )
+    );
   }
 
   if (!isSupportedNetwork(chainId)) {
     return (
       <>
         <InfoModal
-          isOpenModal={isOpen}
+          isOpenModal={true}
           onCloseModal={onClose}
           title="UNSUPPORTED NETWORK"
         >
           Please switch your wallet to Binance Smart Chain Mainnet
-        </ InfoModal>
+        </InfoModal>
         <Button
           as={Button}
           border="none"
@@ -96,7 +94,7 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
           Unsupported Network
         </Button>
       </>
-    )
+    );
   }
 
   return (
@@ -115,6 +113,7 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
           _active={{ outline: '#29235E' }}
           _expanded={{ bg: '#29235E' }}
           rightIcon={show ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          className="connect__wallet__button"
         >
           Connect
         </MenuButton>
@@ -189,10 +188,13 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
   );
 };
 const mapStateToProps = ({ wallet }) => {
-  const { loading, wallet: { chainId } } = wallet;
+  const {
+    loading,
+    wallet: { chainId },
+  } = wallet;
   return {
     loading,
-    chainId
+    chainId,
   };
 };
 export default connect(
