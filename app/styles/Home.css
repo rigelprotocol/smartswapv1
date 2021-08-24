@@ -14,30 +14,6 @@
   color: white;
 }
 
-.start__walkthrough {
-  padding: 10px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  border: none;
-  text-align: center;
-  border-radius: 10px;
-  width: 160px;
-  height: 40px;
-  font-size: small;
-  font-weight: bold;
-  background-color: #8051ca;
-  color: #fff;
-  cursor: pointer;
-}
-
-.skip__walkthrough {
-  background-color: transparent;
-  border: none;
-  background-image: none;
-  color: #fff;
-  font-size: small;
-  cursor: pointer;
-}
 @media only screen and (min-width: 568px) {
   .active,
   .inactive,

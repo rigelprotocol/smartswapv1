@@ -7,10 +7,9 @@ import SendToken from 'components/sendToken';
 import History from 'components/history';
 import Layout from 'components/layout';
 import styles from '../../styles/Home.css';
-import Nav from '../../components/navbar/Nav';
-import { Steps } from 'intro.js-react';
-import 'intro.js/introjs.css';
-import Step from 'components/onboarding/Onboarding';
+import Tour from 'reactour';
+import style from '../../styles/intro.css';
+import Step from 'components/onboarding/Step';
 import Modal from 'components/onboarding/WelcomeModal/WelcomeModal';
 
 export const TABS = {
@@ -34,33 +33,89 @@ export default function HomePage(props) {
 
   const steps = [
     {
-      element: '.connect__wallet__button',
-      intro: (
+      selector: '.connect__wallet__button',
+      content: ({ goTo, inDom }) => (
         <Step
           title={'Connect Wallet'}
           description={
             'Click here to connect us to your wallet on the Ethereum or Binance Smartchain'
           }
-        />
+          desc1={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(1)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
       ),
-      position: 'top',
-    },
-    {
-      element: '.css-1dv2wbq',
-      intro: <Step title={'Details'} description2={true} />,
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
       position: 'bottom',
     },
     {
-      element: '.css-1jo4mlf',
-      intro: (
+      selector: '.css-1dv2wbq',
+      content: ({ goTo, inDom }) => (
+        <Step title={'Details'} desc2={true}>
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(2)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.css-1jo4mlf',
+      content: ({ goTo, inDom }) => (
         <Step
           title={'Order History'}
           description={
             'Click here to view your Order History and Market History for all your previous transactions'
           }
-        />
+          desc3={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.nextbutton}
+          >
+            Done
+          </button>
+        </Step>
       ),
-      position: 'bottom',
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
     },
   ];
 
@@ -78,22 +133,27 @@ export default function HomePage(props) {
       <>
         {welcomeModal && (
           <Modal closeModal={() => setWelcomeModal(false)}>
-            <button onClick={start} className={styles.start__walkthrough}>
+            <button onClick={start} className={style.start__walkthrough}>
               Start walkthrough
             </button>
             <br />
-            <button onClick={skip} className={styles.skip__walkthrough}>
+            <button onClick={skip} className={style.skip__walkthrough}>
               Skip
             </button>
           </Modal>
         )}
 
-        <Steps
-          enabled={isTourOpen}
-          showProgress={false}
+        <Tour
+          isOpen={isTourOpen}
           steps={steps}
-          initialStep={0}
-          showStepNumbers={false}
+          closeWithMask={false}
+          showButtons={false}
+          showNavigation={false}
+          showCloseButton={false}
+          showNumber={false}
+          startAt={0}
+          disableFocusLock={true}
+          disableInteraction={false}
         />
 
         <Flex mb="100px" mx={2} flexWrap="wrap">
