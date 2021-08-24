@@ -268,7 +268,7 @@ const AddLiquidity = ({
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
           disabled={openSupplyButton}
-        // onClick={open}
+          // onClick={open}
         />
         <ModalHeader fontSize="18px" fontWeight="regular" align="center">
           You are providing liquidity of
@@ -384,7 +384,11 @@ const AddLiquidity = ({
             fontWeight="normal"
             color="rgba(64, 186, 213, 1)"
           >
-           {URLNetwork && <a href={`${URLNetwork}`} target="_blank" >View on BSCSCAN</a>}
+            {URLNetwork && (
+              <a href={`${URLNetwork}`} target="_blank">
+                View on BSCSCAN
+              </a>
+            )}
           </Text>
           <Button
             width="100%"
@@ -426,7 +430,11 @@ const AddLiquidity = ({
             fontWeight="normal"
             color="rgba(64, 186, 213, 1)"
           >
-           {URLNetwork && <a href={`${URLNetwork}`} target="_blank" >View on BSCSCAN</a>}
+            {URLNetwork && (
+              <a href={`${URLNetwork}`} target="_blank">
+                View on BSCSCAN
+              </a>
+            )}
           </Text>
           <Button
             width="100%"
@@ -468,7 +476,11 @@ const AddLiquidity = ({
             fontWeight="normal"
             color="rgba(64, 186, 213, 1)"
           >
-          {URLNetwork && <a href={`${URLNetwork}`} target="_blank" >View on BSCSCAN</a>}
+            {URLNetwork && (
+              <a href={`${URLNetwork}`} target="_blank">
+                View on BSCSCAN
+              </a>
+            )}
           </Text>
           <Button
             width="100%"

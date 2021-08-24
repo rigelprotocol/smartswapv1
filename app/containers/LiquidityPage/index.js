@@ -23,6 +23,7 @@ import RemoveALiquidity from 'components/liquidity/removeALiquidity';
 import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
+import { create } from 'react-test-renderer';
 import { tokenList, tokenWhere, SMART_SWAP,  checkIfTokenIsListed } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
@@ -30,7 +31,6 @@ import { isNotEmpty , getDeadline, createURLNetwork } from "../../utils/UtilFunc
 import {getTokenList } from "../../utils/tokens"
 
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
-import { create } from 'react-test-renderer';
 
 // 35,200
 export function LiquidityPage(props) {
@@ -468,7 +468,7 @@ setDetermineInputChange("to")
         setTrxHashed(data)
         const { hash } = data
         setURLNetwork("")
-        setTimeout(()=> setURLNetwork(createURLNetwork(wallet.chainId,hash)) ,3000)
+        setTimeout(()=> setURLNetwork(createURLNetwork(hash)) ,3000)
         closeModal2()
         openModal3()
       } catch (e) {

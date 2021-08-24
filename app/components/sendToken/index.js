@@ -42,6 +42,7 @@ import {
   TOKENS_CONTRACT,
 } from 'utils/constants';
 import NewTokenModal from 'components/TokenListBox/NewTokenModal';
+import { parseAsync } from '@babel/core';
 import {
   router,
   WETH,
@@ -63,7 +64,6 @@ import {
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
 import { getDeadline, createURLNetwork } from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
-import { parseAsync } from '@babel/core';
 
 export const Manual = props => {
   const history = useHistory();
@@ -589,37 +589,35 @@ export const Manual = props => {
           calculateSlippage,
         );
         setDisableSwapTokenButton(false);
+      } else if (routeAddress.length === 2) {
+        await updateSendAmount(
+          path,
+          selectedToken,
+          selectedToToken,
+          askAmount,
+          setAmountIn,
+          setShowBox,
+          setBoxMessage,
+          setFromAmount,
+          field,
+          calculateSlippage,
+        );
+        setDisableSwapTokenButton(false);
+      } else if (routeAddress.length >= 3) {
+        await updateSendAmountForRoute(
+          path,
+          routeAddress,
+          askAmount,
+          setAmountIn,
+          setShowBox,
+          setBoxMessage,
+          setFromAmount,
+          field,
+          calculateSlippage,
+        );
+        setDisableSwapTokenButton(false);
       } else {
-        if (routeAddress.length === 2) {
-          await updateSendAmount(
-            path,
-            selectedToken,
-            selectedToToken,
-            askAmount,
-            setAmountIn,
-            setShowBox,
-            setBoxMessage,
-            setFromAmount,
-            field,
-            calculateSlippage,
-          );
-          setDisableSwapTokenButton(false);
-        } else if (routeAddress.length >= 3) {
-          await updateSendAmountForRoute(
-            path,
-            routeAddress,
-            askAmount,
-            setAmountIn,
-            setShowBox,
-            setBoxMessage,
-            setFromAmount,
-            field,
-            calculateSlippage,
-          );
-          setDisableSwapTokenButton(false);
-        } else {
-          setDisableSwapTokenButton(true);
-        }
+        setDisableSwapTokenButton(true);
       }
     } else {
       setAmountIn('');
@@ -753,7 +751,7 @@ export const Manual = props => {
         setTimeout(() => openModal3(), 1000);
         const { hash } = sendTransaction
         setURLNetwork("")
-        setTimeout(()=> setURLNetwork(createURLNetwork(wallet.chainId,hash)) ,3000)
+        setTimeout(()=> setURLNetwork(createURLNetwork(hash)) ,3000)
         const { confirmations, status } = await sendTransaction.wait(3);
         if (
           typeof sendTransaction.hash != 'undefined' &&
@@ -1467,15 +1465,15 @@ async function updateSendAmountForRoute(
 ) {
   const rout = await updateOutPutAmountForRouter();
   if (typeof path[1] != 'undefined') {
-    //checks if route addresses is 3, and then checks the price
+    // checks if route addresses is 3, and then checks the price
     // by going through routes.
     // reversed addresses are used to refer to when the path
-    //from the argument is = 'to'
+    // from the argument is = 'to'
     if (routeAddress.length === 3) {
       const firstFromPath = routeAddress[0];
       const firstToPath = routeAddress[1];
       const lastPath = routeAddress[2];
-      let newArray = [...routeAddress];
+      const newArray = [...routeAddress];
       const reversedArray = newArray.reverse();
       const reversedFirstFromPath = reversedArray[0];
       const reversedFirstToPath = reversedArray[1];
@@ -1510,16 +1508,16 @@ async function updateSendAmountForRoute(
         setShowBox(true);
       }
     } else {
-      //this runs only when the route address is not 3, which means it's 4
+      // this runs only when the route address is not 3, which means it's 4
       // 4 is the maximum so far, and then checks the price
       // by going through routes.
       // reversed addresses are used to refer to when the path
-      //from the argument is = 'to'
+      // from the argument is = 'to'
       const firstpath = routeAddress[0];
       const secondpath = routeAddress[1];
       const thirdpath = routeAddress[2];
       const fourthpath = routeAddress[3];
-      let newArray = [...routeAddress];
+      const newArray = [...routeAddress];
       const reversedArray = newArray.reverse();
       const reversedFirstPath = reversedArray[0];
       const reversedSecondPath = reversedArray[1];

@@ -103,6 +103,5 @@ export function mergeArrays(arrays) {
   return updatedArray.filter(token => token.symbol !== 'SELECT A TOKEN');
 }
 
-export const createURLNetwork = (chainID,hash) =>{
-return `https://${networkURLS[chainID]}/tx/${hash}`
-}
+export const createURLNetwork = (hash) =>
+  `https://${networkURLS}/tx/${hash}`;

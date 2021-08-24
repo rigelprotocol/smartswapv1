@@ -218,7 +218,11 @@ const ConfirmSwapBox = props => {
               fontWeight="normal"
               color="rgba(64, 186, 213, 1)"
             >
-             {URLNetwork && <a href={`${URLNetwork}`} target="_blank" >View on BSCSCAN</a>}
+              {URLNetwork && (
+                <a href={`${URLNetwork}`} target="_blank">
+                  View on BSCSCAN
+                </a>
+              )}
             </Text>
             <Button
               width="100%"
@@ -260,7 +264,11 @@ const ConfirmSwapBox = props => {
               fontWeight="normal"
               color="rgba(64, 186, 213, 1)"
             >
-            {URLNetwork && <a href={`${URLNetwork}`} target="_blank" >View on BSCSCAN</a>}
+              {URLNetwork && (
+                <a href={`${URLNetwork}`} target="_blank">
+                  View on BSCSCAN
+                </a>
+              )}
             </Text>
             <Button
               width="100%"
