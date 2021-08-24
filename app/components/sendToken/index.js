@@ -61,7 +61,7 @@ import {
   updateFromToken,
 } from '../../containers/WalletProvider/actions';
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
-import { getDeadline } from '../../utils/UtilFunc';
+import { getDeadline, createURLNetwork } from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
 import { parseAsync } from '@babel/core';
 
@@ -94,6 +94,7 @@ export const Manual = props => {
   const [insufficientBalanceButton, setInsufficientBalanceButton] = useState(
     false,
   );
+  const [URLNetwork, setURLNetwork] = useState("")
   const [toURL, setToURL] = useState('');
   const [fromURL, setFromURL] = useState('');
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true);
@@ -750,6 +751,9 @@ export const Manual = props => {
           type: 'success',
         });
         setTimeout(() => openModal3(), 1000);
+        const { hash } = sendTransaction
+        setURLNetwork("")
+        setTimeout(()=> setURLNetwork(createURLNetwork(wallet.chainId,hash)) ,3000)
         const { confirmations, status } = await sendTransaction.wait(3);
         if (
           typeof sendTransaction.hash != 'undefined' &&
@@ -1384,6 +1388,7 @@ export const Manual = props => {
           closeModal4={closeModal4}
           closeModal5={closeModal5}
           minimumAmountToReceive={minimumAmountToReceive}
+          URLNetwork={URLNetwork}
           tokenPrice={tokenPrice}
           selectedToken={selectedToken}
           selectedToToken={selectedToToken}

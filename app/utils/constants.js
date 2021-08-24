@@ -82,6 +82,11 @@ const BSCTestnet = {
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
 };
 
+export const networkURLS = {
+  '0x61':"testnet.bscscan.com",
+   '0x38':"bscscan.com"
+}
+
 export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
