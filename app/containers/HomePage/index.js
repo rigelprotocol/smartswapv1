@@ -52,7 +52,7 @@ export default function HomePage(props) {
           </button>
           <button
             onClick={() => {
-              window.scroll(0, 105);
+              window.scroll(0, 200);
               goTo(1);
             }}
             className={style.nextbutton}
