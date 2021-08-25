@@ -13,7 +13,7 @@ import { ThemeProvider, theme } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
 import { connect } from 'react-redux';
 import WebFont from 'webfontloader';
-import { ethers } from 'ethers'
+
 import HomePage from 'containers/HomePage/index';
 import FarmingPage from 'containers/FarmingPage/index';
 import MarginTradingPage from 'containers/MarginTradingPage/index';
@@ -29,14 +29,12 @@ import {
   disconnectWallet,
   updateChainId,
   getTokenList,
-  updateRGPprice
 } from '../WalletProvider/actions';
 import TrustWallet from '../../components/TrustWallet/index';
 import {
   isSupportedNetwork,
   switchToBSC,
 } from '../../utils/wallet-wiget/connection';
-import { smartSwapLPTokenPoolOne } from '../../utils/SwapConnect'
 
 const breakpoints = {
   sm: '360px',
@@ -76,26 +74,6 @@ const App = props => {
       });
     }
   }, []);
-
-  useEffect(() => {
-    getRGPprice()
-  }, [wallet])
-
-  const getRGPprice = async () => {
-    try {
-      const RGPBUSDToken = await smartSwapLPTokenPoolOne()
-      const reserves = await RGPBUSDToken.getReserves()
-      const RGPprice = ethers.utils.formatUnits(reserves[0]
-        .mul(10000)
-        .div(reserves[1]), 4);
-      props.updateRGPprice(RGPprice);
-
-    } catch (error) {
-
-    }
-  }
-
-
 
   useEffect(() => {
     if (window.ethereum) {
@@ -140,14 +118,7 @@ const mapStateToProps = state => ({ state });
 
 export default connect(
   mapStateToProps,
-  {
-    reConnect,
-    disconnectWallet,
-    notify,
-    updateChainId,
-    getTokenList,
-    updateRGPprice
-  },
+  { reConnect, disconnectWallet, notify, updateChainId, getTokenList },
 )(App);
 
 function reConnector(props) {
