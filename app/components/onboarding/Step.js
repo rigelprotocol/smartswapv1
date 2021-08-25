@@ -34,7 +34,6 @@ const Step = ({
           </p>
         )}
       </p>
-      {/* ._3aVZgjuOcUs7jDx7puQe62 */}
       <div className={styles.cell}>
         {mobile ? (
           <ul className={styles.dots}>
