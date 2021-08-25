@@ -45,6 +45,7 @@ const AddLiquidity = ({
   isNewUser,
   buttonValue,
   openSupplyButton,
+  URLNetwork,
   open,
   back,
   closeModal1,
@@ -267,7 +268,7 @@ const AddLiquidity = ({
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
           disabled={openSupplyButton}
-        // onClick={open}
+          // onClick={open}
         />
         <ModalHeader fontSize="18px" fontWeight="regular" align="center">
           You are providing liquidity of
@@ -378,15 +379,16 @@ const AddLiquidity = ({
             <CheckIcon color="white" w={8} h={8} />
           </Circle>
           <h4>Transaction submitted</h4>
-          <Text>
-            <a href="google.com">view on BSCSCAN</a>
-          </Text>
           <Text
             fontSize="14px"
             fontWeight="normal"
             color="rgba(64, 186, 213, 1)"
           >
-            <a href="#">View on Etherscan</a>
+            {URLNetwork && (
+              <a href={`${URLNetwork}`} target="_blank">
+                View on BSCSCAN
+              </a>
+            )}
           </Text>
           <Button
             width="100%"
@@ -428,7 +430,11 @@ const AddLiquidity = ({
             fontWeight="normal"
             color="rgba(64, 186, 213, 1)"
           >
-            <a href="#">View on Etherscan</a>
+            {URLNetwork && (
+              <a href={`${URLNetwork}`} target="_blank">
+                View on BSCSCAN
+              </a>
+            )}
           </Text>
           <Button
             width="100%"
@@ -470,7 +476,11 @@ const AddLiquidity = ({
             fontWeight="normal"
             color="rgba(64, 186, 213, 1)"
           >
-            <a href="#">View on Etherscan</a>
+            {URLNetwork && (
+              <a href={`${URLNetwork}`} target="_blank">
+                View on BSCSCAN
+              </a>
+            )}
           </Text>
           <Button
             width="100%"
