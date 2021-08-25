@@ -71,7 +71,7 @@ const Wallet = ({ loading, show, connectingWallet, chainId }) => {
     return (
       <>
         <InfoModal
-          isOpenModal={true}
+          isOpenModal={isOpen}
           onCloseModal={onClose}
           title="UNSUPPORTED NETWORK"
         >
