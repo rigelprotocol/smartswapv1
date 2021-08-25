@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, Text, Tooltip, useMediaQuery } from '@chakra-ui/react';
 import ActiveOrder from 'components/order/ActiveOrder';
 import ShowDetails from 'components/detail/ShowDetails';
 import ChartGraph from 'components/charts/ShowChart';
@@ -22,6 +22,7 @@ export default function HomePage(props) {
   const [tab, setTab] = useState(TABS.MANUAL);
   const [isTourOpen, setIsTourOpen] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
+  const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
 
   useEffect(() => {
     if (!localStorage.noFirstVisit) {
@@ -30,6 +31,79 @@ export default function HomePage(props) {
       localStorage.noFirstVisit = '1';
     }
   }, []);
+
+  const stepsForMobile = [
+    {
+      selector: '._3aVZgjuOcUs7jDx7puQe62 ',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Connect Wallet'}
+          description={
+            'Click here to connect us to your wallet on the Ethereum or Binance Smartchain'
+          }
+          desc1={true}
+          mobile={isMobileDevice}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button
+            onClick={() => {
+              window.scroll(0, 105);
+              goTo(1);
+            }}
+            className={style.nextbutton}
+          >
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+      position: 'left',
+    },
+    {
+      selector: '.css-1jo4mlf',
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc2={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.nextbutton}
+          >
+            Done
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+  ];
 
   const steps = [
     {
@@ -145,7 +219,7 @@ export default function HomePage(props) {
 
         <Tour
           isOpen={isTourOpen}
-          steps={steps}
+          steps={isMobileDevice ? stepsForMobile : steps}
           closeWithMask={false}
           showButtons={false}
           showNavigation={false}
@@ -153,7 +227,8 @@ export default function HomePage(props) {
           showNumber={false}
           startAt={0}
           disableFocusLock={true}
-          disableInteraction={false}
+          inViewThreshold={560}
+          // disableInteraction={false}
         />
 
         <Flex mb="100px" mx={2} flexWrap="wrap">

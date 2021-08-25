@@ -79,7 +79,7 @@
   height: 100%;
 }
 
-li {
+.dotli {
   position: relative;
   display: block;
   float: left;
@@ -91,7 +91,7 @@ li {
   cursor: pointer;
 }
 
-li a {
+.dotli a {
   top: 0;
   left: 0;
   width: 100%;
@@ -110,7 +110,7 @@ li a {
   transform: scale3d(1, 1, 1);
 }
 
-li a::after {
+.dotli a::after {
   content: '';
   position: absolute;
   bottom: 0;

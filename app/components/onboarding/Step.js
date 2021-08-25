@@ -1,7 +1,15 @@
 import React from 'react';
 import styles from '../../styles/intro.css';
 
-const Step = ({ title, description, desc2, desc1, desc3, children }) => {
+const Step = ({
+  title,
+  description,
+  desc2,
+  desc1,
+  desc3,
+  children,
+  mobile,
+}) => {
   return (
     <div className="step">
       <p style={{ fontWeight: 'bold' }} className="step__title">
@@ -26,24 +34,40 @@ const Step = ({ title, description, desc2, desc1, desc3, children }) => {
           </p>
         )}
       </p>
+      {/* ._3aVZgjuOcUs7jDx7puQe62 */}
       <div className={styles.cell}>
-        <ul className={styles.dots}>
-          <li>
-            <a className={desc1 && styles.active} href="#">
-              Home
-            </a>
-          </li>
-          <li>
-            <a className={desc2 && styles.active} href="#">
-              About
-            </a>
-          </li>
-          <li>
-            <a className={desc3 && styles.active} href="#">
-              Products
-            </a>
-          </li>
-        </ul>
+        {mobile ? (
+          <ul className={styles.dots}>
+            <li className={styles.dotli}>
+              <a className={desc1 && styles.active} href="#">
+                Home
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc2 && styles.active} href="#">
+                About
+              </a>
+            </li>
+          </ul>
+        ) : (
+          <ul className={styles.dots}>
+            <li className={styles.dotli}>
+              <a className={desc1 && styles.active} href="#">
+                Home
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc2 && styles.active} href="#">
+                About
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc3 && styles.active} href="#">
+                Products
+              </a>
+            </li>
+          </ul>
+        )}
       </div>
 
       <div className={styles.button__container}>{children}</div>
