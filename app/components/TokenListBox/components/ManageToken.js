@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { Flex, Text } from '@chakra-ui/layout';
 import PropTypes from 'prop-types';
-import { ArrowBackIcon, DeleteIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from '@chakra-ui/icons';
 import styles from '../../../styles/token-list-manager.css';
 import RGP from '../../../assets/rgp.svg';
 import NullImage24 from '../../../assets/Null-24.svg';
@@ -48,12 +48,8 @@ const ManageToken = ({
   userCustomURIList,
   importUriToken,
   allTokenList,
-  toggleDefaultTokenState,
-  toggleMainTokenState,
-  toggleUserTokenState,
-  userTokenState,
-  defaultTokenState,
-  mainTokenState,
+  offDefaultTokenList,
+  toggleDisplay,
 }) => {
   const {
     isOpen: isOpenImportModal,
@@ -82,22 +78,7 @@ const ManageToken = ({
               setShowCurrencyList(true);
             }}
           />
-          <ModalHeader fontWeight="light">
-            <ArrowBackIcon
-              cursor="pointer"
-              onClick={() => {
-                setManageToken(false);
-                setShowCurrencyList(true);
-              }}
-            />
-            <Flex
-              flexDirection="row"
-              justifyContent="space-evenly"
-              marginTop="-42px"
-            >
-              <Text>Manage</Text>
-            </Flex>
-          </ModalHeader>
+          <ModalHeader fontWeight="light">Manage</ModalHeader>
           <ModalBody mt={4}>
             <Box className={styles.tabContainer}>
               <Box
@@ -151,7 +132,8 @@ const ManageToken = ({
                       <img
                         src={
                           userCustomURIList.logoURI.includes('ipfs')
-                            ? `https://cloudflare-ipfs.com/${userCustomURIList.logoURI.split('://')[0]
+                            ? `https://cloudflare-ipfs.com/${
+                              userCustomURIList.logoURI.split('://')[0]
                             }/${userCustomURIList.logoURI.split('://')[1]}/`
                             : userCustomURIList.logoURI
                         }
@@ -203,7 +185,8 @@ const ManageToken = ({
                         <img
                           src={
                             list.logoURI.includes('ipfs')
-                              ? `https://cloudflare-ipfs.com/${list.logoURI.split('://')[0]
+                              ? `https://cloudflare-ipfs.com/${
+                                list.logoURI.split('://')[0]
                               }/${list.logoURI.split('://')[1]}/`
                               : list.logoURI
                           }
@@ -242,21 +225,12 @@ const ManageToken = ({
                   >
                     <RGP className={styles.logo} width="45%" height="100%" />
                     <FormControl display="flex" alignItems="center">
-                      <FormLabel
-                        htmlFor="top-ten"
-                        mb="0"
-                        style={{ margin: '0px auto' }}
-                      >
+                      <FormLabel htmlFor="top-ten" mb="0">
                         Rigel Default Token List
-                        <p style={{ margin: '1px' }}>
-                          {defaultTokenState[1].token.length} tokens
-                        </p>
                       </FormLabel>
                       <Switch
-                        onChange={e =>
-                          toggleDefaultTokenState(e.target.checked)
-                        }
-                        defaultChecked={defaultTokenState[0].show}
+                        onChange={e => offDefaultTokenList(e.target.checked)}
+                        isChecked={toggleDisplay}
                         id="top-ten"
                         size="lg"
                       />
@@ -274,57 +248,12 @@ const ManageToken = ({
                   >
                     <RGP className={styles.logo} width="45%" height="100%" />
                     <FormControl display="flex" alignItems="center">
-                      <FormLabel
-                        htmlFor="main-list"
-                        mb="0"
-                        style={{ margin: '0px auto' }}
-                      >
-                        Rigel Main Token List
-                        <p style={{ margin: '1px' }}>
-                          {mainTokenState[1].token.length} tokens
-                        </p>
+                      <FormLabel htmlFor="extended-list" mb="0">
+                        Rigel Extended Token List
                       </FormLabel>
-                      <Switch
-                        onChange={e => toggleMainTokenState(e.target.checked)}
-                        defaultChecked={mainTokenState[0].show}
-                        id="main-list"
-                        size="lg"
-                      />
+                      <Switch id="extended-list" size="lg" disabled />
                     </FormControl>
                   </Flex>
-                  {userCustomTokenList[1].token.length > 0 && (
-                    <Flex
-                      mt={5}
-                      flexDirection="row"
-                      backgroundColor="#29235E"
-                      padding="2"
-                      border="1px solid #9790D6"
-                      borderRadius="16px"
-                      justifyContent="space-between"
-                      h="16"
-                    >
-                      <RGP className={styles.logo} width="45%" height="100%" />
-                      <FormControl display="flex" alignItems="center">
-                        <FormLabel
-                          htmlFor="user-list"
-                          mb="0"
-                          style={{ margin: '0px auto' }}
-                        >
-                          User Token List
-                          <p style={{ margin: '1px' }}>
-                            {userCustomTokenList[1].token.length} tokens
-                          </p>
-                        </FormLabel>
-                        <Switch
-                          onChange={e => toggleUserTokenState(e.target.checked)}
-                          defaultChecked={userTokenState[0].show}
-                          id="user-list"
-                          size="lg"
-                          disabled
-                        />
-                      </FormControl>
-                    </Flex>
-                  )}
                 </>
               ) : (
                 <>
@@ -394,7 +323,7 @@ const ManageToken = ({
                       marginTop="5"
                       paddingTop="4"
                     >
-                      {userCustomTokenList[1].token.map((t, index) => (
+                      {userCustomTokenList.map((t, index) => (
                         <Box
                           key={index}
                           display="flex"
@@ -440,12 +369,7 @@ ManageToken.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   customTokenBox: PropTypes.bool,
-  userTokenState: PropTypes.array,
-  defaultTokenState: PropTypes.array,
-  mainTokenState: PropTypes.array,
-  toggleDefaultTokenState: PropTypes.func,
-  toggleMainTokenState: PropTypes.func,
-  toggleUserTokenState: PropTypes.func,
+  toggleDisplay: PropTypes.bool,
   setManageToken: PropTypes.func,
   tokenImportUri: PropTypes.string,
   setTokenImportUri: PropTypes.func,
@@ -464,6 +388,7 @@ ManageToken.propTypes = {
   showErrorMessage: PropTypes.bool,
   errorMessage: PropTypes.string,
   importUriToken: PropTypes.func,
+  offDefaultTokenList: PropTypes.func,
 };
 
 export default ManageToken;
