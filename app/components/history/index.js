@@ -14,12 +14,10 @@ export function Home(props) {
 
   const { wallet } = props.wallet;
 
-  // using the useuseGetHistory hook
-
   const { historyData } = useGetHistory(wallet);
 
   if (historyData) {
-    console.log('historyData: ', historyData);
+    console.log('historyData: wallet Address:  ', historyData);
   }
   return (
     <Box className={styles.container}>
