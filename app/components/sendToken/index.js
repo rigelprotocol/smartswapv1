@@ -1407,7 +1407,7 @@ async function updateSendAmount(
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
-      setBoxMessage('Please check your token selection');
+      setBoxMessage('Please check your token');
       setShowBox(true);
     }
   }
@@ -1518,7 +1518,7 @@ async function updateSendAmountForRoute(
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
-        setBoxMessage('Please check your token selection');
+        setBoxMessage('Please check your token');
         setShowBox(true);
       }
     }
@@ -1557,7 +1557,7 @@ async function update_RGP_ETH_SendAmount(
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
-      setBoxMessage('Please check your token selection');
+      setBoxMessage('Please check your token');
       setShowBox(true);
     }
   }
