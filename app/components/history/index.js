@@ -7,7 +7,8 @@ import React, { useState } from 'react';
 import OrderHistory from './OrderHistory';
 import styles from '../../styles/history.css';
 import useGetHistory from './useGetHistory';
-// import Empty from './EmptyHistory';
+
+// import Empty from './EmptyHistory'
 
 export function Home(props) {
   const [show, setShow] = useState(false);
