@@ -14,6 +14,7 @@ export function Home(props) {
 
   const { historyData, isLoading } = useGetHistory(wallet);
 
+  // console.log("......: wallet", historyData)
   return (
     <Box className={styles.container}>
       <Flex

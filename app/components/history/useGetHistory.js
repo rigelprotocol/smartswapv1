@@ -33,6 +33,14 @@ const useGetHistory = wallet => {
         const latestBlock = await provider.getBlockNumber();
         const fromBlocks = latestBlock - 1000;
 
+        /*
+                const etherAPI = latestBlock - 3000;
+                let router = '0x00749e00af4359df5e8c156af6dfbdf30dd53f44'
+                let uri = `https://api-testnet.bscscan.com/api?module=account&action=txlist&address=${address}&startblock=${etherAPI}&endblock=tatest&sort=asc&apikey=AATZWFQ47VX3Y1DN7M97BJ5FEJR6MGRQSD`
+                let rewData = await fetch(uri)
+                let data = await rewData.json()
+        */
+
         // eventSignature: "Swap(address,uint256,uint256,uint256,uint256,address)"
         const filterFrom = SmartFactoryInstance.filters.Swap(
           null,
@@ -49,6 +57,8 @@ const useGetHistory = wallet => {
           fromBlocks,
           'latest',
         );
+
+
 
         // extract events values that are relivant  for ui
         const decodedSwapValue = await Promise.all(
@@ -96,6 +106,7 @@ const useGetHistory = wallet => {
           blockNumber: outputs.blocknumber,
           gassFee: convertFromWei(outputs.gas),
         }));
+
 
         sethistoryData(userSwapHistory);
         setIsLoading(false);
