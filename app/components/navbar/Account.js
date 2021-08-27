@@ -31,7 +31,7 @@ const Account = ({ wallet, wallet_props }) => {
         rounded="xl"
         border="0px"
         ml={5}
-        mt={["10","10","0"]}
+        mt={['10', '10', '0']}
       >
         <Text color="#fff" fontSize="sm" ml={2} mr={4}>
           {balance} BNB
