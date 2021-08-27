@@ -26,7 +26,6 @@ const useGetHistory = wallet => {
       function getTokenSymbol(symbol) {
         const tokensList = isTestNet ? testNetToken : mainNetToken;
         return tokensList.find(token => token.symbol === symbol);
-
       }
 
       try {

@@ -1,10 +1,12 @@
 import { Box, Text, Flex } from '@chakra-ui/layout';
 import React from 'react';
 import PropTypes from 'prop-types';
-//import Empty from './EmptyHistory';
 import rightArrow from '../../assets/right-arrow.png';
 
-function OrderHistory({ data }) {
+import Empty from './EmptyHistory';
+import Spinner from 'components/spinner/spinner';
+
+function OrderHistory({ data, loading, dataIsEmpty }) {
   // destructure the data props
   const {
     token1Icon,
@@ -19,6 +21,8 @@ function OrderHistory({ data }) {
 
   return (
     <>
+      {loading && <Spinner />}
+      {dataIsEmpty && <Empty />}
       <Flex p={3}>
         <div style={{ width: '100%' }}>
           <Box
@@ -112,6 +116,8 @@ function OrderHistory({ data }) {
 
 OrderHistory.propTypes = {
   data: PropTypes.object.isRequired,
+  loading: PropTypes.bool,
+  dataIsEmpty: PropTypes.bool
 };
 
 export default OrderHistory;

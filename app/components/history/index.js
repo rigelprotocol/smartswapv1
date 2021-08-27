@@ -1,6 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
-
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { useState } from 'react';
@@ -13,7 +12,7 @@ export function Home(props) {
 
   const { wallet } = props.wallet;
 
-  const { historyData } = useGetHistory(wallet);
+  const { historyData, isLoading } = useGetHistory(wallet);
 
   return (
     <Box className={styles.container}>
@@ -64,13 +63,14 @@ export function Home(props) {
         <Empty />
       ) */}
 
-      {show && historyData.map(data => <OrderHistory data={data} />)}
+      {show && historyData && historyData.map(data => <OrderHistory key={OrderHistory} data={data} loading={isLoading} dataIsEmpty={historyData.length < 1} />)}
     </Box>
   );
 }
 
 Home.propTypes = {
   wallet: PropTypes.object.isRequired,
+  historyData: PropTypes.array
 };
 
 const mapStateToProps = ({ wallet }) => ({ wallet });
