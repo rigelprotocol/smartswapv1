@@ -63,7 +63,7 @@ export function Home(props) {
         <Empty />
       ) */}
 
-      {show && historyData && historyData.map(data => <OrderHistory key={OrderHistory} data={data} loading={isLoading} dataIsEmpty={historyData.length < 1} />)}
+      {show && historyData && historyData.map(data => <OrderHistory key={data.blockNumber} data={data} loading={isLoading} dataIsEmpty={historyData.length < 1} />)}
     </Box>
   );
 }
