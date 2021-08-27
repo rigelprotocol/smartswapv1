@@ -13,7 +13,7 @@ import { ThemeProvider, theme } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
 import { connect } from 'react-redux';
 import WebFont from 'webfontloader';
-import { ethers } from 'ethers'
+import { ethers } from 'ethers';
 import HomePage from 'containers/HomePage/index';
 import FarmingPage from 'containers/FarmingPage/index';
 import MarginTradingPage from 'containers/MarginTradingPage/index';
@@ -29,14 +29,14 @@ import {
   disconnectWallet,
   updateChainId,
   getTokenList,
-  updateRGPprice
+  updateRGPprice,
 } from '../WalletProvider/actions';
 import TrustWallet from '../../components/TrustWallet/index';
 import {
   isSupportedNetwork,
   switchToBSC,
 } from '../../utils/wallet-wiget/connection';
-import { smartSwapLPTokenPoolOne } from '../../utils/SwapConnect'
+import { smartSwapLPTokenPoolOne } from '../../utils/SwapConnect';
 
 const breakpoints = {
   sm: '360px',
@@ -44,6 +44,7 @@ const breakpoints = {
   lg: '1024px',
   xl: '1440px',
 };
+
 WebFont.load({
   google: {
     families: [
@@ -78,24 +79,20 @@ const App = props => {
   }, []);
 
   useEffect(() => {
-    getRGPprice()
-  }, [wallet])
+    getRGPprice();
+  }, [wallet]);
 
   const getRGPprice = async () => {
     try {
-      const RGPBUSDToken = await smartSwapLPTokenPoolOne()
-      const reserves = await RGPBUSDToken.getReserves()
-      const RGPprice = ethers.utils.formatUnits(reserves[0]
-        .mul(10000)
-        .div(reserves[1]), 4);
+      const RGPBUSDToken = await smartSwapLPTokenPoolOne();
+      const reserves = await RGPBUSDToken.getReserves();
+      const RGPprice = ethers.utils.formatUnits(
+        reserves[0].mul(10000).div(reserves[1]),
+        4,
+      );
       props.updateRGPprice(RGPprice);
-
-    } catch (error) {
-
-    }
-  }
-
-
+    } catch (error) {}
+  };
 
   useEffect(() => {
     if (window.ethereum) {
@@ -146,7 +143,7 @@ export default connect(
     notify,
     updateChainId,
     getTokenList,
-    updateRGPprice
+    updateRGPprice,
   },
 )(App);
 
