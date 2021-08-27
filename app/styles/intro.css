@@ -1,0 +1,124 @@
+.button__container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.start__walkthrough {
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border: none;
+  text-align: center;
+  border-radius: 10px;
+  width: 160px;
+  height: 40px;
+  font-size: small;
+  font-weight: bold;
+  background-color: #8051ca;
+  color: #fff;
+  cursor: pointer;
+}
+
+.skip__walkthrough {
+  background-color: transparent;
+  border: none;
+  background-image: none;
+  color: #fff;
+  font-size: small;
+  cursor: pointer;
+}
+
+.nextbutton {
+  width: 100px;
+  text-align: center;
+  padding: 10px;
+  background-color: #6849bc;
+  color: white;
+  border-radius: 7px;
+  font-size: small;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+}
+
+.skipbutton {
+  color: white;
+  border: none;
+  background-color: transparent;
+  font-size: small;
+  cursor: pointer;
+  /* font-weight: bolder; */
+}
+
+.cell {
+  /* display: table-cell;
+  vertical-align: middle; */
+  display: flex;
+  align-items: center;
+  margin: auto;
+  text-align: center;
+}
+
+.dots {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  cursor: default;
+  margin-left: 2px;
+}
+
+.dots .active a {
+  -webkit-transform: scale3d(1.3, 1.3, 1.3);
+  transform: scale3d(1.3, 1.3, 1.3);
+}
+
+.dots .active::after {
+  height: 100%;
+}
+
+.dotli {
+  position: relative;
+  display: block;
+  float: left;
+  /* margin: 0 16px; */
+  margin-right: 6px;
+  margin-top: 7px;
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+}
+
+.dotli a {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  border-radius: 50%;
+  text-indent: -999em;
+  cursor: pointer;
+  position: absolute;
+  overflow: hidden;
+  background-color: transparent;
+  box-shadow: inset 0 0 0 2px white;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  -webkit-transform: scale3d(1, 1, 1);
+  transform: scale3d(1, 1, 1);
+}
+
+.dotli a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  height: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 0 1px #fff;
+  -webkit-transition: height 0.3s ease;
+  transition: height 0.3s ease;
+}
