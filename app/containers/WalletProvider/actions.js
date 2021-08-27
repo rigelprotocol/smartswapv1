@@ -73,7 +73,22 @@ export const reConnect = (wallet) => async dispatch => {
 
 }
 
-export const connectWallet = () => async dispatch => {
+export const connectWallet = (wallet) => async dispatch => {
+  if(wallet==="metamask"){
+    connectMetaMaskWallet()
+  }else if(wallet==="binance"){
+    connectBinanceWithMetamask()
+  }
+
+};
+
+const connectBinanceWithMetamask = ()=>async dispatch =>{
+  alert("you")
+  // BinanceChain.request({method:'eth_requestAccounts'})
+  
+}
+const connectMetaMaskWallet = ()=>async dispatch  =>{
+
   try {
     dispatch({ type: LOADING_WALLET, payload: true });
     const ethProvider = await provider();
@@ -112,8 +127,7 @@ export const connectWallet = () => async dispatch => {
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
 
   }
-};
-
+}
 export const setWalletProps = wallet => dispatch =>
   dispatch({
     type: WALLET_PROPS,

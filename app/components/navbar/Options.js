@@ -14,7 +14,7 @@ const Options = ({ connectWallet }) => (
     <ModalBody mt={4}>
       <Flex
         onClick={async () => {
-          connectWallet();
+          connectWallet("metamask");
         }}
         color="#fff"
         bg="#29235E"
@@ -41,12 +41,31 @@ const Options = ({ connectWallet }) => (
         p={8}
         mt={5}
         onClick={async () => {
-          connectWallet();
+          connectWallet("metamask");
         }}
         rounded="2xl"
       >
         <Text color="white" _hover={{ color: '#40BAD5' }}>
           Trust Wallet
+        </Text>
+        <TrustWalletImage />
+      </Flex>
+      <Flex
+        color="#fff"
+        bg="#29235E"
+        h="50px"
+        cursor="pointer"
+        alignItems="center"
+        justifyContent="space-between"
+        p={8}
+        mt={5}
+        onClick={async () => {
+          connectWallet("binance");
+        }}
+        rounded="2xl"
+      >
+        <Text color="white" _hover={{ color: '#40BAD5' }}>
+          Binance Chain
         </Text>
         <TrustWalletImage />
       </Flex>
