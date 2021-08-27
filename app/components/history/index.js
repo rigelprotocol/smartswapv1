@@ -8,8 +8,6 @@ import OrderHistory from './OrderHistory';
 import styles from '../../styles/history.css';
 import useGetHistory from './useGetHistory';
 
-// import Empty from './EmptyHistory'
-
 export function Home(props) {
   const [show, setShow] = useState(false);
 
@@ -17,9 +15,6 @@ export function Home(props) {
 
   const { historyData } = useGetHistory(wallet);
 
-  if (historyData) {
-    console.log('historyData: wallet Address:  ', historyData);
-  }
   return (
     <Box className={styles.container}>
       <Flex
@@ -63,7 +58,13 @@ export function Home(props) {
         </Flex>
       </Flex>
 
-      {show && <OrderHistory />}
+      {/* show && historyData.length !== 0 ? (
+        historyData.map(data => <OrderHistory data={data} />)
+      ) : (
+        <Empty />
+      ) */}
+
+      {show && historyData.map(data => <OrderHistory data={data} />)}
     </Box>
   );
 }
