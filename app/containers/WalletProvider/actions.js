@@ -16,6 +16,7 @@ import {
 import { ethers } from 'ethers';
 import { formatBalance, isNotEmpty, mergeArrays } from 'utils/UtilFunc';
 import { getTokenDetails } from 'utils/tokens';
+import { BscConnector } from '@binance-chain/bsc-connector'
 import {
   WALLET_CONNECTED,
   WALLET_PROPS,
@@ -111,7 +112,6 @@ export const connectWallet = () => async dispatch => {
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
 
   }
-
 };
 
 export const setWalletProps = wallet => dispatch =>

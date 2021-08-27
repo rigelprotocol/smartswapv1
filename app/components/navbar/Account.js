@@ -86,6 +86,10 @@ const Account = ({ wallet, wallet_props }) => {
               <Text color="gray.400" fontSize="13px">
                 Connected with MetaMask
               </Text>
+              {/* SETTING THISS BUTTON UP
+              WHEN USER CLICKS THIS, IT SHOULD DISCONNECT FRO METAMASK AND DISPLAY THE WALLET OPTIONS AGAIN FOR USER TO CONNECT TO ANOTHER WALLET */}
+
+              {/* ALSO A DISCONNECT BUTTON WILL BE DISPLAYED. SOME USERS MIGHT ONLY WANT TO DISCONNECT THEIR METAMASK BUT WILL DEFINITELY NOT KNOW THAT THE CHANGE BUTTON DOES THAT */}
               <Button
                 border="1px"
                 fontWeight="light"
