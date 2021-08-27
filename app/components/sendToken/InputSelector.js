@@ -18,10 +18,10 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
           <Input
             placeholder="0.0"
             fontSize="lg"
-            color=" rgba(255, 255, 255,0.25)"
+            color=" rgba(255,255,255)"
             value={value}
             isRequired
-            width="38%"
+            width="40%"
             onChange={e => {
               handleChange(e);
             }}
@@ -29,7 +29,7 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
           <Flex
             cursor="pointer"
             justifyContent="space-between"
-            alignItems="center"
+            alignItems="right"
           >
             {max ? (
               <Text
@@ -37,7 +37,7 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                 p="5px 10px"
                 rounded="lg"
                 mt="10px"
-                fontSize="sm"
+                fontSize="xs"
                 width="50%"
                 textAlign="center"
                 color="#72cfe4"
@@ -56,6 +56,7 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                 <Button
                   onClick={onOpen}
                   border="0px"
+                  pl={3}
                   h="30px"
                   fontWeight="regular"
                   fontSize="16px"
@@ -70,7 +71,7 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                     <>
                       <Image src={selectedToken.logoURI} />
                       {selectedToken.imported === true && <NullImage24 />}
-                      <Text ml={4}>{selectedToken.symbol}</Text>
+                      <Text ml={2}>{selectedToken.symbol}</Text>
                     </>
                   )}
                 </Button>
