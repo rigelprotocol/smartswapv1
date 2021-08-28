@@ -687,6 +687,7 @@ export const Manual = props => {
   };
 
   const triggerAccountCheck = async () => {
+    const approveAmount = 1000000000000000;
     if (checkForAllVariables()) {
       if (userHasApproveToken) {
         return openModal1();
@@ -697,7 +698,7 @@ export const Manual = props => {
         wallet.address,
         selectedToken.address,
         wallet.signer,
-        selectedToken.balance,
+        approveAmount,
       );
       const { confirmations, status } = await sendTransaction.wait(3);
       if (
@@ -751,7 +752,7 @@ export const Manual = props => {
         setTimeout(() => openModal3(), 1000);
         const { hash } = sendTransaction
         setURLNetwork("")
-        setTimeout(()=> setURLNetwork(createURLNetwork(hash)) ,3000)
+        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000)
         const { confirmations, status } = await sendTransaction.wait(3);
         if (
           typeof sendTransaction.hash != 'undefined' &&
