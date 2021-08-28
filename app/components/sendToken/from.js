@@ -33,11 +33,9 @@ const From = ({
         color="#fff"
         bg="#29235E"
         h="100%"
-        mb="10px"
         justifyContent="space-between"
         px={4}
         rounded="2xl"
-        py={3}
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">

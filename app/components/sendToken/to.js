@@ -37,7 +37,8 @@ const SendTo = props => {
         justifyContent="space-between"
         px={4}
         rounded="2xl"
-        py={4}
+
+
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
