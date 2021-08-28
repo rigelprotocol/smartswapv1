@@ -36,6 +36,7 @@ import {
   TOGGLE_MAIN_TOKEN_LIST,
   TOGGLE_USER_TOKEN_LIST,
   TOGGLE_DEFAULT_TOKEN_LIST,
+  UPDATE_RGP_PRICE
 } from './constants';
 import defaultTokenList from '../../utils/default-token.json';
 import testNetTokenList from '../../utils/test-net-tokens.json';
@@ -230,6 +231,10 @@ export const toggleMainTokenList = (option) => (dispatch) => dispatch({
 
 export const toggleUserTokenList = (option) => (dispatch) => dispatch({
   type: TOGGLE_USER_TOKEN_LIST, payload: option
+});
+
+export const updateRGPprice = (price) => (dispatch) => dispatch({
+  type: UPDATE_RGP_PRICE, payload: price
 });
 
 

@@ -82,6 +82,10 @@ const BSCTestnet = {
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
 };
 
+export const networkURLS = 
+checkNetVersion() === BSC_MAIN_NET_ID.toString() ? 'bscscan.com' : 'testnet.bscscan.com';
+
+
 export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
@@ -92,7 +96,7 @@ export const tokenList = () => {
     const extendedList = JSON.parse(storedReducer.ExtendedTokenList);
     allToken =
       extendedList !== undefined &&
-        extendedList.defaultTokenList[1].token.length > 0
+      extendedList.defaultTokenList[1].token.length > 0
         ? extendedList.defaultTokenList[1].token
         : [];
   }

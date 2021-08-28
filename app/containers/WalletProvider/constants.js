@@ -27,3 +27,4 @@ export const TOGGLE_USER_TOKEN_LIST =
   'app/WalletProvider/TOGGLE_USER_TOKEN_LIST';
 export const TOGGLE_MAIN_TOKEN_LIST =
   'app/WalletProvider/TOGGLE_MAIN_TOKEN_LIST';
+export const UPDATE_RGP_PRICE = 'app/WalletProvider/UPDATE_RGP_PRICE';

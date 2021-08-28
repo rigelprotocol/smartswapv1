@@ -16,7 +16,8 @@ import { connect } from 'react-redux';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
 import RGPImage from '../../assets/rgp.svg';
 
-const RGP = ({ wallet_props }) => {
+const RGP = ({ wallet_props, RGPprice }) => {
+
   const modal2Disclosure = useDisclosure();
   return (
     <>
@@ -34,7 +35,7 @@ const RGP = ({ wallet_props }) => {
           background:
             'linear-gradient(to right, rgb(64,186,213),rgb(3,90,166))',
         }}
-        mt={["10","10","0"]}
+        mt={["10", "10", "0"]}
       >
         {wallet_props} RGP
       </Button>
@@ -86,7 +87,7 @@ const RGP = ({ wallet_props }) => {
                 RGP price:
               </Text>
               <Text zIndex="10" fontSize="16px" color="gray.200">
-                $2.38
+                ${RGPprice}
               </Text>
             </Flex>
             <Flex justifyContent="space-between" mb={2}>

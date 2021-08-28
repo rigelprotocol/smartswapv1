@@ -34,23 +34,41 @@ const CurrencyList = ({
       <ModalContent
         bg="#120136"
         color="#fff"
+        padding-top="15px"
         borderRadius="20px"
         width="90vw"
         minHeight="60vh"
       >
         <ModalCloseButton
-          bg="none"
+          width="24px"
+          height="24px"
+          padding="5px"
+          bg="#fff"
           border="0px"
-          color="#fff"
+          color="#000"
+          borderRadius="50%"
           cursor="pointer"
-          _focus={{ outline: 'none' }}
+          _focus={{ outline: 'none', backgroundColor: '#fff', color: '#000' }}
+          _hover={{ backgroundColor: '#fff', color: '#000' }}
+          marginTop="15px"
+          marginRight="8px"
         />
-        <ModalHeader fontWeight="light">Select a token</ModalHeader>
+        <ModalHeader
+          fontFamily="Roboto"
+          fontStyle="normal"
+          fontWeight="500"
+          fontSize="16px"
+          marginTop="15px"
+        >
+          Select token
+        </ModalHeader>
         <ModalBody mt={4}>
           <Input
             placeholder="Search by name or paste address"
-            borderColor="#40BAD5"
-            color="gray.500"
+            borderColor="#29235E"
+            marginTop="-10px"
+            color="#fff"
+            fontWeight="800"
             rounded="2xl"
             h="50px"
             fontSize="sm"
@@ -61,10 +79,7 @@ const CurrencyList = ({
             }}
           />
           <Flex justifyContent="space-between" mt={5}>
-            <Text fontSize="sm" fontWeight="light" color="#fff">
-              Token
-            </Text>
-            <ArrowDownImage />
+            <hr style={{ width: '100vw', border: '1px solid #29235E' }} />
           </Flex>
           {toggleDisplay && (
             <div
@@ -92,6 +107,9 @@ const CurrencyList = ({
                 setShowCurrencyList(false);
               }}
               cursor="pointer"
+              fontFamily="Roboto"
+              fontWeight="500"
+              fontSize="16px"
             >
               Manage Token
             </Text>
