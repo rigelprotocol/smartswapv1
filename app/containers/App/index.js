@@ -67,15 +67,15 @@ const App = props => {
     })();
   }, [wallet]);
 
-  useEffect(() => {
-    if (window.ethereum) {
-      checkchain();
-      const obj = ethereum.on('chainChanged', chainId => {
-        console.log(chainId);
-        window.location.reload();
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (window.ethereum) {
+  //     checkchain();
+  //     const obj = ethereum.on('chainChanged', chainId => {
+  //       console.log(chainId);
+  //       window.location.reload();
+  //     });
+  //   }
+  // }, []);
 
   useEffect(() => {
     getRGPprice()
@@ -97,11 +97,11 @@ const App = props => {
 
 
 
-  useEffect(() => {
-    if (window.ethereum) {
-      checkchain();
-    }
-  }, [wallet]);
+  // useEffect(() => {
+  //   if (window.ethereum) {
+  //     checkchain();
+  //   }
+  // }, [wallet]);
 
   const checkchain = async () => {
     const chainID = await window.ethereum.request({

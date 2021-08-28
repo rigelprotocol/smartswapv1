@@ -9,6 +9,9 @@
 import { NOTICE } from 'containers/NoticeProvider/constants';
 import {
   connectMetaMask,
+  connectBinance,
+  binanceProvider,
+  binanceSigner,
   getAddressTokenBalance,
   provider,
   signer,
@@ -74,18 +77,80 @@ export const reConnect = (wallet) => async dispatch => {
 }
 
 export const connectWallet = (wallet) => async dispatch => {
+  // alert(allewt)
   if(wallet==="metamask"){
     connectMetaMaskWallet()
   }else if(wallet==="binance"){
-    connectBinanceWithMetamask()
+    connectBinanceWallet(dispatch)
   }
 
 };
+const connectBinanceWallet = async (dispatch) =>{
+  try{
+    dispatch({ type: LOADING_WALLET, payload: true });
+    const bscProvider = binanceProvider()
+    const walletSigner = await binanceSigner()
+    console.log({walletSigner})
+    const chainId =await window.BinanceChain.request({ method: 'eth_chainId' });
+    // if(deviceChainId !== '0x38'){
+    //   try {
+    //     await window.BinanceChain.request({
+    //       method: 'wallet_addEthereumChain',
+    //       params: [
+    //         {
+    //           chainId:`0x${chainId.toString()}`,
+    //           chainName: 'Smart Chain',
+    //           nativeCurrency: {
+    //             name: 'BNB',
+    //             symbol: 'bnb',
+    //             decimals: 18,
+    //           },
+    //           rpcUrls: ['https://bsc-dataseed.binance.org/'],
+    //           blockExplorerUrls: ['https://bscscan.com/'],
+    //         }
+    //       ]
+    //     })
+    //   }catch(err){
+    //     console.log(err)
+    //   }
+    // }
+    const res =  await connectBinance()
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+  const balance = await bscProvider.getBalance(res[0]);
+    console.log(balance.toString())  
+    console.log(res)
+    console.log(chainId)
+    dispatch({
+      type: WALLET_CONNECTED, wallet: {
+        address: res[0], balance: formatBalance(ethers.utils.formatEther(balance)),
+        provider: binanceProvider, signer: walletSigner, chainId,
+      },
+    })
+    const rgpAddress = getTokenAddress(chainId);
+    const rgpBalance = await getAddressTokenBalance(res[0], rgpAddress, walletSigner);
+    console.log({rgpAddress,rgpBalance})
+    dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
+    return dispatch({
+      type: NOTICE, message: {
+        title: 'Success:',
+        body: 'Connection was successful',
+        type: 'success',
+      }
+    })
+  } catch (e) {
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+    return dispatch({
+      type: NOTICE, message: {
+        title: 'Connection Error',
+        body: 'Please reload this page and reconnect',
+        type: 'error',
+        }
+      });
+    } finally {
+      dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
 
-const connectBinanceWithMetamask = ()=>async dispatch =>{
-  alert("you")
-  // BinanceChain.request({method:'eth_requestAccounts'})
-  
+    }
+
 }
 const connectMetaMaskWallet = ()=>async dispatch  =>{
 
@@ -253,7 +318,7 @@ export const updateRGPprice = (price) => (dispatch) => dispatch({
 
 
 export async function setTokenList(ExtendedTokenList, account) {
-  console.log("dagogo")
+  // console.log("dagogo")
   const listWithDuplicate = [];
   for (const property in ExtendedTokenList) {
     if (

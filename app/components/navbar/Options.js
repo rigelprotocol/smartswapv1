@@ -67,7 +67,7 @@ const Options = ({ connectWallet }) => (
         <Text color="white" _hover={{ color: '#40BAD5' }}>
           Binance Chain
         </Text>
-        <TrustWalletImage />
+        {/* <TrustWalletImage /> */}
       </Flex>
     </ModalBody>
   </>
