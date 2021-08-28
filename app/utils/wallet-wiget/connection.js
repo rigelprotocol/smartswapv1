@@ -7,6 +7,7 @@ import { formatBalance, convertFromWei } from 'utils/UtilFunc';
 import { balanceAbi, decimalAbi } from '../constants';
 const { store } = configureStore();
 
+// CREATE A BSCPROVIDER AND BSCSIGNER THAT WILL INTERACT WITH BINANCE WALLET
 export const provider = async () => {
   try {
     let ethProvider = await detectEthereumProvider();

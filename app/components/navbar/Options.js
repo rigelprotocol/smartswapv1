@@ -12,6 +12,7 @@ const Options = ({ connectWallet }) => (
       Connect to a wallet
     </ModalHeader>
     <ModalBody mt={4}>
+      {/* CREATE A DIV FOR BINANCE, EACH FUNCTION WILL BE SEPERATED WITH IDS THAT WILL EASILY BE IDENTIFIED */}
       <Flex
         onClick={async () => {
           connectWallet();

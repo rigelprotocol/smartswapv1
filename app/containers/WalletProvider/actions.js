@@ -71,7 +71,7 @@ export const reConnect = (wallet) => async dispatch => {
   }
 
 }
-
+// CONNECT WALLET WILL BE SPACED OUT, SINCE METAMASK AND BINANCE WILL HAVE DIFFERENT PROVIDER AND SIGNERS
 export const connectWallet = () => async dispatch => {
   try {
     dispatch({ type: LOADING_WALLET, payload: true });

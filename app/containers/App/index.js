@@ -95,6 +95,7 @@ const App = props => {
   };
 
   useEffect(() => {
+    // CREATE AN ELSE IF STATEMENT TO ALSO CHECK IF WINDOW.BINANCE IS AVAILABLE. THIS WILL CALL A DIFFERENCE FUNCTION THAT WILL CALL WINDOW.BINANCE
     if (window.ethereum) {
       checkchain();
     }
