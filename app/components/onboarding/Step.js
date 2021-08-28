@@ -7,6 +7,10 @@ const Step = ({
   desc2,
   desc1,
   desc3,
+  desc4,
+  desc5,
+  desc6,
+  desc7,
   children,
   mobile,
 }) => {
@@ -47,6 +51,26 @@ const Step = ({
                 About
               </a>
             </li>
+            <li className={styles.dotli}>
+              <a className={desc3 && styles.active} href="#">
+                Home
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc4 && styles.active} href="#">
+                About
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc5 && styles.active} href="#">
+                Home
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc6 && styles.active} href="#">
+                About
+              </a>
+            </li>
           </ul>
         ) : (
           <ul className={styles.dots}>
@@ -62,6 +86,26 @@ const Step = ({
             </li>
             <li className={styles.dotli}>
               <a className={desc3 && styles.active} href="#">
+                Products
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc4 && styles.active} href="#">
+                Home
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc5 && styles.active} href="#">
+                About
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc6 && styles.active} href="#">
+                Products
+              </a>
+            </li>
+            <li className={styles.dotli}>
+              <a className={desc7 && styles.active} href="#">
                 Products
               </a>
             </li>

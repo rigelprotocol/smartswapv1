@@ -87,6 +87,122 @@ export default function HomePage(props) {
           >
             Skip
           </button>
+          <button onClick={() => goTo(2)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc4={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(3)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.to__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc5={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(4)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.css-1r2rfas',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc6={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(5)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.textTo__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc7={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
           <button
             onClick={() => setIsTourOpen(false)}
             className={style.nextbutton}
@@ -175,6 +291,122 @@ export default function HomePage(props) {
           >
             Skip
           </button>
+          <button onClick={() => goTo(3)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc4={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(4)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.to__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc5={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(5)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectFrom__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc6={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(6)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.textTo__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Order History'}
+          description={
+            'Click here to view your Order History and Market History for all your previous transactions'
+          }
+          desc7={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
           <button
             onClick={() => setIsTourOpen(false)}
             className={style.nextbutton}
@@ -191,6 +423,38 @@ export default function HomePage(props) {
         width: '280px',
       },
     },
+    // {
+    //   selector: '.css-1jo4mlf',
+    //   content: ({ goTo, inDom }) => (
+    //     <Step
+    //       title={'Order History'}
+    //       description={
+    //         'Click here to view your Order History and Market History for all your previous transactions'
+    //       }
+    //       desc8={true}
+    //     >
+    //       <button
+    //         onClick={() => setIsTourOpen(false)}
+    //         className={style.skipbutton}
+    //       >
+    //         Skip
+    //       </button>
+    //       <button
+    //         onClick={() => setIsTourOpen(false)}
+    //         className={style.nextbutton}
+    //       >
+    //         Done
+    //       </button>
+    //     </Step>
+    //   ),
+    //   style: {
+    //     borderRadius: '10px',
+    //     backgroundColor: '#34215F',
+    //     color: '#fff',
+    //     padding: '24px 20px',
+    //     width: '280px',
+    //   },
+    // },
   ];
 
   const start = () => {
