@@ -23,10 +23,11 @@ import RemoveALiquidity from 'components/liquidity/removeALiquidity';
 import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
+import { create } from 'react-test-renderer';
 import { tokenList, tokenWhere, SMART_SWAP,  checkIfTokenIsListed } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
-import { isNotEmpty , getDeadline } from "../../utils/UtilFunc";
+import { isNotEmpty , getDeadline, createURLNetwork } from "../../utils/UtilFunc";
 import {getTokenList } from "../../utils/tokens"
 
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
@@ -61,6 +62,7 @@ export function LiquidityPage(props) {
   const [trxHashed, setTrxHashed] = useState({})
   const [sendingTransaction, setSendingTransaction] = useState(false)
   const [tokenToValue, setTokenToValue] = useState("")
+  const [URLNetwork, setURLNetwork] = useState("")
   const [fromTokenAllowance, setFromTokenAllowance] = useState('')
   const [toTokenAllowance, setToTokenAllowance] = useState('')
   const [liquidityLoading, setLiquidityLoading] = useState(false)
@@ -464,9 +466,13 @@ setDetermineInputChange("to")
           },
         );
         setTrxHashed(data)
+        const { hash } = data
+        setURLNetwork("")
+        setTimeout(()=> setURLNetwork(createURLNetwork(hash)) ,3000)
         closeModal2()
         openModal3()
       } catch (e) {
+        console.log(trxHashed)
         props.showErrorMessage(e)
         closeModal2()
         openModal5()
@@ -497,7 +503,6 @@ setDetermineInputChange("to")
   const fetchTransactionData = async (sendTransaction) => {
     modal6Disclosure.onOpen();
     const { confirmations, status } = await sendTransaction.wait(1);
-
     return { confirmations, status }
   }
 
@@ -1004,6 +1009,7 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               modal6Disclosure={modal6Disclosure}
               modal7Disclosure={modal7Disclosure}
               openSupplyButton={openSupplyButton}
+              URLNetwork={URLNetwork}
               checkIfLiquidityPairExist={checkIfLiquidityPairExist}
               approveTokenSpending={approveTokenSpending}
               confirmingSupply={confirmingSupply}
