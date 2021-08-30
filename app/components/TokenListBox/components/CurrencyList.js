@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Modal,
   ModalBody,
@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactList from 'react-list';
 import ArrowDownImage from '../../../assets/arrow-down.svg';
-
+import styles from '../../../styles/CurrencyList.css';
 const CurrencyList = ({
   Row,
   list,
@@ -28,6 +28,7 @@ const CurrencyList = ({
   setShowCurrencyList,
 }) => {
   const isItemLoaded = ({ index }) => !!list[index];
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -37,7 +38,7 @@ const CurrencyList = ({
         padding-top="15px"
         borderRadius="20px"
         width="90vw"
-        minHeight="60vh"
+        // minHeight="60vh"
       >
         <ModalCloseButton
           width="24px"
@@ -82,14 +83,7 @@ const CurrencyList = ({
             <hr style={{ width: '100vw', border: '1px solid #29235E' }} />
           </Flex>
           {toggleDisplay && (
-            <div
-              style={{
-                overflow: 'auto',
-                maxHeight: 300,
-                marginRight: '-10px',
-                paddingRight: '10px',
-              }}
-            >
+            <div className={styles.list}>
               <ReactList
                 itemRenderer={Row}
                 length={list.length}
@@ -98,7 +92,13 @@ const CurrencyList = ({
             </div>
           )}
         </ModalBody>
-        <ModalFooter justifyContent="center">
+        <ModalFooter
+          backgroundColor="#181538"
+          height="48px"
+          borderEndEndRadius="15px"
+          borderEndStartRadius="15px"
+          justifyContent="center"
+        >
           <div>
             {' '}
             <Text

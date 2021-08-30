@@ -222,7 +222,7 @@ function TokenListBox({
       opacity={list[index].symbol !== 'SELECT A TOKEN' ? 1 : 0.4}
       height="63px"
       borderRadius="10px"
-      background="rgba(55, 38, 91, 0.15)"
+      backgroundColor="#120136"
     >
       {list[index].imported ? (
         <NullImage24
@@ -235,13 +235,17 @@ function TokenListBox({
           alt=" "
           borderRadius="100%"
           background="whitesmoke"
+          marginRight="4px"
         />
       )}
       <Flex flexDirection="column" width="100%" justifyContent="space-around">
         <Text fontSize="md" fontWeight="regular" color="#fff" m={1}>
           {list[index].symbol}
         </Text>
-        <Text m={1} style={{ display: 'block', color: '#b3b3b3' }}>
+        <Text
+          m={1}
+          style={{ display: 'block', color: '#b3b3b3', marginTop: '-10px' }}
+        >
           {list[index].imported && (
             <small style={{ fontSize: 'x-small' }}>
               <em>Added by User </em>
