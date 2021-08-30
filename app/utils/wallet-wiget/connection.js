@@ -52,9 +52,10 @@ export const connectMetaMask = async () =>
     method: 'eth_requestAccounts',
   });
 export const connectBinance = async () =>
-  await window.BinanceChain.request({
+ await window.BinanceChain.request({
     method: 'eth_requestAccounts',
-  });
+  })
+
 
 export const getAddressTokenBalance = async (
   address,

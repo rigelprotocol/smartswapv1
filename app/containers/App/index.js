@@ -68,15 +68,21 @@ const App = props => {
     })();
   }, [wallet]);
 
-  // useEffect(() => {
-  //   if (window.ethereum) {
-  //     checkchain();
-  //     const obj = ethereum.on('chainChanged', chainId => {
-  //       console.log(chainId);
-  //       window.location.reload();
-  //     });
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (window.ethereum) {
+      checkchain();
+      const obj = ethereum.on('chainChanged', chainId => {
+        console.log(chainId);
+        window.location.reload();
+      });
+    }else if(window.BinanceChain) {
+      getBinanceChain()
+      const obj = window.BinanceChain.on('chainChanged', chainId => {
+        console.log(chainId);
+        window.location.reload();
+      });
+    }
+  }, []);
 
   useEffect(() => {
     getRGPprice();
@@ -176,9 +182,8 @@ async function reConnector(props)  {
     !props.state.wallet.connected
   ) {
     let selectedAddress = await window.BinanceChain.request({
-      method: 'eth_requestAccounts',
+      method: 'eth_accounts',
     })
-    console.log({selectedAddress})
     props.reConnect({...window.BinanceChain,selectedAddress:selectedAddress[0] },"binance");
   }
 }

@@ -67,7 +67,7 @@ export const reConnect = (wallet,type="metamask") => async dispatch => {
     return dispatch({
       type: NOTICE, message: {
         title: 'Connection Error:',
-        body: 'SSSSSSSSSSSSSSSthis page and reconnect',
+        body: 'Please reload this page and reconnect',
         type: 'error',
       }
     });
