@@ -1,11 +1,3 @@
-/* style={{
-  overflow: 'auto',
-  maxHeight: 300,
-  marginRight: '-10px',
-  paddingRight: '10px',
-  backgroundColor: '#120136',
-}} */
-
 .list {
   overflow: auto;
   max-height: 300px;
@@ -17,7 +9,6 @@
 }
 
 .list::-webkit-scrollbar-track {
-  /* display: none; */
   background: #140f36;
 }
 
