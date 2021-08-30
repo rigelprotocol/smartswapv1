@@ -23,16 +23,9 @@ const InputSelector = ({
       <>
         <Flex justifyContent="space-between" mb={2}>
           <Input
-<<<<<<< HEAD
-            placeholder='0.0'
-            fontSize="28px"
-            color=" rgba(255,255,255)"
-            className={selectedToToken ? 'to__button' : 'from__button'}
-=======
             placeholder="0.0"
             fontSize="28px"
             color=" rgba(255,255,255)"
->>>>>>> 39e173e68f2324e299d8ff779e738d6823066fe8
             value={value}
             isRequired
             width="40%"
@@ -41,6 +34,7 @@ const InputSelector = ({
             onChange={e => {
               handleChange(e);
             }}
+            className={selectedToToken ? 'to__button' : 'from__button'}
           />
           <Flex
             cursor="pointer"
@@ -82,7 +76,6 @@ const InputSelector = ({
                   fontSize="16px"
                   cursor="pointer"
                   bg={selectedToken ? 'none' : '#40BAD5'}
-
                   color="white"
                   _hover={{ background: '#72cfe4', color: '#29235E' }}
                   rightIcon={<ChevronDownIcon />}
@@ -94,20 +87,16 @@ const InputSelector = ({
                       </Circle>
 
                       {selectedToken.imported === true && <NullImage24 />}
-<<<<<<< HEAD
                       <Text
                         className={
                           selectedToToken
                             ? 'textTo__button'
                             : 'textFrom__button'
                         }
-                        ml={4}
+                        ml={2}
                       >
                         {selectedToken.symbol}
                       </Text>
-=======
-                      <Text ml={2}>{selectedToken.symbol}</Text>
->>>>>>> 39e173e68f2324e299d8ff779e738d6823066fe8
                     </>
                   )}
                 </Button>
