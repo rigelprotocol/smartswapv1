@@ -104,11 +104,6 @@ const Step = ({
                 Products
               </a>
             </li>
-            <li className={styles.dotli}>
-              <a className={desc7 && styles.active} href="#">
-                Products
-              </a>
-            </li>
           </ul>
         )}
       </div>

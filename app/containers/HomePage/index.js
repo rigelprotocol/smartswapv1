@@ -304,11 +304,40 @@ export default function HomePage(props) {
         width: '280px',
       },
     },
+    // {
+    //   selector: '.to__button',
+    //   content: ({ goTo, inDom }) => (
+    //     <Step
+    //       title={'Order History'}
+    //       description={
+    //         'Click here to view your Order History and Market History for all your previous transactions'
+    //       }
+    //       desc5={true}
+    //     >
+    //       <button
+    //         onClick={() => setIsTourOpen(false)}
+    //         className={style.skipbutton}
+    //       >
+    //         Skip
+    //       </button>
+    //       <button onClick={() => goTo(5)} className={style.nextbutton}>
+    //         Next
+    //       </button>
+    //     </Step>
+    //   ),
+    //   style: {
+    //     borderRadius: '10px',
+    //     backgroundColor: '#34215F',
+    //     color: '#fff',
+    //     padding: '24px 20px',
+    //     width: '280px',
+    //   },
+    // },
     {
-      selector: '.from__button',
+      selector: '.selectFrom__button',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Order History'}
+          title={'Swap from'}
           description={
             'Click here to view your Order History and Market History for all your previous transactions'
           }
@@ -334,10 +363,10 @@ export default function HomePage(props) {
       },
     },
     {
-      selector: '.to__button',
+      selector: '.selectedTo__button',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Order History'}
+          title={'Swap to'}
           description={
             'Click here to view your Order History and Market History for all your previous transactions'
           }
@@ -363,7 +392,7 @@ export default function HomePage(props) {
       },
     },
     {
-      selector: '.selectFrom__button',
+      selector: '.from__button',
       content: ({ goTo, inDom }) => (
         <Step
           title={'Order History'}
@@ -371,35 +400,6 @@ export default function HomePage(props) {
             'Click here to view your Order History and Market History for all your previous transactions'
           }
           desc6={true}
-        >
-          <button
-            onClick={() => setIsTourOpen(false)}
-            className={style.skipbutton}
-          >
-            Skip
-          </button>
-          <button onClick={() => goTo(6)} className={style.nextbutton}>
-            Next
-          </button>
-        </Step>
-      ),
-      style: {
-        borderRadius: '10px',
-        backgroundColor: '#34215F',
-        color: '#fff',
-        padding: '24px 20px',
-        width: '280px',
-      },
-    },
-    {
-      selector: '.textTo__button',
-      content: ({ goTo, inDom }) => (
-        <Step
-          title={'Order History'}
-          description={
-            'Click here to view your Order History and Market History for all your previous transactions'
-          }
-          desc7={true}
         >
           <button
             onClick={() => setIsTourOpen(false)}
@@ -423,6 +423,7 @@ export default function HomePage(props) {
         width: '280px',
       },
     },
+
     // {
     //   selector: '.css-1jo4mlf',
     //   content: ({ goTo, inDom }) => (
