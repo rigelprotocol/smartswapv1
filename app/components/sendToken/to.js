@@ -37,12 +37,14 @@ const SendTo = props => {
         justifyContent="space-between"
         px={4}
         rounded="2xl"
+
+
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
             To
           </Text>
-          <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+          <Text pr={4} fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             Balance: {selectedToToken.balance}
           </Text>
         </Flex>

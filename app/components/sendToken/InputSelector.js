@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
-import { Flex, Text } from '@chakra-ui/layout';
+import { Flex, Text, Box, Circle } from '@chakra-ui/layout';
 import { Menu } from '@chakra-ui/menu';
 import { Button } from '@chakra-ui/button';
 import { Input } from '@chakra-ui/input';
@@ -21,15 +21,23 @@ const InputSelector = ({
   if (isMobileDevice) {
     return (
       <>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" mb={2}>
           <Input
-            placeholder={'0.0'}
+<<<<<<< HEAD
+            placeholder='0.0'
+            fontSize="28px"
+            color=" rgba(255,255,255)"
             className={selectedToToken ? 'to__button' : 'from__button'}
-            fontSize="lg"
-            color=" rgba(255, 255, 255,0.25)"
+=======
+            placeholder="0.0"
+            fontSize="28px"
+            color=" rgba(255,255,255)"
+>>>>>>> 39e173e68f2324e299d8ff779e738d6823066fe8
             value={value}
             isRequired
-            width="38%"
+            width="40%"
+            border={0}
+            variant="unstyled"
             onChange={e => {
               handleChange(e);
             }}
@@ -37,7 +45,7 @@ const InputSelector = ({
           <Flex
             cursor="pointer"
             justifyContent="space-between"
-            alignItems="center"
+            alignItems="right"
           >
             {max ? (
               <Text
@@ -45,7 +53,7 @@ const InputSelector = ({
                 p="5px 10px"
                 rounded="lg"
                 mt="10px"
-                fontSize="sm"
+                fontSize="xs"
                 width="50%"
                 textAlign="center"
                 color="#72cfe4"
@@ -59,7 +67,7 @@ const InputSelector = ({
             ) : (
               <></>
             )}
-            <Flex>
+            <Box>
               <Menu>
                 <Button
                   onClick={onOpen}
@@ -69,20 +77,24 @@ const InputSelector = ({
                       : 'selectFrom__button'
                   }
                   border="0px"
-                  h="30px"
+                  pl={3}
                   fontWeight="regular"
                   fontSize="16px"
                   cursor="pointer"
                   bg={selectedToken ? 'none' : '#40BAD5'}
-                  marginBottom="5px"
+
                   color="white"
                   _hover={{ background: '#72cfe4', color: '#29235E' }}
                   rightIcon={<ChevronDownIcon />}
                 >
                   {typeof selectedToken.symbol !== 'undefined' && (
                     <>
-                      <Image src={selectedToken.logoURI} />
+                      <Circle size="40px" color="rgba(64, 186, 213,0.35)">
+                        <Image src={selectedToken.logoURI} />
+                      </Circle>
+
                       {selectedToken.imported === true && <NullImage24 />}
+<<<<<<< HEAD
                       <Text
                         className={
                           selectedToToken
@@ -93,11 +105,14 @@ const InputSelector = ({
                       >
                         {selectedToken.symbol}
                       </Text>
+=======
+                      <Text ml={2}>{selectedToken.symbol}</Text>
+>>>>>>> 39e173e68f2324e299d8ff779e738d6823066fe8
                     </>
                   )}
                 </Button>
               </Menu>
-            </Flex>
+            </Box>
           </Flex>
         </Flex>
       </>
