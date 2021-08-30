@@ -46,12 +46,13 @@ import defaultTokenList from '../../utils/default-token.json';
 import testNetTokenList from '../../utils/test-net-tokens.json';
 import mainTokenList from '../../utils/main-token.json';
 
-export const reConnect = (wallet) => async dispatch => {
+export const reConnect = (wallet,type="metamask") => async dispatch => {
+  console.log({wallet})
   try {
     dispatch({ type: LOADING_WALLET, payload: true });
     const { selectedAddress, chainId } = wallet;
-    const ethProvider = await provider();
-    const walletSigner = await signer();
+    const ethProvider =   binanceProvider() ;
+    const walletSigner = await binanceSigner()
     const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress))).toString();
     const rgpBalance = await getAddressTokenBalance(selectedAddress, getTokenAddress(chainId), walletSigner);
     dispatch({
@@ -66,7 +67,7 @@ export const reConnect = (wallet) => async dispatch => {
     return dispatch({
       type: NOTICE, message: {
         title: 'Connection Error:',
-        body: 'Please reload this page and reconnect',
+        body: 'SSSSSSSSSSSSSSSthis page and reconnect',
         type: 'error',
       }
     });
@@ -79,7 +80,7 @@ export const reConnect = (wallet) => async dispatch => {
 export const connectWallet = (wallet) => async dispatch => {
   // alert(allewt)
   if(wallet==="metamask"){
-    connectMetaMaskWallet()
+    connectMetaMaskWallet(dispatch)
   }else if(wallet==="binance"){
     connectBinanceWallet(dispatch)
   }
@@ -90,36 +91,10 @@ const connectBinanceWallet = async (dispatch) =>{
     dispatch({ type: LOADING_WALLET, payload: true });
     const bscProvider = binanceProvider()
     const walletSigner = await binanceSigner()
-    console.log({walletSigner})
     const chainId =await window.BinanceChain.request({ method: 'eth_chainId' });
-    // if(deviceChainId !== '0x38'){
-    //   try {
-    //     await window.BinanceChain.request({
-    //       method: 'wallet_addEthereumChain',
-    //       params: [
-    //         {
-    //           chainId:`0x${chainId.toString()}`,
-    //           chainName: 'Smart Chain',
-    //           nativeCurrency: {
-    //             name: 'BNB',
-    //             symbol: 'bnb',
-    //             decimals: 18,
-    //           },
-    //           rpcUrls: ['https://bsc-dataseed.binance.org/'],
-    //           blockExplorerUrls: ['https://bscscan.com/'],
-    //         }
-    //       ]
-    //     })
-    //   }catch(err){
-    //     console.log(err)
-    //   }
-    // }
     const res =  await connectBinance()
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   const balance = await bscProvider.getBalance(res[0]);
-    console.log(balance.toString())  
-    console.log(res)
-    console.log(chainId)
     dispatch({
       type: WALLET_CONNECTED, wallet: {
         address: res[0], balance: formatBalance(ethers.utils.formatEther(balance)),
@@ -152,7 +127,7 @@ const connectBinanceWallet = async (dispatch) =>{
     }
 
 }
-const connectMetaMaskWallet = ()=>async dispatch  =>{
+const connectMetaMaskWallet = async (dispatch)   =>{
 
   try {
     dispatch({ type: LOADING_WALLET, payload: true });
@@ -240,7 +215,7 @@ export const getTokenAddress = (chainId) => {
   if (chainId === '0x38' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
     return '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
   }
-  if (chainId === '0x61' && window.ethereum !== undefined && window.ethereum.isMetaMask) {
+  if ((chainId === '0x61' && window.ethereum !== undefined && window.ethereum.isMetaMask) || chainId === '0x61' && window.BinanceChain !== undefined) {
     return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
   }
   return window.ethereum !== undefined && window.ethereum.isTrust && chainId == '0x38' && '0xFA262F303Aa244f9CC66f312F0755d89C3793192';

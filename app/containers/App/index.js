@@ -94,16 +94,30 @@ const App = props => {
     } catch (error) {}
   };
 
-  // useEffect(() => {
-  //   if (window.ethereum) {
-  //     checkchain();
-  //   }
-  // }, [wallet]);
+  useEffect(() => {
+    if (window.ethereum) {
+      getMetaMaskChain();
+    }else if (window.BinanceChain){
+      getBinanceChain();
+    }
+  }, [wallet]);
 
-  const checkchain = async () => {
+  const getMetaMaskChain = async () => {
     const chainID = await window.ethereum.request({
       method: 'eth_chainId',
     });
+    checkchain(chainID)
+  }
+  const getBinanceChain = async () => {
+    const chainID = await window.BinanceChain.request({
+      method: 'eth_chainId',
+    });
+    checkchain(chainID)
+  }
+  const checkchain = async (chainID) => {
+    // const chainID = await window.ethereum.request({
+    //   method: 'eth_chainId',
+    // });
     props.updateChainId(chainID);
     if (isSupportedNetwork(chainID)) {
       listener(wallet, props);
@@ -147,7 +161,7 @@ export default connect(
   },
 )(App);
 
-function reConnector(props) {
+async function reConnector(props)  {
   if (
     window.ethereum &&
     window.ethereum.isConnected() &&
@@ -155,7 +169,17 @@ function reConnector(props) {
     window.ethereum.isMetaMask &&
     !props.state.wallet.connected
   ) {
-    props.reConnect(window.ethereum);
+    props.reConnect(window.ethereum,"metamask");
+  }else if (
+    window.BinanceChain &&
+    window.BinanceChain.isConnected() &&
+    !props.state.wallet.connected
+  ) {
+    let selectedAddress = await window.BinanceChain.request({
+      method: 'eth_requestAccounts',
+    })
+    console.log({selectedAddress})
+    props.reConnect({...window.BinanceChain,selectedAddress:selectedAddress[0] },"binance");
   }
 }
 
