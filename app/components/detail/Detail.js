@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import styles from '../../styles/details.css';
-import ReadMore from './ReadMore';
 
 const Detail = ({ swapOutputToken, swapInputToken }) => (
   <>
@@ -20,7 +19,7 @@ const Detail = ({ swapOutputToken, swapInputToken }) => (
             <Text fontSize="14px" color="rgba(255, 255, 255,0.25)">
               Total supply:
             </Text>
-            <Text fontSize="14px" color="white" textTransform="uppercase">
+            <Text fontSize="14px" color="white">
               {swapInputToken.t_supply} {swapInputToken.symbol}
             </Text>
           </Flex>
@@ -28,7 +27,7 @@ const Detail = ({ swapOutputToken, swapInputToken }) => (
             <Text fontSize="14px" color="rgba(255, 255, 255,0.25)">
               Circulating supply:
             </Text>
-            <Text fontSize="14px" color="white" textTransform="uppercase">
+            <Text fontSize="14px" color="white">
               {swapInputToken.C_supply} {swapInputToken.symbol}
             </Text>
           </Flex>
@@ -36,9 +35,9 @@ const Detail = ({ swapOutputToken, swapInputToken }) => (
             <Text fontSize="14px" color="rgba(255, 255, 255,0.25)" mb={0}>
               Description:
             </Text>
-            {swapInputToken.details !== undefined && (
-              <ReadMore>{swapInputToken.details}</ReadMore>
-            )}
+            <Text fontSize="14px" color="white" lineHeight={6}>
+              {swapInputToken.details}
+            </Text>
           </Flex>
         </Box>
       </Box>
@@ -60,7 +59,7 @@ const Detail = ({ swapOutputToken, swapInputToken }) => (
               <Text fontSize="14px" color="rgba(255, 255, 255,0.25)">
                 Total supply:
               </Text>
-              <Text fontSize="14px" color="white" textTransform="uppercase">
+              <Text fontSize="14px" color="white">
                 {swapOutputToken.t_supply} {swapOutputToken.symbol}
               </Text>
             </Flex>
@@ -68,7 +67,7 @@ const Detail = ({ swapOutputToken, swapInputToken }) => (
               <Text fontSize="14px" color="rgba(255, 255, 255,0.25)">
                 Circulating supply:
               </Text>
-              <Text fontSize="14px" color="white" textTransform="uppercase">
+              <Text fontSize="14px" color="white">
                 {swapOutputToken.C_supply} {swapOutputToken.symbol}
               </Text>
             </Flex>
@@ -76,9 +75,9 @@ const Detail = ({ swapOutputToken, swapInputToken }) => (
               <Text fontSize="14px" color="rgba(255, 255, 255,0.25)" mb={0}>
                 Description:
               </Text>
-              {swapOutputToken.details !== undefined && (
-                <ReadMore>{swapOutputToken.details}</ReadMore>
-              )}
+              <Text fontSize="14px" color="white" lineHeight={6}>
+                {swapOutputToken.details}
+              </Text>
             </Flex>
           </Box>
         </Box>

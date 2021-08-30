@@ -39,7 +39,7 @@ module.exports = require('./webpack.base.babel')({
           },
         },
         parallel: true,
-        cache: false,
+        cache: true,
         sourceMap: true,
       }),
     ],
@@ -51,17 +51,17 @@ module.exports = require('./webpack.base.babel')({
       chunks: 'all',
       maxInitialRequests: 10,
       minSize: 0,
-      // cacheGroups: {
-      //   vendor: {
-      //     test: /[\\/]node_modules[\\/]/,
-      //     name(module) {
-      //       const packageName = module.context.match(
-      //         /[\\/]node_modules[\\/](.*?)([\\/]|$)/,
-      //       )[1];
-      //       return `npm.${packageName.replace('@', '')}`;
-      //     },
-      //   },
-      // },
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            const packageName = module.context.match(
+              /[\\/]node_modules[\\/](.*?)([\\/]|$)/,
+            )[1];
+            return `npm.${packageName.replace('@', '')}`;
+          },
+        },
+      },
     },
   },
 

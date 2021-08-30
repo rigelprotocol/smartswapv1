@@ -1,6 +1,5 @@
 import Web3 from 'web3';
 import tokenDetails from './default-token-details.json';
-import { networkURLS } from './constants';
 
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
@@ -78,30 +77,10 @@ export const isValidJson = jsonObject => {
 
 export const objectHasProperty = (object, props) =>
   Object.prototype.hasOwnProperty.call(object, props);
+console.log(tokenDetails);
 export const getSelectedTokenDetails = symbol =>
   tokenDetails.length > 0 &&
   symbol !== null &&
   tokenDetails.filter(
     fields => fields.symbol.toUpperCase() === symbol.toUpperCase(),
   )[0];
-
-export function mergeArrays(arrays) {
-  let jointArray = [];
-  arrays.forEach(array => {
-    jointArray = [...jointArray, ...array];
-  });
-  let updatedArray = jointArray.filter(
-    (thing, index, self) =>
-      index === self.findIndex(t => t.symbol === thing.symbol),
-  );
-  updatedArray = updatedArray.map((token, id) => {
-    const balance = null;
-    const available = true;
-    const imported = !!token.imported;
-    return { ...token, id, balance, available, imported };
-  });
-  return updatedArray.filter(token => token.symbol !== 'SELECT A TOKEN');
-}
-
-export const createURLNetwork = (hash) =>
-  `https://${networkURLS}/tx/${hash}`;

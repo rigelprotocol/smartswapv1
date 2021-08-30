@@ -7,7 +7,7 @@ import { tokenWhere } from 'utils/constants';
 import { connect } from 'react-redux';
 import InputSelector from './InputSelector';
 
-const SendTo = props => {
+const SendTo = (props) => {
   const {
     amountIn,
     handleChangeToAmount,
@@ -18,11 +18,7 @@ const SendTo = props => {
     wallet,
   } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isOpenModal,
-    onOpen: onOpenModal,
-    onClose: onCloseModal,
-  } = useDisclosure();
+  const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   // move this to the actually state created
   // useEffect(() => {
   //   setSelectedToToken(tokenWhere('SELECT A TOKEN'));
@@ -37,14 +33,12 @@ const SendTo = props => {
         justifyContent="space-between"
         px={4}
         rounded="2xl"
-
-
       >
         <Flex justifyContent="space-between" mb={1}>
           <Text fontSize="sm" color="#40BAD5">
             To
           </Text>
-          <Text pr={4} fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+          <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             Balance: {selectedToToken.balance}
           </Text>
         </Flex>
