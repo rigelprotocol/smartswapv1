@@ -68,15 +68,15 @@ const App = props => {
     })();
   }, [wallet]);
 
-  useEffect(() => {
-    if (window.ethereum) {
-      checkchain();
-      const obj = ethereum.on('chainChanged', chainId => {
-        console.log(chainId);
-        window.location.reload();
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (window.ethereum) {
+  //     checkchain();
+  //     const obj = ethereum.on('chainChanged', chainId => {
+  //       console.log(chainId);
+  //       window.location.reload();
+  //     });
+  //   }
+  // }, []);
 
   useEffect(() => {
     getRGPprice();
@@ -94,12 +94,11 @@ const App = props => {
     } catch (error) {}
   };
 
-  useEffect(() => {
-    // CREATE AN ELSE IF STATEMENT TO ALSO CHECK IF WINDOW.BINANCE IS AVAILABLE. THIS WILL CALL A DIFFERENCE FUNCTION THAT WILL CALL WINDOW.BINANCE
-    if (window.ethereum) {
-      checkchain();
-    }
-  }, [wallet]);
+  // useEffect(() => {
+  //   if (window.ethereum) {
+  //     checkchain();
+  //   }
+  // }, [wallet]);
 
   const checkchain = async () => {
     const chainID = await window.ethereum.request({

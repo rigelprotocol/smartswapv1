@@ -440,8 +440,9 @@ setDetermineInputChange("to")
   }
 
   const addingLiquidity = async () => {
+    console.log(wallet)
     if (wallet.signer !== 'signer') {
-      try {
+      // try {
         const rout = await router();
         const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
@@ -471,12 +472,12 @@ setDetermineInputChange("to")
         setTimeout(()=> setURLNetwork(createURLNetwork(hash)) ,3000)
         closeModal2()
         openModal3()
-      } catch (e) {
-        console.log(trxHashed)
-        props.showErrorMessage(e)
-        closeModal2()
-        openModal5()
-      }
+      // } catch (e) {
+      //   console.log(trxHashed)
+      //   props.showErrorMessage(e)
+      //   closeModal2()
+      //   openModal5()
+      // }
     }
   };
   const addMoreLiquidity = async (liquidity) =>{

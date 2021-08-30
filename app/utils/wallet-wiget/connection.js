@@ -24,11 +24,35 @@ export const provider = async () => {
     });
   }
 };
+export const binanceProvider = ()=>{
+  console.log(window.BinanceChain)
+  let newProvider
+  try {
+    if (window.BinanceChain !== 'undefined') {
+     newProvider = window.BinanceChain;
+    return new ethers.providers.Web3Provider(newProvider);
+    }
+    // return new ethers.providers.Web3Provider(bscProvider);
+  } catch (e) {
+    return notify({
+      title: 'System Error',
+      body: 'You have not installed MetaMask Wallet',
+      type: 'error',
+    });
+  }
+  console.log(newProvider)
+}
 
 export const signer = async () => (await provider()).getSigner();
 
+export const binanceSigner = async () => (binanceProvider()).getSigner();
+
 export const connectMetaMask = async () =>
   await window.ethereum.request({
+    method: 'eth_requestAccounts',
+  });
+export const connectBinance = async () =>
+  await window.BinanceChain.request({
     method: 'eth_requestAccounts',
   });
 
