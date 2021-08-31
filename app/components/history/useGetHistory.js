@@ -60,12 +60,11 @@ const useGetHistory = wallet => {
             transactionfee: items.gasPrice * items.gasUsed,
           }));
 
+        console.log('FirstFilter: ', dataFiltered);
         // data ready
         const useruserData = dataFiltered.map(data => ({
           inputAmount:
-            Number(data.value) === 0
-              ? data.transactionObj[1].value
-              : data.value,
+            Number(data.value) > 0 ? data.value : data.transactionObj[0].value,
           outputAmount:
             Number(data.value) > 0
               ? data.transactionObj[0].value
@@ -81,6 +80,8 @@ const useGetHistory = wallet => {
           time: convertToTime(data.timestamp),
           transactionFee: convertFromWei(data.transactionfee),
         }));
+
+        console.log('secondFilter : 1', useruserData);
 
         // geting tokens name
         const swapDataForWallet = await Promise.all(
