@@ -111,7 +111,7 @@ const InputSelector = ({
     <>
       <Flex justifyContent="space-between">
         <Input
-          placeholder="0.1"
+          placeholder="0.0"
           className={selectedToToken ? 'to__button' : 'from__button'}
           fontSize="lg"
           color=" rgba(255, 255, 255,0.25)"
@@ -157,6 +157,9 @@ const InputSelector = ({
               color="white"
               _hover={{ background: '#72cfe4', color: '#29235E' }}
               rightIcon={<ChevronDownIcon />}
+              className={
+                selectedToToken ? 'selectedTo__button' : 'selectFrom__button'
+              }
             >
               {typeof selectedToken.symbol !== 'undefined' && (
                 <>

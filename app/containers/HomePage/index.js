@@ -101,14 +101,15 @@ export default function HomePage(props) {
       },
     },
     {
-      selector: '.from__button',
+      selector: '.selectFrom__button',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Order History'}
+          mobile={isMobileDevice}
+          title={'Swap From'}
           description={
-            'Click here to view your Order History and Market History for all your previous transactions'
+            'Click here to select the token you would like to swap for another token.'
           }
-          desc4={true}
+          desc3={true}
         >
           <button
             onClick={() => setIsTourOpen(false)}
@@ -130,72 +131,52 @@ export default function HomePage(props) {
       },
     },
     {
-      selector: '.to__button',
+      selector: '.selectedTo__button',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Order History'}
+          mobile={isMobileDevice}
+          title={'Swap To'}
           description={
-            'Click here to view your Order History and Market History for all your previous transactions'
+            'Click here to select the token you would like to receive.'
+          }
+          desc4={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button
+            onClick={() => {
+              window.scroll(300, 0);
+              goTo(4);
+            }}
+            className={style.nextbutton}
+          >
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title={'Token Amount To Change'}
+          description={
+            'Enter the amount of tokens you would like to change from.'
           }
           desc5={true}
-        >
-          <button
-            onClick={() => setIsTourOpen(false)}
-            className={style.skipbutton}
-          >
-            Skip
-          </button>
-          <button onClick={() => goTo(4)} className={style.nextbutton}>
-            Next
-          </button>
-        </Step>
-      ),
-      style: {
-        borderRadius: '10px',
-        backgroundColor: '#34215F',
-        color: '#fff',
-        padding: '24px 20px',
-        width: '280px',
-      },
-    },
-    {
-      selector: '.css-1r2rfas',
-      content: ({ goTo, inDom }) => (
-        <Step
-          title={'Order History'}
-          description={
-            'Click here to view your Order History and Market History for all your previous transactions'
-          }
-          desc6={true}
-        >
-          <button
-            onClick={() => setIsTourOpen(false)}
-            className={style.skipbutton}
-          >
-            Skip
-          </button>
-          <button onClick={() => goTo(5)} className={style.nextbutton}>
-            Next
-          </button>
-        </Step>
-      ),
-      style: {
-        borderRadius: '10px',
-        backgroundColor: '#34215F',
-        color: '#fff',
-        padding: '24px 20px',
-        width: '280px',
-      },
-    },
-    {
-      selector: '.textTo__button',
-      content: ({ goTo, inDom }) => (
-        <Step
-          title={'Order History'}
-          description={
-            'Click here to view your Order History and Market History for all your previous transactions'
-          }
-          desc7={true}
         >
           <button
             onClick={() => setIsTourOpen(false)}
@@ -304,42 +285,13 @@ export default function HomePage(props) {
         width: '280px',
       },
     },
-    // {
-    //   selector: '.to__button',
-    //   content: ({ goTo, inDom }) => (
-    //     <Step
-    //       title={'Order History'}
-    //       description={
-    //         'Click here to view your Order History and Market History for all your previous transactions'
-    //       }
-    //       desc5={true}
-    //     >
-    //       <button
-    //         onClick={() => setIsTourOpen(false)}
-    //         className={style.skipbutton}
-    //       >
-    //         Skip
-    //       </button>
-    //       <button onClick={() => goTo(5)} className={style.nextbutton}>
-    //         Next
-    //       </button>
-    //     </Step>
-    //   ),
-    //   style: {
-    //     borderRadius: '10px',
-    //     backgroundColor: '#34215F',
-    //     color: '#fff',
-    //     padding: '24px 20px',
-    //     width: '280px',
-    //   },
-    // },
     {
       selector: '.selectFrom__button',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Swap from'}
+          title={'Swap From'}
           description={
-            'Click here to view your Order History and Market History for all your previous transactions'
+            'Click here to select the token you would like to swap for another token.'
           }
           desc4={true}
         >
@@ -366,9 +318,9 @@ export default function HomePage(props) {
       selector: '.selectedTo__button',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Swap to'}
+          title={'Swap To'}
           description={
-            'Click here to view your Order History and Market History for all your previous transactions'
+            'Click here to select the token you would like to receive.'
           }
           desc5={true}
         >
@@ -395,9 +347,9 @@ export default function HomePage(props) {
       selector: '.from__button',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Order History'}
+          title={'Token Amount To Change'}
           description={
-            'Click here to view your Order History and Market History for all your previous transactions'
+            'Click here to Enter the amount of tokens you would like to change from.'
           }
           desc6={true}
         >
@@ -423,39 +375,6 @@ export default function HomePage(props) {
         width: '280px',
       },
     },
-
-    // {
-    //   selector: '.css-1jo4mlf',
-    //   content: ({ goTo, inDom }) => (
-    //     <Step
-    //       title={'Order History'}
-    //       description={
-    //         'Click here to view your Order History and Market History for all your previous transactions'
-    //       }
-    //       desc8={true}
-    //     >
-    //       <button
-    //         onClick={() => setIsTourOpen(false)}
-    //         className={style.skipbutton}
-    //       >
-    //         Skip
-    //       </button>
-    //       <button
-    //         onClick={() => setIsTourOpen(false)}
-    //         className={style.nextbutton}
-    //       >
-    //         Done
-    //       </button>
-    //     </Step>
-    //   ),
-    //   style: {
-    //     borderRadius: '10px',
-    //     backgroundColor: '#34215F',
-    //     color: '#fff',
-    //     padding: '24px 20px',
-    //     width: '280px',
-    //   },
-    // },
   ];
 
   const start = () => {
@@ -493,7 +412,9 @@ export default function HomePage(props) {
           startAt={0}
           disableFocusLock={true}
           inViewThreshold={560}
-          // disableInteraction={false}
+          disableInteraction={true}
+          rounded={10}
+          maskSpace={5}
         />
 
         <Flex mb="100px" mx={2} flexWrap="wrap">

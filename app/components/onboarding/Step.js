@@ -66,11 +66,6 @@ const Step = ({
                 Home
               </a>
             </li>
-            <li className={styles.dotli}>
-              <a className={desc6 && styles.active} href="#">
-                About
-              </a>
-            </li>
           </ul>
         ) : (
           <ul className={styles.dots}>
