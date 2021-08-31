@@ -1,10 +1,10 @@
 import { Box, Text, Flex } from '@chakra-ui/layout';
 import React from 'react';
 import PropTypes from 'prop-types';
+import Spinner from 'components/spinner/spinner';
 import rightArrow from '../../assets/right-arrow.png';
 
 import Empty from './EmptyHistory';
-import Spinner from 'components/spinner/spinner';
 
 function OrderHistory({ data, loading, dataIsEmpty }) {
   // destructure the data props
@@ -15,16 +15,17 @@ function OrderHistory({ data, loading, dataIsEmpty }) {
     token2,
     amountIn,
     amountOut,
-    blockNumber,
-    gassFee,
+    time,
+    fee,
   } = data;
 
   return (
     <>
       {loading && <Spinner />}
       {dataIsEmpty && <Empty />}
+
       <Flex p={3}>
-        <div style={{ width: '100%' }}>
+        <div style={{}}>
           <Box
             color="#fff"
             bg="#29235E"
@@ -76,10 +77,10 @@ function OrderHistory({ data, loading, dataIsEmpty }) {
                   fontSize="12px"
                   lineHeight="0"
                 >
-                  Gas
+                  Fee
                 </Text>
                 <Text color="#fff" fontSize="14px" fontWeight="regular">
-                  {gassFee}
+                  {fee}
                 </Text>
               </Box>
               <Box>
@@ -88,10 +89,10 @@ function OrderHistory({ data, loading, dataIsEmpty }) {
                   lineHeight="0"
                   color="rgba(255, 255, 255,0.25)"
                 >
-                  Block # &nbsp;
+                  @ &nbsp;
                 </Text>
                 <Text color="#fff" fontSize="14px" fontWeight="regular">
-                  {blockNumber}
+                  {time}
                 </Text>
               </Box>
             </Flex>
@@ -117,7 +118,7 @@ function OrderHistory({ data, loading, dataIsEmpty }) {
 OrderHistory.propTypes = {
   data: PropTypes.object.isRequired,
   loading: PropTypes.bool,
-  dataIsEmpty: PropTypes.bool
+  dataIsEmpty: PropTypes.bool,
 };
 
 export default OrderHistory;

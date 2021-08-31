@@ -58,20 +58,24 @@ export function Home(props) {
         </Flex>
       </Flex>
 
-      {/* show && historyData.length !== 0 ? (
-        historyData.map(data => <OrderHistory data={data} />)
-      ) : (
-        <Empty />
-      ) */}
-
-      {show && historyData && historyData.map(data => <OrderHistory key={data.blockNumber} data={data} loading={isLoading} dataIsEmpty={historyData.length < 1} />)}
+      <Box overflowY="auto" maxH={460}>
+        {show &&
+          historyData &&
+          historyData.map(data => (
+            <OrderHistory
+              key={data.blockNumber}
+              data={data}
+              loading={isLoading}
+              dataIsEmpty={historyData.length < 1}
+            />
+          ))}
+      </Box>
     </Box>
   );
 }
 
 Home.propTypes = {
   wallet: PropTypes.object.isRequired,
-  historyData: PropTypes.array
 };
 
 const mapStateToProps = ({ wallet }) => ({ wallet });
