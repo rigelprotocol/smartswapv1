@@ -87,6 +87,103 @@ export default function HomePage(props) {
           >
             Skip
           </button>
+          <button onClick={() => goTo(2)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectFrom__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title={'Swap From'}
+          description={
+            'Click here to select the token you would like to swap for another token.'
+          }
+          desc3={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(3)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectedTo__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title={'Swap To'}
+          description={
+            'Click here to select the token you would like to receive.'
+          }
+          desc4={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button
+            onClick={() => {
+              window.scroll(300, 0);
+              goTo(4);
+            }}
+            className={style.nextbutton}
+          >
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title={'Token Amount To Change'}
+          description={
+            'Enter the amount of tokens you would like to change from.'
+          }
+          desc5={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
           <button
             onClick={() => setIsTourOpen(false)}
             className={style.nextbutton}
@@ -175,6 +272,93 @@ export default function HomePage(props) {
           >
             Skip
           </button>
+          <button onClick={() => goTo(3)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectFrom__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Swap From'}
+          description={
+            'Click here to select the token you would like to swap for another token.'
+          }
+          desc4={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(4)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectedTo__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Swap To'}
+          description={
+            'Click here to select the token you would like to receive.'
+          }
+          desc5={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(5)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Token Amount To Change'}
+          description={
+            'Click here to Enter the amount of tokens you would like to change from.'
+          }
+          desc6={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
           <button
             onClick={() => setIsTourOpen(false)}
             className={style.nextbutton}
@@ -228,7 +412,9 @@ export default function HomePage(props) {
           startAt={0}
           disableFocusLock={true}
           inViewThreshold={560}
-          // disableInteraction={false}
+          disableInteraction={true}
+          rounded={10}
+          maskSpace={5}
         />
 
         <Flex mb="100px" mx={2} flexWrap="wrap">
