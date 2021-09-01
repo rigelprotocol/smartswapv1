@@ -32,7 +32,8 @@ export const getSigner = () => {
     if (typeof signer === 'string') {
       if (window.ethereum && window.ethereum !== 'undefined') {
         signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
-      }else if(window.BinanceChain && window.BinanceChain !== 'undefined'){
+      }
+      else if(window.BinanceChain && window.BinanceChain !== 'undefined'){
         signer = new ethers.providers.Web3Provider(window.BinanceChain).getSigner();
       }
     }

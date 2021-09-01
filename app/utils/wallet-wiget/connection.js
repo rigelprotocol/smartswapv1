@@ -25,7 +25,6 @@ export const provider = async () => {
   }
 };
 export const binanceProvider = ()=>{
-  console.log(window.BinanceChain)
   let newProvider
   try {
     if (window.BinanceChain !== 'undefined') {

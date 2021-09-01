@@ -93,7 +93,8 @@ const connectBinanceWallet = async (dispatch) =>{
     dispatch({ type: LOADING_WALLET, payload: true });
     const bscProvider = binanceProvider()
     const walletSigner = await binanceSigner()
-    const chainId =await window.BinanceChain.request({ method: 'eth_chainId' });
+    // const chainId =await window.BinanceChain.request({ method: 'eth_chainId' })
+    const chainId = "0x61"
     const res =  await connectBinance()
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   const balance = await bscProvider.getBalance(res[0]);
