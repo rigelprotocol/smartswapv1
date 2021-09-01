@@ -12,6 +12,7 @@
   },
   "author": "Rigel Protocol",
   "license": "MIT",
+  "homepage": ".",
   "scripts": {
     "analyze:clean": "rimraf stats.json",
     "preanalyze": "npm run analyze:clean",
