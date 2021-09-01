@@ -42,7 +42,7 @@ const Options = ({ connectWallet }) => (
         p={8}
         mt={5}
         onClick={async () => {
-          connectWallet("metamask");
+          connectWallet();
         }}
         rounded="2xl"
       >

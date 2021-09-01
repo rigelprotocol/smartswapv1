@@ -76,13 +76,6 @@ const App = props => {
         window.location.reload();
       });
     }
-    // else if(window.BinanceChain) {
-    //   getBinanceChain()
-    //   const obj = window.BinanceChain.on('chainChanged', chainId => {
-    //     console.log(chainId);
-    //     window.location.reload();
-    //   });
-    // }
   }, []);
 
   useEffect(() => {
@@ -105,9 +98,6 @@ const App = props => {
     if (window.ethereum) {
       getMetaMaskChain();
     }
-    // else if (window.BinanceChain){
-    //   getBinanceChain();
-    // }
   }, [wallet]);
 
   const getMetaMaskChain = async () => {
@@ -116,16 +106,7 @@ const App = props => {
     });
     checkchain(chainID)
   }
-  const getBinanceChain = async () => {
-    const chainID = await window.BinanceChain.request({
-      method: 'eth_chainId',
-    });
-    checkchain(chainID)
-  }
   const checkchain = async (chainID) => {
-    // const chainID = await window.ethereum.request({
-    //   method: 'eth_chainId',
-    // });
     props.updateChainId(chainID);
     if (isSupportedNetwork(chainID)) {
       listener(wallet, props);
@@ -177,18 +158,8 @@ async function reConnector(props)  {
     window.ethereum.isMetaMask &&
     !props.state.wallet.connected
   ) {
-    props.reConnect(window.ethereum,"metamask");
+    props.reConnect(window.ethereum);
   }
-  // else if (
-  //   window.BinanceChain &&
-  //   window.BinanceChain.isConnected() &&
-  //   !props.state.wallet.connected
-  // ) {
-  //   let selectedAddress = await window.BinanceChain.request({
-  //     method: 'eth_accounts',
-  //   })
-  //   props.reConnect({...window.BinanceChain,selectedAddress:selectedAddress[0] },"binance");
-  // }
 }
 
 function listener(wallet, props) {

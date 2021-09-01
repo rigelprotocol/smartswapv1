@@ -35,16 +35,15 @@ export const binanceProvider = ()=>{
   } catch (e) {
     return notify({
       title: 'System Error',
-      body: 'You have not installed MetaMask Wallet',
+      body: 'You have not installed Binance Wallet',
       type: 'error',
     });
   }
-  console.log(newProvider)
 }
 
 export const signer = async () => (await provider()).getSigner();
 
-export const binanceSigner = async () => (binanceProvider()).getSigner();
+export const binanceSigner = () => (binanceProvider()).getSigner();
 
 export const connectMetaMask = async () =>
   await window.ethereum.request({

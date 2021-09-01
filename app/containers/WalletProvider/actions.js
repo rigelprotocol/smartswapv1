@@ -45,7 +45,7 @@ import defaultTokenList from '../../utils/default-token.json';
 import testNetTokenList from '../../utils/test-net-tokens.json';
 import mainTokenList from '../../utils/main-token.json';
 
-export const reConnect = (wallet,type="metamask") => async dispatch => {
+export const reConnect = (wallet) => async dispatch => {
   try {
     dispatch({ type: LOADING_WALLET, payload: true });
     const { selectedAddress, chainId } = wallet;
@@ -85,6 +85,15 @@ export const connectWallet = (wallet) => async dispatch => {
     connectMetaMaskWallet(dispatch)
   }else if(wallet==="binance"){
     connectBinanceWallet(dispatch)
+  }else{
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+    // return dispatch({
+    //   type: NOTICE, message: {
+    //     title: 'Connection Error',
+    //     body: 'Please reload this page and reconnect',
+    //     type: 'error',
+    //     }
+    //   });
   }
 
 };
