@@ -91,7 +91,7 @@ const App = props => {
         4,
       );
       props.updateRGPprice(RGPprice);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
