@@ -54,6 +54,7 @@ const SendTo = props => {
           value={amountIn}
           selectedToken={selectedToToken}
           onOpen={onOpen}
+          selectedToToken
         />
       </Box>
       <TokenListBox
