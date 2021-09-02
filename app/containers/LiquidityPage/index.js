@@ -259,7 +259,6 @@ const getWhichValueHasChanged = (liquidityRatio) =>{
     handleFromAmount(liquidityRatio)
   }else if(toValue!== "" && toValue>=0){
     handleToAmount(liquidityRatio)
-    alert("change from value")
   }
 }
 
