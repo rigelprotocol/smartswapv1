@@ -24,7 +24,6 @@ export const getProvider = () => {
     return new ethers.providers.Web3Provider(window.ethereum);
   } catch (Exception) {}
 };
-// GETSIGNER IS USE TO SIGN CONTRACT ON METAMASK. A NEW FUNCTION WILL BE CREATED FOR BINANCE CHAIN. PARTICULARLY, WINDOW.ETHEREUM WILL BE CHANGED TO WINDOW.BINANCE
 export const getSigner = () => {
   try {
     const { wallet } = store.getState().wallet;

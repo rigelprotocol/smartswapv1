@@ -176,7 +176,6 @@ export const Manual = props => {
         setUserHasApproveToken(false);
       }
       if (fromAmount !== '') {
-        console.log(parseFloat(fromAmount), selectedToken.balance);
         if (parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
           setInsufficientBalanceButton(true);
         } else {

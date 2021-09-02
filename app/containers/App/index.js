@@ -75,6 +75,8 @@ const App = props => {
         console.log(chainId);
         window.location.reload();
       });
+    }else if(window.BinanceChain){
+      checkBinanceChain()
     }
   }, []);
 
@@ -96,17 +98,14 @@ const App = props => {
 
   useEffect(() => {
     if (window.ethereum) {
-      getMetaMaskChain();
+      checkchain();
     }
   }, [wallet]);
 
-  const getMetaMaskChain = async () => {
+  const checkchain = async () => {
     const chainID = await window.ethereum.request({
       method: 'eth_chainId',
     });
-    checkchain(chainID)
-  }
-  const checkchain = async (chainID) => {
     props.updateChainId(chainID);
     if (isSupportedNetwork(chainID)) {
       listener(wallet, props);
@@ -114,6 +113,19 @@ const App = props => {
     } else {
       switchToBSC();
     }
+    await props.getTokenList();
+  };
+  const checkBinanceChain = async () => {
+    const chainID = await window.BinanceChain.request({
+      method: 'eth_chainId',
+    });
+    // props.updateChainId(chainID);
+    // if (isSupportedNetwork(chainID)) {
+    //   listener(wallet, props);
+    //   reConnector(props);
+    // } else {
+    //   switchToBSC();
+    // }
     await props.getTokenList();
   };
 

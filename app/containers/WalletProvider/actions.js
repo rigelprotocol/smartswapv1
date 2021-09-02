@@ -49,8 +49,8 @@ export const reConnect = (wallet) => async dispatch => {
   try {
     dispatch({ type: LOADING_WALLET, payload: true });
     const { selectedAddress, chainId } = wallet;
-    const ethProvider =   binanceProvider() ;
-    const walletSigner = await binanceSigner()
+    const ethProvider =  await provider() ;
+    const walletSigner = await signer()
     const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress))).toString();
     const rgpBalance = await getAddressTokenBalance(selectedAddress, getTokenAddress(chainId), walletSigner);
     dispatch({
@@ -115,7 +115,6 @@ const connectBinanceWallet = async (dispatch) =>{
     })
     const rgpAddress = getTokenAddress(chainId);
     const rgpBalance = await getAddressTokenBalance(res[0], rgpAddress, walletSigner);
-    console.log({rgpAddress,rgpBalance})
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
     return dispatch({
       type: NOTICE, message: {
@@ -218,17 +217,23 @@ export const updateChainId = chainId => dispatch => {
 export const changeRGPValue = wallet => async dispatch => {
   if (wallet.signer != 'signer') {
     try {
+      let walletProvider,chainId
       const { address } = wallet;
-      const ethProvider = await provider();
+      if(window.ethereum && window.ethereum.isConnected()){
+        walletProvider =await provider();
+        chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      }else if(window.BinanceChain && window.BinanceChain.isConnected()){
+        walletProvider = binanceProvider();
+        chainId = await window.BinanceChain.request({ method: 'eth_chainId' });
+      }
 
-      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
       const rgpBalance = await getAddressTokenBalance(
         wallet.address,
         getTokenAddress(chainId),
         wallet.signer,
       );
       const balance = formatBalance(
-        ethers.utils.formatEther(await ethProvider.getBalance(address)),
+        ethers.utils.formatEther(await walletProvider.getBalance(address)),
       ).toString();
       dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
       dispatch({ type: CHANGE_BNB, payload: { balance } });
