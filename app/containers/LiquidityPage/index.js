@@ -182,14 +182,15 @@ export function LiquidityPage(props) {
     getBalance()
   }, [percentValue, wallet])
 
-  const handleFromAmount = () => {
+  const handleFromAmount = (liquidityRatio = liquidityPairRatio) => {
     if(!newTokenPairButton){
-      setToValue((fromValue * liquidityPairRatio).toString());
+      console.log({fromValue,liquidityRatio})
+      setToValue((fromValue * liquidityRatio).toString());
     }
   }
-  const handleToAmount = () => {
+  const handleToAmount = (liquidityRatio = liquidityPairRatio) => {
     if(!newTokenPairButton){
-      setFromValue((toValue / liquidityPairRatio).toString());
+      setFromValue((toValue / liquidityRatio).toString());
     }
   }
 
@@ -244,13 +245,25 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
         liquidityRatio = tokenAReserve.toString() / tokenBreserve.toString();
       }
       setLiquidityPairRatio(liquidityRatio);
+      console.log(liquidityRatio)
+      getWhichValueHasChanged(liquidityRatio)
     } catch (error) {
       console.error(error)
     }
 
   }
+
+const getWhichValueHasChanged = (liquidityRatio) =>{
+  console.log('GETTING')
+  if(fromValue!== "" && fromValue>=0){
+    handleFromAmount(liquidityRatio)
+  }else if(toValue!== "" && toValue>=0){
+    handleToAmount(liquidityRatio)
+    alert("change from value")
+  }
+}
+
 const setFromAndToToken =(selection0,selection1)=>{
- 
   if(selection0 !== []) {
     setFromSelectedToken(selection0[0])
     setFromAddress(selection0[0].address)
