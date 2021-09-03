@@ -95,7 +95,7 @@ export const tokenList = () => {
 
   if (persistedRoot) {
     const storedReducer = JSON.parse(persistedRoot);
-    const extendedList = JSON.parse(storedReducer.ExtendedTokenList);
+    const extendedList = storedReducer.ExtendedTokenList;
     allToken =
       extendedList !== undefined &&
         extendedList.defaultTokenList[1].token.length > 0
