@@ -33,7 +33,6 @@ const From = ({
         color="#fff"
         bg="#29235E"
         h="100%"
-        mb="10px"
         justifyContent="space-between"
         px={4}
         rounded="2xl"
@@ -42,7 +41,7 @@ const From = ({
           <Text fontSize="sm" color="#40BAD5">
             From
           </Text>
-          <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
+          <Text pr={4} fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             Balance: {selectedToken.balance}
           </Text>
         </Flex>

@@ -17,6 +17,7 @@ import {
   UPDATE_CHAIN_ID,
   UPDATE_TO_TOKEN,
   UPDATE_FROM_TOKEN,
+  UPDATE_RGP_PRICE
 } from './constants';
 
 export const initialState = {
@@ -34,6 +35,7 @@ export const initialState = {
   slippageValue: '383993939993',
   swapOutputToken: {},
   swapInputToken: {},
+  RGPprice: ''
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -83,6 +85,9 @@ const walletProviderReducer = (state = initialState, action) =>
         break;
       case UPDATE_FROM_TOKEN:
         draft.swapInputToken = getSelectedTokenDetails(action.payload.symbol);
+        break;
+        case UPDATE_RGP_PRICE:
+        draft.RGPprice = action.payload;
         break;
       default:
         return state;

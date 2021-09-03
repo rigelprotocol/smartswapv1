@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import tokenDetails from './default-token-details.json';
+import { networkURLS } from './constants';
 
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
@@ -101,3 +102,6 @@ export function mergeArrays(arrays) {
   });
   return updatedArray.filter(token => token.symbol !== 'SELECT A TOKEN');
 }
+
+export const createURLNetwork = (hash) =>
+  `https://${networkURLS}/tx/${hash}`;
