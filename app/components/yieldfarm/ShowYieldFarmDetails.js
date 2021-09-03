@@ -85,7 +85,8 @@ const ShowYieldFarmDetails = ({
     if (depositTokenValue !== '') {
       if (
         isNaN(parseFloat(depositTokenValue)) ||
-        !Math.sign(parseFloat(depositTokenValue))
+        !Math.sign(parseFloat(depositTokenValue)) || 
+        Math.sign(parseFloat(depositTokenValue)) == -1
       ) {
         setDepositInputHasError(true);
         setDepositErrorButtonText('Invalid Input');
