@@ -45,12 +45,20 @@ import defaultTokenList from '../../utils/default-token.json';
 import testNetTokenList from '../../utils/test-net-tokens.json';
 import mainTokenList from '../../utils/main-token.json';
 
-export const reConnect = (wallet) => async dispatch => {
+export const reConnect = (wallet,id="ethereum") => async dispatch => {
   try {
+    console.log({wallet})
     dispatch({ type: LOADING_WALLET, payload: true });
     const { selectedAddress, chainId } = wallet;
-    const ethProvider =  await provider() ;
-    const walletSigner = await signer()
+    let ethProvider, walletSigner;
+if(id === "ethereum"){
+     ethProvider =  await provider() ;
+     walletSigner = await signer()
+}else if(id==="BinanceChain"){
+     ethProvider =  binanceProvider() ;
+     walletSigner = await binanceSigner()
+}
+     
     const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress))).toString();
     const rgpBalance = await getAddressTokenBalance(selectedAddress, getTokenAddress(chainId), walletSigner);
     dispatch({
@@ -80,7 +88,6 @@ export const reConnect = (wallet) => async dispatch => {
 };
 
 export const connectWallet = (wallet) => async dispatch => {
-  // alert(allewt)
   if(wallet==="metamask"){
     connectMetaMaskWallet(dispatch)
   }else if(wallet==="binance"){
@@ -368,6 +375,7 @@ export async function setTokenList(ExtendedTokenList, account) {
   const updatedList = await Promise.all(
     mergeArrays(listWithDuplicate).map(async (token, _index) => {
       const accountSigner = account.signer;
+      console.log({account,token})
       let { balance } = token;
       const { symbol, address } = token;
       if (symbol === 'BNB' && accountSigner !== 'signer') {
@@ -378,11 +386,13 @@ export async function setTokenList(ExtendedTokenList, account) {
         accountSigner !== 'signer' &&
         symbol !== 'BNB'
       ) {
+        console.log({account,address,accountSigner})
         balance = await getAddressTokenBalance(
           account.address,
           address,
           accountSigner,
         );
+        console.log({balance})
       }
 
       return {

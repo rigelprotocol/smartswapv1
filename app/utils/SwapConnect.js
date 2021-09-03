@@ -29,10 +29,10 @@ export const getSigner = () => {
     const { wallet } = store.getState().wallet;
     let { signer } = wallet;
     if (typeof signer === 'string') {
-      if (window.ethereum && window.ethereum !== 'undefined') {
+      if (window.ethereum && window.ethereum !== 'undefined' && window.ethereum.isConnected()) {
         signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
       }
-      else if(window.BinanceChain && window.BinanceChain !== 'undefined'){
+      else if(window.BinanceChain && window.BinanceChain !== 'undefined' && window.BinanceChain.isConnected()){
         signer = new ethers.providers.Web3Provider(window.BinanceChain).getSigner();
       }
     }

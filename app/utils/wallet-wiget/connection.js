@@ -60,7 +60,15 @@ export const getAddressTokenBalance = async (
   tokenAddress,
   walletSigner,
 ) =>
-  formatBalance(
+  {
+    console.log({address,tokenAddress,walletSigner})
+    console.log(
+      await new ethers.Contract(
+        tokenAddress,
+        balanceAbi,
+        walletSigner,
+      ).balanceOf(address))
+    return formatBalance(
     convertFromWei(
       await new ethers.Contract(
         tokenAddress,
@@ -73,7 +81,7 @@ export const getAddressTokenBalance = async (
         walletSigner,
       ).decimals(),
     ),
-  );
+  );}
 /**
  *
  * @param {*} wallet
@@ -162,7 +170,7 @@ const checkMetamask = async () => {
 };
 
 export const switchToBSC = async () => {
-  if (checkMetamask()) {
+  if (checkMetamask() && window.ethereum.isConnected()) {
     try {
       await ethereum.request({
         method: 'wallet_switchEthereumChain',
