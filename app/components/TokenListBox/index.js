@@ -1,5 +1,12 @@
-/* eslint-disable no-shadow */
+/* eslint-disable consistent-return */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/prop-types */
+/* eslint-disable import/no-unresolved */
+/* eslint-disable array-callback-return */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-undef */
+// @ts-nocheck
 /**
  *
  * TokenListBox
@@ -8,7 +15,7 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Text } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
-import PropTypes from 'prop-types';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import { isFunc, isNotEmpty, isValidJson } from 'utils/UtilFunc';
 import { getTokenList, getTokenDetails, isItAddress } from 'utils/tokens';
@@ -17,16 +24,16 @@ import {
   storeUserToken,
   deleteUserTokenList,
   importUriTokenList,
+  updateTokenListAction,
   toggleDefaultTokenList,
-  toggleMainTokenList,
-  toggleUserTokenList,
-  setTokenList,
 } from 'containers/WalletProvider/actions';
 import { ethers } from 'ethers';
+import { balanceAbi } from 'utils/constants';
+import { getAddressTokenBalance } from 'utils/wallet-wiget/connection';
 import NewTokenModal from './NewTokenModal';
 import CurrencyList from './components/CurrencyList';
 import ManageToken from './components/ManageToken';
-import NullImage24 from '../../assets/Null-48.svg';
+import NullImage24 from '../../assets/Null-24.svg';
 
 function TokenListBox({
   setSelectedToken,
@@ -45,20 +52,16 @@ function TokenListBox({
   storeUserToken,
   importUriTokenList,
   deleteUserTokenList,
+  updateTokenListAction,
   toggleDefaultTokenList,
-  toggleMainTokenList,
-  toggleUserTokenList,
 }) {
   const account = wallet.wallet;
   const {
-    appTokenList,
+    tokenList,
+    userTokenList,
     allTokenList,
     toggleDisplay,
-    userTokenList,
-    mainTokenList,
-    defaultTokenList,
   } = ExtendedTokenList;
-
   const [list, setList] = useState([]);
   const [searchToken, setSearchToken] = useState('');
   const [manageToken, setManageToken] = useState(false);
@@ -76,20 +79,44 @@ function TokenListBox({
   const [deletedToken, setDeletedToken] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const updateTokenListReducer = async () => {
+    const updatedList = await Promise.all(
+      tokenList.map(async (token, index) => {
+        const { signer } = account;
+        let { balance } = token;
+        const { symbol, address } = token;
+        if (symbol === 'BNB' && signer !== 'signer') {
+          ({ balance } = account);
+        }
+        if (address !== undefined && signer !== 'signer' && symbol !== 'BNB') {
+          balance = await getAddressTokenBalance(
+            account.address,
+            address,
+            signer,
+          );
+        }
+        return { ...token, balance };
+      }),
+    );
+    const sortedList = updatedList.sort(
+      (a, b) =>
+        a.symbol !== 'SELECT A TOKEN' &&
+        (a.symbol !== 'RGP' && a.symbol.localeCompare(b.symbol)),
+    );
+    updateTokenListAction(sortedList);
+    return sortedList;
+  };
   useEffect(() => {
     (async () => {
       try {
-        const updateTokenListBalance = await setTokenList(
-          ExtendedTokenList,
-          account,
-        );
+        const updateTokenListBalance = await updateTokenListReducer();
         setList(updateTokenListBalance);
         setBalanceIsSet(true);
       } catch (e) {
         console.log(e);
       }
     })();
-  }, [isOpen, account, manageToken, showCurrencyList, ExtendedTokenList]);
+  }, [isOpen, account]);
 
   const deleteToken = address => {
     deleteUserTokenList(address);
@@ -99,13 +126,9 @@ function TokenListBox({
   useEffect(() => {
     searchTokens();
   }, [searchToken]);
-
-  const toggleDefaultTokenState = option => toggleDefaultTokenList(option);
-
-  const toggleMainTokenState = option => toggleMainTokenList(option);
-
-  const toggleUserTokenState = option => toggleUserTokenList(option);
-
+  const offDefaultTokenList = option => {
+    toggleDefaultTokenList(option);
+  };
   useEffect(() => {
     setShowErrorMessage(false);
     if (userTokenAddress !== '') {
@@ -138,11 +161,11 @@ function TokenListBox({
       const tokenArrayList = await getTokenList(
         searchToken,
         account,
-        appTokenList,
+        tokenList,
       );
       return setList(tokenArrayList);
     }
-    setList(appTokenList);
+    setList(tokenList);
   };
 
   useEffect(() => {
@@ -200,52 +223,36 @@ function TokenListBox({
     setUserCustomURIList({});
   };
 
-  const Row = (index, key, _style) => (
+  const Row = (index, key, style) => (
     <Flex
       key={key}
       justifyContent="space-between"
       mt={1}
-      cursor={list[index].symbol !== 'SELECT A TOKEN' ? 'pointer' : 'no-drop'}
+      cursor="pointer"
       onClick={() => {
-        if (list[index].symbol !== 'SELECT A TOKEN') {
-          isFunc(setSelectedToken) && setSelectedToken(list[index]);
-          isFunc(setSelectedToToken) && setSelectedToToken(list[index]);
-          isFunc(setPathToArray) &&
-            setPathToArray(list[index].address, list[index].symbol);
-          isFunc(setPathArray) &&
-            setPathArray(list[index].address, list[index].symbol);
-          isFunc(getToAmount) && getToAmount();
-          isFunc(onClose) && onClose();
-        }
-        return null;
+        isFunc(setSelectedToken) && setSelectedToken(list[index]);
+        isFunc(setSelectedToToken) && setSelectedToToken(list[index]);
+        isFunc(setPathToArray) &&
+          setPathToArray(list[index].address, list[index].symbol);
+        isFunc(setPathArray) &&
+          setPathArray(list[index].address, list[index].symbol);
+        isFunc(getToAmount) && getToAmount();
+        isFunc(onClose) && onClose();
       }}
-      opacity={list[index].symbol !== 'SELECT A TOKEN' ? 1 : 0.4}
       height="63px"
       borderRadius="10px"
-      backgroundColor="#120136"
+      background="rgba(55, 38, 91, 0.15)"
     >
       {list[index].imported ? (
-        <NullImage24
-          style={{ margin: '17px', borderRadius: '100%', width: '80px' }}
-        />
+        <NullImage24 />
       ) : (
-        <Image
-          margin="17px"
-          src={list[index].logoURI}
-          alt=" "
-          borderRadius="100%"
-          background="whitesmoke"
-          marginRight="4px"
-        />
+        <Image width="10%" margin="17px" src={list[index].logoURI} alt=" " />
       )}
       <Flex flexDirection="column" width="100%" justifyContent="space-around">
         <Text fontSize="md" fontWeight="regular" color="#fff" m={1}>
           {list[index].symbol}
         </Text>
-        <Text
-          m={1}
-          style={{ display: 'block', color: '#b3b3b3', marginTop: '-10px' }}
-        >
+        <Text m={1} style={{ display: 'block', color: '#b3b3b3' }}>
           {list[index].imported && (
             <small style={{ fontSize: 'x-small' }}>
               <em>Added by User </em>
@@ -254,13 +261,7 @@ function TokenListBox({
           {list[index].name}
         </Text>
       </Flex>
-      <Text
-        fontSize="md"
-        width="100%"
-        fontWeight="regular"
-        textAlign="right"
-        color="#fff"
-      >
+      <Text fontSize="md" fontWeight="regular" textAlign="left" color="#fff">
         {!balanceIsSet && list[index].available ? (
           '0.0'
         ) : list[index].balance == null && list[index].address !== undefined ? (
@@ -310,32 +311,27 @@ function TokenListBox({
         <ManageToken
           isOpen={isOpen}
           onClose={onClose}
-          onOpenModal={onOpenModal}
-          allTokenList={allTokenList}
-          errorMessage={errorMessage}
-          toggleDisplay={toggleDisplay}
           customTokenBox={customTokenBox}
-          userTokenState={userTokenList}
-          defaultTokenState={defaultTokenList}
-          mainTokenState={mainTokenList}
-          tokenImportUri={tokenImportUri}
-          userCustomToken={userCustomToken}
-          userCustomTokenList={userTokenList}
-          userTokenAddress={userTokenAddress}
-          showErrorMessage={showErrorMessage}
-          importCustomToken={importCustomToken}
-          userCustomURIList={userCustomURIList}
-          deleteToken={deleteToken}
           setManageToken={setManageToken}
-          importUriToken={importUriToken}
+          tokenImportUri={tokenImportUri}
           setTokenImportUri={setTokenImportUri}
+          userTokenAddress={userTokenAddress}
           setUserTokenAddress={setUserTokenAddress}
           setCustomTokenBox={setCustomTokenBox}
           setShowCurrencyList={setShowCurrencyList}
+          userCustomToken={userCustomToken}
+          importCustomToken={importCustomToken}
           setSelectedTokenForModal={setSelectedTokenForModal}
-          toggleDefaultTokenState={toggleDefaultTokenState}
-          toggleMainTokenState={toggleMainTokenState}
-          toggleUserTokenState={toggleUserTokenState}
+          onOpenModal={onOpenModal}
+          userCustomTokenList={userTokenList}
+          deleteToken={deleteToken}
+          showErrorMessage={showErrorMessage}
+          errorMessage={errorMessage}
+          userCustomURIList={userCustomURIList}
+          importUriToken={importUriToken}
+          allTokenList={allTokenList}
+          toggleDisplay={toggleDisplay}
+          offDefaultTokenList={offDefaultTokenList}
         />
       )}
       <NewTokenModal
@@ -368,8 +364,7 @@ export default connect(
     storeUserToken,
     deleteUserTokenList,
     importUriTokenList,
+    updateTokenListAction,
     toggleDefaultTokenList,
-    toggleMainTokenList,
-    toggleUserTokenList,
   },
 )(TokenListBox);
