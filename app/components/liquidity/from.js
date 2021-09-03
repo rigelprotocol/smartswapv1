@@ -19,7 +19,6 @@ const LiquidityFromBox = ({
   setFromInputMax,
   label,
 }) => {
-  console.log({fromSelectedToken})
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   return (

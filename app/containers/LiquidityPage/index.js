@@ -184,7 +184,6 @@ export function LiquidityPage(props) {
 
   const handleFromAmount = (liquidityRatio = liquidityPairRatio) => {
     if(!newTokenPairButton){
-      console.log({fromValue,liquidityRatio})
       setToValue((fromValue * liquidityRatio).toString());
     }
   }
@@ -245,7 +244,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
         liquidityRatio = tokenAReserve.toString() / tokenBreserve.toString();
       }
       setLiquidityPairRatio(liquidityRatio);
-      console.log(liquidityRatio)
       getWhichValueHasChanged(liquidityRatio)
     } catch (error) {
       console.error(error)
@@ -254,7 +252,6 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
   }
 
 const getWhichValueHasChanged = (liquidityRatio) =>{
-  console.log('GETTING')
   if(fromValue!== "" && fromValue>=0){
     handleFromAmount(liquidityRatio)
   }else if(toValue!== "" && toValue>=0){
@@ -484,7 +481,6 @@ setDetermineInputChange("to")
         closeModal2()
         openModal3()
       } catch (e) {
-        console.log(trxHashed)
         props.showErrorMessage(e)
         closeModal2()
         openModal5()
