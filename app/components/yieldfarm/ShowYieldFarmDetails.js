@@ -104,7 +104,8 @@ const ShowYieldFarmDetails = ({
     if (unstakeToken !== '') {
       if (
         isNaN(parseFloat(unstakeToken)) ||
-        !Math.sign(parseFloat(unstakeToken) || Math.sign(parseFloat(unstakeToken) == -1)
+        !Math.sign(parseFloat(unstakeToken)) || 
+        Math.sign(parseFloat(unstakeToken)) == -1
       ) {
         setInputHasError(true);
         setErrorButtonText('Invalid Input');
