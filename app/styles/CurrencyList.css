@@ -1,0 +1,25 @@
+.list {
+  overflow: auto;
+  max-height: 300px;
+  margin-right: -10px;
+  padding-right: 10px;
+  background-color: #120136;
+  scrollbar-color: #40bad5 #140f36;
+  scrollbar-width: 5px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: #140f36;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background-color: #40bad5;
+  border-radius: 50px;
+  height: 55px;
+  width: 5px;
+}
+
+.list {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
