@@ -1359,13 +1359,7 @@ export const Manual = props => {
                           )
                           : insufficientBalanceButton
                             ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
-<<<<<<< HEAD
-                            : newTokenPair || lowLiquidity
-                              ? sendNotice(`No Liquidity Available for this pair`)
-                              : triggerAccountCheck()
-=======
                             : triggerAccountCheck()
->>>>>>> 9b6e345f7fd8cfe2107764a45c937c0d8162647e
                         : null;
               }}
             >
@@ -1386,17 +1380,9 @@ export const Manual = props => {
                         ? 'Improper token selection'
                         : insufficientBalanceButton
                           ? `Insufficient ${selectedToken.symbol} balance`
-<<<<<<< HEAD
-                          : newTokenPair || lowLiquidity
-                            ? 'Insufficient Liquidity'
-                            : !userHasApproveToken
-                              ? 'Approve Transaction'
-                              : 'Swap Tokens'
-=======
                           : !userHasApproveToken
                             ? 'Approve Transaction'
                             : 'Swap Tokens'
->>>>>>> 9b6e345f7fd8cfe2107764a45c937c0d8162647e
                       : ''}
             </Button>
           )}
