@@ -47,7 +47,6 @@ import mainTokenList from '../../utils/main-token.json';
 
 export const reConnect = (wallet,id="ethereum") => async dispatch => {
   try {
-    console.log({wallet})
     dispatch({ type: LOADING_WALLET, payload: true });
     const { selectedAddress, chainId } = wallet;
     let ethProvider, walletSigner;
@@ -375,7 +374,6 @@ export async function setTokenList(ExtendedTokenList, account) {
   const updatedList = await Promise.all(
     mergeArrays(listWithDuplicate).map(async (token, _index) => {
       const accountSigner = account.signer;
-      console.log({account,token})
       let { balance } = token;
       const { symbol, address } = token;
       if (symbol === 'BNB' && accountSigner !== 'signer') {
@@ -386,13 +384,11 @@ export async function setTokenList(ExtendedTokenList, account) {
         accountSigner !== 'signer' &&
         symbol !== 'BNB'
       ) {
-        console.log({account,address,accountSigner})
         balance = await getAddressTokenBalance(
           account.address,
           address,
           accountSigner,
         );
-        console.log({balance})
       }
 
       return {

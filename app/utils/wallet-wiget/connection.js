@@ -61,13 +61,6 @@ export const getAddressTokenBalance = async (
   walletSigner,
 ) =>
   {
-    console.log({address,tokenAddress,walletSigner})
-    console.log(
-      await new ethers.Contract(
-        tokenAddress,
-        balanceAbi,
-        walletSigner,
-      ).balanceOf(address))
     return formatBalance(
     convertFromWei(
       await new ethers.Contract(
@@ -180,6 +173,20 @@ export const switchToBSC = async () => {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
         addBSCToMetamask();
+      }
+      // handle other  errors codes
+    }
+  }else if(window.BinanceChain && window.BinanceChain.isConnected()){
+    alert("try")
+    try {
+      await window.BinanceChain.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x38' }],
+      });
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        alert("metamask")
       }
       // handle other  errors codes
     }

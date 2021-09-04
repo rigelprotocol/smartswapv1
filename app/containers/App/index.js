@@ -76,7 +76,12 @@ const App = props => {
         window.location.reload();
       });
     }else if(window.BinanceChain && window.BinanceChain.isConnected()){
-      checkBinanceChain()
+      alert("try 2")
+     getBinanceChain()
+     const obj = BinanceChain.on('chainChanged', chainId => {
+      console.log(chainId);
+      window.location.reload();
+    });
     }
   }, []);
 
@@ -123,19 +128,6 @@ const getBinanceChain = async () => {
     } else {
       switchToBSC();
     }
-    await props.getTokenList();
-  };
-  const checkBinanceChain = async () => {
-    const chainID = await window.BinanceChain.request({
-      method: 'eth_chainId',
-    });
-    // props.updateChainId(chainID);
-    // if (isSupportedNetwork(chainID)) {
-    //   listener(wallet, props);
-    //   reConnector(props);
-    // } else {
-    //   switchToBSC();
-    // }
     await props.getTokenList();
   };
 
