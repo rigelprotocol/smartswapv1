@@ -25,10 +25,11 @@ export default function HomePage(props) {
   const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
 
   useEffect(() => {
-    if (!localStorage.noFirstVisit) {
+    const visits = window.localStorage.getItem('noFirstVisit')
+    if (!visits) {
       setWelcomeModal(true);
 
-      localStorage.noFirstVisit = '1';
+      window.localStorage.setItem('noFirstVisit', 1);
     }
   }, []);
 
@@ -455,9 +456,9 @@ export default function HomePage(props) {
                     className={
                       tab === TABS.PRICE ? styles.active : styles.inactive
                     }
-                    // onClick={() => {
-                    //   setTab(TABS.PRICE);
-                    // }}
+                  // onClick={() => {
+                  //   setTab(TABS.PRICE);
+                  // }}
                   >
                     Set price
                   </Text>
@@ -472,9 +473,9 @@ export default function HomePage(props) {
                     className={
                       tab === TABS.AUTO_TIME ? styles.active : styles.inactive
                     }
-                    // onClick={() => {
-                    //   setTab(TABS.AUTO_TIME);
-                    // }}
+                  // onClick={() => {
+                  //   setTab(TABS.AUTO_TIME);
+                  // }}
                   >
                     Auto Time
                   </Text>
