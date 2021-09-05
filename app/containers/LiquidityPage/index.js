@@ -24,11 +24,11 @@ import { showErrorMessage, notify } from 'containers/NoticeProvider/actions';
 import { BUSDToken, rigelToken, BNBTOKEN, router, LPTokenContract, WETH, smartSwapLPToken, erc20Token, SmartFactory, LiquidityPairInstance } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { create } from 'react-test-renderer';
-import { tokenList, tokenWhere, SMART_SWAP,  checkIfTokenIsListed } from '../../utils/constants';
+import { tokenList, tokenWhere, SMART_SWAP, checkIfTokenIsListed, convertToNumber } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
-import { isNotEmpty , getDeadline, createURLNetwork } from "../../utils/UtilFunc";
-import {getTokenList } from "../../utils/tokens"
+import { isNotEmpty, getDeadline, createURLNetwork } from "../../utils/UtilFunc";
+import { getTokenList } from "../../utils/tokens"
 
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
 
@@ -80,8 +80,8 @@ export function LiquidityPage(props) {
   const [determineInputChange, setDetermineInputChange] = useState("");
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   useEffect(() => {
-      setPopupText("")
-  },[liquidityTab,showApprovalBox,openSupplyButton,insufficientBalanceButton])
+    setPopupText("")
+  }, [liquidityTab, showApprovalBox, openSupplyButton, insufficientBalanceButton])
   useEffect(() => {
     displayBNBbutton();
   }, [toSelectedToken, liquidities]);
@@ -91,30 +91,30 @@ export function LiquidityPage(props) {
       const { pair } = props.match.params;
       const pairArray = pair.split('-');
       setLiquidityTab("ADDLIQUIDITY")
-      if(pairArray.length===2 ){
+      if (pairArray.length === 2) {
         setFromURL(pairArray[0])
         setToURL(pairArray[1])
- getTokensListed(pairArray)
-      }else{
+        getTokensListed(pairArray)
+      } else {
         history.push("/liquidity")
       }
     }
   }, [wallet])
 
-  
+
   useEffect(() => {
-    setUpUrl(fromSelectedToken,toSelectedToken)
+    setUpUrl(fromSelectedToken, toSelectedToken)
     if (fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN") {
-   checkIfLiquidityPairExist(fromSelectedToken.address,toSelectedToken.address)
+      checkIfLiquidityPairExist(fromSelectedToken.address, toSelectedToken.address)
     }
-  }, [fromSelectedToken, toSelectedToken,fromAddress,toAddress])
+  }, [fromSelectedToken, toSelectedToken, fromAddress, toAddress])
 
   useEffect(async () => {
-    if(determineInputChange==="from"){
+    if (determineInputChange === "from") {
       handleFromAmount()
-   }else if(determineInputChange==="to"){
-     handleToAmount()
-   }
+    } else if (determineInputChange === "to") {
+      handleToAmount()
+    }
     if (!isNotEmpty(fromSelectedToken) && fromValue != '') {
       const tokenAllowance = await runApproveCheck(fromSelectedToken, wallet.address, wallet.signer);
       setFromTokenAllowance(tokenAllowance);
@@ -136,11 +136,11 @@ export function LiquidityPage(props) {
         setHasAllowedToToken(false);
       }
     }
-    if((parseInt(fromValue) > parseInt(fromSelectedToken.balance)) || (parseInt(toValue) > parseInt(toSelectedToken.balance))){
+    if ((parseInt(fromValue) > parseInt(fromSelectedToken.balance)) || (parseInt(toValue) > parseInt(toSelectedToken.balance))) {
       setInsufficientBalanceButton(true)
-    }else{
+    } else {
       setInsufficientBalanceButton(false)
-    } 
+    }
   }, [fromValue, toValue])
 
   useEffect(() => {
@@ -150,9 +150,9 @@ export function LiquidityPage(props) {
   }, [wallet])
   useEffect(() => {
     if (wallet.address != "0x") {
-     checkIfTokensHasBeenApproved()
+      checkIfTokensHasBeenApproved()
     }
-  }, [hasAllowedFromToken,hasAllowedToToken])
+  }, [hasAllowedFromToken, hasAllowedToToken])
   useEffect(() => {
     const balanceOfUserLPs = async () => {
 
@@ -183,49 +183,49 @@ export function LiquidityPage(props) {
   }, [percentValue, wallet])
 
   const handleFromAmount = (liquidityRatio = liquidityPairRatio) => {
-    if(!newTokenPairButton){
+    if (!newTokenPairButton) {
       setToValue((fromValue * liquidityRatio).toString());
     }
   }
   const handleToAmount = (liquidityRatio = liquidityPairRatio) => {
-    if(!newTokenPairButton){
+    if (!newTokenPairButton) {
       setFromValue((toValue / liquidityRatio).toString());
     }
   }
 
-const getTokensListed = async (pairArray) => {
- const selection0 = await getTokenList(pairArray[0],wallet)
- const selection1 = await getTokenList(pairArray[1],wallet)
-setFromAndToToken(selection0,selection1)
- if(selection0 !== [] && selection1[0]!== []){
-   checkIfLiquidityPairExist()  
- }
-}
-const setUpUrl = () => {
-  if (fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN") {
-    const toTokenURL = checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address
-    const fromTokenURL = checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address
-    setFromURL(fromTokenURL)
-        setToURL(toTokenURL)
-    history.push(`/liquidity/${toTokenURL}-${fromTokenURL}`)
-  } else{
-    history.push('/liquidity')
+  const getTokensListed = async (pairArray) => {
+    const selection0 = await getTokenList(pairArray[0], wallet)
+    const selection1 = await getTokenList(pairArray[1], wallet)
+    setFromAndToToken(selection0, selection1)
+    if (selection0 !== [] && selection1[0] !== []) {
+      checkIfLiquidityPairExist()
+    }
   }
- 
-}
+  const setUpUrl = () => {
+    if (fromSelectedToken.symbol !== "SELECT A TOKEN" && toSelectedToken.symbol !== "SELECT A TOKEN") {
+      const toTokenURL = checkIfTokenIsListed(fromSelectedToken.symbol) ? fromSelectedToken.symbol : fromSelectedToken.address
+      const fromTokenURL = checkIfTokenIsListed(toSelectedToken.symbol) ? toSelectedToken.symbol : toSelectedToken.address
+      setFromURL(fromTokenURL)
+      setToURL(toTokenURL)
+      history.push(`/liquidity/${toTokenURL}-${fromTokenURL}`)
+    } else {
+      history.push('/liquidity')
+    }
 
-  const checkIfLiquidityPairExist = async (fromAddress = fromSelectedToken.address,toAddress = toSelectedToken.address) => {
-      const factory = await SmartFactory();
+  }
+
+  const checkIfLiquidityPairExist = async (fromAddress = fromSelectedToken.address, toAddress = toSelectedToken.address) => {
+    const factory = await SmartFactory();
     const fromPath = ethers.utils.getAddress(fromAddress);
     const toPath = ethers.utils.getAddress(toAddress);
-    const LPAddress = await factory.getPair(toPath,fromPath)
-if (LPAddress !== "0x0000000000000000000000000000000000000000" ){ 
-   setNewTokenPairButton(false)
-   setButtonValue("Supply")
-  getLiquidityPairRatio()
-}else{
-  openModal7()
-}
+    const LPAddress = await factory.getPair(toPath, fromPath)
+    if (LPAddress !== "0x0000000000000000000000000000000000000000") {
+      setNewTokenPairButton(false)
+      setButtonValue("Supply")
+      getLiquidityPairRatio()
+    } else {
+      openModal7()
+    }
   }
   const getLiquidityPairRatio = async () => {
     try {
@@ -234,7 +234,7 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
       const toPath = ethers.utils.getAddress(toAddress);
       const LPAddress = await factory.getPair(toPath, fromPath);
       const LPcontract = await LPTokenContract(LPAddress)
-      
+
       const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
       const token0 = await LPcontract.token0();
       let liquidityRatio;
@@ -251,25 +251,25 @@ if (LPAddress !== "0x0000000000000000000000000000000000000000" ){
 
   }
 
-const getWhichValueHasChanged = (liquidityRatio) =>{
-  if(fromValue!== "" && fromValue>=0){
-    handleFromAmount(liquidityRatio)
-  }else if(toValue!== "" && toValue>=0){
-    handleToAmount(liquidityRatio)
+  const getWhichValueHasChanged = (liquidityRatio) => {
+    if (fromValue !== "" && fromValue >= 0) {
+      handleFromAmount(liquidityRatio)
+    } else if (toValue !== "" && toValue >= 0) {
+      handleToAmount(liquidityRatio)
+    }
   }
-}
 
-const setFromAndToToken =(selection0,selection1)=>{
-  if(selection0 !== []) {
-    setFromSelectedToken(selection0[0])
-    setFromAddress(selection0[0].address)
-   }
-  if(selection1 !== []) {
-    setToSelectedToken(selection1[0])
-    setToAddress(selection1[0].address)
-   }
-}
-  const changeButtonCreateNewTokenPair = async () =>{
+  const setFromAndToToken = (selection0, selection1) => {
+    if (selection0 !== []) {
+      setFromSelectedToken(selection0[0])
+      setFromAddress(selection0[0].address)
+    }
+    if (selection1 !== []) {
+      setToSelectedToken(selection1[0])
+      setToAddress(selection1[0].address)
+    }
+  }
+  const changeButtonCreateNewTokenPair = async () => {
     closeModal7()
     setNewTokenPairButton(true)
     setDisableToSelectInputBox(false)
@@ -285,7 +285,7 @@ const setFromAndToToken =(selection0,selection1)=>{
   }, [fromAddress])
 
 
- 
+
 
   const getAllPairs = (length, allPairs) => {
     const pairs = [];
@@ -348,15 +348,15 @@ const setFromAndToToken =(selection0,selection1)=>{
     }
 
   }
-const checkIfTokensHasBeenApproved =() => {
-  if(hasAllowedFromToken && hasAllowedToToken ){ 
-    setShowApprovalBox(false);
-    setOpenSupplyButton(true);
-  }else{
-    setShowApprovalBox(true);
-    setOpenSupplyButton(false);
+  const checkIfTokensHasBeenApproved = () => {
+    if (hasAllowedFromToken && hasAllowedToToken) {
+      setShowApprovalBox(false);
+      setOpenSupplyButton(true);
+    } else {
+      setShowApprovalBox(true);
+      setOpenSupplyButton(false);
+    }
   }
-}
   const approveToToken = async () => {
     try {
       if (!isNotEmpty(toSelectedToken)) {
@@ -368,7 +368,7 @@ const checkIfTokensHasBeenApproved =() => {
           setShowApprovalBox(false);
           setHasAllowedToToken(true);
           // setOpenSupplyButton(false);
-        checkIfTokensHasBeenApproved()
+          checkIfTokensHasBeenApproved()
         }
       }
     } catch (error) {
@@ -398,27 +398,27 @@ const checkIfTokensHasBeenApproved =() => {
         setShowApprovalBox(false);
         setHasAllowedFromToken(true);
         // setOpenSupplyButton(false);
-      checkIfTokensHasBeenApproved()
+        checkIfTokensHasBeenApproved()
       }
     }
   }
-  const setFromInputMax = () =>{
-    try{
-setDetermineInputChange("from")
-    setFromValue(fromSelectedToken.balance)
-    }catch(e){
+  const setFromInputMax = () => {
+    try {
+      setDetermineInputChange("from")
+      setFromValue(fromSelectedToken.balance)
+    } catch (e) {
       console.log(e)
     }
-    
+
   }
-  const setToInputMax = () =>{
-    try{
-setDetermineInputChange("to")
-    setToValue(toSelectedToken.balance)
-    }catch(e){
+  const setToInputMax = () => {
+    try {
+      setDetermineInputChange("to")
+      setToValue(toSelectedToken.balance)
+    } catch (e) {
       console.log(e)
     }
-    
+
   }
 
   const modal1Disclosure = useDisclosure();
@@ -455,10 +455,22 @@ setDetermineInputChange("to")
         const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString())
         const amountBDesired = Web3.utils.toWei(toValue.toString())
-        const amountAMin =Web3.utils.toWei((fromValue * 0.8).toString())
+        const amountAMin = Web3.utils.toWei((fromValue * 0.8).toString())
         const amountBMin = Web3.utils.toWei((toValue * 0.8).toString())
         closeModal1()
         modal2Disclosure.onOpen()
+        const estimatedGasLimit = await rout.estimateGas.addLiquidity(
+          fromAddress,
+          toAddress,
+          amountADesired.toString(),
+          amountBDesired.toString(),
+          amountAMin.toString(),
+          amountBMin,
+          wallet.address,
+          deadLine,
+          { from: wallet.address, gasPrice: ethers.utils.parseUnits('10', 'gwei') }
+        );
+
         const data = await rout.addLiquidity(
           fromAddress,
           toAddress,
@@ -470,14 +482,14 @@ setDetermineInputChange("to")
           deadLine,
           {
             from: wallet.address,
-            gasLimit: newTokenPairButton ? 5900008 : 390000,
+            gasLimit: (convertToNumber(estimatedGasLimit) * 2),
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
         setTrxHashed(data)
         const { hash } = data
         setURLNetwork("")
-        setTimeout(()=> setURLNetwork(createURLNetwork(hash)) ,3000)
+        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000)
         closeModal2()
         openModal3()
       } catch (e) {
@@ -487,18 +499,18 @@ setDetermineInputChange("to")
       }
     }
   };
-  const addMoreLiquidity = async (liquidity) =>{
+  const addMoreLiquidity = async (liquidity) => {
     setAddMoreLiquidityButton(true)
     clearAllPreviousData()
     const { path } = liquidity
-    const selection0 = await getTokenList(path[1].toPath,wallet)
-    const selection1 = await getTokenList(path[0].fromPath,wallet)
-    setFromAndToToken(selection0,selection1)
+    const selection0 = await getTokenList(path[1].toPath, wallet)
+    const selection1 = await getTokenList(path[0].fromPath, wallet)
+    setFromAndToToken(selection0, selection1)
     setAddMoreLiquidityButton(false)
     setLiquidityTab("ADDLIQUIDITY")
 
   }
-  const clearAllPreviousData = () =>{
+  const clearAllPreviousData = () => {
     history.push("/liquidity")
     setFromSelectedToken(tokenWhere('SELECT A TOKEN'))
     setToSelectedToken(tokenWhere('SELECT A TOKEN'))
@@ -531,6 +543,20 @@ setDetermineInputChange("to")
         const deadLine = getDeadline(deadline);
         closeModal1()
         modal2Disclosure.onOpen()
+
+
+
+        const gasCost = await rout.estimateGas.addLiquidityETH(
+          tokenSelected,
+          ethers.utils.parseEther(amountTokenDesired.toString(), 'ether'),
+          ethers.utils.parseEther((amountTokenDesired * 0.8).toString(), 'ether'),
+          ethers.utils.parseEther((EthValue * 0.8).toString(), 'ether'),
+          wallet.address.toString(),
+          deadLine,
+          { value: Web3.utils.toWei(EthValue.toString()), gasPrice: ethers.utils.parseUnits('10', 'gwei') }
+        );
+
+
         const data = await rout.addLiquidityETH(
           tokenSelected,
           ethers.utils.parseEther(amountTokenDesired.toString(), 'ether'),
@@ -540,7 +566,7 @@ setDetermineInputChange("to")
           deadLine,
           {
             value: Web3.utils.toWei(EthValue.toString()),
-            gasLimit: newTokenPairButton ? 5900008 : 1000000,
+            gasLimit: (convertToNumber(gasCost) * 2),
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           }
         );
@@ -641,15 +667,15 @@ setDetermineInputChange("to")
     // CHECK IF THERE IS LIQUIDITY ON THIS, BY CALLING THE GETPATR FUNCTION ON SMARTFACTORY
     // IF IT DOES CONTINUE WITH THE PROCESS
     // IF NOT SHOW A MODAL THAT TELLS THE USER TO ADD LIQUIDITY TO THIS SET OF PAIRS 
-    if(value === "new"){
+    if (value === "new") {
       const value1 = (parseFloat(fromValue) / parseFloat(toValue)).toFixed(5)
       const value2 = (parseFloat(toValue) / parseFloat(fromValue)).toFixed(5)
       setTokenFromValue(value1)
       setTokenToValue(value2)
-    }else{
+    } else {
       await getPriceForToken()
     }
-    
+
     modal1Disclosure.onOpen();
   };
 
@@ -699,10 +725,10 @@ setDetermineInputChange("to")
     modal4Disclosure.onOpen();
   };
 
-  const openModal7 = () =>{
+  const openModal7 = () => {
     modal7Disclosure.onOpen()
   }
-  const closeModal7 = () =>{
+  const closeModal7 = () => {
     modal7Disclosure.onClose()
   }
 
@@ -739,10 +765,10 @@ setDetermineInputChange("to")
   const back = (tab) => {
     setLiquidityTab(tab)
   }
-  const addLiquidityPage = (head,newPair) => {
+  const addLiquidityPage = (head, newPair) => {
     setLiquidityTab("ADDLIQUIDITY")
-setAddLiquidityPageHeading(head)
-newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
+    setAddLiquidityPageHeading(head)
+    newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
   }
   const getAmountForLiquidity = async (value) => {
     const convertToEther = ethers.utils.parseEther(value.toString())
@@ -1034,9 +1060,9 @@ newPair ? setNewTokenPairButton(true) : setNewTokenPairButton(false)
               tokenToValue={tokenToValue}
               setDetermineInputChange={setDetermineInputChange}
               sendingTransaction={sendingTransaction}
-              onCloseModal ={onCloseModal}
+              onCloseModal={onCloseModal}
               setToValue={setToValue}
-              isOpenModal ={isOpenModal}
+              isOpenModal={isOpenModal}
               disableToSelectInputBox={disableToSelectInputBox}
             />
           }
