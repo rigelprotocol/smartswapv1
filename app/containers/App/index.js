@@ -76,7 +76,6 @@ const App = props => {
         window.location.reload();
       });
     }else if(window.BinanceChain && window.BinanceChain.isConnected()){
-      alert("try 2")
      getBinanceChain()
      const obj = BinanceChain.on('chainChanged', chainId => {
       console.log(chainId);

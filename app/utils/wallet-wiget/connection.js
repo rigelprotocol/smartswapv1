@@ -177,7 +177,6 @@ export const switchToBSC = async () => {
       // handle other  errors codes
     }
   }else if(window.BinanceChain && window.BinanceChain.isConnected()){
-    alert("try")
     try {
       await window.BinanceChain.request({
         method: 'wallet_switchEthereumChain',
@@ -186,7 +185,6 @@ export const switchToBSC = async () => {
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
-        alert("metamask")
       }
       // handle other  errors codes
     }
