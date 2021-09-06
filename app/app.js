@@ -78,4 +78,3 @@ if (!window.Intl) {
 } else {
   render(translationMessages);
 }
-
