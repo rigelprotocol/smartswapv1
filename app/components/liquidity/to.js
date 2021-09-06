@@ -2,7 +2,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Box, Flex, Text,Circle } from '@chakra-ui/layout';
 import { Input, Button, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
@@ -10,10 +10,12 @@ import PropTypes from 'prop-types';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import TokenListBox from 'components/TokenListBox';
+import NullImage24 from '../../assets/Null-24.svg';
 import {
   NumberInput,
   NumberInputField,
-  useMediaQuery
+  useMediaQuery,
+  Image
 } from "@chakra-ui/react"
 const Manual = ({
   toValue,
@@ -97,9 +99,18 @@ const Manual = ({
                 rightIcon={<ChevronDownIcon />}
                 px={toSelectedToken.symbol !== "SELECT A TOKEN" ? '3' : '1'}
               >
-                {toSelectedToken.symbol !== "SELECT A TOKEN" && <span
-                  className={`icon icon-${toSelectedToken.symbol.toLowerCase()}`}
-                />}
+                 {(typeof toSelectedToken.symbol !== 'undefined' && toSelectedToken.symbol!=="SELECT A TOKEN" && !toSelectedToken.imported) &&  
+                 <>
+                 <Circle size="40px" color="rgba(64, 186, 213,0.35)">
+                        <Image src={toSelectedToken.logoURI} />
+                      </Circle>
+                      </>
+                      }
+                {toSelectedToken.imported && 
+                      <Box px="0">
+                      <NullImage24 />
+                      </Box>
+                      }
                 <Text ml={toSelectedToken.symbol !== "SELECT A TOKEN" ? '4' : '0'}>{toSelectedToken.symbol}</Text>
               </Button>
               <TokenListBox

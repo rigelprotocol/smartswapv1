@@ -1,16 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Box, Flex, Text, Circle } from '@chakra-ui/layout';
 import { Input, Button, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import TokenListBox from 'components/TokenListBox';
+import NullImage24 from '../../assets/Null-24.svg';
 import {
   NumberInput,
   NumberInputField,
-  useMediaQuery
+  useMediaQuery,
+  Image
 } from "@chakra-ui/react"
 
 const LiquidityFromBox = ({
@@ -27,6 +29,7 @@ const LiquidityFromBox = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
+  console.log(fromSelectedToken)
   return (
     <>
       <Box
@@ -98,10 +101,19 @@ const LiquidityFromBox = ({
                 _hover={{ background: '#72cfe4', color: '#29235E' }}
                 rightIcon={<ChevronDownIcon />}
               >
-                <span
-                  className={`icon icon-${fromSelectedToken.symbol.toLowerCase()}`}
-                />
-                <Text ml={4}>{fromSelectedToken.symbol}</Text>
+               {(typeof fromSelectedToken.symbol !== 'undefined' && fromSelectedToken.symbol!=="SELECT A TOKEN" && !fromSelectedToken.imported) &&  
+                 <>
+                 <Circle size="40px" color="rgba(64, 186, 213,0.35)">
+                        <Image src={fromSelectedToken.logoURI} />
+                      </Circle>
+                      </>
+                      }
+                {fromSelectedToken.imported && 
+                      <Box px="0">
+                      <NullImage24 />
+                      </Box>
+                      }
+                      <Text ml={fromSelectedToken.symbol !== "SELECT A TOKEN" ? '4' : '0'}>{fromSelectedToken.symbol}</Text>
               </Button>
               <TokenListBox
                 setSelectedToken={setFromSelectedToken}
