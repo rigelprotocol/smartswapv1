@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Modal,
   ModalBody,
@@ -17,13 +17,12 @@ import {
   FormLabel,
   Button,
   useDisclosure,
-  extendTheme,
 } from '@chakra-ui/react';
 import { Flex, Text } from '@chakra-ui/layout';
 import PropTypes from 'prop-types';
-import { ArrowBackIcon, DeleteIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from '@chakra-ui/icons';
 import styles from '../../../styles/token-list-manager.css';
-import RGP from '../../../assets/rgp.png';
+import RGP from '../../../assets/rgp.svg';
 import NullImage24 from '../../../assets/Null-24.svg';
 import ImportTokenModal from './ImportTokenModal';
 
@@ -49,19 +48,14 @@ const ManageToken = ({
   userCustomURIList,
   importUriToken,
   allTokenList,
-  toggleDefaultTokenState,
-  toggleMainTokenState,
-  toggleUserTokenState,
-  userTokenState,
-  defaultTokenState,
-  mainTokenState,
+  offDefaultTokenList,
+  toggleDisplay,
 }) => {
   const {
     isOpen: isOpenImportModal,
     onOpen: onOpenImportModal,
     onClose: onCloseImportModal,
   } = useDisclosure();
-
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -74,46 +68,17 @@ const ManageToken = ({
           minHeight="60vh"
         >
           <ModalCloseButton
-            width="24px"
-            height="24px"
-            padding="5px"
-            bg="#fff"
+            bg="none"
             border="0px"
-            color="#000"
-            borderRadius="50%"
-            marginRight="15px"
+            color="#fff"
             cursor="pointer"
-            _focus={{ outline: 'none', backgroundColor: '#fff', color: '#000' }}
-            _hover={{ backgroundColor: '#fff', color: '#000' }}
-            marginTop="10px"
+            _focus={{ outline: 'none' }}
             onClick={() => {
               setManageToken(false);
               setShowCurrencyList(true);
             }}
           />
-          <ModalHeader fontWeight="bold">
-            <ArrowBackIcon
-              w={10}
-              h={6}
-              cursor="pointer"
-              onClick={() => {
-                setManageToken(false);
-                setShowCurrencyList(true);
-              }}
-            />
-            <Flex
-              flexDirection="row"
-              justifyContent="space-evenly"
-              marginTop="-42px"
-            >
-              <Text marginLeft="-200px" marginTop="22px" fontSize="16px">
-                Manage
-              </Text>
-            </Flex>
-          </ModalHeader>
-          <Flex justifyContent="space-between" mt={-1}>
-            <hr style={{ width: '100vw', border: '1px solid #29235E' }} />
-          </Flex>
+          <ModalHeader fontWeight="light">Manage</ModalHeader>
           <ModalBody mt={4}>
             <Box className={styles.tabContainer}>
               <Box
@@ -124,9 +89,7 @@ const ManageToken = ({
                     : styles.inactiveToggleButton
                 }
               >
-                <Text fontFamily="Roboto" fontSize="14px" fontWeight="500">
-                  Lists
-                </Text>
+                <Text>Lists</Text>
               </Box>
               <Box
                 onClick={() => setCustomTokenBox(true)}
@@ -136,9 +99,7 @@ const ManageToken = ({
                     : styles.inactiveToggleButton
                 }
               >
-                <Text fontFamily="Roboto" fontSize="14px" fontWeight="500">
-                  Tokens
-                </Text>
+                <Text>Tokens</Text>
               </Box>
             </Box>
             <Flex mt={5} flexDirection="column">
@@ -146,13 +107,11 @@ const ManageToken = ({
                 <>
                   <Input
                     placeholder="https:// or ipfs:// or ENS"
-                    borderColor="#29235E"
-                    backgroundColor="#120136"
-                    color="#EEE6FF"
+                    borderColor="#40BAD5"
+                    color="white"
                     rounded="2xl"
                     h="40px"
-                    fontSize="14px"
-                    fontWeight="normal"
+                    fontSize="sm"
                     variant="outline"
                     value={tokenImportUri}
                     onChange={e => {
@@ -174,8 +133,8 @@ const ManageToken = ({
                         src={
                           userCustomURIList.logoURI.includes('ipfs')
                             ? `https://cloudflare-ipfs.com/${
-                                userCustomURIList.logoURI.split('://')[0]
-                              }/${userCustomURIList.logoURI.split('://')[1]}/`
+                              userCustomURIList.logoURI.split('://')[0]
+                            }/${userCustomURIList.logoURI.split('://')[1]}/`
                             : userCustomURIList.logoURI
                         }
                         style={{
@@ -227,8 +186,8 @@ const ManageToken = ({
                           src={
                             list.logoURI.includes('ipfs')
                               ? `https://cloudflare-ipfs.com/${
-                                  list.logoURI.split('://')[0]
-                                }/${list.logoURI.split('://')[1]}/`
+                                list.logoURI.split('://')[0]
+                              }/${list.logoURI.split('://')[1]}/`
                               : list.logoURI
                           }
                           style={{
@@ -247,222 +206,60 @@ const ManageToken = ({
                           >
                             {list.name}
                             <p style={{ margin: '1px' }}>
-                              {list.tokens.length} token
+                              {list.tokens.length} tokens
                             </p>
                           </FormLabel>
                           <Switch defaultChecked id={list.name} size="lg" />
                         </FormControl>
                       </Flex>
                     ))}
-
                   <Flex
                     mt={5}
                     flexDirection="row"
-                    backgroundColor={
-                      defaultTokenState[0].show === true ? '#29235E' : '#120136'
-                    }
+                    backgroundColor="#29235E"
                     padding="2"
-                    border={
-                      defaultTokenState[0].show === true
-                        ? '1px solid #9790D6'
-                        : '1px solid #29235E'
-                    }
+                    border="1px solid #9790D6"
                     borderRadius="16px"
                     justifyContent="space-between"
                     h="16"
                   >
-                    {/* <RGP className={styles.logo} width="45%" height="100%" /> */}
-                    <img
-                      src={RGP}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        margin: '10px',
-                        marginTop: '1px',
-                        marginRight: '20px',
-                      }}
-                    />
+                    <RGP className={styles.logo} width="45%" height="100%" />
                     <FormControl display="flex" alignItems="center">
-                      <FormLabel
-                        htmlFor="top-ten"
-                        mb="0"
-                        style={{ margin: '0px auto', marginLeft: '1px' }}
-                      >
-                        <Text
-                          fontFamily="Roboto"
-                          fontSize="14px"
-                          lineHeight="16px"
-                          fontWeight="500"
-                          fontStyle="normal"
-                        >
-                          Rigel Default Token List
-                        </Text>
-                        <p
-                          style={{
-                            marginTop: '-10px',
-                            fontSize: '12px',
-                            fontFamily: 'Roboto',
-                            fontWeight: 'normal',
-                          }}
-                        >
-                          {defaultTokenState[1].token.length} tokens
-                        </p>
+                      <FormLabel htmlFor="top-ten" mb="0">
+                        Rigel Default Token List
                       </FormLabel>
                       <Switch
-                        onChange={e => {
-                          toggleDefaultTokenState(e.target.checked);
-                        }}
-                        defaultChecked={defaultTokenState[0].show}
+                        onChange={e => offDefaultTokenList(e.target.checked)}
+                        isChecked={toggleDisplay}
                         id="top-ten"
                         size="lg"
-                        // colorScheme="#9790D5"
-                        // color="#9790D5"
-                        colorScheme="purple"
                       />
                     </FormControl>
                   </Flex>
                   <Flex
                     mt={5}
                     flexDirection="row"
-                    backgroundColor={
-                      mainTokenState[0].show === true ? '#29235E' : '#120136'
-                    }
+                    backgroundColor="#29235E"
                     padding="2"
-                    border={
-                      mainTokenState[0].show === true
-                        ? '1px solid #9790D6'
-                        : '1px solid #29235E'
-                    }
+                    border="1px solid #9790D6"
                     borderRadius="16px"
                     justifyContent="space-between"
                     h="16"
                   >
-                    {/* <RGP className={styles.logo} width="45%" height="100%" /> */}
-                    <img
-                      src={RGP}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        margin: '10px',
-                        marginTop: '1px',
-                        marginRight: '20px',
-                      }}
-                    />
+                    <RGP className={styles.logo} width="45%" height="100%" />
                     <FormControl display="flex" alignItems="center">
-                      <FormLabel
-                        htmlFor="main-list"
-                        mb="0"
-                        style={{
-                          margin: '0px auto',
-                          marginLeft: '1px',
-                        }}
-                      >
-                        <Text
-                          fontFamily="Roboto"
-                          fontSize="14px"
-                          lineHeight="16px"
-                          fontWeight="500"
-                          fontStyle="normal"
-                        >
-                          Rigel Main Token List
-                        </Text>
-
-                        <p
-                          style={{
-                            marginTop: '-10px',
-                            fontSize: '12px',
-                            fontFamily: 'Roboto',
-                            fontWeight: 'normal',
-                          }}
-                        >
-                          {mainTokenState[1].token.length} tokens
-                        </p>
+                      <FormLabel htmlFor="extended-list" mb="0">
+                        Rigel Extended Token List
                       </FormLabel>
-                      <Switch
-                        onChange={e => {
-                          toggleMainTokenState(e.target.checked);
-                        }}
-                        defaultChecked={mainTokenState[0].show}
-                        id="main-list"
-                        size="lg"
-                        colorScheme="purple"
-                      />
+                      <Switch id="extended-list" size="lg" disabled />
                     </FormControl>
                   </Flex>
-                  {userCustomTokenList[1].token.length > 0 && (
-                    <Flex
-                      mt={5}
-                      flexDirection="row"
-                      backgroundColor={
-                        userTokenState[0].show === true ? '#29235E' : '#120136'
-                      }
-                      padding="2"
-                      border={
-                        userTokenState[0].show === true
-                          ? '1px solid #9790D6'
-                          : '1px solid #29235E'
-                      }
-                      borderRadius="16px"
-                      justifyContent="space-between"
-                      h="16"
-                    >
-                      {/* <RGP className={styles.logo} width="45%" height="100%" /> */}
-                      <img
-                        src={RGP}
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          margin: '10px',
-                          marginTop: '1px',
-                          marginRight: '20px',
-                        }}
-                      />
-                      <FormControl display="flex" alignItems="center">
-                        <FormLabel
-                          htmlFor="user-list"
-                          mb="0"
-                          style={{ margin: '0px auto', marginLeft: '1px' }}
-                        >
-                          <Text
-                            fontFamily="Roboto"
-                            fontSize="14px"
-                            lineHeight="16px"
-                            fontWeight="500"
-                            fontStyle="normal"
-                          >
-                            User Token List
-                          </Text>
-
-                          <p
-                            style={{
-                              marginTop: '-10px',
-                              fontSize: '12px',
-                              fontFamily: 'Roboto',
-                              fontWeight: 'normal',
-                            }}
-                          >
-                            {userCustomTokenList[1].token.length} tokens
-                          </p>
-                        </FormLabel>
-                        <Switch
-                          onChange={e => {
-                            toggleUserTokenState(e.target.checked);
-                          }}
-                          defaultChecked={userTokenState[0].show}
-                          id="user-list"
-                          size="lg"
-                          disabled
-                          colorScheme="purple"
-                        />
-                      </FormControl>
-                    </Flex>
-                  )}
                 </>
               ) : (
                 <>
                   <Input
-                    placeholder="0x0000"
-                    borderColor="#29235E"
+                    placeholder="Custom Token Address 0x00"
+                    borderColor="#40BAD5"
                     color="white"
                     rounded="2xl"
                     h="40px"
@@ -518,29 +315,7 @@ const ManageToken = ({
                   )}
                   <Flex flexDirection="column" justifyContent="space-between">
                     <Box>
-                      <Text>
-                        {userCustomTokenList[1].token.length <= 1 ? (
-                          <p
-                            style={{
-                              fontSize: '14px',
-                              fontWeight: '500',
-                              color: '#eee6ff',
-                            }}
-                          >
-                            {userCustomTokenList[1].token.length} Custom Token
-                          </p>
-                        ) : (
-                          <p
-                            style={{
-                              fontSize: '14px',
-                              fontWeight: '500',
-                              color: '#eee6ff',
-                            }}
-                          >
-                            {userCustomTokenList[1].token.length} Custom Token
-                          </p>
-                        )}
-                      </Text>
+                      <Text>Your Custom Tokens</Text>
                     </Box>
                     <Box
                       height="200"
@@ -548,7 +323,7 @@ const ManageToken = ({
                       marginTop="5"
                       paddingTop="4"
                     >
-                      {userCustomTokenList[1].token.map((t, index) => (
+                      {userCustomTokenList.map((t, index) => (
                         <Box
                           key={index}
                           display="flex"
@@ -594,12 +369,7 @@ ManageToken.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   customTokenBox: PropTypes.bool,
-  userTokenState: PropTypes.array,
-  defaultTokenState: PropTypes.array,
-  mainTokenState: PropTypes.array,
-  toggleDefaultTokenState: PropTypes.func,
-  toggleMainTokenState: PropTypes.func,
-  toggleUserTokenState: PropTypes.func,
+  toggleDisplay: PropTypes.bool,
   setManageToken: PropTypes.func,
   tokenImportUri: PropTypes.string,
   setTokenImportUri: PropTypes.func,
@@ -618,6 +388,7 @@ ManageToken.propTypes = {
   showErrorMessage: PropTypes.bool,
   errorMessage: PropTypes.string,
   importUriToken: PropTypes.func,
+  offDefaultTokenList: PropTypes.func,
 };
 
 export default ManageToken;

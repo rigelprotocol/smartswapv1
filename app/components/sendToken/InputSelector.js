@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect } from 'react';
-import { Flex, Text, Box, Circle } from '@chakra-ui/layout';
+import React from 'react';
+import { Flex, Text } from '@chakra-ui/layout';
 import { Menu } from '@chakra-ui/menu';
 import { Button } from '@chakra-ui/button';
 import { Input } from '@chakra-ui/input';
@@ -9,37 +9,27 @@ import { useMediaQuery, Image } from '@chakra-ui/react';
 import { tokenList, tokenWhere } from '../../utils/constants';
 import NullImage24 from '../../assets/Null-24.svg';
 
-const InputSelector = ({
-  max,
-  value,
-  onOpen,
-  handleChange,
-  selectedToken,
-  selectedToToken,
-}) => {
+const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   if (isMobileDevice) {
     return (
       <>
-        <Flex justifyContent="space-between" mb={2}>
+        <Flex justifyContent="space-between">
           <Input
             placeholder="0.0"
-            fontSize="28px"
-            color=" rgba(255,255,255)"
+            fontSize="lg"
+            color=" rgba(255, 255, 255,0.25)"
             value={value}
             isRequired
-            width="40%"
-            border={0}
-            variant="unstyled"
+            width="38%"
             onChange={e => {
               handleChange(e);
             }}
-            className={selectedToToken ? 'to__button' : 'from__button'}
           />
           <Flex
             cursor="pointer"
             justifyContent="space-between"
-            alignItems="right"
+            alignItems="center"
           >
             {max ? (
               <Text
@@ -47,7 +37,7 @@ const InputSelector = ({
                 p="5px 10px"
                 rounded="lg"
                 mt="10px"
-                fontSize="xs"
+                fontSize="sm"
                 width="50%"
                 textAlign="center"
                 color="#72cfe4"
@@ -61,47 +51,31 @@ const InputSelector = ({
             ) : (
               <></>
             )}
-            <Box>
+            <Flex>
               <Menu>
                 <Button
                   onClick={onOpen}
-                  className={
-                    selectedToToken
-                      ? 'selectedTo__button'
-                      : 'selectFrom__button'
-                  }
                   border="0px"
-                  pl={3}
+                  h="30px"
                   fontWeight="regular"
                   fontSize="16px"
                   cursor="pointer"
                   bg={selectedToken ? 'none' : '#40BAD5'}
+                  marginBottom="5px"
                   color="white"
                   _hover={{ background: '#72cfe4', color: '#29235E' }}
                   rightIcon={<ChevronDownIcon />}
                 >
                   {typeof selectedToken.symbol !== 'undefined' && (
                     <>
-                      <Circle size="40px" color="rgba(64, 186, 213,0.35)">
-                        <Image src={selectedToken.logoURI} />
-                      </Circle>
-
+                      <Image src={selectedToken.logoURI} />
                       {selectedToken.imported === true && <NullImage24 />}
-                      <Text
-                        className={
-                          selectedToToken
-                            ? 'textTo__button'
-                            : 'textFrom__button'
-                        }
-                        ml={2}
-                      >
-                        {selectedToken.symbol}
-                      </Text>
+                      <Text ml={4}>{selectedToken.symbol}</Text>
                     </>
                   )}
                 </Button>
               </Menu>
-            </Box>
+            </Flex>
           </Flex>
         </Flex>
       </>
@@ -112,7 +86,6 @@ const InputSelector = ({
       <Flex justifyContent="space-between">
         <Input
           placeholder="0.0"
-          className={selectedToToken ? 'to__button' : 'from__button'}
           fontSize="lg"
           color=" rgba(255, 255, 255,0.25)"
           value={value}
@@ -157,24 +130,14 @@ const InputSelector = ({
               color="white"
               _hover={{ background: '#72cfe4', color: '#29235E' }}
               rightIcon={<ChevronDownIcon />}
-              className={
-                selectedToToken ? 'selectedTo__button' : 'selectFrom__button'
-              }
             >
               {typeof selectedToken.symbol !== 'undefined' && (
                 <>
-                  <Image className="select__icon" src={selectedToken.img} />
+                  <Image src={selectedToken.img} />
                   <span
                     className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
                   />
-                  <Text
-                    className={
-                      selectedToToken ? 'textTo__button' : 'textFrom__button'
-                    }
-                    ml={4}
-                  >
-                    {selectedToken.symbol}
-                  </Text>
+                  <Text ml={4}>{selectedToken.symbol}</Text>
                 </>
               )}
             </Button>

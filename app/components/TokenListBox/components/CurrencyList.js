@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   Modal,
   ModalBody,
@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactList from 'react-list';
 import ArrowDownImage from '../../../assets/arrow-down.svg';
-import styles from '../../../styles/CurrencyList.css';
+
 const CurrencyList = ({
   Row,
   list,
@@ -28,48 +28,29 @@ const CurrencyList = ({
   setShowCurrencyList,
 }) => {
   const isItemLoaded = ({ index }) => !!list[index];
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent
         bg="#120136"
         color="#fff"
-        padding-top="15px"
         borderRadius="20px"
         width="90vw"
-        // minHeight="60vh"
+        minHeight="60vh"
       >
         <ModalCloseButton
-          width="24px"
-          height="24px"
-          padding="5px"
-          bg="#fff"
+          bg="none"
           border="0px"
-          color="#000"
-          borderRadius="50%"
+          color="#fff"
           cursor="pointer"
-          _focus={{ outline: 'none', backgroundColor: '#fff', color: '#000' }}
-          _hover={{ backgroundColor: '#fff', color: '#000' }}
-          marginTop="15px"
-          marginRight="8px"
+          _focus={{ outline: 'none' }}
         />
-        <ModalHeader
-          fontFamily="Roboto"
-          fontStyle="normal"
-          fontWeight="500"
-          fontSize="16px"
-          marginTop="15px"
-        >
-          Select token
-        </ModalHeader>
+        <ModalHeader fontWeight="light">Select a token</ModalHeader>
         <ModalBody mt={4}>
           <Input
             placeholder="Search by name or paste address"
-            borderColor="#29235E"
-            marginTop="-10px"
-            color="#fff"
-            fontWeight="800"
+            borderColor="#40BAD5"
+            color="gray.500"
             rounded="2xl"
             h="50px"
             fontSize="sm"
@@ -80,10 +61,20 @@ const CurrencyList = ({
             }}
           />
           <Flex justifyContent="space-between" mt={5}>
-            <hr style={{ width: '100vw', border: '1px solid #29235E' }} />
+            <Text fontSize="sm" fontWeight="light" color="#fff">
+              Token
+            </Text>
+            <ArrowDownImage />
           </Flex>
           {toggleDisplay && (
-            <div className={styles.list}>
+            <div
+              style={{
+                overflow: 'auto',
+                maxHeight: 300,
+                marginRight: '-10px',
+                paddingRight: '10px',
+              }}
+            >
               <ReactList
                 itemRenderer={Row}
                 length={list.length}
@@ -92,13 +83,7 @@ const CurrencyList = ({
             </div>
           )}
         </ModalBody>
-        <ModalFooter
-          backgroundColor="#181538"
-          height="48px"
-          borderEndEndRadius="15px"
-          borderEndStartRadius="15px"
-          justifyContent="center"
-        >
+        <ModalFooter justifyContent="center">
           <div>
             {' '}
             <Text
@@ -107,9 +92,6 @@ const CurrencyList = ({
                 setShowCurrencyList(false);
               }}
               cursor="pointer"
-              fontFamily="Roboto"
-              fontWeight="500"
-              fontSize="16px"
             >
               Manage Token
             </Text>
