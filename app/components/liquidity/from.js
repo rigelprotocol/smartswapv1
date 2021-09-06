@@ -7,6 +7,11 @@ import PropTypes from 'prop-types';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import TokenListBox from 'components/TokenListBox';
+import {
+  NumberInput,
+  NumberInputField,
+  useMediaQuery
+} from "@chakra-ui/react"
 
 const LiquidityFromBox = ({
   fromValue,
@@ -21,21 +26,22 @@ const LiquidityFromBox = ({
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
+  const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   return (
     <>
       <Box
         color="#fff"
         bg="#29235E"
-        h="100px"
+        paddingBottom="10px"
         mb="10px"
         justifyContent="space-between"
-        px={4}
+        px={isMobileDevice ? "4":"2"}
         mx={4}
         mt={4}
         rounded="2xl"
       >
         <Flex justifyContent="space-between" mb={1}>
-          <Text fontSize="sm" color="#40BAD5">
+          <Text fontSize="sm" color="rgba(255, 255, 255, 0.5)">
             {label || 'From'}
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
@@ -45,28 +51,37 @@ const LiquidityFromBox = ({
         </Flex>
         <Flex justifyContent="space-between">
         <InputGroup>
-          <Input
-            type="number"
-            id="input__field"
-            placeholder="0.0"
-            value={fromValue}
-            border="1px solid rgba(255, 255, 255,0.25)"
-            fontSize="lg"
-            color="rgb(255, 255, 255)"
-            onChange={event => {
-              setFromValue(event.target.value);
-              setDetermineInputChange("from")
+          <NumberInput
+            onChange={value => {
+            setFromValue(value);
+            setDetermineInputChange("from")
             }}
-          />
+            variant="unstyled"
+            value={fromValue}
+          >
+            <NumberInputField  
+            padding="0"
+            border="0"
+            placeholder="0.0"
+            fontSize="24px"
+            paddingRight="40px"
+            color="#FFFFFF"
+            opacity="0.5"
+           />
+          </NumberInput>
+
              <InputRightElement marginRight="5px">
               <Text
               cursor="pointer" 
               color="rgba(64, 186, 213, 1)"
-              onClick={()=>setFromInputMax()}>
+              onClick={()=>setFromInputMax()}
+              marginTop="3px"
+              >
                 max
               </Text>
           </InputRightElement>
           </InputGroup>
+         
           <Flex alignItems="center">
             <Menu>
               <Button
@@ -79,6 +94,7 @@ const LiquidityFromBox = ({
                 bg={fromSelectedToken.name ? 'none' : '#40BAD5'}
                 marginBottom="5px"
                 color="white"
+                px="3"
                 _hover={{ background: '#72cfe4', color: '#29235E' }}
                 rightIcon={<ChevronDownIcon />}
               >
