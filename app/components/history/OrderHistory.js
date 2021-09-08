@@ -89,7 +89,7 @@ function OrderHistory({ data, loading, dataIsEmpty }) {
                   lineHeight="0"
                   color="rgba(255, 255, 255,0.25)"
                 >
-                  @ &nbsp;
+                  Time &nbsp;
                 </Text>
                 <Text color="#fff" fontSize="14px" fontWeight="regular">
                   {time}

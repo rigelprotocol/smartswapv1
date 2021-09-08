@@ -5,6 +5,7 @@ import testNetToken from '../../utils/test-net-tokens.json';
 import mainNetToken from '../../utils/main-token.json';
 import SmartSwapRouter02 from '../../utils/abis/SmartSwapRouter02.json';
 import { getTokenDetails } from '../../utils/tokens';
+import NullImage24 from '../../assets/Null-24.svg';
 
 const useGetHistory = wallet => {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,8 +36,10 @@ const useGetHistory = wallet => {
     const fetchData = async () => {
       const { provider, address } = wallet;
 
-      // for TokenIcon Url
-      const isTestNet = true; // will be updated with provider network for mainet Intergration
+      // Testnet or Mainet
+      const { chainId } = await provider.getNetwork();
+      const isTestNet = chainId === 97;
+
       function getTokenSymbol(symbol) {
         const tokensList = isTestNet ? testNetToken : mainNetToken;
         return tokensList.find(token => token.symbol === symbol);
@@ -47,7 +50,10 @@ const useGetHistory = wallet => {
         const latestBlock = await provider.getBlockNumber();
         const etherAPI = latestBlock - 3000;
 
-        const uri = `https://api-testnet.bscscan.com/api?module=account&action=txlist&address=${address}&startblock=${etherAPI}&endblock=tatest&sort=desc&apikey=AATZWFQ47VX3Y1DN7M97BJ5FEJR6MGRQSD`;
+        const uri = `https://api${
+          isTestNet ? '-testnet.bscscan.com' : '.bscscan.com'
+        }/api?module=account&action=txlist&address=${address}&startblock=${etherAPI}&endblock=tatest&sort=desc&apikey=AATZWFQ47VX3Y1DN7M97BJ5FEJR6MGRQSD`;
+
         const rewData = await fetch(uri);
         const jsondata = await rewData.json();
 
@@ -94,8 +100,10 @@ const useGetHistory = wallet => {
 
         // final modifications
         const userSwapHistory = swapDataForWallet.map(data => ({
-          token1Icon: getTokenSymbol(data.tokenIn.symbol).logoURI,
-          token2Icon: getTokenSymbol(data.tokenOut.symbol).logoURI,
+          token1Icon:
+            getTokenSymbol(data.tokenIn.symbol).logoURI || NullImage24,
+          token2Icon:
+            getTokenSymbol(data.tokenOut.symbol).logoURI || NullImage24,
           token1: data.tokenIn,
           token2: data.tokenOut,
           amountIn: convertFromWei(data.amountIn, data.tokenIn.decimals),
