@@ -162,7 +162,7 @@ const AddLiquidity = ({
     )}
     <Box mt={5} p={5}>
       {toSelectedToken.symbol !== 'BNB' &&
-      !hasAllowedToToken &&
+        !hasAllowedToToken &&
         toSelectedToken.symbol !== 'SELECT A TOKEN' &&
         !insufficientBalanceButton &&
         toValue >= 0 && (
@@ -186,8 +186,8 @@ const AddLiquidity = ({
             Approve {toSelectedToken.symbol}
           </Button>
         )}
-      {fromSelectedToken.symbol !== 'BNB' && 
-      !hasAllowedFromToken &&
+      {fromSelectedToken.symbol !== 'BNB' &&
+        !hasAllowedFromToken &&
         fromSelectedToken.symbol !== 'SELECT A TOKEN' &&
         fromValue >= 0 &&
         fromValue !== '' &&
@@ -557,16 +557,31 @@ const AddLiquidity = ({
       </ModalContent>
     </Modal>
 
-    <SpinModal
-      isOpenModal={isOpenModal}
-      onCloseModal={onCloseModal}
-      title="Success"
-    >
-      <Box textAlign="center" mt={3} mb={8}>
-        Providing {fromValue} {fromSelectedToken.symbol} and {toValue}{' '}
-        {toSelectedToken.symbol}
-      </Box>
-    </SpinModal>
+    <Modal isOpen={isOpenModal} onClose={onCloseModal} isCentered>
+      <ModalOverlay />
+      <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
+        <ModalCloseButton
+          bg="none"
+          border="0px"
+          color="#fff"
+          cursor="pointer"
+          _focus={{ outline: 'none' }}
+          onClick={onCloseModal}
+        />
+        <ModalBody align="center" my={2}>
+          <Circle size="70px" background="#68C18A" my={3}>
+            <CheckIcon fontSize="40px" />
+          </Circle>
+          <Text fontSize="18px" fontWeight="normal">
+            Transaction Succesful
+          </Text>
+          <Box textAlign="center" mt={3} mb={8}>
+            you have successfully Provided Liquidity for {fromValue}{' '}
+            {fromSelectedToken.symbol} and {toValue} {toSelectedToken.symbol}
+          </Box>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   </Box>
 );
 AddLiquidity.propTypes = {

@@ -751,6 +751,9 @@ export function LiquidityPage(props) {
     }
   }
 
+
+
+
   const confirmingSupply = () => {
     if ((fromSelectedToken.symbol !== "BNB" && toSelectedToken.symbol === "BNB") || (fromSelectedToken.symbol === "BNB" && toSelectedToken.symbol !== "BNB")
     ) {
