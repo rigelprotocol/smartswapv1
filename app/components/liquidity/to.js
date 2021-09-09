@@ -2,7 +2,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Box, Flex, Text,Circle } from '@chakra-ui/layout';
 import { Input, Button, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import PropTypes from 'prop-types';
@@ -10,7 +10,13 @@ import PropTypes from 'prop-types';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import TokenListBox from 'components/TokenListBox';
-
+import NullImage24 from '../../assets/Null-24.svg';
+import {
+  NumberInput,
+  NumberInputField,
+  useMediaQuery,
+  Image
+} from "@chakra-ui/react"
 const Manual = ({
   toValue,
   setToAddress,
@@ -24,22 +30,22 @@ const Manual = ({
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
-
+  const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   return (
     <>
       <Box
         color="#fff"
         bg="#29235E"
         mt="10px"
-        h="100px"
+        paddingBottom="10px"
         justifyContent="space-between"
-        px={4}
+        px={isMobileDevice ? "4":"2"}
         mx={4}
         rounded="2xl"
       >
         <Flex justifyContent="space-between" mb={1}>
-          <Text fontSize="sm" color="#40BAD5">
-            {label || 'TO:'}
+          <Text fontSize="sm" color="rgba(255, 255, 255, 0.5)">
+            {label || 'TO'}
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             Balance: {` `}
@@ -48,24 +54,31 @@ const Manual = ({
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <InputGroup>
-          <Input
-            type="number"
-            id="input__field"
-            placeholder="0.0"
-            value={toValue}
-            border="1px solid rgba(255, 255, 255,0.25)"
-            fontSize="lg"
-            color="rgb(255, 255, 255)"
-            onChange={event => {
-              setToValue(event.target.value);
+          <NumberInput
+             onChange={value => {
+              setToValue(value);
               setDetermineInputChange("to")
             }}
-          />
+            variant="unstyled"
+            value={toValue}
+          >
+            <NumberInputField  
+            padding="0"
+            border="0"
+            placeholder="0.0"
+            fontSize="24px"
+            paddingRight="40px"
+            color="#FFFFFF"
+            opacity="0.5"
+           />
+          </NumberInput>
              <InputRightElement marginRight="5px">
               <Text
               cursor="pointer" 
               color="rgba(64, 186, 213, 1)"
-              onClick={()=>setToInputMax()}>
+              onClick={()=>setToInputMax()}
+              marginTop="2px"
+              >
                 max
               </Text>
           </InputRightElement>
@@ -79,16 +92,26 @@ const Manual = ({
                 fontWeight="regular"
                 fontSize="16px"
                 cursor="pointer"
-                bg={toSelectedToken.name ? 'none' : '#40BAD5'}
+                bg={toSelectedToken.symbol !== "SELECT A TOKEN" ? 'none' : '#40BAD5'}
                 marginBottom="5px"
-                color="white"
+                color={toSelectedToken.symbol !== "SELECT A TOKEN" ? 'white' : 'black'}
                 _hover={{ background: '#72cfe4', color: '#29235E' }}
                 rightIcon={<ChevronDownIcon />}
+                px={toSelectedToken.symbol !== "SELECT A TOKEN" ? '3' : '1'}
               >
-                <span
-                  className={`icon icon-${toSelectedToken.symbol.toLowerCase()}`}
-                />
-                <Text ml={4}>{toSelectedToken.symbol}</Text>
+                 {(typeof toSelectedToken.symbol !== 'undefined' && toSelectedToken.symbol!=="SELECT A TOKEN" && !toSelectedToken.imported) &&  
+                 <>
+                 <Circle size="40px" color="rgba(64, 186, 213,0.35)">
+                        <Image src={toSelectedToken.logoURI} />
+                      </Circle>
+                      </>
+                      }
+                {toSelectedToken.imported && 
+                      <Box px="0">
+                      <NullImage24 />
+                      </Box>
+                      }
+                <Text ml={toSelectedToken.symbol !== "SELECT A TOKEN" ? '4' : '0'}>{toSelectedToken.symbol}</Text>
               </Button>
               <TokenListBox
                 setSelectedToken={setToSelectedToken}

@@ -9,7 +9,14 @@ import { useMediaQuery, Image } from '@chakra-ui/react';
 import { tokenList, tokenWhere } from '../../utils/constants';
 import NullImage24 from '../../assets/Null-24.svg';
 
-const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
+const InputSelector = ({
+  max,
+  value,
+  onOpen,
+  handleChange,
+  selectedToken,
+  selectedToToken,
+}) => {
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   if (isMobileDevice) {
     return (
@@ -27,6 +34,7 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
             onChange={e => {
               handleChange(e);
             }}
+            className={selectedToToken ? 'to__button' : 'from__button'}
           />
           <Flex
             cursor="pointer"
@@ -57,13 +65,17 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
               <Menu>
                 <Button
                   onClick={onOpen}
+                  className={
+                    selectedToToken
+                      ? 'selectedTo__button'
+                      : 'selectFrom__button'
+                  }
                   border="0px"
                   pl={3}
                   fontWeight="regular"
                   fontSize="16px"
                   cursor="pointer"
                   bg={selectedToken ? 'none' : '#40BAD5'}
-
                   color="white"
                   _hover={{ background: '#72cfe4', color: '#29235E' }}
                   rightIcon={<ChevronDownIcon />}
@@ -75,7 +87,16 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
                       </Circle>
 
                       {selectedToken.imported === true && <NullImage24 />}
-                      <Text ml={2}>{selectedToken.symbol}</Text>
+                      <Text
+                        className={
+                          selectedToToken
+                            ? 'textTo__button'
+                            : 'textFrom__button'
+                        }
+                        ml={2}
+                      >
+                        {selectedToken.symbol}
+                      </Text>
                     </>
                   )}
                 </Button>
@@ -91,6 +112,7 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
       <Flex justifyContent="space-between">
         <Input
           placeholder="0.0"
+          className={selectedToToken ? 'to__button' : 'from__button'}
           fontSize="lg"
           color=" rgba(255, 255, 255,0.25)"
           value={value}
@@ -135,14 +157,24 @@ const InputSelector = ({ max, value, onOpen, handleChange, selectedToken }) => {
               color="white"
               _hover={{ background: '#72cfe4', color: '#29235E' }}
               rightIcon={<ChevronDownIcon />}
+              className={
+                selectedToToken ? 'selectedTo__button' : 'selectFrom__button'
+              }
             >
               {typeof selectedToken.symbol !== 'undefined' && (
                 <>
-                  <Image src={selectedToken.img} />
+                  <Image className="select__icon" src={selectedToken.img} />
                   <span
                     className={`icon icon-${selectedToken.symbol.toLowerCase()}`}
                   />
-                  <Text ml={4}>{selectedToken.symbol}</Text>
+                  <Text
+                    className={
+                      selectedToToken ? 'textTo__button' : 'textFrom__button'
+                    }
+                    ml={4}
+                  >
+                    {selectedToken.symbol}
+                  </Text>
                 </>
               )}
             </Button>

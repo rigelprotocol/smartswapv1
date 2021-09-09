@@ -48,6 +48,7 @@ import {
   WETH,
   updateOutPutAmountForRouter,
   SmartFactory,
+  LPTokenContract,
 } from '../../utils/SwapConnect';
 import ArrowDownImage from '../../assets/arrow-down.svg';
 import From from './from';
@@ -86,6 +87,7 @@ export const Manual = props => {
   const [transactionDeadline, setTransactionDeadline] = useState('');
   const [balanceIsSet, setBalanceIsSet] = useState(false);
   const [newTokenPair, setNewTokenPair] = useState(false);
+  const [lowLiquidity, setLowLiquidity] = useState(false);
   const [actualTransactionDeadline, setActualTransactionDeadline] = useState(
     Math.floor(new Date().getTime() / 1000.0 + 1200),
   );
@@ -165,24 +167,35 @@ export const Manual = props => {
   }, [selectedToken, wallet]);
 
   useEffect(() => {
-    if (!newTokenPair) {
-      // if (selectedToken.balance !== undefined && parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
-      //   setFromAmount(selectedToken.balance)
-      // }
-      if (
-        parseFloat(tokenAllowance) < parseFloat(fromAmount) &&
-        selectedToken.symbol !== 'BNB'
-      ) {
-        setUserHasApproveToken(false);
-      }
-      if (fromAmount !== '') {
-        if (parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
-          setInsufficientBalanceButton(true);
-        } else {
-          setInsufficientBalanceButton(false);
+    (async () => {
+
+      if (!newTokenPair) {
+        if (
+          parseFloat(tokenAllowance) < parseFloat(fromAmount) &&
+          selectedToken.symbol !== 'BNB'
+        ) {
+          setUserHasApproveToken(false);
+        }
+        if (fromAmount !== '') {
+          const factory = await SmartFactory();
+          const fromPath = ethers.utils.getAddress(selectedToken.address);
+          const toPath = ethers.utils.getAddress(selectedToToken.address);
+          const LPAddress = await factory.getPair(toPath, fromPath);
+          if (LPAddress != '0x0000000000000000000000000000000000000000') {
+            const LPContract = await LPTokenContract(LPAddress);
+            const [fromPathReserve, toPathReserve] = await LPContract.getReserves();
+            ethers.utils.formatEther(fromPathReserve).toString()
+            console.log('use the console to Confirm the Code To Amount', ethers.utils.formatEther(toPathReserve).toString(), 'From Amount', ethers.utils.formatEther(fromPathReserve).toString())
+            parseFloat(ethers.utils.formatEther(fromPathReserve).toString()) < fromAmount || parseFloat(ethers.utils.formatEther(toPathReserve).toString()) < amountIn ? setLowLiquidity(true) : null;
+          }
+          if (parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
+            setInsufficientBalanceButton(true);
+          } else {
+            setInsufficientBalanceButton(false);
+          }
         }
       }
-    }
+    })()
   }, [fromAmount, amountIn]);
 
   useEffect(async () => {
@@ -195,7 +208,6 @@ export const Manual = props => {
     const fromPath = ethers.utils.getAddress(selectedToken.address);
     const toPath = ethers.utils.getAddress(selectedToToken.address);
     const LPAddress = await factory.getPair(toPath, fromPath);
-
     const RGPBUSDAddress = await factory.getPair(
       TOKENS_CONTRACT.RGP,
       TOKENS_CONTRACT.BUSD,
@@ -1432,7 +1444,7 @@ async function updateSendAmount(
   if (typeof path[1] != 'undefined') {
     const fromPath = selectedToken.address;
     const toPath = selectedToToken.address;
-    // try {
+    try {
       setShowBox(false);
       setBoxMessage('...');
       const amount = await rout.getAmountsOut(
@@ -1445,12 +1457,12 @@ async function updateSendAmount(
           ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
         )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-    // } catch (e) {
-    //   console.log(e)
-    //   setAmountIn('');
-    //   setBoxMessage('Please check your token');
-    //   setShowBox(true);
-    // }
+    } catch (e) {
+      console.log(e)
+      setAmountIn('');
+      setBoxMessage('Please check your token');
+      setShowBox(true);
+    }
   }
 }
 

@@ -25,10 +25,11 @@ export default function HomePage(props) {
   const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
 
   useEffect(() => {
-    if (!localStorage.noFirstVisit) {
+    const visits = window.localStorage.getItem('noFirstVisit')
+    if (!visits) {
       setWelcomeModal(true);
 
-      localStorage.noFirstVisit = '1';
+      window.localStorage.setItem('noFirstVisit', 1);
     }
   }, []);
 
@@ -80,6 +81,103 @@ export default function HomePage(props) {
             'Click here to view your Order History and Market History for all your previous transactions'
           }
           desc2={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(2)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectFrom__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title={'Swap From'}
+          description={
+            'Click here to select the token you would like to swap for another token.'
+          }
+          desc3={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(3)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectedTo__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title={'Swap To'}
+          description={
+            'Click here to select the token you would like to receive.'
+          }
+          desc4={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button
+            onClick={() => {
+              window.scroll(300, 0);
+              goTo(4);
+            }}
+            className={style.nextbutton}
+          >
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title={'Token Amount To Change'}
+          description={
+            'Enter the amount of tokens you would like to change from.'
+          }
+          desc5={true}
         >
           <button
             onClick={() => setIsTourOpen(false)}
@@ -175,6 +273,93 @@ export default function HomePage(props) {
           >
             Skip
           </button>
+          <button onClick={() => goTo(3)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectFrom__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Swap From'}
+          description={
+            'Click here to select the token you would like to swap for another token.'
+          }
+          desc4={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(4)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectedTo__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Swap To'}
+          description={
+            'Click here to select the token you would like to receive.'
+          }
+          desc5={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(5)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title={'Token Amount To Change'}
+          description={
+            'Click here to Enter the amount of tokens you would like to change from.'
+          }
+          desc6={true}
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
           <button
             onClick={() => setIsTourOpen(false)}
             className={style.nextbutton}
@@ -228,7 +413,9 @@ export default function HomePage(props) {
           startAt={0}
           disableFocusLock={true}
           inViewThreshold={560}
-          // disableInteraction={false}
+          disableInteraction={true}
+          rounded={10}
+          maskSpace={5}
         />
 
         <Flex mb="100px" mx={2} flexWrap="wrap">
@@ -269,9 +456,9 @@ export default function HomePage(props) {
                     className={
                       tab === TABS.PRICE ? styles.active : styles.inactive
                     }
-                    // onClick={() => {
-                    //   setTab(TABS.PRICE);
-                    // }}
+                  // onClick={() => {
+                  //   setTab(TABS.PRICE);
+                  // }}
                   >
                     Set price
                   </Text>
@@ -286,9 +473,9 @@ export default function HomePage(props) {
                     className={
                       tab === TABS.AUTO_TIME ? styles.active : styles.inactive
                     }
-                    // onClick={() => {
-                    //   setTab(TABS.AUTO_TIME);
-                    // }}
+                  // onClick={() => {
+                  //   setTab(TABS.AUTO_TIME);
+                  // }}
                   >
                     Auto Time
                   </Text>
