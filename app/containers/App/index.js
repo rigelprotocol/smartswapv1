@@ -38,6 +38,7 @@ import {
 } from '../../utils/wallet-wiget/connection';
 import { smartSwapLPTokenPoolOne } from '../../utils/SwapConnect';
 import { useMediaQuery } from '@chakra-ui/react';
+import { Toaster } from 'react-hot-toast';
 
 const breakpoints = {
   sm: '360px',
@@ -62,6 +63,7 @@ const newTheme = {
 };
 
 const App = props => {
+  const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
   const { wallet } = props.state;
   useEffect(() => {
     (async () => {
@@ -120,6 +122,15 @@ const App = props => {
       <ThemeProvider theme={newTheme}>
         <TrustWallet />
         <Toast {...props} />
+        <Toaster
+          position={isMobileDevice ? 'top-center' : 'top-right'}
+          containerStyle={{
+            marginTop: isMobileDevice ? '50px' : '70px',
+          }}
+          toastOptions={{
+            duration: 240000,
+          }}
+        />
         <Switch>
           <Route exact path="/" component={Splash} />
           <Route exact path="/farming" component={FarmingPage} />
