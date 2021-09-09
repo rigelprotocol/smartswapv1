@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import toast from 'react-hot-toast';
-import FontAwesome from 'react-fontawesome';
-import { useMediaQuery } from '@chakra-ui/react';
 import styles from '../../styles/toastnotification.css';
 import SUCCESSFUL from '../../assets/successful.png';
 import { createURLNetwork } from '../../utils/UtilFunc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 const Notification = ({ hash, message }) => {
-  const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
   const closeicon = () => (
     <FontAwesomeIcon
       icon={faTimes}
@@ -28,12 +25,7 @@ const Notification = ({ hash, message }) => {
     />
   );
   return (
-    <div
-      // style={{
-      //   marginTop: isMobileDevice ? '50px' : '',
-      // }}
-      className={styles.container}
-    >
+    <div className={styles.container}>
       {closeicon()}
       <div className={styles.content}>
         <img src={SUCCESSFUL} style={{ height: '35px', width: '35px' }} />
