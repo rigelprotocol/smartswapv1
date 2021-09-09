@@ -780,6 +780,7 @@ export const Manual = props => {
           props.changeRGPValue(wallet);
         }
       } catch (e) {
+        console.log(e)
         setIsSendingTransaction(false);
         setTimeout(() => openModal4(), 1000);
         props.notify({
@@ -1457,6 +1458,7 @@ async function updateSendAmount(
         )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
+      console.log(e)
       setAmountIn('');
       setBoxMessage('Please check your token');
       setShowBox(true);

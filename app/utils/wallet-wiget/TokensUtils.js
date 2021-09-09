@@ -75,14 +75,14 @@ export async function ETHCheckAllowance() {
   if (wallet.signer !== 'signer') {
     const eth = await WETH();
     const walletBal = await eth.balanceOf(wallet.address);
-    return await eth.allowance(wallet.address, SMART_SWAP.router, { from: wallet.address });
+    return await eth.allowance(wallet.address, SMART_SWAP., { from: wallet.address });
   }
 }
 
 export async function BUSDCheckAllowance() {
   if (wallet.signer !== 'signer') {
     const busd = await BUSDToken();
-    return await busd.allowance(wallet.address, SMART_SWAP.router, { from: wallet.address });
+    return await busd.allowance(wallet.address, SMART_SWAP., { from: wallet.address });
   }
 }
 

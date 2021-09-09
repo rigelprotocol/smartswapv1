@@ -4,9 +4,12 @@ import { notify } from 'containers/NoticeProvider/actions';
 import configureStore from 'configureStore';
 import { WALLET_CONNECTED } from 'containers/WalletProvider/constants';
 import { formatBalance, convertFromWei } from 'utils/UtilFunc';
+import {supportedChainIds} from 'utils/wallet-wiget/connection'
 import { balanceAbi, decimalAbi } from '../constants';
+import {BscConnector} from "@binance-chain/bsc-connector"
 const { store } = configureStore();
 
+// CREATE A BSCPROVIDER AND BSCSIGNER THAT WILL INTERACT WITH BINANCE WALLET
 export const provider = async () => {
   try {
     let ethProvider = await detectEthereumProvider();
@@ -23,20 +26,47 @@ export const provider = async () => {
     });
   }
 };
+export const bsc = new BscConnector({
+  supportedChainIds // later on 1 ethereum mainnet and 3 ethereum ropsten will be supported
+})
+export const binanceProvider = ()=>{
+  let newProvider
+  try {
+    if (window.BinanceChain !== 'undefined') {
+     newProvider = window.BinanceChain;
+    return new ethers.providers.Web3Provider(newProvider);
+    }
+    // return new ethers.providers.Web3Provider(bscProvider);
+  } catch (e) {
+    return notify({
+      title: 'System Error',
+      body: 'You have not installed Binance Wallet',
+      type: 'error',
+    });
+  }
+}
 
 export const signer = async () => (await provider()).getSigner();
+
+export const binanceSigner = () => (binanceProvider()).getSigner();
 
 export const connectMetaMask = async () =>
   await window.ethereum.request({
     method: 'eth_requestAccounts',
   });
+export const connectBinance = async () =>
+ await window.BinanceChain.request({
+    method: 'eth_requestAccounts',
+  })
+
 
 export const getAddressTokenBalance = async (
   address,
   tokenAddress,
   walletSigner,
 ) =>
-  formatBalance(
+  {
+    return formatBalance(
     convertFromWei(
       await new ethers.Contract(
         tokenAddress,
@@ -49,7 +79,7 @@ export const getAddressTokenBalance = async (
         walletSigner,
       ).decimals(),
     ),
-  );
+  );}
 /**
  *
  * @param {*} wallet
@@ -127,7 +157,7 @@ export const setupNetwork = async () => {
   }
 };
 
-const supportedNetworks = ['0x61', '0x38', 'chainId'];
+export const supportedNetworks = ['0x61', '0x38', 'chainId'];
 
 export const isSupportedNetwork = chainId =>
   supportedNetworks.includes(chainId);
@@ -138,7 +168,11 @@ const checkMetamask = async () => {
 };
 
 export const switchToBSC = async () => {
-  if (checkMetamask()) {
+  if ( window.ethereum &&
+    window.ethereum.isConnected() &&
+    window.ethereum.selectedAddress &&
+    window.ethereum.isMetaMask &&
+    props.state.wallet.connected) {
     try {
       await ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -148,6 +182,18 @@ export const switchToBSC = async () => {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
         addBSCToMetamask();
+      }
+      // handle other  errors codes
+    }
+  }else if(window.BinanceChain && window.BinanceChain.isConnected()){
+    try {
+      // await window.BinanceChain.request({
+      //   method: 'switchNetwork',
+      //   params: [{ chainId: '0x38' }],
+      // });
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
       }
       // handle other  errors codes
     }

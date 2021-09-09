@@ -449,6 +449,7 @@ export function LiquidityPage(props) {
   }
 
   const addingLiquidity = async () => {
+    console.log(wallet)
     if (wallet.signer !== 'signer') {
       try {
         const rout = await router();

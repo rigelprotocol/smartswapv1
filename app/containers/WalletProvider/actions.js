@@ -9,6 +9,9 @@
 import { NOTICE } from 'containers/NoticeProvider/constants';
 import {
   connectMetaMask,
+  bsc,
+  binanceProvider,
+  binanceSigner,
   getAddressTokenBalance,
   provider,
   signer,
@@ -42,20 +45,21 @@ import defaultTokenList from '../../utils/default-token.json';
 import testNetTokenList from '../../utils/test-net-tokens.json';
 import mainTokenList from '../../utils/main-token.json';
 
-export const reConnect = wallet => async dispatch => {
+export const reConnect = (wallet,id="ethereum") => async dispatch => {
   try {
     dispatch({ type: LOADING_WALLET, payload: true });
     const { selectedAddress, chainId } = wallet;
-    const ethProvider = await provider();
-    const walletSigner = await signer();
-    const balance = formatBalance(
-      ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress)),
-    ).toString();
-    const rgpBalance = await getAddressTokenBalance(
-      selectedAddress,
-      getTokenAddress(chainId),
-      walletSigner,
-    );
+    let ethProvider, walletSigner;
+if(id === "ethereum"){
+     ethProvider =  await provider() ;
+     walletSigner = await signer()
+}else if(id==="BinanceChain"){
+     ethProvider =  binanceProvider() ;
+     walletSigner = await binanceSigner()
+}
+     
+    const balance = formatBalance(ethers.utils.formatEther(await ethProvider.getBalance(selectedAddress))).toString();
+    const rgpBalance = await getAddressTokenBalance(selectedAddress, getTokenAddress(chainId), walletSigner);
     dispatch({
       type: WALLET_CONNECTED,
       wallet: {
@@ -69,6 +73,7 @@ export const reConnect = wallet => async dispatch => {
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   } catch (e) {
+    console.log(e)
     return dispatch({
       type: NOTICE,
       message: {
@@ -82,7 +87,68 @@ export const reConnect = wallet => async dispatch => {
   }
 };
 
-export const connectWallet = () => async dispatch => {
+export const connectWallet = (wallet) => async dispatch => {
+  if(wallet==="metamask"){
+    connectMetaMaskWallet(dispatch)
+  }else if(wallet==="binance"){
+    connectBinanceWallet(dispatch)
+  }else{
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+    // return dispatch({
+    //   type: NOTICE, message: {
+    //     title: 'Connection Error',
+    //     body: 'Please reload this page and reconnect',
+    //     type: 'error',
+    //     }
+    //   });
+  }
+
+};
+const connectBinanceWallet = async (dispatch) =>{
+  try{
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+   
+   let loginData= await bsc.activate();
+   let chainID= await bsc.getChainId();
+const {provider,account} = loginData
+let newProvider = new ethers.providers.Web3Provider(provider)
+    const walletSigner = newProvider.getSigner()
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+  const balance = await newProvider.getBalance(account);
+    dispatch({
+      type: WALLET_CONNECTED, wallet: {
+        address: account, balance: formatBalance(ethers.utils.formatEther(balance)),
+        provider: binanceProvider, signer: walletSigner, chainID,
+      },
+    })
+    const rgpAddress = getTokenAddress(chainID);
+    const rgpBalance = await getAddressTokenBalance(account, rgpAddress, walletSigner);
+    dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
+    return dispatch({
+      type: NOTICE, message: {
+        title: 'Success:',
+        body: 'Connection was successful',
+        type: 'success',
+      }
+    })
+  } catch (e) {
+    console.log(e)
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+    return dispatch({
+      type: NOTICE, message: {
+        title: 'Connection Error',
+        body: 'Please reload this page and reconnect',
+        type: 'error',
+        }
+      });
+    } finally {
+      dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+
+    }
+
+}
+const connectMetaMaskWallet = async (dispatch)   =>{
+
   try {
     dispatch({ type: LOADING_WALLET, payload: true });
     const ethProvider = await provider();
@@ -130,8 +196,7 @@ export const connectWallet = () => async dispatch => {
   } finally {
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   }
-};
-
+}
 export const setWalletProps = wallet => dispatch =>
   dispatch({
     type: WALLET_PROPS,
@@ -161,17 +226,23 @@ export const updateChainId = chainId => dispatch => {
 export const changeRGPValue = wallet => async dispatch => {
   if (wallet.signer != 'signer') {
     try {
+      let walletProvider,chainId
       const { address } = wallet;
-      const ethProvider = await provider();
+      if(window.ethereum && window.ethereum.isConnected()){
+        walletProvider =await provider();
+        chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      }else if(window.BinanceChain && window.BinanceChain.isConnected()){
+        walletProvider = binanceProvider();
+        // chainId = await window.BinanceChain.request({ method: 'eth_chainId' });
+      }
 
-      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
       const rgpBalance = await getAddressTokenBalance(
         wallet.address,
         getTokenAddress(chainId),
         wallet.signer,
       );
       const balance = formatBalance(
-        ethers.utils.formatEther(await ethProvider.getBalance(address)),
+        ethers.utils.formatEther(await walletProvider.getBalance(address)),
       ).toString();
       dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
       dispatch({ type: CHANGE_BNB, payload: { balance } });
@@ -189,11 +260,7 @@ export const getTokenAddress = chainId => {
   ) {
     return '0xFA262F303Aa244f9CC66f312F0755d89C3793192';
   }
-  if (
-    chainId === '0x61' &&
-    window.ethereum !== undefined &&
-    window.ethereum.isMetaMask
-  ) {
+  if ((chainId === '0x61' && window.ethereum !== undefined && window.ethereum.isMetaMask) || chainId === '0x61' && window.BinanceChain !== undefined) {
     return '0x9f0227a21987c1ffab1785ba3eba60578ec1501b';
   }
   return (
@@ -294,7 +361,7 @@ export const updateRGPprice = price => dispatch =>
   });
 
 export async function setTokenList(ExtendedTokenList, account) {
-  console.log('dagogo');
+  // console.log("dagogo")
   const listWithDuplicate = [];
   for (const property in ExtendedTokenList) {
     if (
