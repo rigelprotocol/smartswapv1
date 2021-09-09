@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import toast from 'react-hot-toast';
-import styles from '../../styles/toastnotification.css';
 import FontAwesome from 'react-fontawesome';
 import { useMediaQuery } from '@chakra-ui/react';
+import styles from '../../styles/toastnotification.css';
 import SUCCESSFUL from '../../assets/successful.png';
 import { createURLNetwork } from '../../utils/UtilFunc';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 const Notification = ({ hash, message }) => {
   const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
   const closeicon = () => (
-    <FontAwesome
-      name="times"
+    <FontAwesomeIcon
+      icon={faTimes}
       onClick={() => toast.dismiss()}
       className={styles.cross}
       style={{
@@ -23,6 +24,7 @@ const Notification = ({ hash, message }) => {
         right: '10px',
         fontWeight: 'lighter',
       }}
+      size="lg"
     />
   );
   return (

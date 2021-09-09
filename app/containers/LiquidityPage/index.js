@@ -52,6 +52,8 @@ import {
 import { getTokenList } from '../../utils/tokens';
 
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
+import Notification from '../../components/ToastNotification/Notification';
+import toast from 'react-hot-toast';
 
 // 35,200
 export function LiquidityPage(props) {
@@ -428,16 +430,25 @@ export function LiquidityPage(props) {
           wallet.signer,
           balance,
         );
+
         const { confirmations, status } = await fetchTransactionData(
           approveResponse,
         );
+
+        const { hash } = approveResponse;
         if (confirmations >= 1 && status) {
           closeModal6();
           setShowApprovalBox(false);
           setHasAllowedToToken(true);
           // setOpenSupplyButton(false);
           checkIfTokensHasBeenApproved();
-          console.log('approved', toSelectedToken.symbol);
+          console.log('approved1', toSelectedToken.symbol);
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Approve ${toSelectedToken.symbol}`}
+            />,
+          );
         }
       }
     } catch (error) {
@@ -472,13 +483,21 @@ export function LiquidityPage(props) {
       const { confirmations, status } = await fetchTransactionData(
         approveResponse,
       );
+
+      const { hash } = approveResponse;
       if (confirmations >= 1 && status) {
         closeModal6();
         setShowApprovalBox(false);
         setHasAllowedFromToken(true);
         // setOpenSupplyButton(false);
         checkIfTokensHasBeenApproved();
-        console.log('approved', fromSelectedToken.symbol);
+        console.log('approved2', fromSelectedToken.symbol);
+        toast.custom(
+          <Notification
+            hash={hash}
+            message={`Approve ${fromSelectedToken.symbol}`}
+          />,
+        );
       }
     }
   };

@@ -29,6 +29,6 @@
 }
 
 .cross {
-  -webkit-text-stroke: 2px black;
-  font-size: larger;
+  -webkit-text-stroke: 4px black;
+  font-size: xx-large;
 }
