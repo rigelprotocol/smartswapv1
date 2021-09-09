@@ -104,6 +104,7 @@
     "react-dom": "^17.0.1",
     "react-fontawesome": "^1.7.1",
     "react-helmet": "6.0.0-beta",
+    "react-hot-toast": "^2.1.1",
     "react-intl": "2.8.0",
     "react-list": "^0.8.16",
     "react-redux": "7.0.2",

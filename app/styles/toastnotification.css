@@ -1,0 +1,34 @@
+.container {
+  position: relative;
+  width: 400px;
+  height: 100px;
+  background-color: #201c4a;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.texts {
+  line-height: 2rem;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  margin-left: 12px;
+}
+
+.texts > a {
+  font-size: x-small;
+  color: #82d2e3;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.cross {
+  -webkit-text-stroke: 2px black;
+  font-size: larger;
+}

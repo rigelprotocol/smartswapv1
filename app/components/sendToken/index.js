@@ -65,6 +65,8 @@ import {
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
 import { getDeadline, createURLNetwork } from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
+import toast, { Toaster } from 'react-hot-toast';
+import Notification from '../ToastNotification/Notification';
 
 export const Manual = props => {
   const history = useHistory();
@@ -96,7 +98,7 @@ export const Manual = props => {
   const [insufficientBalanceButton, setInsufficientBalanceButton] = useState(
     false,
   );
-  const [URLNetwork, setURLNetwork] = useState("")
+  const [URLNetwork, setURLNetwork] = useState('');
   const [toURL, setToURL] = useState('');
   const [fromURL, setFromURL] = useState('');
   const [disableSwapTokenButton, setDisableSwapTokenButton] = useState(true);
@@ -104,7 +106,7 @@ export const Manual = props => {
   const [selectedTokenForModal, setSelectedTokenForModal] = useState({});
   const [slippage, setSlippage] = useLocalStorage('slippage', 1.5);
   const [deadline, setDeadline] = useLocalStorage('deadline', 20);
-  const [noLiquidity, setNoLiquidity] = useState(false)
+  const [noLiquidity, setNoLiquidity] = useState(false);
 
   // Path route to be displayed in the confirmswapbox component
   const [route, setRoute] = useState('');
@@ -168,7 +170,6 @@ export const Manual = props => {
 
   useEffect(() => {
     (async () => {
-
       if (!newTokenPair) {
         if (
           parseFloat(tokenAllowance) < parseFloat(fromAmount) &&
@@ -183,10 +184,23 @@ export const Manual = props => {
           const LPAddress = await factory.getPair(toPath, fromPath);
           if (LPAddress != '0x0000000000000000000000000000000000000000') {
             const LPContract = await LPTokenContract(LPAddress);
-            const [fromPathReserve, toPathReserve] = await LPContract.getReserves();
-            ethers.utils.formatEther(fromPathReserve).toString()
-            console.log('use the console to Confirm the Code To Amount', ethers.utils.formatEther(toPathReserve).toString(), 'From Amount', ethers.utils.formatEther(fromPathReserve).toString())
-            parseFloat(ethers.utils.formatEther(fromPathReserve).toString()) < fromAmount || parseFloat(ethers.utils.formatEther(toPathReserve).toString()) < amountIn ? setLowLiquidity(true) : null;
+            const [
+              fromPathReserve,
+              toPathReserve,
+            ] = await LPContract.getReserves();
+            ethers.utils.formatEther(fromPathReserve).toString();
+            console.log(
+              'use the console to Confirm the Code To Amount',
+              ethers.utils.formatEther(toPathReserve).toString(),
+              'From Amount',
+              ethers.utils.formatEther(fromPathReserve).toString(),
+            );
+            parseFloat(ethers.utils.formatEther(fromPathReserve).toString()) <
+              fromAmount ||
+            parseFloat(ethers.utils.formatEther(toPathReserve).toString()) <
+              amountIn
+              ? setLowLiquidity(true)
+              : null;
           }
           if (parseFloat(fromAmount) > parseFloat(selectedToken.balance)) {
             setInsufficientBalanceButton(true);
@@ -195,7 +209,7 @@ export const Manual = props => {
           }
         }
       }
-    })()
+    })();
   }, [fromAmount, amountIn]);
 
   useEffect(async () => {
@@ -203,7 +217,7 @@ export const Manual = props => {
   }, [selectedToken, selectedToToken, path]);
 
   const checkLiquidityPair = async () => {
-    setNoLiquidity(false)
+    setNoLiquidity(false);
     const factory = await SmartFactory();
     const fromPath = ethers.utils.getAddress(selectedToken.address);
     const toPath = ethers.utils.getAddress(selectedToToken.address);
@@ -388,8 +402,8 @@ export const Manual = props => {
         ]);
       } else {
         setNewTokenPair(true);
-        setNoLiquidity(true)
-        console.log("Insufficient liquidity for this trade")
+        setNoLiquidity(true);
+        console.log('Insufficient liquidity for this trade');
       }
     }
   };
@@ -712,13 +726,21 @@ export const Manual = props => {
         approveAmount,
       );
       const { confirmations, status } = await sendTransaction.wait(3);
+      const { hash } = sendTransaction;
       if (
         typeof sendTransaction.hash != 'undefined' &&
         confirmations >= 3 &&
         status
       ) {
         setIsSendingTransaction(false);
-        return setUserHasApproveToken(true);
+        setUserHasApproveToken(true);
+        console.log('approved');
+        toast.custom(
+          <Notification
+            hash={hash}
+            message={`Approve ${selectedToken.symbol}`}
+          />,
+        );
       }
     }
   };
@@ -761,9 +783,9 @@ export const Manual = props => {
           type: 'success',
         });
         setTimeout(() => openModal3(), 1000);
-        const { hash } = sendTransaction
-        setURLNetwork("")
-        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000)
+        const { hash } = sendTransaction;
+        setURLNetwork('');
+        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
         const { confirmations, status } = await sendTransaction.wait(3);
         if (
           typeof sendTransaction.hash != 'undefined' &&
@@ -1306,7 +1328,7 @@ export const Manual = props => {
                 <Spinner size="xs" color="red.500" /> Pending...
               </Button>
             </Stack>
-          ) : (noLiquidity ?
+          ) : noLiquidity ? (
             <Button
               d="block"
               w="100%"
@@ -1324,7 +1346,8 @@ export const Manual = props => {
             >
               No liquidity for this trade
             </Button>
-            : <Button
+          ) : (
+            <Button
               d="block"
               w="100%"
               h="50px"
@@ -1343,47 +1366,47 @@ export const Manual = props => {
                 wallet.signer === 'signer'
                   ? sendNotice('Please use the Connect button above')
                   : (typeof wallet.signer === 'object' &&
-                    fromAmount === undefined) ||
+                      fromAmount === undefined) ||
                     fromAmount.length == parseFloat(0.0)
-                    ? sendNotice('Enter the amount of token to exchange')
-                    : typeof wallet.signer === 'object' &&
-                      fromAmount > parseFloat(0) &&
-                      selectedToToken.name === 'Select a token'
-                      ? sendNotice('Select the designated token')
-                      : typeof wallet.signer === 'object' &&
-                        fromAmount != parseFloat(0.0) &&
-                        selectedToToken.name !== 'Select a token'
-                        ? selectedToken.symbol == selectedToToken.symbol
-                          ? sendNotice(
-                            'Improper token selection, you selected the same token',
-                          )
-                          : insufficientBalanceButton
-                            ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
-                            : triggerAccountCheck()
-                        : null;
+                  ? sendNotice('Enter the amount of token to exchange')
+                  : typeof wallet.signer === 'object' &&
+                    fromAmount > parseFloat(0) &&
+                    selectedToToken.name === 'Select a token'
+                  ? sendNotice('Select the designated token')
+                  : typeof wallet.signer === 'object' &&
+                    fromAmount != parseFloat(0.0) &&
+                    selectedToToken.name !== 'Select a token'
+                  ? selectedToken.symbol == selectedToToken.symbol
+                    ? sendNotice(
+                        'Improper token selection, you selected the same token',
+                      )
+                    : insufficientBalanceButton
+                    ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
+                    : triggerAccountCheck()
+                  : null;
               }}
             >
               {wallet.signer === 'signer'
                 ? 'connect to Wallet'
                 : (typeof wallet.signer === 'object' &&
-                  fromAmount === undefined) ||
+                    fromAmount === undefined) ||
                   fromAmount.length == parseFloat(0.0)
-                  ? 'Enter Amount'
-                  : typeof wallet.signer === 'object' &&
-                    fromAmount != parseFloat(0.0) &&
-                    selectedToToken.name === 'Select a token'
-                    ? 'Click Select a Token'
-                    : typeof wallet.signer === 'object' &&
-                      fromAmount != parseFloat(0.0) &&
-                      selectedToToken.name !== 'Select a token'
-                      ? selectedToken.symbol == selectedToToken.symbol
-                        ? 'Improper token selection'
-                        : insufficientBalanceButton
-                          ? `Insufficient ${selectedToken.symbol} balance`
-                          : !userHasApproveToken
-                            ? 'Approve Transaction'
-                            : 'Swap Tokens'
-                      : ''}
+                ? 'Enter Amount'
+                : typeof wallet.signer === 'object' &&
+                  fromAmount != parseFloat(0.0) &&
+                  selectedToToken.name === 'Select a token'
+                ? 'Click Select a Token'
+                : typeof wallet.signer === 'object' &&
+                  fromAmount != parseFloat(0.0) &&
+                  selectedToToken.name !== 'Select a token'
+                ? selectedToken.symbol == selectedToToken.symbol
+                  ? 'Improper token selection'
+                  : insufficientBalanceButton
+                  ? `Insufficient ${selectedToken.symbol} balance`
+                  : !userHasApproveToken
+                  ? 'Approve Transaction'
+                  : 'Swap Tokens'
+                : ''}
             </Button>
           )}
         </Box>
@@ -1453,8 +1476,8 @@ async function updateSendAmount(
       // if(field != 'to' && )
       return field != 'to'
         ? setAmountIn(
-          ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-        )
+            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+          )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
@@ -1511,8 +1534,8 @@ async function updateSendAmountForRoute(
 
         return field != 'to'
           ? setAmountIn(
-            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-          )
+              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+            )
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
@@ -1564,8 +1587,8 @@ async function updateSendAmountForRoute(
         );
         return field != 'to'
           ? setAmountIn(
-            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-          )
+              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+            )
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
@@ -1603,8 +1626,8 @@ async function update_RGP_ETH_SendAmount(
 
       return field != 'to'
         ? setAmountIn(
-          ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
-        )
+            ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
+          )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');

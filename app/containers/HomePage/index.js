@@ -11,6 +11,7 @@ import Tour from 'reactour';
 import style from '../../styles/intro.css';
 import Step from 'components/onboarding/Step';
 import Modal from 'components/onboarding/WelcomeModal/WelcomeModal';
+import { Toaster } from 'react-hot-toast';
 
 export const TABS = {
   MANUAL: 'MANUAL',
@@ -25,7 +26,7 @@ export default function HomePage(props) {
   const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
 
   useEffect(() => {
-    const visits = window.localStorage.getItem('noFirstVisit')
+    const visits = window.localStorage.getItem('noFirstVisit');
     if (!visits) {
       setWelcomeModal(true);
 
@@ -390,6 +391,18 @@ export default function HomePage(props) {
   return (
     <Layout title="Rigel Protocol - Smartswap">
       <>
+        <Toaster
+          position="top-right"
+          containerStyle={{
+            // position: 'absolute',
+            // top: 170,
+            // left: 1500,
+            marginTop: '70px',
+          }}
+          toastOptions={{
+            duration: 240000,
+          }}
+        />
         {welcomeModal && (
           <Modal closeModal={() => setWelcomeModal(false)}>
             <button onClick={start} className={style.start__walkthrough}>
@@ -456,9 +469,9 @@ export default function HomePage(props) {
                     className={
                       tab === TABS.PRICE ? styles.active : styles.inactive
                     }
-                  // onClick={() => {
-                  //   setTab(TABS.PRICE);
-                  // }}
+                    // onClick={() => {
+                    //   setTab(TABS.PRICE);
+                    // }}
                   >
                     Set price
                   </Text>
@@ -473,9 +486,9 @@ export default function HomePage(props) {
                     className={
                       tab === TABS.AUTO_TIME ? styles.active : styles.inactive
                     }
-                  // onClick={() => {
-                  //   setTab(TABS.AUTO_TIME);
-                  // }}
+                    // onClick={() => {
+                    //   setTab(TABS.AUTO_TIME);
+                    // }}
                   >
                     Auto Time
                   </Text>
