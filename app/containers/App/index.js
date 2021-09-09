@@ -35,6 +35,7 @@ import TrustWallet from '../../components/TrustWallet/index';
 import {
   isSupportedNetwork,
   switchToBSC,
+  bsc
 } from '../../utils/wallet-wiget/connection';
 import { smartSwapLPTokenPoolOne } from '../../utils/SwapConnect';
 
@@ -72,13 +73,11 @@ const App = props => {
     if (window.ethereum && window.ethereum.isConnected()) {
       getMetaMaskChain();
       const obj = ethereum.on('chainChanged', chainId => {
-        console.log(chainId);
         window.location.reload();
       });
     }else if(window.BinanceChain && window.BinanceChain.isConnected()){
      getBinanceChain()
      const obj = BinanceChain.on('chainChanged', chainId => {
-      console.log(chainId);
       window.location.reload();
     });
     }
@@ -114,10 +113,10 @@ const getMetaMaskChain = async () => {
     checkchain(chain)
 }
 const getBinanceChain = async () => {
-   let chain= await window.BinanceChain.request({
-      method: 'eth_chainId',
-    });
-    checkchain(chain)
+  //  let chain= await window.BinanceChain.request({
+  //     method: 'eth_chainId',
+  //   });
+  //   checkchain(chain)
 }
   const checkchain = async (chainID) => {
     props.updateChainId(chainID);
@@ -176,8 +175,9 @@ async function reConnector(props)  {
   }else if(window.BinanceChain &&
     window.BinanceChain.isConnected() &&
     !props.state.wallet.connected){
+    //  await bsc.activate()
       let accounts = await BinanceChain.request({ method: 'eth_accounts' })
-      console.log(accounts[0])
+      console.log(accounts)
       props.reConnect({...window.BinanceChain,selectedAddress:accounts[0]},"BinanceChain");
       // Note that this event is emitted on page load.
       // If the array of accounts is non-empty, you're already

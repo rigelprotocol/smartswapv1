@@ -218,7 +218,7 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
       liquidityToRemove.path[1].toPath,
     );
     }else{
-      alert("error")
+      console.log("error")
 
     }
     

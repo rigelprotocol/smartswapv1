@@ -4,7 +4,9 @@ import { notify } from 'containers/NoticeProvider/actions';
 import configureStore from 'configureStore';
 import { WALLET_CONNECTED } from 'containers/WalletProvider/constants';
 import { formatBalance, convertFromWei } from 'utils/UtilFunc';
+import {supportedChainIds} from 'utils/wallet-wiget/connection'
 import { balanceAbi, decimalAbi } from '../constants';
+import {BscConnector} from "@binance-chain/bsc-connector"
 const { store } = configureStore();
 
 // CREATE A BSCPROVIDER AND BSCSIGNER THAT WILL INTERACT WITH BINANCE WALLET
@@ -24,6 +26,9 @@ export const provider = async () => {
     });
   }
 };
+export const bsc = new BscConnector({
+  supportedChainIds // later on 1 ethereum mainnet and 3 ethereum ropsten will be supported
+})
 export const binanceProvider = ()=>{
   let newProvider
   try {
@@ -152,7 +157,7 @@ export const setupNetwork = async () => {
   }
 };
 
-const supportedNetworks = ['0x61', '0x38', 'chainId'];
+export const supportedNetworks = ['0x61', '0x38', 'chainId'];
 
 export const isSupportedNetwork = chainId =>
   supportedNetworks.includes(chainId);
@@ -163,7 +168,11 @@ const checkMetamask = async () => {
 };
 
 export const switchToBSC = async () => {
-  if (checkMetamask() && window.ethereum.isConnected()) {
+  if ( window.ethereum &&
+    window.ethereum.isConnected() &&
+    window.ethereum.selectedAddress &&
+    window.ethereum.isMetaMask &&
+    props.state.wallet.connected) {
     try {
       await ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -178,10 +187,10 @@ export const switchToBSC = async () => {
     }
   }else if(window.BinanceChain && window.BinanceChain.isConnected()){
     try {
-      await window.BinanceChain.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x38' }],
-      });
+      // await window.BinanceChain.request({
+      //   method: 'switchNetwork',
+      //   params: [{ chainId: '0x38' }],
+      // });
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {

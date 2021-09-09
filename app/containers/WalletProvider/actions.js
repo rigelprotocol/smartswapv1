@@ -9,7 +9,7 @@
 import { NOTICE } from 'containers/NoticeProvider/constants';
 import {
   connectMetaMask,
-  connectBinance,
+  bsc,
   binanceProvider,
   binanceSigner,
   getAddressTokenBalance,
@@ -73,6 +73,7 @@ if(id === "ethereum"){
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
   } catch (e) {
+    console.log(e)
     return dispatch({
       type: NOTICE,
       message: {
@@ -105,22 +106,23 @@ export const connectWallet = (wallet) => async dispatch => {
 };
 const connectBinanceWallet = async (dispatch) =>{
   try{
-    dispatch({ type: LOADING_WALLET, payload: true });
-    const bscProvider = binanceProvider()
-    const walletSigner = await binanceSigner()
-    // const chainId =await window.BinanceChain.request({ method: 'eth_chainId' })
-    const chainId = "0x61"
-    const res =  await connectBinance()
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
-  const balance = await bscProvider.getBalance(res[0]);
+   
+   let loginData= await bsc.activate();
+   let chainID= await bsc.getChainId();
+const {provider,account} = loginData
+let newProvider = new ethers.providers.Web3Provider(provider)
+    const walletSigner = newProvider.getSigner()
+    dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
+  const balance = await newProvider.getBalance(account);
     dispatch({
       type: WALLET_CONNECTED, wallet: {
-        address: res[0], balance: formatBalance(ethers.utils.formatEther(balance)),
-        provider: binanceProvider, signer: walletSigner, chainId,
+        address: account, balance: formatBalance(ethers.utils.formatEther(balance)),
+        provider: binanceProvider, signer: walletSigner, chainID,
       },
     })
-    const rgpAddress = getTokenAddress(chainId);
-    const rgpBalance = await getAddressTokenBalance(res[0], rgpAddress, walletSigner);
+    const rgpAddress = getTokenAddress(chainID);
+    const rgpBalance = await getAddressTokenBalance(account, rgpAddress, walletSigner);
     dispatch({ type: WALLET_PROPS, payload: { rgpBalance } });
     return dispatch({
       type: NOTICE, message: {
@@ -130,6 +132,7 @@ const connectBinanceWallet = async (dispatch) =>{
       }
     })
   } catch (e) {
+    console.log(e)
     dispatch({ type: CLOSE_LOADING_WALLET, payload: false });
     return dispatch({
       type: NOTICE, message: {
@@ -230,7 +233,7 @@ export const changeRGPValue = wallet => async dispatch => {
         chainId = await window.ethereum.request({ method: 'eth_chainId' });
       }else if(window.BinanceChain && window.BinanceChain.isConnected()){
         walletProvider = binanceProvider();
-        chainId = await window.BinanceChain.request({ method: 'eth_chainId' });
+        // chainId = await window.BinanceChain.request({ method: 'eth_chainId' });
       }
 
       const rgpBalance = await getAddressTokenBalance(

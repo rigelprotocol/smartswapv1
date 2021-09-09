@@ -17,32 +17,33 @@ import lPContractABI from 'utils/abis/lPContractABI.json';
 import specialPool from 'utils/abis/specialPool.json';
 import configureStore from 'configureStore';
 import { SMART_SWAP, checkNetVersion } from './constants';
-
+import {bsc} from "utils/wallet-wiget/connection"
+// import {
+//   bsc
+// } from '/utils/wallet-wiget/connection';
 const { store } = configureStore();
 export const getProvider = () => {
   try {
     return new ethers.providers.Web3Provider(window.ethereum);
   } catch (Exception) {}
 };
-export const getSigner = () => {
+export const getSigner =() => {
   try {
     const { wallet } = store.getState().wallet;
     let { signer } = wallet;
     if (typeof signer === 'string') {
-      if (window.ethereum && window.ethereum !== 'undefined' && window.ethereum.isConnected()) {
+      if (window.ethereum &&
+                window.ethereum.isConnected() &&
+                window.ethereum.selectedAddress &&
+                window.ethereum.isMetaMask) {
         signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
-      }
-      else if(window.BinanceChain && window.BinanceChain !== 'undefined' && window.BinanceChain.isConnected()){
-        signer = new ethers.providers.Web3Provider(window.BinanceChain).getSigner();
-      }
+      } else if(window.BinanceChain && window.BinanceChain !== 'undefined' && window.BinanceChain.isConnected()){
+               signer = new ethers.providers.Web3Provider(window.BinanceChain).getSigner()
+              }
     }
     return signer;
   } catch (e) {}
 };
-// ----------------------------------------------------------------- LIVE DEPLOYMENT CONTRACT -----------------------------------------
-
-//
-// router contract where trx is made for both liquidity and swap
 export const router = async () =>
   new ethers.Contract(
     SMART_SWAP.SMART_SWAPPING,

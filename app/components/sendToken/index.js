@@ -768,6 +768,7 @@ export const Manual = props => {
           props.changeRGPValue(wallet);
         }
       } catch (e) {
+        console.log(e)
         setIsSendingTransaction(false);
         setTimeout(() => openModal4(), 1000);
         props.notify({
@@ -1431,7 +1432,7 @@ async function updateSendAmount(
   if (typeof path[1] != 'undefined') {
     const fromPath = selectedToken.address;
     const toPath = selectedToToken.address;
-    try {
+    // try {
       setShowBox(false);
       setBoxMessage('...');
       const amount = await rout.getAmountsOut(
@@ -1444,11 +1445,12 @@ async function updateSendAmount(
           ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
         )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
-    } catch (e) {
-      setAmountIn('');
-      setBoxMessage('Please check your token');
-      setShowBox(true);
-    }
+    // } catch (e) {
+    //   console.log(e)
+    //   setAmountIn('');
+    //   setBoxMessage('Please check your token');
+    //   setShowBox(true);
+    // }
   }
 }
 
