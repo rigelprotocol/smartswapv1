@@ -792,6 +792,16 @@ export const Manual = props => {
           });
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
           props.changeRGPValue(wallet);
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Swap ${fromAmount}  ${
+                selectedToken.symbol
+              } for ${parseFloat(amountIn).toFixed(7)}  ${
+                selectedToToken.symbol
+              }`}
+            />,
+          );
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -835,6 +845,7 @@ export const Manual = props => {
         });
         setTimeout(() => openModal3(), 1000);
         const { confirmations, status } = await sendTransaction.wait(3);
+        const { hash } = sendTransaction;
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -848,6 +859,16 @@ export const Manual = props => {
           });
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
           props.changeRGPValue(wallet);
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Swap ${fromAmount}  ${
+                selectedToken.symbol
+              } for ${parseFloat(amountIn).toFixed(7)}  ${
+                selectedToToken.symbol
+              }`}
+            />,
+          );
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -939,6 +960,7 @@ export const Manual = props => {
         });
         setTimeout(() => openModal3(), 1000);
         const { confirmations, status } = await sendTransaction.wait(3);
+        const { hash } = sendTransaction;
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -952,6 +974,16 @@ export const Manual = props => {
           });
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
           props.changeRGPValue(wallet);
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Swap ${fromAmount}  ${
+                selectedToken.symbol
+              } for ${parseFloat(amountIn).toFixed(7)}  ${
+                selectedToToken.symbol
+              }`}
+            />,
+          );
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -1004,12 +1036,13 @@ export const Manual = props => {
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
           props.changeRGPValue(wallet);
           console.log('swap done');
+          console.log('amountIn', amountIn);
           toast.custom(
             <Notification
               hash={hash}
               message={`Swap ${fromAmount}  ${
                 selectedToken.symbol
-              } for ${Web3.utils.fromWei(inputAmount, 'ether')}  ${
+              } for ${parseFloat(amountIn).toFixed(7)}  ${
                 selectedToToken.symbol
               }`}
             />,
@@ -1051,6 +1084,7 @@ export const Manual = props => {
         });
         setTimeout(() => openModal3(), 1000);
         const { confirmations, status } = await sendTransaction.wait(3);
+        const { hash } = sendTransaction;
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -1064,6 +1098,16 @@ export const Manual = props => {
           });
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
           props.changeRGPValue(wallet);
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Swap ${fromAmount}  ${
+                selectedToken.symbol
+              } for ${parseFloat(amountIn).toFixed(7)}  ${
+                selectedToToken.symbol
+              }`}
+            />,
+          );
         }
       } catch (e) {
         setIsSendingTransaction(false);

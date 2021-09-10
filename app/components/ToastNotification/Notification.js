@@ -1,44 +1,33 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import toast from 'react-hot-toast';
 import styles from '../../styles/toastnotification.css';
-import FontAwesome from 'react-fontawesome';
-import { useMediaQuery } from '@chakra-ui/react';
 import SUCCESSFUL from '../../assets/successful.png';
 import { createURLNetwork } from '../../utils/UtilFunc';
-
+import { CloseIcon } from '@chakra-ui/icons';
+import { IconButton } from '@chakra-ui/react';
 const Notification = ({ hash, message }) => {
-  const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
-  const closeicon = () => (
-    <FontAwesome
-      name="times"
-      onClick={() => toast.dismiss()}
-      className={styles.cross}
-      style={{
-        color: '#fff',
-        padding: '5px',
-        cursor: 'pointer',
-        border: 0,
-        position: 'absolute',
-        top: '5px',
-        right: '10px',
-        fontWeight: 'lighter',
-      }}
-    />
-  );
   return (
-    <div
-      // style={{
-      //   marginTop: isMobileDevice ? '50px' : '',
-      // }}
-      className={styles.container}
-    >
-      {closeicon()}
+    <div className={styles.container}>
+      <IconButton
+        icon={<CloseIcon />}
+        onClick={() => toast.dismiss()}
+        style={{
+          color: '#fff',
+          cursor: 'pointer',
+          position: 'absolute',
+          top: '2px',
+          right: '8px',
+          fontSize: 'x-small',
+          border: 'none',
+        }}
+        backgroundColor="transparent"
+      />
       <div className={styles.content}>
         <img src={SUCCESSFUL} style={{ height: '35px', width: '35px' }} />
         <div className={styles.texts}>
           <b>{message}</b>
           <a href={createURLNetwork(hash)} target="_blank">
-            View on Explorer
+            <b>View on Explorer</b>
           </a>
         </div>
       </div>
