@@ -21,6 +21,13 @@ const Notification = ({ hash, message }) => {
           border: 'none',
         }}
         backgroundColor="transparent"
+        _focus={{
+          outline: 'none',
+          backgroundColor: 'transparent',
+          color: '#fff',
+        }}
+        _hover={{ backgroundColor: 'transparen', color: '#fff' }}
+        _active={{ backgroundColor: 'transparen', color: '#fff' }}
       />
       <div className={styles.content}>
         <img src={SUCCESSFUL} style={{ height: '35px', width: '35px' }} />
