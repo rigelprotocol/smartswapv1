@@ -128,7 +128,7 @@ const App = props => {
             marginTop: isMobileDevice ? '50px' : '70px',
           }}
           toastOptions={{
-            duration: 5000,
+            duration: 6000,
           }}
         />
         <Switch>
