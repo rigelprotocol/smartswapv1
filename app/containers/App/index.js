@@ -16,6 +16,7 @@ import WebFont from 'webfontloader';
 import { ethers } from 'ethers';
 import HomePage from 'containers/HomePage/index';
 import FarmingPage from 'containers/FarmingPage/index';
+import FarmingPageV2 from 'containers/V2FarmingPage/index';
 import MarginTradingPage from 'containers/MarginTradingPage/index';
 import LiquidityPage from 'containers/LiquidityPage/index';
 import NotFoundPage from 'containers/NotFoundPage/index';
@@ -122,6 +123,7 @@ const App = props => {
         <Switch>
           <Route exact path="/" component={Splash} />
           <Route exact path="/farming" component={FarmingPage} />
+          <Route exact path="/farming-v2" component={FarmingPageV2} />
           <Route exact path="/liquidity" component={LiquidityPage} />
           <Route exact path="/liquidity/:pair" component={LiquidityPage} />
           <Route exact path="/swap/" component={HomePage} />
