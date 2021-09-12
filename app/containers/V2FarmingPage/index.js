@@ -23,6 +23,7 @@ import {
   Tab,
   TabPanel,
 } from '@chakra-ui/react';
+import { useHistory } from 'react-router-dom';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm-v2/YieldFarm';
 import InfoModal from 'components/modal/InfoModal';
@@ -54,7 +55,10 @@ import {
   updateFarmBalances,
   farmDataLoading,
 } from './actions';
+
 export function FarmingPage(props) {
+  const history = useHistory();
+
   const { wallet } = props.wallet;
   const [isAddressWhitelist, setIsAddressWhitelist] = useState(false);
   const [dataInputToGetWhiteListed] = useState('');
@@ -99,6 +103,28 @@ export function FarmingPage(props) {
   const checkIfInitialLoading = () => {
     initialLoad ? setFarmingModal(true) : setFarmingModal(false);
   };
+
+  function AlertSvg(props) {
+    return (
+      <svg
+        width={48}
+        height={48}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <rect width={48} height={48} rx={8} fill="#2D276A" />
+        <path
+          d="M33.935 27.658L30.638 15.38c-.358-1.335-1.999-1.827-3.035-.91l-2.078 1.84a19.916 19.916 0 01-8.054 4.325 4.68 4.68 0 00-3.31 5.732 4.691 4.691 0 005.738 3.313 19.94 19.94 0 019.142-.274l2.721.556c1.357.277 2.531-.968 2.173-2.303zM19.718 20L23.5 34"
+          stroke="#fff"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+      
+  }
 
   const checkIfUserAddressHasBeenWhiteListed = async () => {
     if (wallet.address !== '0x') {
@@ -589,6 +615,11 @@ export function FarmingPage(props) {
     } catch (error) {}
   };
 
+  const changeVersion = () => {
+    history.push('/farming');
+
+  }
+
   return (
     <div>
       <Layout title="Farming Page">
@@ -606,14 +637,15 @@ export function FarmingPage(props) {
         </InfoModal>
         <Box mx={[5, 10, 15, 20]} my={4}>
           <Alert color="#FFFFFF" background="#726AC8" borderRadius="8px">
-            <AlertIcon />
+            <AlertSvg overflow="visible" />
             <AlertDescription
               fontFamily="Inter"
-              fontSize="16px"
+              fontSize="20px"
               fontWeight="500"
               lineHeight="24px"
               letterSpacing="0em"
               textAlign="left"
+              padding="30px"
             >
               This is the V2 Farm. You should migrate your stakings from V1 Farm
             </AlertDescription>
@@ -623,7 +655,7 @@ export function FarmingPage(props) {
               width="14px"
               background="#726AC8"
               color="#fff"
-              right="8px"
+              right="20px"
               border="2px solid #726AC8"
               textAign="center"
             />
@@ -641,10 +673,10 @@ export function FarmingPage(props) {
             borderRadius="50px"
           >
             <TabList>
-              <Tab marginTop="3px" background="none" border="none">
+              <Tab padding="8px 34px" marginTop="3px" background="none" border="none" onClick={changeVersion}>
                 V1
               </Tab>
-              <Tab marginTop="3px" background="#726AC8">
+              <Tab padding="8px 34px" marginTop="3px" background="#726AC8">
                 V2
               </Tab>
             </TabList>
@@ -652,10 +684,10 @@ export function FarmingPage(props) {
         </Flex>
         <Tabs isManual variant="enclosed" mx={[5, 10, 15, 20]} my={4}>
           <TabList border="none">
-            <Tab border="1px solid #2D276A" background="#2D276A" color="#fff">
+            <Tab borderRadius="0px" border="1px solid #2D276A" background="#2D276A" color="#fff">
               Liquidity Pools
             </Tab>
-            <Tab border="1px solid #2D276A" background="#2D276A" color="#fff">
+            <Tab borderRadius="0px" border="1px solid #2D276A" background="#2D276A" color="#fff">
               Staking
             </Tab>
           </TabList>

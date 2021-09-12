@@ -67,7 +67,7 @@ const YieldFarm = ({
           >
             Earn
           </Box>
-          <Box marginTop="15px" align="left">
+          <Box marginTop="15px" paddingLeft="40px" align="left">
             {content.img === 'bnb.svg' && <BNBImage mr="3" />}
             {content.img === 'eth.svg' && <ETHImage mr="3" />}
             {content.img === 'rgp.svg' && <RGPImage mr="3" />}
@@ -83,7 +83,7 @@ const YieldFarm = ({
           >
             APY
           </Box>
-          <Box marginTop="15px" paddingLeft="20px" align="left">
+          <Box marginTop="15px" paddingLeft="40px" align="left">
             {formatAmount(content.ARYValue)} %
           </Box>
         </Flex>
@@ -100,7 +100,7 @@ const YieldFarm = ({
           >
             Total Liquidity
           </Box>
-          <Box marginTop="15px" paddingLeft="20px" align="right">
+          <Box marginTop="15px" paddingLeft="65px" align="right">
             {totalLiquidityValue()}
           </Box>
         </Flex>

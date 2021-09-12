@@ -903,7 +903,7 @@ const ShowYieldFarmDetails = ({
   return (
     <>
       <Flex
-        justifyContent="space-between"
+        // justifyContent="space-between"
         flexDirection={['column', 'column', 'row']}
         color="white"
         // margin="0 auto"
@@ -915,6 +915,7 @@ const ShowYieldFarmDetails = ({
         // borderBottomRadius="14px"
       >
         <Box
+          flexBasis="30%"
           width="100%"
           textAlign="right"
           display="flex"
@@ -943,7 +944,7 @@ const ShowYieldFarmDetails = ({
                   approveValueForRGP &&
                   approveValueForOtherToken &&
                   content.tokensStaked[1] <= 0
-                    ? '#444159'
+                    ? '#4D4693'
                     : 'rgba(64, 186,213, 0.1)'
                 }
                 color={
@@ -956,6 +957,7 @@ const ShowYieldFarmDetails = ({
                 border="0"
                 mb="4"
                 mr="6"
+                padding="10 80"
                 cursor="pointer"
                 _hover={
                   approveValueForRGP && approveValueForOtherToken
@@ -990,10 +992,15 @@ const ShowYieldFarmDetails = ({
           </Box>
         </Box>
         {/* margin={['0', '0', '0 20px']} */}
-        <Box width="100%" display="flex" justifyContent="space-around">
+        <Box
+          flexBasis="30%"
+          width="100%"
+          display="flex"
+          justifyContent="space-around"
+        >
           <Box>
             <Flex>
-              <Text fontSize="23px" marginRight="30px">
+              <Text fontSize="20px" marginRight="30px">
                 {content.RGPEarned}
               </Text>{' '}
               <Text color="gray.400" marginTop="25px">
@@ -1001,16 +1008,16 @@ const ShowYieldFarmDetails = ({
               </Text>
             </Flex>
             <Button
-              w="60%"
+              w="100%"
               h="50px"
               borderRadius="0px"
-              bg={content.RGPEarned <= 0 ? '#444159' : 'rgba(64, 186,213, 0.1)'}
+              bg={content.RGPEarned <= 0 ? '#4D4693' : 'rgba(64, 186,213, 0.1)'}
               color={
                 content.RGPEarned <= 0 ? 'rgba(190, 190, 190, 1)' : '#40BAD5'
               }
               border="0"
               mb="4"
-              // mr="6"
+              mr="6"
               cursor="pointer"
               _hover={{ color: 'white' }}
               onClick={() => harvest(content.pId)}
@@ -1023,7 +1030,12 @@ const ShowYieldFarmDetails = ({
           </Box>
         </Box>
 
-        <Box width="100%" display="flex" justifyContent="space-around">
+        <Box
+          flexBasis="25%"
+          width="100%"
+          display="flex"
+          justifyContent="space-around"
+        >
           <Box>
             {!isPoolRGP && (
               <Flex marginTop="10px">
@@ -1046,29 +1058,40 @@ const ShowYieldFarmDetails = ({
             <Divider orientation="vertical" height="84px" />
           </Box>
         </Box>
-        <Box width="100%" margin={['0', '0', '0 20px']} justifySelf="end">
-          <Flex>
-            <Text marginTop="15px">Auto-Harvest</Text>
-            <label className={styles.themeSwitch}>
-              <input
-                type="checkbox"
-                id="checkbox"
-                name="influencer"
-                className={styles.input}
-              />
-              <div className={`${styles.slider} ${styles.round}`} />
-            </label>
-            <Circle
-              size="20px"
-              bg="#fff"
-              marginTop="14px"
-              // marginLeft="10px"
-              // marginRight="10px"
-            >
-              <Tooltip label="Auto Harvest (weekly)" fontSize="md">
-                <QuestionOutlineIcon color="#120136" cursor="pointer" />
-              </Tooltip>
-            </Circle>
+        <Box
+          flexBasis="15%"
+          width="100%"
+          margin={['0', '0', '0 20px']}
+          justifySelf="end"
+        >
+          <Flex flexDirection="column">
+            <Box>
+              <Text marginTop="15px">Auto-Harvest</Text>
+            </Box>
+            <Box>
+              <label className={styles.themeSwitch}>
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  name="influencer"
+                  className={styles.input}
+                />
+                <div className={`${styles.slider} ${styles.round}`} />
+              </label>
+              <Circle
+                size="20px"
+                bg="#fff"
+                display="inline-flex"
+                marginLeft="40px" 
+                marginBottom="10px"
+                // marginLeft="10px"
+                // marginRight="10px"
+              >
+                <Tooltip label="Auto Harvest (weekly)" fontSize="md">
+                  <QuestionOutlineIcon color="#120136" cursor="pointer" />
+                </Tooltip>
+              </Circle>
+            </Box>
           </Flex>
         </Box>
       </Flex>
