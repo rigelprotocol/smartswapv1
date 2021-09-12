@@ -779,6 +779,8 @@ export const Manual = props => {
         setURLNetwork('');
         setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
         const { confirmations, status } = await sendTransaction.wait(3);
+        const receipt = await sendTransaction.wait();
+        const amountForNotification = receipt.events[2].data;
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -795,11 +797,10 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${
-                selectedToken.symbol
-              } for ${parseFloat(amountIn).toFixed(7)}  ${
-                selectedToToken.symbol
-              }`}
+              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
+                parseInt(amountForNotification, 16) /
+                10 ** 18
+              ).toFixed(7)}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -846,6 +847,9 @@ export const Manual = props => {
         setTimeout(() => openModal3(), 1000);
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
+        const receipt = await sendTransaction.wait();
+        const amountForNotification = receipt.events[5].data;
+        console.log(receipt);
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -862,11 +866,10 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${
-                selectedToken.symbol
-              } for ${parseFloat(amountIn).toFixed(7)}  ${
-                selectedToToken.symbol
-              }`}
+              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
+                parseInt(amountForNotification, 16) /
+                10 ** 18
+              ).toFixed(7)}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -908,6 +911,10 @@ export const Manual = props => {
         });
         setTimeout(() => openModal3(), 1000);
         const { confirmations, status } = await sendTransaction.wait(3);
+        const { hash } = sendTransaction;
+        const receipt = await sendTransaction.wait();
+        const amountForNotification = receipt.events[2].data;
+        console.log(receipt);
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -921,6 +928,15 @@ export const Manual = props => {
           });
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
           props.changeRGPValue(wallet);
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
+                parseInt(amountForNotification, 16) /
+                10 ** 18
+              ).toFixed(7)}  ${selectedToToken.symbol}`}
+            />,
+          );
         }
       } catch (e) {
         setIsSendingTransaction(false);
@@ -961,6 +977,9 @@ export const Manual = props => {
         setTimeout(() => openModal3(), 1000);
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
+        const receipt = await sendTransaction.wait();
+        const amountForNotification = receipt.events[5].data;
+        console.log(receipt);
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -974,14 +993,14 @@ export const Manual = props => {
           });
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
           props.changeRGPValue(wallet);
+          console.log('eth to token routed');
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${
-                selectedToken.symbol
-              } for ${parseFloat(amountIn).toFixed(7)}  ${
-                selectedToToken.symbol
-              }`}
+              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
+                parseInt(amountForNotification, 16) /
+                10 ** 18
+              ).toFixed(7)}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -1022,6 +1041,10 @@ export const Manual = props => {
         setTimeout(() => openModal3(), 1000);
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
+        const receipt = await sendTransaction.wait();
+        console.log('receipt', receipt);
+        console.log('data', receipt.events[2].data);
+        const amountForNotification = receipt.events[2].data;
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -1040,11 +1063,10 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${
-                selectedToken.symbol
-              } for ${parseFloat(amountIn).toFixed(7)}  ${
-                selectedToToken.symbol
-              }`}
+              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
+                parseInt(amountForNotification, 16) /
+                10 ** 18
+              ).toFixed(7)}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -1085,6 +1107,8 @@ export const Manual = props => {
         setTimeout(() => openModal3(), 1000);
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
+        const receipt = await sendTransaction.wait();
+        const amountForNotification = receipt.events[5].data;
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -1101,11 +1125,10 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${
-                selectedToken.symbol
-              } for ${parseFloat(amountIn).toFixed(7)}  ${
-                selectedToToken.symbol
-              }`}
+              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
+                parseInt(amountForNotification, 16) /
+                10 ** 18
+              ).toFixed(7)}  ${selectedToToken.symbol}`}
             />,
           );
         }
