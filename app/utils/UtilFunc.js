@@ -104,7 +104,7 @@ export function mergeArrays(arrays) {
 }
 
 export const getOutPutDataFromEvent = async (tokenAddress, eventsArray) => {
-  let duplicateArray = [];
+  const duplicateArray = [];
   eventsArray.map(event => {
     if (event.address.toLowerCase() == tokenAddress.toLowerCase()) {
       duplicateArray.push(event);
@@ -125,7 +125,7 @@ export const getInPutDataFromEvent = (
   eventsArray,
   fromAmount,
 ) => {
-  let duplicateArray = [];
+  const duplicateArray = [];
   eventsArray.map(event => {
     if (event.address.toLowerCase() == tokenAddress.toLowerCase()) {
       duplicateArray.push(event);
@@ -137,9 +137,8 @@ export const getInPutDataFromEvent = (
 
     if (parseFloat(convertedInput) != parseFloat(fromAmount)) {
       return convertedInput.toFixed(7);
-    } else {
-      return fromAmount;
     }
+    return fromAmount;
   }
 };
 
