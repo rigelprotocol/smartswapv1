@@ -64,7 +64,12 @@ import {
   updateFromToken,
 } from '../../containers/WalletProvider/actions';
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
-import { getDeadline, createURLNetwork } from '../../utils/UtilFunc';
+import {
+  getDeadline,
+  createURLNetwork,
+  getOutPutDataFromEvent,
+  getInPutDataFromEvent,
+} from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
 import Notification from '../ToastNotification/Notification';
 
@@ -780,7 +785,16 @@ export const Manual = props => {
         setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
         const { confirmations, status } = await sendTransaction.wait(3);
         const receipt = await sendTransaction.wait();
-        const amountForNotification = receipt.events[2].data;
+        const OutputAmountForNotification = await getOutPutDataFromEvent(
+          selectedToToken.address,
+          receipt.events,
+        );
+
+        const InputAmountForNotification = await getInPutDataFromEvent(
+          selectedToken.address,
+          receipt.events,
+          fromAmount,
+        );
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -797,10 +811,9 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
-                parseInt(amountForNotification, 16) /
-                10 ** 18
-              ).toFixed(7)}  ${selectedToToken.symbol}`}
+              message={`Swap ${InputAmountForNotification}  ${
+                selectedToken.symbol
+              } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -848,8 +861,16 @@ export const Manual = props => {
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
         const receipt = await sendTransaction.wait();
-        const amountForNotification = receipt.events[5].data;
-        console.log(receipt);
+        const OutputAmountForNotification = await getOutPutDataFromEvent(
+          selectedToToken.address,
+          receipt.events,
+        );
+
+        const InputAmountForNotification = await getInPutDataFromEvent(
+          selectedToken.address,
+          receipt.events,
+          fromAmount,
+        );
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -866,10 +887,9 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
-                parseInt(amountForNotification, 16) /
-                10 ** 18
-              ).toFixed(7)}  ${selectedToToken.symbol}`}
+              message={`Swap ${InputAmountForNotification}  ${
+                selectedToken.symbol
+              } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -913,8 +933,17 @@ export const Manual = props => {
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
         const receipt = await sendTransaction.wait();
-        const amountForNotification = receipt.events[2].data;
-        console.log(receipt);
+        const OutputAmountForNotification = await getOutPutDataFromEvent(
+          selectedToToken.address,
+          receipt.events,
+        );
+
+        const InputAmountForNotification = await getInPutDataFromEvent(
+          selectedToken.address,
+          receipt.events,
+          fromAmount,
+        );
+
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -931,10 +960,9 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
-                parseInt(amountForNotification, 16) /
-                10 ** 18
-              ).toFixed(7)}  ${selectedToToken.symbol}`}
+              message={`Swap ${InputAmountForNotification}  ${
+                selectedToken.symbol
+              } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -978,8 +1006,17 @@ export const Manual = props => {
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
         const receipt = await sendTransaction.wait();
-        const amountForNotification = receipt.events[5].data;
-        console.log(receipt);
+
+        const OutputAmountForNotification = await getOutPutDataFromEvent(
+          selectedToToken.address,
+          receipt.events,
+        );
+
+        const InputAmountForNotification = await getInPutDataFromEvent(
+          selectedToken.address,
+          receipt.events,
+          fromAmount,
+        );
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -997,10 +1034,9 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
-                parseInt(amountForNotification, 16) /
-                10 ** 18
-              ).toFixed(7)}  ${selectedToToken.symbol}`}
+              message={`Swap ${InputAmountForNotification}  ${
+                selectedToken.symbol
+              } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -1042,9 +1078,16 @@ export const Manual = props => {
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
         const receipt = await sendTransaction.wait();
-        console.log('receipt', receipt);
-        console.log('data', receipt.events[2].data);
-        const amountForNotification = receipt.events[2].data;
+        const OutputAmountForNotification = await getOutPutDataFromEvent(
+          selectedToToken.address,
+          receipt.events,
+        );
+
+        const InputAmountForNotification = await getInPutDataFromEvent(
+          selectedToken.address,
+          receipt.events,
+          fromAmount,
+        );
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -1058,15 +1101,12 @@ export const Manual = props => {
           });
           getTokenListBalance(tokenList, wallet, setBalanceIsSet);
           props.changeRGPValue(wallet);
-          console.log('swap done');
-          console.log('amountIn', amountIn);
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
-                parseInt(amountForNotification, 16) /
-                10 ** 18
-              ).toFixed(7)}  ${selectedToToken.symbol}`}
+              message={`Swap ${InputAmountForNotification}  ${
+                selectedToken.symbol
+              } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -1108,7 +1148,16 @@ export const Manual = props => {
         const { confirmations, status } = await sendTransaction.wait(3);
         const { hash } = sendTransaction;
         const receipt = await sendTransaction.wait();
-        const amountForNotification = receipt.events[5].data;
+        const OutputAmountForNotification = await getOutPutDataFromEvent(
+          selectedToToken.address,
+          receipt.events,
+        );
+
+        const InputAmountForNotification = await getInPutDataFromEvent(
+          selectedToken.address,
+          receipt.events,
+          fromAmount,
+        );
         if (
           typeof sendTransaction.hash != 'undefined' &&
           confirmations >= 3 &&
@@ -1125,10 +1174,9 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${fromAmount}  ${selectedToken.symbol} for ${(
-                parseInt(amountForNotification, 16) /
-                10 ** 18
-              ).toFixed(7)}  ${selectedToToken.symbol}`}
+              message={`Swap ${InputAmountForNotification}  ${
+                selectedToken.symbol
+              } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
         }
@@ -1439,22 +1487,22 @@ export const Manual = props => {
                   : (typeof wallet.signer === 'object' &&
                       fromAmount === undefined) ||
                     fromAmount.length == parseFloat(0.0)
-                    ? sendNotice('Enter the amount of token to exchange')
-                    : typeof wallet.signer === 'object' &&
+                  ? sendNotice('Enter the amount of token to exchange')
+                  : typeof wallet.signer === 'object' &&
                     fromAmount > parseFloat(0) &&
                     selectedToToken.name === 'Select a token'
-                      ? sendNotice('Select the designated token')
-                      : typeof wallet.signer === 'object' &&
+                  ? sendNotice('Select the designated token')
+                  : typeof wallet.signer === 'object' &&
                     fromAmount != parseFloat(0.0) &&
                     selectedToToken.name !== 'Select a token'
-                        ? selectedToken.symbol == selectedToToken.symbol
-                          ? sendNotice(
-                            'Improper token selection, you selected the same token',
-                          )
-                          : insufficientBalanceButton
-                            ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
-                            : triggerAccountCheck()
-                        : null;
+                  ? selectedToken.symbol == selectedToToken.symbol
+                    ? sendNotice(
+                        'Improper token selection, you selected the same token',
+                      )
+                    : insufficientBalanceButton
+                    ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
+                    : triggerAccountCheck()
+                  : null;
               }}
             >
               {wallet.signer === 'signer'
@@ -1462,22 +1510,22 @@ export const Manual = props => {
                 : (typeof wallet.signer === 'object' &&
                     fromAmount === undefined) ||
                   fromAmount.length == parseFloat(0.0)
-                  ? 'Enter Amount'
-                  : typeof wallet.signer === 'object' &&
+                ? 'Enter Amount'
+                : typeof wallet.signer === 'object' &&
                   fromAmount != parseFloat(0.0) &&
                   selectedToToken.name === 'Select a token'
-                    ? 'Click Select a Token'
-                    : typeof wallet.signer === 'object' &&
+                ? 'Click Select a Token'
+                : typeof wallet.signer === 'object' &&
                   fromAmount != parseFloat(0.0) &&
                   selectedToToken.name !== 'Select a token'
-                      ? selectedToken.symbol == selectedToToken.symbol
-                        ? 'Improper token selection'
-                        : insufficientBalanceButton
-                          ? `Insufficient ${selectedToken.symbol} balance`
-                          : !userHasApproveToken
-                            ? 'Approve Transaction'
-                            : 'Swap Tokens'
-                      : ''}
+                ? selectedToken.symbol == selectedToToken.symbol
+                  ? 'Improper token selection'
+                  : insufficientBalanceButton
+                  ? `Insufficient ${selectedToken.symbol} balance`
+                  : !userHasApproveToken
+                  ? 'Approve Transaction'
+                  : 'Swap Tokens'
+                : ''}
             </Button>
           )}
         </Box>
@@ -1547,8 +1595,8 @@ async function updateSendAmount(
       // if(field != 'to' && )
       return field != 'to'
         ? setAmountIn(
-          ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-        )
+            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+          )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
@@ -1605,8 +1653,8 @@ async function updateSendAmountForRoute(
 
         return field != 'to'
           ? setAmountIn(
-            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-          )
+              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+            )
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
@@ -1658,8 +1706,8 @@ async function updateSendAmountForRoute(
         );
         return field != 'to'
           ? setAmountIn(
-            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-          )
+              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+            )
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
@@ -1697,8 +1745,8 @@ async function update_RGP_ETH_SendAmount(
 
       return field != 'to'
         ? setAmountIn(
-          ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
-        )
+            ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
+          )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
