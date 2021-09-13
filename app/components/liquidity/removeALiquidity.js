@@ -11,14 +11,21 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  useToast
+  Circle,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  useToast,
 } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
-import { router, LPTokenContract,SmartFactory } from 'utils/SwapConnect';
+import { router, LPTokenContract, SmartFactory } from 'utils/SwapConnect';
 import PropTypes from 'prop-types';
-import { SettingsIcon } from '@chakra-ui/icons';
+import { SettingsIcon, CheckIcon } from '@chakra-ui/icons';
 import BNBImage from '../../assets/bnb.svg';
 import NullImage from '../../assets/Null-24.svg';
 import RGPImage from '../../assets/rgp.svg';
@@ -26,9 +33,8 @@ import ETHImage from '../../assets/eth.svg';
 import BUSDImage from '../../assets/busd.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import ArrowDown from '../../assets/arrow-down.svg';
-import { useLocalStorage } from '../../utils/hooks/storageHooks'
+import { useLocalStorage } from '../../utils/hooks/storageHooks';
 import { getDeadline } from '../../utils/UtilFunc';
-
 
 const removeALiquidity = ({
   back,
@@ -39,20 +45,26 @@ const removeALiquidity = ({
   liquidityToRemove,
   hasApprovedLPTokens,
   approveSmartSwapLPTokens,
+  closeRemovalSuccessModal,
+  removalSuccessModalDisclosure,
 }) => {
   const [fromValue, setFromValue] = useState(0);
-  const [simpleRemoveLiquidityPool, setSimpleRemoveLiquidityPool] = useState(true);
+  const [simpleRemoveLiquidityPool, setSimpleRemoveLiquidityPool] = useState(
+    true,
+  );
   const [toValue, setToValue] = useState(0);
-  const [userSelectedPositionValue, setUserSelectedPositionValue] = useState("");
-  const [tokenZeroAmount, setTokenZeroAmount] = useState("");
-  const [tokenOneAmount, setTokenOneAmount] = useState("");
+  const [userSelectedPositionValue, setUserSelectedPositionValue] = useState(
+    '',
+  );
+  const [tokenZeroAmount, setTokenZeroAmount] = useState('');
+  const [tokenOneAmount, setTokenOneAmount] = useState('');
   const [above100Percent, setAbove100Percent] = useState(false);
-  const [determineInputChange, setDetermineInputChange] = useState("");
-  const [deadline, setDeadline] = useLocalStorage('deadline', 20)
+  const [determineInputChange, setDetermineInputChange] = useState('');
+  const [deadline, setDeadline] = useLocalStorage('deadline', 20);
   const [selectedValue, setSelectedValue] = useState(0);
   const [liquidityPairRatio, setLiquidityPairRatio] = useState(0);
   useEffect(() => {
-    getLiquidityPairRatio()
+    getLiquidityPairRatio();
     const getPriceForToken = async path => {
       if (wallet.signer !== 'signer') {
         const rout = await router();
@@ -91,34 +103,42 @@ const removeALiquidity = ({
     };
     getPriceForToken(liquidityToRemove.path);
   }, []);
-  useEffect(()=>{
-    if(determineInputChange==="zero"){
-       setTheValueForTokenOne() 
-    }else if(determineInputChange==="one"){
-      setTheValueForTokenZero() 
-    }else if(determineInputChange==="position"){
-      setTheValueForTokenOneAndTokenTwo()
-    }else if(determineInputChange==="slider"){
-    setInputZeroAndOne()
+  useEffect(() => {
+    if (determineInputChange === 'zero') {
+      setTheValueForTokenOne()
+    } else if (determineInputChange === 'one') {
+      setTheValueForTokenZero();
+    } else if (determineInputChange === 'position') {
+      setTheValueForTokenOneAndTokenTwo();
+    } else if (determineInputChange === 'slider') {
+      setInputZeroAndOne()
     }
-  },[tokenZeroAmount,userSelectedPositionValue,tokenOneAmount,determineInputChange,selectedValue])
-  useEffect(()=>{
-if(selectedValue>100){
-  setAbove100Percent(true)
-}else{
-  setAbove100Percent(false)
-}
-  },[selectedValue])
+  }, [
+    tokenZeroAmount,
+    userSelectedPositionValue,
+    tokenOneAmount,
+    determineInputChange,
+    selectedValue,
+  ]);
+  useEffect(() => {
+    if(selectedValue>100){
+      setAbove100Percent(true)
+    }else{
+      setAbove100Percent(false)
+    }
+  }, [selectedValue]);
 
   const getLiquidityPairRatio = async () => {
     try {
       const factory = await SmartFactory();
-      const fromPath = ethers.utils.getAddress(liquidityToRemove.path[0].fromPath);
+      const fromPath = ethers.utils.getAddress(
+        liquidityToRemove.path[0].fromPath,
+      );
       const toPath = ethers.utils.getAddress(liquidityToRemove.path[1].toPath);
-      const LPAddress = liquidityToRemove.pairAddress
-      const LPcontract = await LPTokenContract(LPAddress)
-      
-      const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
+      const LPAddress = liquidityToRemove.pairAddress;
+      const LPcontract = await LPTokenContract(LPAddress);
+
+      const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves();
       const token0 = await LPcontract.token0();
       let liquidityRatio;
       if (token0.toString() == fromPath.toString()) {
@@ -128,10 +148,9 @@ if(selectedValue>100){
       }
       setLiquidityPairRatio(liquidityRatio);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-
-  }
+  };
 
   const removeLiquidityForETH = async (tokenAddress, liquidity) => {
     const rout = await router();
@@ -158,98 +177,100 @@ if(selectedValue>100){
       console.error('******', error);
     }
   };
-  const setInputZeroAndOne = () =>{
-    let inputZero = liquidityToRemove.pooledToken0 * (selectedValue / 100)
-    let inputOne = liquidityToRemove.pooledToken1 * (selectedValue / 100)
-    let calculatedValue =  liquidityToRemove.poolToken * (selectedValue / 100)
-    setUserSelectedPositionValue(calculatedValue)
-    setTokenOneAmount(inputOne)
-    setTokenZeroAmount(inputZero)
-  }
-  const setTheValueForTokenOne =() => {
-    let percent = PercentValue("one")
-    userPositionValue(percent)
-    setTokenOneAmount(liquidityToRemove.pooledToken1 * (percent / 100))
-  }
-  const setTheValueForTokenZero =() => {
-    let percent = PercentValue("zero")
-    userPositionValue(percent)
-    setTokenZeroAmount(liquidityToRemove.pooledToken0 * (percent / 100))
-  }
-  const PercentValue = (val) =>{
-    let calculatedValue
-    if(val==="zero"){
-      calculatedValue = Math.floor((100 * tokenOneAmount) / liquidityToRemove.pooledToken1)
-    }else{
-      calculatedValue = Math.floor((100 * tokenZeroAmount) / liquidityToRemove.pooledToken0) 
+  const setInputZeroAndOne = () => {
+    const inputZero = liquidityToRemove.pooledToken0 * (selectedValue / 100);
+    const inputOne = liquidityToRemove.pooledToken1 * (selectedValue / 100);
+    const calculatedValue = liquidityToRemove.poolToken * (selectedValue / 100);
+    setUserSelectedPositionValue(calculatedValue);
+    setTokenOneAmount(inputOne);
+    setTokenZeroAmount(inputZero);
+  };
+  const setTheValueForTokenOne = () => {
+    const percent = PercentValue('one');
+    userPositionValue(percent);
+    setTokenOneAmount(liquidityToRemove.pooledToken1 * (percent / 100));
+  };
+  const setTheValueForTokenZero = () => {
+    const percent = PercentValue('zero');
+    userPositionValue(percent);
+    setTokenZeroAmount(liquidityToRemove.pooledToken0 * (percent / 100));
+  };
+  const PercentValue = val => {
+    let calculatedValue;
+    if (val === 'zero') {
+      calculatedValue = Math.floor(
+        (100 * tokenOneAmount) / liquidityToRemove.pooledToken1,
+      );
+    } else {
+      calculatedValue = Math.floor(
+        (100 * tokenZeroAmount) / liquidityToRemove.pooledToken0,
+      );
     }
-    setSelectedValue(calculatedValue)
-    return calculatedValue
-  }
-  const userPositionValue = (percent) => {
-    let calculatedValue =  liquidityToRemove.poolToken * (percent / 100)
-    setUserSelectedPositionValue(calculatedValue)
-  }
+    setSelectedValue(calculatedValue);
+    return calculatedValue;
+  };
+  const userPositionValue = percent => {
+    const calculatedValue = liquidityToRemove.poolToken * (percent / 100);
+    setUserSelectedPositionValue(calculatedValue);
+  };
   const removeThisLiquidity = async () => {
-    if(selectedValue<=100){
-const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
-    const walletBal = await smartSwapLP.balanceOf(wallet.address);
-    const liquidityAmount = ethers.utils.formatEther(
-      walletBal.mul(selectedValue).div(100),
-    );
-
-    if (liquidityToRemove.path[0].token === 'WBNB') {
-      return removeLiquidityForETH(
-        liquidityToRemove.path[1].toPath,
-        liquidityAmount,
+    if (selectedValue <= 100) {
+      const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
+      const walletBal = await smartSwapLP.balanceOf(wallet.address);
+      const liquidityAmount = ethers.utils.formatEther(
+        walletBal.mul(selectedValue).div(100),
       );
-    }
 
-    if (liquidityToRemove.path[1].token === 'WBNB') {
-      return removeLiquidityForETH(
+      if (liquidityToRemove.path[0].token === 'WBNB') {
+        return removeLiquidityForETH(
+          liquidityToRemove.path[1].toPath,
+          liquidityAmount,
+        );
+      }
+
+      if (liquidityToRemove.path[1].token === 'WBNB') {
+        return removeLiquidityForETH(
+          liquidityToRemove.path[0].fromPath,
+          liquidityAmount,
+        );
+      }
+
+      removingLiquidity(
+        liquidityAmount,
         liquidityToRemove.path[0].fromPath,
-        liquidityAmount,
+        liquidityToRemove.path[1].toPath,
       );
+    } else {
+      alert('error');
     }
-
-    removingLiquidity(
-      liquidityAmount,
-      liquidityToRemove.path[0].fromPath,
-      liquidityToRemove.path[1].toPath,
-    );
-    }else{
-      alert("error")
-
-    }
-    
   };
   const sliderValues = [0, 25, 50, 75, 100];
   const selectedButton = val => {
-    setDetermineInputChange("slider")
+    setDetermineInputChange('slider');
     setSelectedValue(val);
     setPercentValue(val);
   };
-  const removeMaxAmount = () =>{
+  const removeMaxAmount = () => {
     setSelectedValue(100);
-    
-    setUserSelectedPositionValue(liquidityToRemove.poolToken)
-    setTokenZeroAmount(liquidityToRemove.pooledToken0)
-    setTokenOneAmount(liquidityToRemove.pooledToken1)
-  }
-  const setTheValueForTokenOneAndTokenTwo =()=>{
-   if(userSelectedPositionValue<= liquidityToRemove.poolToken){
-    let calculatedValue =  Math.floor((100 * userSelectedPositionValue) / liquidityToRemove.poolToken)
-    setSelectedValue(calculatedValue)
-    setTokenZeroAmount(liquidityToRemove.pooledToken0 * (calculatedValue / 100) )
-    setTokenOneAmount(liquidityToRemove.pooledToken1 * (calculatedValue / 100) )
-   }
-  }
+
+    setUserSelectedPositionValue(liquidityToRemove.poolToken);
+    setTokenZeroAmount(liquidityToRemove.pooledToken0);
+    setTokenOneAmount(liquidityToRemove.pooledToken1);
+  };
+  const setTheValueForTokenOneAndTokenTwo = () => {
+    if(userSelectedPositionValue<= liquidityToRemove.poolToken){
+      let calculatedValue =  Math.floor((100 * userSelectedPositionValue) / liquidityToRemove.poolToken)
+      setSelectedValue(calculatedValue)
+      setTokenZeroAmount(liquidityToRemove.pooledToken0 * (calculatedValue / 100) )
+      setTokenOneAmount(liquidityToRemove.pooledToken1 * (calculatedValue / 100) )
+    }
+  };
   const deleteLiquidity = () => {
     back('INDEX');
   };
-  const toggleViewOfRemoveLiquidity =() =>{
-    setSimpleRemoveLiquidityPool(!simpleRemoveLiquidityPool)
-  }
+  const toggleViewOfRemoveLiquidity = () => {
+    setSimpleRemoveLiquidityPool(!simpleRemoveLiquidityPool);
+  };
 
   return (
     <>
@@ -283,101 +304,101 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
         >
           <Flex justifyContent="space-between">
             <Text mt="0px">Amount</Text>
-            <Text mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
-            cursor="pointer">
-              {simpleRemoveLiquidityPool ? "Detailed" : "Simple"}  
+            <Text
+mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
+              cursor="pointer">
+              {simpleRemoveLiquidityPool ? 'Detailed' : 'Simple'}
             </Text>
           </Flex>
           <Heading as="h2" size="3xl">
             {selectedValue}%
           </Heading>
-          {simpleRemoveLiquidityPool && 
-        <Box>
-          <Slider
-            defaultValue={sliderValues[1]}
-            value={selectedValue}
-            min={sliderValues[0]}
-            max={sliderValues[sliderValues.length - 1]}
-            step={sliderValues[1]}
-            onChangeEnd={value => {
-              setDetermineInputChange("slider")
-              setSelectedValue(value)}
-            }
-          >
-            <SliderTrack bg="#999999">
-              <Box position="relative" right={10} />
-              <SliderFilledTrack bg="#999999" opacity={0.5} />
-            </SliderTrack>
-            <SliderThumb boxSize={6} bg="#C4C4C4" />
-          </Slider>
-          <Flex justifyContent="space-between" my="4">
-            {sliderValues.splice(1).map((val, index) => (
-              <Button
-                bgColor={selectedValue === val ? '#3841AE' : '#191D4E'}
-                rounded="lg"
-                width="74px"
-                height="37px"
-                color={selectedValue === val ? 'white' : '#787FD4'}
-                border="0"
-                cursor="pointer"
-                onClick={() => selectedButton(val)}
-                key={index}
+          {simpleRemoveLiquidityPool && (
+            <Box>
+              <Slider
+                defaultValue={sliderValues[1]}
+                value={selectedValue}
+                min={sliderValues[0]}
+                max={sliderValues[sliderValues.length - 1]}
+                step={sliderValues[1]}
+                onChangeEnd={value => {
+                  setDetermineInputChange('slider');
+                  setSelectedValue(value);
+                }}
               >
-                {val}
-              </Button>
-            ))}
-          </Flex> 
+                <SliderTrack bg="#999999">
+                  <Box position="relative" right={10} />
+                  <SliderFilledTrack bg="#999999" opacity={0.5} />
+                </SliderTrack>
+                <SliderThumb boxSize={6} bg="#C4C4C4" />
+              </Slider>
+              <Flex justifyContent="space-between" my="4">
+                {sliderValues.splice(1).map((val, index) => (
+                  <Button
+                    bgColor={selectedValue === val ? '#3841AE' : '#191D4E'}
+                    rounded="lg"
+                    width="74px"
+                    height="37px"
+                    color={selectedValue === val ? 'white' : '#787FD4'}
+                    border="0"
+                    cursor="pointer"
+                    onClick={() => selectedButton(val)}
+                    key={index}
+                  >
+                    {val}
+                  </Button>
+                ))}
+              </Flex>
+            </Box>
+          )}
+          {!simpleRemoveLiquidityPool && (
+            <Box>
+              <Flex justifyContent="space-between">
+            <InputGroup size="md">
+                  <Input
+                    type="number"
+                id="input__field"
+                    placeholder="0.0"
+                    border="1px solid rgba(255, 255, 255,0.25)"
+                    fontSize="lg"
+                    color="rgb(255, 255, 255)"
+                    value={userSelectedPositionValue}
+                    onChange={e => {
+                  setDetermineInputChange("position")
+                  setUserSelectedPositionValue(e.target.value)
+                    }}
+                  />
+                  <InputRightElement marginRight="5px">
+                <Text
+                      cursor="pointer"
+                      color="rgba(64, 186, 213, 1)"
+                  onClick={()=>removeMaxAmount()}>
+                      max
+                    </Text>
+                  </InputRightElement>
+                </InputGroup>
+                <Flex alignItems="center">
+                  <Menu>
+                    <Button
+                      color="rgba(64, 186, 213, 1)"
+                  border="none"
+                      borderRadius="6px"
+                  fontSize="15px"
+                      bg="rgba(53, 44, 129, 0.3)"
+                      fontWeight="regular"
+                  fontSize="16px"
+                      cursor="pointer"
+                      marginBottom="5px"
+                      _hover={{ background: '#72cfe4', color: '#29235E' }}
+                >
+                  {liquidityToRemove.path[0].token} : {liquidityToRemove.path[1].token}
+                    </Button>
+              </Menu>
+                </Flex>
+              </Flex>
+            </Box>
+          )}
         </Box>
-          }
-          {!simpleRemoveLiquidityPool && 
-        <Box>
-           <Flex justifyContent="space-between">
-           <InputGroup size="md">
-          <Input
-            type="number"
-            id="input__field"
-            placeholder="0.0"
-            border="1px solid rgba(255, 255, 255,0.25)"
-            fontSize="lg"
-            color="rgb(255, 255, 255)"
-            value={userSelectedPositionValue}
-            onChange={e => {
-              setDetermineInputChange("position")
-              setUserSelectedPositionValue(e.target.value)
-            }}
-          />
-          <InputRightElement marginRight="5px">
-              <Text
-              cursor="pointer" 
-              color="rgba(64, 186, 213, 1)"
-              onClick={()=>removeMaxAmount()}>
-                max
-              </Text>
-          </InputRightElement>
-          </InputGroup>
-          <Flex alignItems="center">
-            <Menu>
-              <Button
-                color="rgba(64, 186, 213, 1)"
-                border="none"
-                borderRadius="6px"
-                fontSize="15px"
-                bg="rgba(53, 44, 129, 0.3)"
-                fontWeight="regular"
-                fontSize="16px"
-                cursor="pointer"
-                marginBottom="5px"
-                _hover={{ background: '#72cfe4', color: '#29235E' }}
-              >
-                 {liquidityToRemove.path[0].token} : {liquidityToRemove.path[1].token}
-              </Button>
-            </Menu>
-          </Flex>
-        </Flex> 
-       
-         </Box>
-          }
-          </Box>
         <Flex justifyContent="center">
           <ArrowDown />
         </Flex>
@@ -389,135 +410,141 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
           p={4}
           my={6}
         >
-          {simpleRemoveLiquidityPool ?     <Box>
-            <Flex justifyContent="space-between">
-              <Text>
-                {simpleRemoveLiquidityPool ? liquidityToRemove.pooledToken0 * (selectedValue / 100): tokenZeroAmount}
-              </Text>
-              <Text>
-                {liquidityToRemove.path[0].token === 'RGP' ? (
-                  <RGPImage />
-                ) : liquidityToRemove.path[0].token === 'BUSD' ? (
-                  <BUSDImage />
-                ) : liquidityToRemove.path[0].token === 'ETH' ? (
-                  <ETHImage />
-                ) : (
-                  <NullImage />
-                )}
-                {liquidityToRemove.path[0].token == 'WBNB'
-                  ? 'BNB'
-                  : liquidityToRemove.path[0].token}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text>
-                {simpleRemoveLiquidityPool ? liquidityToRemove.pooledToken1 * (selectedValue / 100) : tokenOneAmount}
-              </Text>
-              <Text>
-                {liquidityToRemove.path[1].token === 'RGP' ? (
-                  <RGPImage />
-                ) : liquidityToRemove.path[1].token === 'BUSD' ? (
-                  <BUSDImage />
-                ) : liquidityToRemove.path[1].token === 'ETH' ? (
-                  <ETHImage />
-                ) : (
-                  <NullImage />
-                )}
-                {liquidityToRemove.path[1].token == 'WBNB'
-                  ? 'BNB'
-                  : liquidityToRemove.path[1].token}
-              </Text>
-            </Flex>
-          </Box> : 
-          <Box>
-        <Flex justifyContent="space-between" my="2">
-          <Input
-            type="number"
-            id="input__field"
-            placeholder="0.0"
-            border="1px solid rgba(255, 255, 255,0.25)"
-            fontSize="lg"
-            color="rgb(255, 255, 255)"
-            value={tokenZeroAmount}
-                onChange={e => {
-                  setDetermineInputChange("zero")
-                  setTokenZeroAmount(e.target.value)}
-                }
-          />
-          <Flex alignItems="center">
-            <Menu>
-              <Button
-                color="rgba(64, 186, 213, 1)"
-                border="none"
-                borderRadius="6px"
-                fontSize="15px"
-                bg="rgba(53, 44, 129, 0.3)"
-                fontWeight="regular"
-                fontSize="16px"
-                cursor="pointer"
-                marginBottom="5px"
-                _hover={{ background: '#72cfe4', color: '#29235E' }}
-              >
-                 {liquidityToRemove.path[0].token === 'RGP' ? (
-                  <RGPImage mr={1}/>
-                ) : liquidityToRemove.path[0].token === 'BUSD' ? (
-                  <BUSDImage mr={1}/>
-                ) : liquidityToRemove.path[0].token === 'ETH' ? (
-                  <ETHImage mr={1}/>
-                ) : (
-                  <NullImage mr={1}/>
-                )}
-                 {liquidityToRemove.path[0].token}
-              </Button>
-            </Menu>
-          </Flex>
-        </Flex> 
-        <Flex justifyContent="space-between" my="2">
-          <Input
-            type="number"
-            id="input__field"
-            placeholder="0.0"
-            border="1px solid rgba(255, 255, 255,0.25)"
-            fontSize="lg"
-            color="rgb(255, 255, 255)"
-            value={tokenOneAmount}
-                onChange={e => {
-                  setDetermineInputChange("one")
-                  setTokenOneAmount(e.target.value)}
-                }
-          />
-          <Flex alignItems="center">
-            <Menu>
-              <Button
-                color="rgba(64, 186, 213, 1)"
-                border="none"
-                borderRadius="6px"
-                fontSize="15px"
-                bg="rgba(53, 44, 129, 0.3)"
-                fontWeight="regular"
-                fontSize="16px"
-                cursor="pointer"
-                marginBottom="5px"
-                _hover={{ background: '#72cfe4', color: '#29235E' }}
-              >
-                 {liquidityToRemove.path[1].token === 'RGP' ? (
-                  <RGPImage mr={1}/>
-                ) : liquidityToRemove.path[1].token === 'BUSD' ? (
-                  <BUSDImage mr={1}/>
-                ) : liquidityToRemove.path[1].token === 'ETH' ? (
-                  <ETHImage mr={1}/>
-                ) : (
-                  <NullImage mr={1}/>
-                )}
-                 {liquidityToRemove.path[1].token}
-              </Button>
-            </Menu>
-          </Flex>
-        </Flex>
-         </Box>
+          {simpleRemoveLiquidityPool ? (
+            <Box>
+              <Flex justifyContent="space-between">
+                <Text>
+                  {simpleRemoveLiquidityPool
+                    ? liquidityToRemove.pooledToken0 * (selectedValue / 100)
+                    : tokenZeroAmount}
+                </Text>
+                <Text>
+                  {liquidityToRemove.path[0].token === 'RGP' ? (
+                    <RGPImage />
+                  ) : liquidityToRemove.path[0].token === 'BUSD' ? (
+                    <BUSDImage />
+                  ) : liquidityToRemove.path[0].token === 'ETH' ? (
+                    <ETHImage />
+                  ) : (
+                    <NullImage />
+                  )}
+                  {liquidityToRemove.path[0].token == 'WBNB'
+                    ? 'BNB'
+                    : liquidityToRemove.path[0].token}
+                </Text>
+              </Flex>
+              <Flex justifyContent="space-between">
+                <Text>
+                  {simpleRemoveLiquidityPool
+                    ? liquidityToRemove.pooledToken1 * (selectedValue / 100)
+                    : tokenOneAmount}
+                </Text>
+                <Text>
+                  {liquidityToRemove.path[1].token === 'RGP' ? (
+                    <RGPImage />
+                  ) : liquidityToRemove.path[1].token === 'BUSD' ? (
+                    <BUSDImage />
+                  ) : liquidityToRemove.path[1].token === 'ETH' ? (
+                    <ETHImage />
+                  ) : (
+                    <NullImage />
+                  )}
+                  {liquidityToRemove.path[1].token == 'WBNB'
+                    ? 'BNB'
+                    : liquidityToRemove.path[1].token}
+                </Text>
+              </Flex>
+            </Box>
+          ) : (
+            <Box>
+              <Flex justifyContent="space-between" my="2">
+                <Input
+                  type="number"
+                  id="input__field"
+                  placeholder="0.0"
+                  border="1px solid rgba(255, 255, 255,0.25)"
+                  fontSize="lg"
+                  color="rgb(255, 255, 255)"
+                  value={tokenZeroAmount}
+                  onChange={e => {
+                    setDetermineInputChange("zero")
+                    setTokenZeroAmount(e.target.value)}
+                  }
+                />
+                <Flex alignItems="center">
+                  <Menu>
+                    <Button
+                      color="rgba(64, 186, 213, 1)"
+                      border="none"
+                      borderRadius="6px"
+                      fontSize="15px"
+                      bg="rgba(53, 44, 129, 0.3)"
+                      fontWeight="regular"
+                      fontSize="16px"
+                      cursor="pointer"
+                      marginBottom="5px"
+                      _hover={{ background: '#72cfe4', color: '#29235E' }}
+                    >
+                      {liquidityToRemove.path[0].token === 'RGP' ? (
+                        <RGPImage mr={1}/>
+                      ) : liquidityToRemove.path[0].token === 'BUSD' ? (
+                        <BUSDImage mr={1}/>
+                      ) : liquidityToRemove.path[0].token === 'ETH' ? (
+                        <ETHImage mr={1}/>
+                      ) : (
+                        <NullImage mr={1}/>
+                      )}
+                      {liquidityToRemove.path[0].token}
+                    </Button>
+                  </Menu>
+                </Flex>
+              </Flex>
+              <Flex justifyContent="space-between" my="2">
+                <Input
+                  type="number"
+                  id="input__field"
+                  placeholder="0.0"
+                  border="1px solid rgba(255, 255, 255,0.25)"
+                  fontSize="lg"
+                  color="rgb(255, 255, 255)"
+                  value={tokenOneAmount}
+                  onChange={e => {
+                    setDetermineInputChange("one")
+                    setTokenOneAmount(e.target.value)}
+                  }
+                />
+                <Flex alignItems="center">
+                  <Menu>
+                    <Button
+                      color="rgba(64, 186, 213, 1)"
+                      border="none"
+                      borderRadius="6px"
+                      fontSize="15px"
+                      bg="rgba(53, 44, 129, 0.3)"
+                      fontWeight="regular"
+                      fontSize="16px"
+                      cursor="pointer"
+                      marginBottom="5px"
+                      _hover={{ background: '#72cfe4', color: '#29235E' }}
+                    >
+                      {liquidityToRemove.path[1].token === 'RGP' ? (
+                        <RGPImage mr={1}/>
+                      ) : liquidityToRemove.path[1].token === 'BUSD' ? (
+                        <BUSDImage mr={1}/>
+                      ) : liquidityToRemove.path[1].token === 'ETH' ? (
+                        <ETHImage mr={1}/>
+                      ) : (
+                        <NullImage mr={1}/>
+                      )}
+                      {liquidityToRemove.path[1].token}
+                    </Button>
+                  </Menu>
+                </Flex>
+              </Flex>
+            </Box>
 
-          }
-      
+          )}
+
           <Text textAlign="right" color="#9869FC">
             Recieve RGP
           </Text>
@@ -584,6 +611,30 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
           )}
         </Flex>
       </Box>
+      <Modal isOpen={removalSuccessModalDisclosure.isOpen} onClose={closeRemovalSuccessModal} isCentered>
+        <ModalOverlay />
+        <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
+          <ModalCloseButton
+            bg="none"
+            border="0px"
+            color="#fff"
+            cursor="pointer"
+            _focus={{ outline: 'none' }}
+            onClick={closeRemovalSuccessModal}
+          />
+          <ModalBody align="center" my={2}>
+            <Circle size="70px" background="#68C18A" my={3}>
+              <CheckIcon fontSize="40px" />
+            </Circle>
+            <Text fontSize="18px" fontWeight="normal">
+              Transaction Successful
+            </Text>
+            <Box textAlign="center" mt={3} mb={8}>
+              You have successfully removed the Liquidity
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <Box
         mx={5}
         color="white"
@@ -663,5 +714,7 @@ removeALiquidity.propTypes = {
   removingLiquidity: PropTypes.func.isRequired,
   liquidityToRemove: PropTypes.object.isRequired,
   approveSmartSwapLPTokens: PropTypes.func.isRequired,
+  closeRemovalSuccessModal: PropTypes.func.isRequired,
+  removalSuccessModalDisclosure: PropTypes.object,
 };
 export default removeALiquidity;

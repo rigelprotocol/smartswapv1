@@ -428,6 +428,7 @@ export function LiquidityPage(props) {
   const modal5Disclosure = useDisclosure();
   const modal6Disclosure = useDisclosure();
   const modal7Disclosure = useDisclosure();
+  const removalSuccessModalDisclosure = useDisclosure();
 
   function closeInput() {
     setApproveBNBPopup(false)
@@ -607,6 +608,7 @@ export function LiquidityPage(props) {
         const { confirmations, status } = await hasRemovedLiquidity.wait(2);
         if (typeof hasRemovedLiquidity.hash !== 'undefined' && confirmations >= 2 && status) {
           setApproving(false);
+          removalSuccessModalDisclosure.onOpen()
           props.notify({
             title: 'Process Completed',
             body: 'You have successfully remove the liquidity',
@@ -666,7 +668,7 @@ export function LiquidityPage(props) {
   const open = async (value) => {
     // CHECK IF THERE IS LIQUIDITY ON THIS, BY CALLING THE GETPATR FUNCTION ON SMARTFACTORY
     // IF IT DOES CONTINUE WITH THE PROCESS
-    // IF NOT SHOW A MODAL THAT TELLS THE USER TO ADD LIQUIDITY TO THIS SET OF PAIRS 
+    // IF NOT SHOW A MODAL THAT TELLS THE USER TO ADD LIQUIDITY TO THIS SET OF PAIRS
     if (value === "new") {
       const value1 = (parseFloat(fromValue) / parseFloat(toValue)).toFixed(5)
       const value2 = (parseFloat(toValue) / parseFloat(fromValue)).toFixed(5)
@@ -678,7 +680,9 @@ export function LiquidityPage(props) {
 
     modal1Disclosure.onOpen();
   };
-
+  const closeRemovalSuccessModal = () => {
+    removalSuccessModalDisclosure.onClose();
+  };
   const closeModal1 = () => {
     modal1Disclosure.onClose();
   };
@@ -996,6 +1000,8 @@ export function LiquidityPage(props) {
               wallet={wallet}
               liquidityToRemove={liquidityToRemove}
               hasApprovedLPTokens={hasApprovedLPTokens}
+              removalSuccessModalDisclosure={removalSuccessModalDisclosure}
+              closeRemovalSuccessModal={closeRemovalSuccessModal}
             />
           }
           {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY &&
