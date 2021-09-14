@@ -9,7 +9,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { ThemeProvider, theme } from '@chakra-ui/react';
+import { ThemeProvider, theme, useMediaQuery } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
 import { connect } from 'react-redux';
 import WebFont from 'webfontloader';
@@ -23,6 +23,7 @@ import Splash from 'components/splash/index';
 import '../../styles/globals.css';
 import { setWallet } from 'containers/WalletProvider/saga';
 import { notify } from 'containers/NoticeProvider/actions';
+import { Toaster } from 'react-hot-toast';
 import Toast from '../../components/Toast';
 import {
   reConnect,
@@ -61,6 +62,7 @@ const newTheme = {
 };
 
 const App = props => {
+  const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
   const { wallet } = props.state;
   useEffect(() => {
     (async () => {
@@ -119,6 +121,15 @@ const App = props => {
       <ThemeProvider theme={newTheme}>
         <TrustWallet />
         <Toast {...props} />
+        <Toaster
+          position={isMobileDevice ? 'top-center' : 'top-right'}
+          containerStyle={{
+            marginTop: isMobileDevice ? '50px' : '70px',
+          }}
+          toastOptions={{
+            duration: 10000,
+          }}
+        />
         <Switch>
           <Route exact path="/" component={Splash} />
           <Route exact path="/farming" component={FarmingPage} />
