@@ -103,5 +103,43 @@ export function mergeArrays(arrays) {
   return updatedArray.filter(token => token.symbol !== 'SELECT A TOKEN');
 }
 
-export const createURLNetwork = (hash) =>
-  `https://${networkURLS}/tx/${hash}`;
+export const getOutPutDataFromEvent = async (tokenAddress, eventsArray) => {
+  const duplicateArray = [];
+  eventsArray.map(event => {
+    if (event.address.toLowerCase() == tokenAddress.toLowerCase()) {
+      duplicateArray.push(event);
+    }
+  });
+
+  if (duplicateArray.length != 0) {
+    const convertedInput = (
+      parseInt(duplicateArray[0].data, 16) /
+      10 ** 18
+    ).toFixed(7);
+    return convertedInput;
+  }
+};
+
+export const getInPutDataFromEvent = (
+  tokenAddress,
+  eventsArray,
+  fromAmount,
+) => {
+  const duplicateArray = [];
+  eventsArray.map(event => {
+    if (event.address.toLowerCase() == tokenAddress.toLowerCase()) {
+      duplicateArray.push(event);
+    }
+  });
+
+  if (duplicateArray.length != 0) {
+    const convertedInput = parseInt(duplicateArray[0].data, 16) / 10 ** 18;
+
+    if (parseFloat(convertedInput) != parseFloat(fromAmount)) {
+      return convertedInput.toFixed(7);
+    }
+    return fromAmount;
+  }
+};
+
+export const createURLNetwork = hash => `https://${networkURLS}/tx/${hash}`;
