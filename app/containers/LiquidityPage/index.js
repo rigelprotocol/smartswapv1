@@ -614,7 +614,6 @@ export function LiquidityPage(props) {
             body: 'You have successfully remove the liquidity',
             type: 'success'
           });
-          //back('ADDLIQUIDITY');
         }
 
       } catch (error) {
