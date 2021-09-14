@@ -27,11 +27,13 @@ import { create } from 'react-test-renderer';
 import { tokenList, tokenWhere, SMART_SWAP, checkIfTokenIsListed, convertToNumber } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import { LIQUIDITYTABS } from "./constants";
-import { isNotEmpty, getDeadline, createURLNetwork } from "../../utils/UtilFunc";
+import { isNotEmpty, getDeadline, createURLNetwork, decodeTransaction, convertFromWei, convertToWei } from "../../utils/UtilFunc";
 import { getTokenList } from "../../utils/tokens"
 
 import { useLocalStorage } from '../../utils/hooks/storageHooks'
-
+import toast from 'react-hot-toast';
+import AddLiquidityToast from 'components/liquidity/AddLiquidityToast';
+import ShowMessageBox from 'components/Toast/ShowMessageBox';
 // 35,200
 export function LiquidityPage(props) {
   const history = useHistory()
@@ -78,6 +80,9 @@ export function LiquidityPage(props) {
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true)
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const [determineInputChange, setDetermineInputChange] = useState("");
+
+  const [eventData, setEventData] = useState({})
+
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   useEffect(() => {
     setPopupText("")
@@ -85,6 +90,11 @@ export function LiquidityPage(props) {
   useEffect(() => {
     displayBNBbutton();
   }, [toSelectedToken, liquidities]);
+
+  const getNotificationData = (data) => {
+    return parseInt(data, 16)
+
+  }
 
   useEffect(() => {
     if (props.match.params.pair !== undefined) {
@@ -487,11 +497,16 @@ export function LiquidityPage(props) {
           },
         );
         setTrxHashed(data)
+
         const { hash } = data
         setURLNetwork("")
         setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000)
         closeModal2()
         openModal3()
+
+        let signedTransaction = await data.wait()
+        setEventData(signedTransaction)
+
       } catch (e) {
         props.showErrorMessage(e)
         closeModal2()
@@ -571,8 +586,14 @@ export function LiquidityPage(props) {
           }
         );
         setTrxHashed(data)
+
+
         closeModal2()
         openModal3()
+
+        let signedTransaction = await data.wait()
+        setEventData(signedTransaction)
+
       } catch (e) {
         props.showErrorMessage(e)
         console.log(e.message)
@@ -607,6 +628,7 @@ export function LiquidityPage(props) {
         const { confirmations, status } = await hasRemovedLiquidity.wait(2);
         if (typeof hasRemovedLiquidity.hash !== 'undefined' && confirmations >= 2 && status) {
           setApproving(false);
+
           props.notify({
             title: 'Process Completed',
             body: 'You have successfully remove the liquidity',
@@ -741,7 +763,18 @@ export function LiquidityPage(props) {
       if (confirmations >= 1 && status) {
         closeModal6();
         openModal4()
+
+
+        let decodedData = await decodeTransaction(trxHashed.data)
+
+        let fromvalueFromBlockchain = convertFromWei(decodedData.params[2].value)
+        let tovalueFromBlockchain = convertFromWei(decodedData.params[3].value)
+
+        toast.custom(<AddLiquidityToast hash={trxHashed.hash} message={`Added ${fromvalueFromBlockchain} ${fromSelectedToken.name} and ${tovalueFromBlockchain} ${toSelectedToken.name}`} />)
+
         setPopupText(`Added ${fromValue} ${fromSelectedToken.name} and ${toValue} ${toSelectedToken.name}`);
+
+
 
       }
     } catch (e) {

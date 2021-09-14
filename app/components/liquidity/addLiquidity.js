@@ -24,7 +24,7 @@ import LiquidityPriceBox from './LiquidityPriceBox';
 import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
-
+import ShowMessageBox from 'components/Toast/ShowMessageBox';
 const AddLiquidity = ({
   fromValue,
   setFromValue,
@@ -270,7 +270,7 @@ const AddLiquidity = ({
           _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
           _active={{ outline: '#29235E', background: '#29235E' }}
           disabled={openSupplyButton}
-          // onClick={open}
+        // onClick={open}
         />
         <ModalHeader fontSize="18px" fontWeight="regular" align="center">
           You are providing liquidity of
@@ -557,31 +557,7 @@ const AddLiquidity = ({
       </ModalContent>
     </Modal>
 
-    <Modal isOpen={isOpenModal} onClose={onCloseModal} isCentered>
-      <ModalOverlay />
-      <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
-        <ModalCloseButton
-          bg="none"
-          border="0px"
-          color="#fff"
-          cursor="pointer"
-          _focus={{ outline: 'none' }}
-          onClick={onCloseModal}
-        />
-        <ModalBody align="center" my={2}>
-          <Circle size="70px" background="#68C18A" my={3}>
-            <CheckIcon fontSize="40px" />
-          </Circle>
-          <Text fontSize="18px" fontWeight="normal">
-            Transaction Succesful
-          </Text>
-          <Box textAlign="center" mt={3} mb={8}>
-            you have successfully Provided Liquidity for {fromValue}{' '}
-            {fromSelectedToken.symbol} and {toValue} {toSelectedToken.symbol}
-          </Box>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+
   </Box>
 );
 AddLiquidity.propTypes = {

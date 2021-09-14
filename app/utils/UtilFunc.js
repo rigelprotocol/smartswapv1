@@ -1,6 +1,10 @@
 import Web3 from 'web3';
 import tokenDetails from './default-token-details.json';
 import { networkURLS } from './constants';
+import ethers from 'ethers';
+import abiDecoder from 'abi-decoder'
+
+import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 
 export const isFunc = functionToCheck =>
   functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
@@ -85,6 +89,8 @@ export const getSelectedTokenDetails = symbol =>
     fields => fields.symbol.toUpperCase() === symbol.toUpperCase(),
   )[0];
 
+
+
 export function mergeArrays(arrays) {
   let jointArray = [];
   arrays.forEach(array => {
@@ -105,3 +111,10 @@ export function mergeArrays(arrays) {
 
 export const createURLNetwork = (hash) =>
   `https://${networkURLS}/tx/${hash}`;
+
+
+export async function decodeTransaction(data) {
+  abiDecoder.addABI(SmartSwapRouter02);
+  let decodedData = await abiDecoder.decodeMethod(data)
+  return decodedData
+}
