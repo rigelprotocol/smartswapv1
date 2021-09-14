@@ -592,6 +592,17 @@ export function LiquidityPage(props) {
         setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
         closeModal2();
         openModal3();
+        const { confirmations } = await data.wait(3);
+        if (confirmations >= 3) {
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Add ${fromSelectedToken.symbol}/${
+                toSelectedToken.symbol
+              } liquidity`}
+            />,
+          );
+        }
       } catch (e) {
         props.showErrorMessage(e);
         closeModal2();
@@ -622,6 +633,7 @@ export function LiquidityPage(props) {
   const fetchTransactionData = async sendTransaction => {
     modal6Disclosure.onOpen();
     const { confirmations, status } = await sendTransaction.wait(1);
+
     return { confirmations, status };
   };
 
@@ -680,6 +692,18 @@ export function LiquidityPage(props) {
         setTrxHashed(data);
         closeModal2();
         openModal3();
+        const { confirmations } = await data.wait(3);
+        const { hash } = data;
+        if (confirmations >= 3) {
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Add ${fromSelectedToken.symbol}/${
+                toSelectedToken.symbol
+              } liquidity`}
+            />,
+          );
+        }
       } catch (e) {
         props.showErrorMessage(e);
         console.log(e.message);
