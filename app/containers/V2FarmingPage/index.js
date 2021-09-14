@@ -107,6 +107,7 @@ export function FarmingPage(props) {
   function AlertSvg(props) {
     return (
       <svg
+        overflow="visible"
         width={48}
         height={48}
         fill="none"
@@ -122,8 +123,7 @@ export function FarmingPage(props) {
           strokeLinejoin="round"
         />
       </svg>
-    )
-      
+    );
   }
 
   const checkIfUserAddressHasBeenWhiteListed = async () => {
@@ -617,8 +617,7 @@ export function FarmingPage(props) {
 
   const changeVersion = () => {
     history.push('/farming');
-
-  }
+  };
 
   return (
     <div>
@@ -637,10 +636,10 @@ export function FarmingPage(props) {
         </InfoModal>
         <Box mx={[5, 10, 15, 20]} my={4}>
           <Alert color="#FFFFFF" background="#726AC8" borderRadius="8px">
-            <AlertSvg overflow="visible" />
+            <AlertSvg />
             <AlertDescription
               fontFamily="Inter"
-              fontSize="20px"
+              fontSize={{ base: '16px', md: '18px', lg: '20px' }}
               fontWeight="500"
               lineHeight="24px"
               letterSpacing="0em"
@@ -673,7 +672,13 @@ export function FarmingPage(props) {
             borderRadius="50px"
           >
             <TabList>
-              <Tab padding="8px 34px" marginTop="3px" background="none" border="none" onClick={changeVersion}>
+              <Tab
+                padding="8px 34px"
+                marginTop="3px"
+                background="none"
+                border="none"
+                onClick={changeVersion}
+              >
                 V1
               </Tab>
               <Tab padding="8px 34px" marginTop="3px" background="#726AC8">
@@ -684,10 +689,20 @@ export function FarmingPage(props) {
         </Flex>
         <Tabs isManual variant="enclosed" mx={[5, 10, 15, 20]} my={4}>
           <TabList border="none">
-            <Tab borderRadius="0px" border="1px solid #2D276A" background="#2D276A" color="#fff">
+            <Tab
+              borderRadius="0px"
+              border="1px solid #2D276A"
+              background="#2D276A"
+              color="#fff"
+            >
               Liquidity Pools
             </Tab>
-            <Tab borderRadius="0px" border="1px solid #2D276A" background="#2D276A" color="#fff">
+            <Tab
+              borderRadius="0px"
+              border="1px solid #2D276A"
+              background="#2D276A"
+              color="#fff"
+            >
               Staking
             </Tab>
           </TabList>
