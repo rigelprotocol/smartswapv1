@@ -38,8 +38,6 @@ import {
   switchToBSC,
 } from '../../utils/wallet-wiget/connection';
 import { smartSwapLPTokenPoolOne } from '../../utils/SwapConnect';
-import { Toaster } from 'react-hot-toast';
-import { useMediaQuery } from '@chakra-ui/react';
 
 const breakpoints = {
   sm: '360px',
