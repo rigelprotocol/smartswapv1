@@ -9,7 +9,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { ThemeProvider, theme } from '@chakra-ui/react';
+import { ThemeProvider, theme, useMediaQuery } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
 import { connect } from 'react-redux';
 import WebFont from 'webfontloader';
@@ -23,6 +23,7 @@ import Splash from 'components/splash/index';
 import '../../styles/globals.css';
 import { setWallet } from 'containers/WalletProvider/saga';
 import { notify } from 'containers/NoticeProvider/actions';
+import { Toaster } from 'react-hot-toast';
 import Toast from '../../components/Toast';
 import {
   reConnect,
