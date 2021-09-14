@@ -429,6 +429,7 @@ export function LiquidityPage(props) {
   const modal6Disclosure = useDisclosure();
   const modal7Disclosure = useDisclosure();
   const removalSuccessModalDisclosure = useDisclosure();
+  const approveSmartSwapLPTokensDisclosure = useDisclosure();
 
   function closeInput() {
     setApproveBNBPopup(false)
@@ -635,6 +636,7 @@ export function LiquidityPage(props) {
         if (typeof approveTransaction.hash !== 'undefined' && confirmations >= 2 && status) {
           setHasApprovedLPTokens(true);
           setApproving(false);
+          approveSmartSwapLPTokensDisclosure.onOpen();
         }
       } catch (e) {
         props.showErrorMessage('Oops we encountered an error please try again later')
@@ -684,6 +686,9 @@ export function LiquidityPage(props) {
     removalSuccessModalDisclosure.onClose();
     back('ADDLIQUIDITY');
   };
+  const closeApproveSmartSwapLPTokensSuccessModal = () =>{
+    approveSmartSwapLPTokensDisclosure.onClose();
+  }
   const closeModal1 = () => {
     modal1Disclosure.onClose();
   };
@@ -1004,6 +1009,8 @@ export function LiquidityPage(props) {
               hasApprovedLPTokens={hasApprovedLPTokens}
               removalSuccessModalDisclosure={removalSuccessModalDisclosure}
               closeRemovalSuccessModal={closeRemovalSuccessModal}
+              closeApproveSmartSwapLPTokensSuccessModal={closeApproveSmartSwapLPTokensSuccessModal}
+              approveSmartSwapLPTokensDisclosure={approveSmartSwapLPTokensDisclosure}
             />
           }
           {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY &&

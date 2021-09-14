@@ -47,6 +47,8 @@ const removeALiquidity = ({
   approveSmartSwapLPTokens,
   closeRemovalSuccessModal,
   removalSuccessModalDisclosure,
+  approveSmartSwapLPTokensDisclosure,
+  closeApproveSmartSwapLPTokensSuccessModal,
 }) => {
   const [fromValue, setFromValue] = useState(0);
   const [simpleRemoveLiquidityPool, setSimpleRemoveLiquidityPool] = useState(
@@ -622,6 +624,47 @@ const removeALiquidity = ({
         </Flex>
       </Box>
       <Modal
+        isOpen={approveSmartSwapLPTokensDisclosure.isOpen}
+        onClose={closeApproveSmartSwapLPTokensSuccessModal}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
+          <ModalCloseButton
+            bg="none"
+            border="0px"
+            color="#fff"
+            cursor="pointer"
+            _focus={{ outline: 'none' }}
+            onClick={closeApproveSmartSwapLPTokensSuccessModal}
+          />
+          <ModalBody align="center" my={2}>
+            <Circle size="70px" background="#68C18A" my={3}>
+              <CheckIcon fontSize="40px" />
+            </Circle>
+            <Text fontSize="18px" fontWeight="normal">
+              Approval Successful
+            </Text>
+            <Box textAlign="center" mt={3} mb={8}>
+              The liquidity tokens have been approved
+            </Box>
+            <Button
+              width="100%"
+              rounded="2xl"
+              border="0"
+              py={6}
+              mt={3}
+              background="rgba(64, 186, 213, 0.1)"
+              color="rgba(64, 186, 213, 1)"
+              cursor="pointer"
+              onClick={closeApproveSmartSwapLPTokensSuccessModal}
+            >
+              Close
+            </Button>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal
         isOpen={removalSuccessModalDisclosure.isOpen}
         onClose={closeRemovalSuccessModal}
         isCentered
@@ -743,5 +786,7 @@ removeALiquidity.propTypes = {
   approveSmartSwapLPTokens: PropTypes.func.isRequired,
   closeRemovalSuccessModal: PropTypes.func.isRequired,
   removalSuccessModalDisclosure: PropTypes.object,
+  closeApproveSmartSwapLPTokensSuccessModal: PropTypes.func.isRequired,
+  approveSmartSwapLPTokensDisclosure: PropTypes.object,
 };
 export default removeALiquidity;
