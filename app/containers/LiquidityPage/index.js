@@ -608,14 +608,15 @@ export function LiquidityPage(props) {
         const { confirmations, status } = await hasRemovedLiquidity.wait(2);
         if (typeof hasRemovedLiquidity.hash !== 'undefined' && confirmations >= 2 && status) {
           setApproving(false);
-          removalSuccessModalDisclosure.onOpen()
+          removalSuccessModalDisclosure.onOpen();
           props.notify({
             title: 'Process Completed',
             body: 'You have successfully remove the liquidity',
             type: 'success'
           });
-          back('ADDLIQUIDITY');
+          //back('ADDLIQUIDITY');
         }
+
       } catch (error) {
         props.showErrorMessage('Oops we encountered an error please try again later');
       }
@@ -682,6 +683,7 @@ export function LiquidityPage(props) {
   };
   const closeRemovalSuccessModal = () => {
     removalSuccessModalDisclosure.onClose();
+    back('ADDLIQUIDITY');
   };
   const closeModal1 = () => {
     modal1Disclosure.onClose();
@@ -767,7 +769,8 @@ export function LiquidityPage(props) {
   };
 
   const back = (tab) => {
-    setLiquidityTab(tab)
+    setLiquidityTab(tab);
+
   }
   const addLiquidityPage = (head, newPair) => {
     setLiquidityTab("ADDLIQUIDITY")

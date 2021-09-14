@@ -105,13 +105,13 @@ const removeALiquidity = ({
   }, []);
   useEffect(() => {
     if (determineInputChange === 'zero') {
-      setTheValueForTokenOne()
+      setTheValueForTokenOne();
     } else if (determineInputChange === 'one') {
       setTheValueForTokenZero();
     } else if (determineInputChange === 'position') {
       setTheValueForTokenOneAndTokenTwo();
     } else if (determineInputChange === 'slider') {
-      setInputZeroAndOne()
+      setInputZeroAndOne();
     }
   }, [
     tokenZeroAmount,
@@ -121,10 +121,10 @@ const removeALiquidity = ({
     selectedValue,
   ]);
   useEffect(() => {
-    if(selectedValue>100){
-      setAbove100Percent(true)
-    }else{
-      setAbove100Percent(false)
+    if (selectedValue > 100) {
+      setAbove100Percent(true);
+    } else {
+      setAbove100Percent(false);
     }
   }, [selectedValue]);
 
@@ -258,11 +258,17 @@ const removeALiquidity = ({
     setTokenOneAmount(liquidityToRemove.pooledToken1);
   };
   const setTheValueForTokenOneAndTokenTwo = () => {
-    if(userSelectedPositionValue<= liquidityToRemove.poolToken){
-      let calculatedValue =  Math.floor((100 * userSelectedPositionValue) / liquidityToRemove.poolToken)
-      setSelectedValue(calculatedValue)
-      setTokenZeroAmount(liquidityToRemove.pooledToken0 * (calculatedValue / 100) )
-      setTokenOneAmount(liquidityToRemove.pooledToken1 * (calculatedValue / 100) )
+    if (userSelectedPositionValue <= liquidityToRemove.poolToken) {
+      const calculatedValue = Math.floor(
+        (100 * userSelectedPositionValue) / liquidityToRemove.poolToken,
+      );
+      setSelectedValue(calculatedValue);
+      setTokenZeroAmount(
+        liquidityToRemove.pooledToken0 * (calculatedValue / 100),
+      );
+      setTokenOneAmount(
+        liquidityToRemove.pooledToken1 * (calculatedValue / 100),
+      );
     }
   };
   const deleteLiquidity = () => {
@@ -305,8 +311,11 @@ const removeALiquidity = ({
           <Flex justifyContent="space-between">
             <Text mt="0px">Amount</Text>
             <Text
-mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
-              cursor="pointer">
+              mt="0px"
+              color="#9869FC"
+              onClick={toggleViewOfRemoveLiquidity}
+              cursor="pointer"
+            >
               {simpleRemoveLiquidityPool ? 'Detailed' : 'Simple'}
             </Text>
           </Flex>
@@ -354,25 +363,26 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
           {!simpleRemoveLiquidityPool && (
             <Box>
               <Flex justifyContent="space-between">
-            <InputGroup size="md">
+                <InputGroup size="md">
                   <Input
                     type="number"
-                id="input__field"
+                    id="input__field"
                     placeholder="0.0"
                     border="1px solid rgba(255, 255, 255,0.25)"
                     fontSize="lg"
                     color="rgb(255, 255, 255)"
                     value={userSelectedPositionValue}
                     onChange={e => {
-                  setDetermineInputChange("position")
-                  setUserSelectedPositionValue(e.target.value)
+                      setDetermineInputChange('position');
+                      setUserSelectedPositionValue(e.target.value);
                     }}
                   />
                   <InputRightElement marginRight="5px">
-                <Text
+                    <Text
                       cursor="pointer"
                       color="rgba(64, 186, 213, 1)"
-                  onClick={()=>removeMaxAmount()}>
+                      onClick={() => removeMaxAmount()}
+                    >
                       max
                     </Text>
                   </InputRightElement>
@@ -381,19 +391,20 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
                   <Menu>
                     <Button
                       color="rgba(64, 186, 213, 1)"
-                  border="none"
+                      border="none"
                       borderRadius="6px"
-                  fontSize="15px"
+                      fontSize="15px"
                       bg="rgba(53, 44, 129, 0.3)"
                       fontWeight="regular"
-                  fontSize="16px"
+                      fontSize="16px"
                       cursor="pointer"
                       marginBottom="5px"
                       _hover={{ background: '#72cfe4', color: '#29235E' }}
-                >
-                  {liquidityToRemove.path[0].token} : {liquidityToRemove.path[1].token}
+                    >
+                      {liquidityToRemove.path[0].token} :{' '}
+                      {liquidityToRemove.path[1].token}
                     </Button>
-              </Menu>
+                  </Menu>
                 </Flex>
               </Flex>
             </Box>
@@ -467,9 +478,9 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
                   color="rgb(255, 255, 255)"
                   value={tokenZeroAmount}
                   onChange={e => {
-                    setDetermineInputChange("zero")
-                    setTokenZeroAmount(e.target.value)}
-                  }
+                    setDetermineInputChange('zero');
+                    setTokenZeroAmount(e.target.value);
+                  }}
                 />
                 <Flex alignItems="center">
                   <Menu>
@@ -486,13 +497,13 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
                       _hover={{ background: '#72cfe4', color: '#29235E' }}
                     >
                       {liquidityToRemove.path[0].token === 'RGP' ? (
-                        <RGPImage mr={1}/>
+                        <RGPImage mr={1} />
                       ) : liquidityToRemove.path[0].token === 'BUSD' ? (
-                        <BUSDImage mr={1}/>
+                        <BUSDImage mr={1} />
                       ) : liquidityToRemove.path[0].token === 'ETH' ? (
-                        <ETHImage mr={1}/>
+                        <ETHImage mr={1} />
                       ) : (
-                        <NullImage mr={1}/>
+                        <NullImage mr={1} />
                       )}
                       {liquidityToRemove.path[0].token}
                     </Button>
@@ -509,9 +520,9 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
                   color="rgb(255, 255, 255)"
                   value={tokenOneAmount}
                   onChange={e => {
-                    setDetermineInputChange("one")
-                    setTokenOneAmount(e.target.value)}
-                  }
+                    setDetermineInputChange('one');
+                    setTokenOneAmount(e.target.value);
+                  }}
                 />
                 <Flex alignItems="center">
                   <Menu>
@@ -528,13 +539,13 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
                       _hover={{ background: '#72cfe4', color: '#29235E' }}
                     >
                       {liquidityToRemove.path[1].token === 'RGP' ? (
-                        <RGPImage mr={1}/>
+                        <RGPImage mr={1} />
                       ) : liquidityToRemove.path[1].token === 'BUSD' ? (
-                        <BUSDImage mr={1}/>
+                        <BUSDImage mr={1} />
                       ) : liquidityToRemove.path[1].token === 'ETH' ? (
-                        <ETHImage mr={1}/>
+                        <ETHImage mr={1} />
                       ) : (
-                        <NullImage mr={1}/>
+                        <NullImage mr={1} />
                       )}
                       {liquidityToRemove.path[1].token}
                     </Button>
@@ -542,7 +553,6 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
                 </Flex>
               </Flex>
             </Box>
-
           )}
 
           <Text textAlign="right" color="#9869FC">
@@ -611,7 +621,11 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
           )}
         </Flex>
       </Box>
-      <Modal isOpen={removalSuccessModalDisclosure.isOpen} onClose={closeRemovalSuccessModal} isCentered>
+      <Modal
+        isOpen={removalSuccessModalDisclosure.isOpen}
+        onClose={closeRemovalSuccessModal}
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
           <ModalCloseButton
@@ -632,6 +646,19 @@ mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
             <Box textAlign="center" mt={3} mb={8}>
               You have successfully removed the Liquidity
             </Box>
+            <Button
+              width="100%"
+              rounded="2xl"
+              border="0"
+              py={6}
+              mt={3}
+              background="rgba(64, 186, 213, 0.1)"
+              color="rgba(64, 186, 213, 1)"
+              cursor="pointer"
+              onClick={closeRemovalSuccessModal}
+            >
+              Close
+            </Button>
           </ModalBody>
         </ModalContent>
       </Modal>
