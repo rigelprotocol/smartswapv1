@@ -33,7 +33,7 @@ export const clearpersistCache = () => {
     console.log("smartswap")
     window.addEventListener('error', () => {
         localStorage.removeItem('persist:root')
-        window.location.reload()
+
     })
 }
 
