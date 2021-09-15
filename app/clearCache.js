@@ -30,6 +30,7 @@ const clearCache = () => {
 export const clearpersistCache = () => {
     clearCache()
     console.log("smartswap")
+    window.localStorage.removeItem('persist:root')
     window.addEventListener('error', () => {
         window.localStorage.removeItem('persist:root')
 
