@@ -525,6 +525,7 @@ export function LiquidityPage(props) {
   const modal5Disclosure = useDisclosure();
   const modal6Disclosure = useDisclosure();
   const modal7Disclosure = useDisclosure();
+  const approveSmartSwapLPTokensDisclosure = useDisclosure();
 
   function closeInput() {
     setApproveBNBPopup(false);
@@ -776,6 +777,7 @@ export function LiquidityPage(props) {
           status
         ) {
           setHasApprovedLPTokens(true);
+          approveSmartSwapLPTokensDisclosure.onOpen();
           setApproving(false);
         }
       } catch (e) {
@@ -830,6 +832,9 @@ export function LiquidityPage(props) {
   const closeModal1 = () => {
     modal1Disclosure.onClose();
   };
+  const closeApproveSmartSwapLPTokensSuccessModal = () => {
+    approveSmartSwapLPTokensDisclosure.onClose();
+  }
   const closeModal3 = () => {
     modal3Disclosure.onClose();
     // close all modal one by one
@@ -1170,6 +1175,8 @@ export function LiquidityPage(props) {
               wallet={wallet}
               liquidityToRemove={liquidityToRemove}
               hasApprovedLPTokens={hasApprovedLPTokens}
+              closeApproveSmartSwapLPTokensSuccessModal={closeApproveSmartSwapLPTokensSuccessModal}
+              approveSmartSwapLPTokensDisclosure={approveSmartSwapLPTokensDisclosure}
             />
           )}
           {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY && (
