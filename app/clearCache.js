@@ -12,6 +12,7 @@ function unregisterServiceWorker() {
 }
 
 const clearCache = () => {
+    console.log("cl")
     if ('caches' in window) {
         caches.keys()
             .then(function (keyList) {
@@ -20,6 +21,7 @@ const clearCache = () => {
                     return caches.delete(key);
                 }));
             }).then(() => unregisterServiceWorker())
+            .then(() => window.location.reload())
             .catch((error) => {
                 console.log(error.message)
             })
@@ -27,10 +29,11 @@ const clearCache = () => {
 }
 
 export const clearpersistCache = () => {
+    clearCache()
+    console.log("smartswap")
     window.addEventListener('error', () => {
-        console.log("smartswap")
-        clearAllCache()
         localStorage.removeItem('persist:root')
+        window.location.reload()
     })
 }
 
