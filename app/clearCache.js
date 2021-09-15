@@ -1,12 +1,14 @@
 
-const unregisterServiceWorker = () => {
-
-    navigator.serviceWorker.getRegistrations()
-        .then(registrations => {
-            registrations.forEach(registration => {
+function unregisterServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready
+            .then((registration) => {
                 registration.unregister();
             })
-        });
+            .catch((error) => {
+                console.error(error.message);
+            });
+    }
 }
 
 const clearCache = () => {
@@ -18,16 +20,17 @@ const clearCache = () => {
                     return caches.delete(key);
                 }));
             }).then(() => unregisterServiceWorker())
+            .catch((error) => {
+                console.log(error.message)
+            })
     }
 }
 
-const clearpersist = () => {
+export const clearpersistCache = () => {
     window.addEventListener('error', () => {
+        console.log("smartswap")
+        clearAllCache()
         localStorage.removeItem('persist:root')
     })
 }
 
-export const clearAllCache = async () => {
-    await clearCache();
-    clearpersist();
-}
