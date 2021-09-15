@@ -34,7 +34,7 @@ const AddLiquidityToast = ({ hash, message }) => {
                 <div className={styles.texts}>
                     <b>{message}</b>
                     <a href={createURLNetwork(hash)} target="_blank">
-                        <b>View on Explorer</b>
+                        View on Explorer
                     </a>
                 </div>
             </div>
