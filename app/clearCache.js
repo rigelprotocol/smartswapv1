@@ -21,7 +21,6 @@ const clearCache = () => {
                     return caches.delete(key);
                 }));
             }).then(() => unregisterServiceWorker())
-            .then(() => window.location.reload())
             .catch((error) => {
                 console.log(error.message)
             })
@@ -33,6 +32,7 @@ export const clearpersistCache = () => {
     console.log("smartswap")
     window.addEventListener('error', () => {
         window.localStorage.removeItem('persist:root')
+
 
     })
 }
