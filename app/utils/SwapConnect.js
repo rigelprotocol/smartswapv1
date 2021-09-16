@@ -9,6 +9,7 @@ import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 import SmartSwapLPToken from 'utils/abis/smartSwapLPToken.json';
 import ETHRGPSMARTSWAPPAIR from 'utils/abis/ETHRGPSMARTSWAPPAIR.json';
 import masterChef from 'utils/abis/masterChef.json';
+import masterChefV2 from 'utils/abis/masterChefV2.json';
 import SmartSwapLPTokenOne from 'utils/abis/SmartSwapLPTokenOne.json';
 import SmartSwapLPTokenTwo from 'utils/abis/SmartSwapLPTokenTwo.json';
 import SmartSwapLPTokenThree from 'utils/abis/SmartSwapLPTokenThree.json';
@@ -56,6 +57,9 @@ export const updateOutPutAmountForRouter = async () =>
 
 export const masterChefContract = async () =>
   new ethers.Contract(SMART_SWAP.masterChef, masterChef, getSigner());
+
+export const masterChefV2Contract = async () =>
+  new ethers.Contract(SMART_SWAP.masterChefV2, masterChefV2, getSigner());
 
 export const smartSwapLPTokenPoolOne = async () =>
   new ethers.Contract(

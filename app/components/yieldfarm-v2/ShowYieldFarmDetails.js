@@ -33,6 +33,7 @@ import {
   BUSDToken,
   RGPSpecialPool,
   masterChefContract,
+  masterChefV2Contract,
   smartSwapLPTokenPoolOne,
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
@@ -461,7 +462,7 @@ const ShowYieldFarmDetails = ({
   // deposit for the Liquidity Provider tokens for
   const BNBRGPlpDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
+      const lpTokens = await masterChefV2Contract();
       const pid = 2;
       const data = await lpTokens.deposit(
         pid,
@@ -480,7 +481,7 @@ const ShowYieldFarmDetails = ({
   // withdrawal for the Liquidity Provider tokens for
   const BNBRGPlpTokensWithdrawal = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
+      const lpTokens = await masterChefV2Contract();
       const pid = 2;
       const data = await lpTokens.withdraw(
         pid,
@@ -569,7 +570,7 @@ const ShowYieldFarmDetails = ({
   // deposit for the Liquidity Provider tokens for
   const RGPBUSDlpDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
+      const lpTokens = await masterChefV2Contract();
       const pid = 1;
       const data = await lpTokens.deposit(
         pid,
@@ -588,7 +589,7 @@ const ShowYieldFarmDetails = ({
   // withdrawal for the Liquidity Provider tokens for
   const RGPBUSDlpTokensWithdrawal = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
+      const lpTokens = await masterChefV2Contract();
       const pid = 1;
       const data = await lpTokens.withdraw(
         pid,
@@ -631,7 +632,7 @@ const ShowYieldFarmDetails = ({
 
   const BNBBUSDlpDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
+      const lpTokens = await masterChefV2Contract();
       const pid = 3;
       const data = await lpTokens.deposit(
         pid,
@@ -648,7 +649,7 @@ const ShowYieldFarmDetails = ({
   // withdrawal for the Liquidity Provider tokens for
   const BNBBUSDlpTokensWithdrawal = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
+      const lpTokens = await masterChefV2Contract();
       const pid = 3;
       const data = await lpTokens.withdraw(
         pid,
@@ -699,7 +700,7 @@ const ShowYieldFarmDetails = ({
           );
           callRefreshFarm(confirmations, status);
         } else {
-          const lpTokens = await masterChefContract();
+          const lpTokens = await masterChefV2Contract();
           const withdraw = await lpTokens.withdraw(pId, 0);
           const { confirmations, status } = await fetchTransactionData(
             withdraw,
