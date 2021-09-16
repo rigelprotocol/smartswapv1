@@ -1,6 +1,6 @@
 /**
  *
- * FarmingPage
+ * FarmingPageV2
  *
  */
 
@@ -9,12 +9,26 @@ import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
 import { connect } from 'react-redux';
 import Web3 from 'web3';
-import { Box, Flex, Text, useDisclosure } from '@chakra-ui/layout';
+import { Box, Flex, Text } from '@chakra-ui/layout';
+import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  CloseButton,
+  useDisclosure as useModalDisclosure,
+  useToast,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+} from '@chakra-ui/react';
+import { useHistory } from 'react-router-dom';
 import Layout from 'components/layout';
-import YieldFarm from 'components/yieldfarm/YieldFarm';
+import YieldFarm from 'components/yieldfarm-v2/YieldFarm';
 import InfoModal from 'components/modal/InfoModal';
-import FarmingPageModal from 'components/yieldfarm/FarmingPageModal';
-import RGPFarmInfo from 'components/yieldfarm/RGPFarmInfo';
+import FarmingPageModal from 'components/yieldfarm-v2/FarmingPageModal';
+import RGPFarmInfo from 'components/yieldfarm-v2/RGPFarmInfo';
 import { notify } from 'containers/NoticeProvider/actions';
 
 import {
@@ -29,11 +43,8 @@ import {
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
 } from 'utils/SwapConnect';
-import {
-  useDisclosure as useModalDisclosure,
-  useToast,
-} from '@chakra-ui/react';
-import { tokenList, SMART_SWAP } from '../../utils/constants';
+
+import { tokenList } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import {
   changeFarmingContent,
@@ -44,22 +55,17 @@ import {
   updateFarmBalances,
   farmDataLoading,
 } from './actions';
-// import masterChefContract from "../../utils/abis/masterChef.json"
-export function FarmingPage(props) {
-  const { wallet, wallet_props } = props.wallet;
 
-  const [RGPTotalTokStake, setRGPTotalTokStake] = useState('');
-  const [BUSDTotalTokStake, setBUSDTotalTokStake] = useState('');
-  const [BNBTotalTokStake, setBNBTotalTokStake] = useState('');
-  const [ETHTotalTokStake, setETHTotalTokStake] = useState('');
+export function FarmingPage(props) {
+  const history = useHistory();
+
+  const { wallet } = props.wallet;
   const [isAddressWhitelist, setIsAddressWhitelist] = useState(false);
-  const [dataInputToGetWhiteListed, setDataInputToGetWhiteListed] = useState(
-    '',
-  );
+  const [dataInputToGetWhiteListed] = useState('');
   const [farmingModal, setFarmingModal] = useState(false);
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true);
-  const [showModalWithInput, setShowModalWithInput] = useState(false);
+  const [setShowModalWithInput] = useState(false);
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -68,10 +74,8 @@ export function FarmingPage(props) {
   const toast = useToast();
   const id = 'totalLiquidityToast';
 
-
-
   useEffect(() => {
-    checkIfUserAddressHasBeenWhiteListed()
+    checkIfUserAddressHasBeenWhiteListed();
     refreshTokenStaked();
   }, [wallet]);
 
@@ -100,21 +104,42 @@ export function FarmingPage(props) {
     initialLoad ? setFarmingModal(true) : setFarmingModal(false);
   };
 
+  function AlertSvg(props) {
+    return (
+      <svg
+        overflow="visible"
+        width={48}
+        height={48}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <rect width={48} height={48} rx={8} fill="#2D276A" />
+        <path
+          d="M33.935 27.658L30.638 15.38c-.358-1.335-1.999-1.827-3.035-.91l-2.078 1.84a19.916 19.916 0 01-8.054 4.325 4.68 4.68 0 00-3.31 5.732 4.691 4.691 0 005.738 3.313 19.94 19.94 0 019.142-.274l2.721.556c1.357.277 2.531-.968 2.173-2.303zM19.718 20L23.5 34"
+          stroke="#fff"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
   const checkIfUserAddressHasBeenWhiteListed = async () => {
-    if (wallet.address != '0x') {
+    if (wallet.address !== '0x') {
       try {
         const specialPool = await RGPSpecialPool();
-        const isItWhiteListed = await specialPool.isWhitelist(wallet.address)
-        setIsAddressWhitelist(isItWhiteListed)
+        const isItWhiteListed = await specialPool.isWhitelist(wallet.address);
+        setIsAddressWhitelist(isItWhiteListed);
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
     }
-
-  }
+  };
   const submitDataToGetWhitelisted = () => {
-    console.log({ dataInputToGetWhiteListed })
-    onCloseModal()
+    console.log({ dataInputToGetWhiteListed });
+    onCloseModal();
     toast({
       title: 'Address successfully submitted',
       description: 'You will be notified if you are eligible for this pool',
@@ -129,11 +154,11 @@ export function FarmingPage(props) {
       const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) { }
+    } catch (error) {}
   };
   useEffect(() => {
-    getFarmData()
-  }, [])
+    getFarmData();
+  }, []);
 
   const getFarmData = async () => {
     props.farmDataLoading(true);
@@ -143,19 +168,24 @@ export function FarmingPage(props) {
         smartSwapLPTokenPoolOne(),
         smartSwapLPTokenPoolTwo(),
         smartSwapLPTokenPoolThree(),
-      ])
+      ]);
 
-      const [rgpTotalStaking, pool1Reserve, pool2Reserve, pool3Reserve] = await Promise.all([
+      const [
+        rgpTotalStaking,
+        pool1Reserve,
+        pool2Reserve,
+        pool3Reserve,
+      ] = await Promise.all([
         specialPool.totalStaking(),
         pool1.getReserves(),
         pool2.getReserves(),
         pool3.getReserves(),
+      ]);
 
-      ])
-
-      const RGPprice = ethers.utils.formatUnits(pool1Reserve[0]
-        .mul(1000)
-        .div(pool1Reserve[1]), 3);
+      const RGPprice = ethers.utils.formatUnits(
+        pool1Reserve[0].mul(1000).div(pool1Reserve[1]),
+        3,
+      );
       const BNBprice = getBnbPrice(pool3, pool3Reserve);
       const RGPLiquidity = ethers.utils
         .formatUnits(rgpTotalStaking.mul(Math.floor(1000 * RGPprice)), 21)
@@ -195,12 +225,12 @@ export function FarmingPage(props) {
     } finally {
       props.farmDataLoading(false);
     }
-  }
+  };
 
   const getBusdBnbLiquidity = (pool3, pool3Reserve) => {
     const pool3Testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
     let BUSD_BNBLiquidity;
-    if (pool3 && (pool3.address === pool3Testnet)) {
+    if (pool3 && pool3.address === pool3Testnet) {
       BUSD_BNBLiquidity = ethers.utils
         .formatEther(pool3Reserve[0].mul(2))
         .toString();
@@ -210,12 +240,12 @@ export function FarmingPage(props) {
         .toString();
     }
     return BUSD_BNBLiquidity;
-  }
+  };
 
   const getBnbPrice = (pool3, pool3Reserve) => {
-    const pool3testnet = "0x120f3E6908899Af930715ee598BE013016cde8A5";
+    const pool3testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
     let BNBprice;
-    if (pool3 && (pool3.address === pool3testnet)) {
+    if (pool3 && pool3.address === pool3testnet) {
       BNBprice = ethers.utils.formatUnits(
         pool3Reserve[0].mul(1000).div(pool3Reserve[1]),
         3,
@@ -227,8 +257,7 @@ export function FarmingPage(props) {
       );
     }
     return BNBprice;
-  }
-
+  };
 
   const showErrorToast = () =>
     toast({
@@ -252,6 +281,7 @@ export function FarmingPage(props) {
         return RGPStakedEarned;
       } catch (error) {
         console.log(error);
+        return error;
       }
     }
   };
@@ -582,7 +612,11 @@ export function FarmingPage(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) { }
+    } catch (error) {}
+  };
+
+  const changeVersion = () => {
+    history.push('/farming');
   };
 
   return (
@@ -600,57 +634,138 @@ export function FarmingPage(props) {
         >
           <RGPFarmInfo />
         </InfoModal>
-        <Flex
-          mx={5}
-          justifyContent="center"
-          alignItems="center"
-          minHeight="100vh"
-          rounded="lg"
-          mb={4}
-        >
-          <Box
-            bg="#120136"
-            minHeight="89vh"
-            w={['100%', '100%', '95%']}
-            rounded="lg"
+        <Box mx={[5, 10, 15, 20]} my={4}>
+          <Alert color="#FFFFFF" background="#726AC8" borderRadius="8px">
+            <AlertSvg />
+            <AlertDescription
+              fontFamily="Inter"
+              fontSize={{ base: '16px', md: '18px', lg: '20px' }}
+              fontWeight="500"
+              lineHeight="24px"
+              letterSpacing="0em"
+              textAlign="left"
+              padding="30px"
+            >
+              This is the V2 Farm. You should migrate your stakings from V1 Farm
+            </AlertDescription>
+            <CloseButton
+              position="absolute"
+              height="14px"
+              width="14px"
+              background="#726AC8"
+              color="#fff"
+              right="20px"
+              border="2px solid #726AC8"
+              textAign="center"
+            />
+          </Alert>
+        </Box>
+        <Flex justifyContent="flex-end">
+          <Tabs
+            variant="soft-rounded"
+            colorScheme="#2D276A"
+            background="#2D276A"
+            mx={[5, 10, 15, 20]}
+            marginTop={{ base: '', md: '2px', lg: '2px' }}
+            position={{ base: 'relative', md: 'absolute' }}
+            paddingLeft={{ base: '1px', md: '10px', lg: '15px' }}
+            borderRadius="50px"
           >
-            <Box mx="auto" w={['100%', '100%', '80%']} pb="70px">
-              <Flex
-                color="gray.400"
-                alignItems="center"
-                justifyContent="space-between"
-                px={4}
-                pt={4}
-                w={['100%', '100%', '90%']}
-                align="left"
-                display={['none', 'flex']}
+            <TabList>
+              <Tab
+                padding="8px 34px"
+                marginTop="3px"
+                background="none"
+                border="none"
+                onClick={changeVersion}
               >
-                <FarmingPageModal
-                  farmingModal={farmingModal}
-                  setFarmingModal={setFarmingModal}
-                  farmingFee={farmingFee}
-                />
-                <Text>Deposit</Text>
-                <Text>Earn</Text>
-                <Text>APY</Text>
-                <Text>Total Liquidity</Text>
-                <Text />
-              </Flex>
-              {props.farming.contents.map(content => (
-                <YieldFarm
-                  isAddressWhitelist={isAddressWhitelist}
-                  onOpenModal={onOpenModal}
-                  setShowModalWithInput={setShowModalWithInput}
-                  content={content}
-                  key={content.id}
-                  wallet={wallet}
-                  refreshTokenStaked={refreshTokenStaked}
-                  loadingTotalLiquidity={props.farming.loading}
-                />
-              ))}
-            </Box>
-          </Box>
+                V1
+              </Tab>
+              <Tab padding="8px 34px" marginTop="3px" background="#726AC8">
+                V2
+              </Tab>
+            </TabList>
+          </Tabs>
         </Flex>
+        <Tabs isManual variant="enclosed" mx={[5, 10, 15, 20]} my={4}>
+          <TabList border="none">
+            <Tab
+              borderRadius="0px"
+              border="1px solid #2D276A"
+              background="#2D276A"
+              color="#fff"
+            >
+              Liquidity Pools
+            </Tab>
+            <Tab
+              borderRadius="0px"
+              border="1px solid #2D276A"
+              background="#2D276A"
+              color="#fff"
+            >
+              Staking
+            </Tab>
+          </TabList>
+          <TabPanels padding="0px">
+            <TabPanel padding="0px">
+              <Flex
+                justifyContent="center"
+                alignItems="center"
+                rounded="lg"
+                mb={4}
+              >
+                <Box
+                  bg="#120136"
+                  minHeight="89vh"
+                  w={['100%', '100%', '100%']}
+                  background="#29235e"
+                  rounded="lg"
+                >
+                  <Box mx="auto" w={['100%', '100%', '100%']} pb="70px">
+                    <Flex
+                      color="gray.400"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      px={4}
+                      pt={4}
+                      w={['100%', '100%', '100%']}
+                      align="left"
+                      background="#2D276A"
+                      border="1px solid #4D4693"
+                      display={{ base: 'none', md: 'flex', lg: 'flex' }}
+                    >
+                      <FarmingPageModal
+                        farmingModal={farmingModal}
+                        setFarmingModal={setFarmingModal}
+                        farmingFee={farmingFee}
+                      />
+                      <Text>Deposit</Text>
+                      <Text>Earn</Text>
+                      <Text>APY</Text>
+                      <Text>Total Liquidity</Text>
+                      <Text />
+                    </Flex>
+                    {props.farming.contents.map(content => (
+                      <YieldFarm
+                        isAddressWhitelist={isAddressWhitelist}
+                        onOpenModal={onOpenModal}
+                        setShowModalWithInput={setShowModalWithInput}
+                        content={content}
+                        key={content.id}
+                        wallet={wallet}
+                        refreshTokenStaked={refreshTokenStaked}
+                        loadingTotalLiquidity={props.farming.loading}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              </Flex>
+            </TabPanel>
+            <TabPanel>
+              <p>two!</p>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Layout>
     </div>
   );

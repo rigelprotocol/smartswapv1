@@ -45,6 +45,7 @@ const BSCmainnetTokens = {
 };
 const BSC_MAIN_NET_ID =
   window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
+
 export const TOKENS_CONTRACT =
   checkNetVersion() === BSC_MAIN_NET_ID.toString()
     ? BSCmainnetTokens
@@ -81,17 +82,24 @@ const BSCTestnet = {
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
 };
 
+export const networkURLS =
+  checkNetVersion() === BSC_MAIN_NET_ID.toString() ? 'bscscan.com' : 'testnet.bscscan.com';
+
+
 export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
 export const tokenList = () => {
   let allToken = [];
-  const storedReducer = JSON.parse(localStorage.getItem('persist:root'));
-  if (storedReducer != null) {
+  const persistedRoot = window.localStorage.getItem('persist:root')
+
+  if (persistedRoot) {
+    const storedReducer = JSON.parse(persistedRoot);
     const extendedList = JSON.parse(storedReducer.ExtendedTokenList);
     allToken =
-      extendedList !== undefined && extendedList.tokenList.length > 0
-        ? extendedList.tokenList
+      extendedList !== undefined &&
+        extendedList.defaultTokenList[1].token.length > 0
+        ? extendedList.defaultTokenList[1].token
         : [];
   }
   if (allToken.length > 0) {

@@ -34,7 +34,8 @@ import configureStore from './configureStore';
 
 // Import i18n messages
 import { translationMessages } from './i18n';
-
+import { clearpersistCache } from './clearCache'
+clearpersistCache();
 // Create redux store with history
 const initialState = {};
 const { store, persistor } = configureStore(initialState, history);
@@ -78,4 +79,3 @@ if (!window.Intl) {
 } else {
   render(translationMessages);
 }
-

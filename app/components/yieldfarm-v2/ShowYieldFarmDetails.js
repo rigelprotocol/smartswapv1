@@ -85,7 +85,7 @@ const ShowYieldFarmDetails = ({
     if (depositTokenValue !== '') {
       if (
         isNaN(parseFloat(depositTokenValue)) ||
-        !Math.sign(parseFloat(depositTokenValue)) || 
+        !Math.sign(parseFloat(depositTokenValue)) ||
         Math.sign(parseFloat(depositTokenValue)) == -1
       ) {
         setDepositInputHasError(true);
@@ -105,7 +105,7 @@ const ShowYieldFarmDetails = ({
     if (unstakeToken !== '') {
       if (
         isNaN(parseFloat(unstakeToken)) ||
-        !Math.sign(parseFloat(unstakeToken)) || 
+        !Math.sign(parseFloat(unstakeToken)) ||
         Math.sign(parseFloat(unstakeToken)) == -1
       ) {
         setInputHasError(true);
@@ -530,7 +530,7 @@ const ShowYieldFarmDetails = ({
       background="rgba(64, 186, 213, 0.15)"
       cursor="pointer"
       border="none"
-      borderRadius="13px"
+      borderRadius="0px"
       padding="10px"
       height="50px"
       fontSize="16px"
@@ -903,147 +903,201 @@ const ShowYieldFarmDetails = ({
   return (
     <>
       <Flex
-        justifyContent="space-between"
+        // justifyContent="space-between"
         flexDirection={['column', 'column', 'row']}
         color="white"
-        margin="0 auto"
+        // margin="0 auto"
         background="#29235E"
         padding="0 20px"
         paddingBottom="4px"
-        width="90%"
-        borderBottomRadius="14px"
+        border="1px solid #4D4693"
+        width="100%"
+        // borderBottomRadius="14px"
       >
-        <Box width="100%" textAlign="right">
-          <Flex>
-            <Text fontSize="20px" marginRight="20px">
-              {content.tokensStaked[1]}
-            </Text>{' '}
-            <Text fontSize="14px" color="gray.400" marginTop="25px">
-              {' '}
-              {content.type === 'LP'
-                ? `${content.tokensStaked[0]} LP`
-                : 'RGP'}{' '}
-              Tokens Staked
-            </Text>
-          </Flex>
+        <Box
+          flexBasis="30%"
+          width="100%"
+          textAlign="right"
+          display="flex"
+          justifyContent="space-around"
+        >
+          <Box>
+            <Flex>
+              <Text fontSize="20px" marginRight="20px">
+                {content.tokensStaked[1]}
+              </Text>{' '}
+              <Text fontSize="14px" color="gray.400" marginTop="25px">
+                {' '}
+                {content.type === 'LP'
+                  ? `${content.tokensStaked[0]} LP`
+                  : 'RGP'}{' '}
+                Tokens Staked
+              </Text>
+            </Flex>
 
-          <Flex>
+            <Flex>
+              <Button
+                w="60%"
+                h="50px"
+                borderRadius="0px"
+                bg={
+                  approveValueForRGP &&
+                  approveValueForOtherToken &&
+                  content.tokensStaked[1] <= 0
+                    ? '#4D4693'
+                    : 'rgba(64, 186,213, 0.1)'
+                }
+                color={
+                  approveValueForRGP &&
+                  approveValueForOtherToken &&
+                  content.tokensStaked[1] <= 0
+                    ? 'rgba(190, 190, 190, 1)'
+                    : '#40BAD5'
+                }
+                border="0"
+                mb="4"
+                mr="6"
+                padding="10 80"
+                cursor="pointer"
+                _hover={
+                  approveValueForRGP && approveValueForOtherToken
+                    ? { color: 'white' }
+                    : { color: '#423a85' }
+                }
+                onClick={() => setApprove(content.deposit)}
+              >
+                {approveValueForRGP && approveValueForOtherToken
+                  ? 'Unstake'
+                  : 'Approve'}
+              </Button>
+              <Square
+                size="40px"
+                borderRadius="0px"
+                color="white"
+                cursor="pointer"
+                marginTop="5px"
+                bg="rgba(64, 186, 213, 0.1);"
+              >
+                <AddIcon
+                  onClick={open}
+                  disabled={
+                    !!(!approveValueForRGP || !approveValueForOtherToken)
+                  }
+                />
+              </Square>
+            </Flex>
+          </Box>
+          <Box mx={1} display={{ base: 'none', md: 'block', lg: 'block' }}>
+            <Divider orientation="vertical" height="84px" />
+          </Box>
+        </Box>
+        {/* margin={['0', '0', '0 20px']} */}
+        <Box
+          flexBasis="30%"
+          width="100%"
+          display="flex"
+          justifyContent="space-around"
+        >
+          <Box>
+            <Flex>
+              <Text fontSize="20px" marginRight="30px">
+                {content.RGPEarned}
+              </Text>{' '}
+              <Text color="gray.400" marginTop="25px">
+                RGP Earned
+              </Text>
+            </Flex>
             <Button
-              w="60%"
+              w="100%"
               h="50px"
-              borderRadius="12px"
-              bg={
-                approveValueForRGP &&
-                  approveValueForOtherToken &&
-                  content.tokensStaked[1] <= 0
-                  ? '#444159'
-                  : 'rgba(64, 186,213, 0.1)'
-              }
+              borderRadius="0px"
+              bg={content.RGPEarned <= 0 ? '#4D4693' : 'rgba(64, 186,213, 0.1)'}
               color={
-                approveValueForRGP &&
-                  approveValueForOtherToken &&
-                  content.tokensStaked[1] <= 0
-                  ? 'rgba(190, 190, 190, 1)'
-                  : '#40BAD5'
+                content.RGPEarned <= 0 ? 'rgba(190, 190, 190, 1)' : '#40BAD5'
               }
               border="0"
               mb="4"
               mr="6"
               cursor="pointer"
-              _hover={
-                approveValueForRGP && approveValueForOtherToken
-                  ? { color: 'white' }
-                  : { color: '#423a85' }
-              }
-              onClick={() => setApprove(content.deposit)}
+              _hover={{ color: 'white' }}
+              onClick={() => harvest(content.pId)}
             >
-              {approveValueForRGP && approveValueForOtherToken
-                ? 'Unstake'
-                : 'Approve'}
+              Harvest
             </Button>
-            <Square
-              size="40px"
-              borderRadius="12px"
-              color="white"
-              cursor="pointer"
-              marginTop="5px"
-              bg="rgba(64, 186, 213, 0.1);"
-            >
-              <AddIcon
-                onClick={open}
-                disabled={!!(!approveValueForRGP || !approveValueForOtherToken)}
-              />
-            </Square>
-          </Flex>
+          </Box>
+          <Box display={{ base: 'none', md: 'block', lg: 'block' }} mx={1}>
+            <Divider orientation="vertical" height="84px" />
+          </Box>
         </Box>
 
-        <Box width="100%" textAlign="right" margin={['0', '0', '0 20px']}>
-          <Flex>
-            <Text fontSize="23px" marginRight="30px">
-              {content.RGPEarned}
-            </Text>{' '}
-            <Text color="gray.400" marginTop="25px">
-              RGP Earned
-            </Text>
-          </Flex>
-          <Button
-            w="100%"
-            h="50px"
-            borderRadius="12px"
-            bg={content.RGPEarned <= 0 ? '#444159' : 'rgba(64, 186,213, 0.1)'}
-            color={
-              content.RGPEarned <= 0 ? 'rgba(190, 190, 190, 1)' : '#40BAD5'
-            }
-            border="0"
-            mb="4"
-            mr="6"
-            cursor="pointer"
-            _hover={{ color: 'white' }}
-            onClick={() => harvest(content.pId)}
-          >
-            Harvest
-          </Button>
-        </Box>
+        <Box
+          flexBasis="25%"
+          width="100%"
+          display="flex"
+          justifyContent="space-around"
+        >
+          <Box>
+            {!isPoolRGP && (
+              <Flex marginTop="10px">
+                <Text fontSize="23px" marginTop="15px">
+                  {content.farmingFee}
+                </Text>
+                <Flex flexDirection={['column', 'column', 'column']}>
+                  <Text color="gray.400" textAlign="right" marginLeft="30px">
+                    Entry Pool Fee
+                  </Text>{' '}
+                  <Text color="gray.400" marginLeft="30px">
+                    RGPs
+                  </Text>{' '}
+                </Flex>
+              </Flex>
+            )}
+          </Box>
 
-        <Box width="100%">
-          {!isPoolRGP && (
-            <Flex marginTop="10px">
-              <Text color="gray.400" textAlign="right" marginRight="30px">
-                Entry Pool Fee
-              </Text>{' '}
-              <Text fontSize="23px" marginTop="15px">
-                {content.farmingFee} RGPs
-              </Text>
-            </Flex>
-          )}
-          <Flex justifyContent="right">
-            <Text marginTop="15px">Auto-Harvest</Text>
-            <label className={styles.themeSwitch}>
-              <input
-                type="checkbox"
-                id="checkbox"
-                name="influencer"
-                className={styles.input}
-              />
-              <div className={`${styles.slider} ${styles.round}`} />
-            </label>
-            <Circle
-              size="20px"
-              bg="#fff"
-              marginTop="14px"
-              marginLeft="10px"
-              marginRight="10px"
-            >
-              <Tooltip label="Auto Harvest (weekly)" fontSize="md">
-                <QuestionOutlineIcon color="#120136" cursor="pointer" />
-              </Tooltip>
-            </Circle>
+          <Box mx={1} display={{ base: 'none', md: 'block', lg: 'block' }}>
+            <Divider orientation="vertical" height="84px" />
+          </Box>
+        </Box>
+        <Box
+          flexBasis="15%"
+          width="100%"
+          margin={['0', '0', '0 20px']}
+          justifySelf="end"
+        >
+          <Flex flexDirection="column">
+            <Box>
+              <Text marginTop="15px">Auto-Harvest</Text>
+            </Box>
+            <Box>
+              <label className={styles.themeSwitch}>
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  name="influencer"
+                  className={styles.input}
+                />
+                <div className={`${styles.slider} ${styles.round}`} />
+              </label>
+              <Circle
+                size="20px"
+                bg="#fff"
+                display="inline-flex"
+                marginLeft="40px"
+                marginBottom="10px"
+                // marginLeft="10px"
+                // marginRight="10px"
+              >
+                <Tooltip label="Auto Harvest (weekly)" fontSize="md">
+                  <QuestionOutlineIcon color="#120136" cursor="pointer" />
+                </Tooltip>
+              </Circle>
+            </Box>
           </Flex>
         </Box>
       </Flex>
       <Modal isOpen={modal1Disclosure.isOpen} onClose={close} isCentered>
         <ModalOverlay />
-        <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
+        <ModalContent bg="#120136" color="#fff" borderRadius="0px" width="95%">
           <ModalHeader
             fontSize="18px"
             fontWeight="regular"
@@ -1064,7 +1118,7 @@ const ShowYieldFarmDetails = ({
                 bg="#29235E"
                 opacity="0.5"
                 h="50px"
-                borderRadius="20px"
+                borderRadius="0px"
                 name="availableToken"
                 value={depositTokenValue}
                 onChange={e => setDepositTokenValue(e.target.value)}
@@ -1074,7 +1128,7 @@ const ShowYieldFarmDetails = ({
                 <Button
                   color="rgba(64, 186, 213, 1)"
                   border="none"
-                  borderRadius="6px"
+                  borderRadius="0px"
                   fontSize="13px"
                   bg="rgba(53, 44, 129, 0.3)"
                   p="1"
@@ -1097,31 +1151,31 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
                     disabled={unstakeButtonValue !== 'Confirm'}
                     cursor="pointer"
                     border="none"
-                    borderRadius="13px"
+                    borderRadius="0px"
                     padding="10px"
                     height="50px"
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
-                    onClick={() => { }}
+                    onClick={() => {}}
                   >
                     {depositErrorButtonText}
                   </Button>
@@ -1149,7 +1203,7 @@ const ShowYieldFarmDetails = ({
                       disabled={depositValue !== 'Confirm'}
                       cursor="pointer"
                       border="none"
-                      borderRadius="13px"
+                      borderRadius="0px"
                       padding="10px"
                       height="50px"
                       fontSize="16px"
@@ -1173,7 +1227,7 @@ const ShowYieldFarmDetails = ({
                     background="rgba(64, 186, 213, 0.15)"
                     cursor="pointer"
                     border="none"
-                    borderRadius="13px"
+                    borderRadius="0px"
                     padding="10px"
                     height="50px"
                     fontSize="16px"
@@ -1190,7 +1244,7 @@ const ShowYieldFarmDetails = ({
       </Modal>
       <Modal isOpen={modal2Disclosure.isOpen} onClose={closeModal} isCentered>
         <ModalOverlay />
-        <ModalContent bg="#120136" color="#fff" borderRadius="20px" width="90%">
+        <ModalContent bg="#120136" color="#fff" borderRadius="0px" width="95%">
           <ModalHeader
             fontSize="18px"
             fontWeight="regular"
@@ -1212,7 +1266,7 @@ const ShowYieldFarmDetails = ({
                 bg="#29235E"
                 opacity="0.5"
                 h="50px"
-                borderRadius="20px"
+                borderRadius="0px"
                 name="availableToken"
                 value={unstakeToken}
                 onChange={e => setUnstakeToken(e.target.value)}
@@ -1222,7 +1276,7 @@ const ShowYieldFarmDetails = ({
                 <Button
                   color="rgba(64, 186, 213, 1)"
                   border="none"
-                  borderRadius="6px"
+                  borderRadius="0px"
                   fontSize="13px"
                   bg="rgba(53, 44, 129, 0.3)"
                   p="1"
@@ -1245,31 +1299,31 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
                     disabled={unstakeButtonValue !== 'Confirm'}
                     cursor="pointer"
                     border="none"
-                    borderRadius="13px"
+                    borderRadius="0px"
                     padding="10px"
                     height="50px"
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
-                    onClick={() => { }}
+                    onClick={() => {}}
                   >
                     {errorButtonText}
                   </Button>
@@ -1281,27 +1335,27 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
                     disabled={unstakeButtonValue !== 'Confirm'}
                     cursor="pointer"
                     border="none"
-                    borderRadius="13px"
+                    borderRadius="0px"
                     padding="10px"
                     height="50px"
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
@@ -1317,7 +1371,7 @@ const ShowYieldFarmDetails = ({
                     background="rgba(64, 186, 213, 0.15)"
                     cursor="pointer"
                     border="none"
-                    borderRadius="13px"
+                    borderRadius="0px"
                     padding="10px"
                     height="50px"
                     fontSize="16px"
