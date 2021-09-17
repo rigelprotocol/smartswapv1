@@ -4,7 +4,7 @@ import styles from '../../styles/toastnotification.css';
 import SUCCESSFUL from '../../assets/successful.png';
 import { createURLNetwork } from '../../utils/UtilFunc';
 import { CloseIcon } from '@chakra-ui/icons';
-import { IconButton } from '@chakra-ui/react';
+import { IconButton, Progress } from '@chakra-ui/react';
 const Notification = ({ hash, message }) => {
   return (
     <div className={styles.container}>
@@ -38,6 +38,7 @@ const Notification = ({ hash, message }) => {
           </a>
         </div>
       </div>
+      <Progress size="xs" isIndeterminate />
     </div>
   );
 };

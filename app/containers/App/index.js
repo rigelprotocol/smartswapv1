@@ -94,7 +94,7 @@ const App = props => {
         4,
       );
       props.updateRGPprice(RGPprice);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -128,7 +128,7 @@ const App = props => {
             marginTop: isMobileDevice ? '50px' : '70px',
           }}
           toastOptions={{
-            duration: 10000,
+            duration: 8000,
           }}
         />
         <Switch>
