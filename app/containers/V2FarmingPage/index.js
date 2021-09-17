@@ -308,12 +308,6 @@ export function FarmingPage(props) {
           masterChefV2.userInfo(2, wallet.address),
           masterChefV2.userInfo(3, wallet.address),
         ]);
-        // console.log({ poolOneEarned:formatBigNumber(poolOneEarned),
-        //   poolTwoEarned:formatBigNumber(poolTwoEarned),
-        //   poolThreeEarned:formatBigNumber(poolThreeEarned),
-        //   poolOneStaked:formatBigNumber(poolOneStaked.amount),
-        //   poolTwoStaked:formatBigNumber(poolTwoStaked.amount),
-        //   poolThreeStaked:formatBigNumber(poolThreeStaked.amount),})
         const RGPStakedEarned = await specialPoolStaked();
         let RGPStaked;
         let RGPEarned;
