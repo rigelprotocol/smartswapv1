@@ -35,6 +35,7 @@ import {
 } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { create } from 'react-test-renderer';
+import toast from 'react-hot-toast';
 import {
   tokenList,
   tokenWhere,
@@ -54,7 +55,6 @@ import { getTokenList } from '../../utils/tokens';
 
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
 import Notification from '../../components/ToastNotification/Notification';
-import toast from 'react-hot-toast';
 
 // 35,200
 export function LiquidityPage(props) {
