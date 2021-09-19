@@ -33,7 +33,7 @@ const Notification = ({ hash, message }) => {
         <img src={SUCCESSFUL} style={{ height: '35px', width: '35px' }} />
         <div className={styles.texts}>
           <b>{message}</b>
-          <a href={createURLNetwork(hash)} target="_blank">
+          <a href={createURLNetwork(hash,'tx')} target="_blank">
             <b>View on Explorer</b>
           </a>
         </div>
