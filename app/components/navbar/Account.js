@@ -13,6 +13,7 @@ import {
   useClipboard,
 } from '@chakra-ui/react';
 import CurrentImage from '../../assets/current.svg';
+import { createURLNetwork } from '../../utils/UtilFunc';
 import EditImage from '../../assets/edit.svg';
 import CopyImage from '../../assets/copy.svg';
 
@@ -134,10 +135,10 @@ const Account = ({ wallet, wallet_props }) => {
                 <EditImage />
                 <Text color="gray.400" fontSize="13px" ml={2}>
                   <a
-                    href={`https://etherscan.io/address/${address}`}
+                    href={createURLNetwork(address,'address')}
                     target="_blank"
                   >
-                    View on Etherscan
+                    View on BSCSCAN
                   </a>
                 </Text>
               </Flex>

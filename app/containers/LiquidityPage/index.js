@@ -590,7 +590,7 @@ export function LiquidityPage(props) {
         setTrxHashed(data);
         const { hash } = data;
         setURLNetwork('');
-        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
+        setTimeout(() => setURLNetwork(createURLNetwork(hash,'tx')), 3000);
         closeModal2();
         openModal3();
         const { confirmations, events } = await data.wait(3);
