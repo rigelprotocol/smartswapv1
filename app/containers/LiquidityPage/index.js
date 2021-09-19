@@ -48,6 +48,7 @@ import {
   isNotEmpty,
   getDeadline,
   createURLNetwork,
+  getOutPutDataFromEvent,
 } from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
 
@@ -735,7 +736,18 @@ export function LiquidityPage(props) {
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
-        const { confirmations, status } = await hasRemovedLiquidity.wait(2);
+        const { hash } = hasRemovedLiquidity;
+        setURLNetwork('');
+        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
+        const { confirmations, status, events } = await hasRemovedLiquidity.wait(2);
+        const OutputValueForToken1 = await getOutPutDataFromEvent(
+          tokenA,
+          events
+        );
+        const OutputValueForToken2 = await getOutPutDataFromEvent(
+          tokenB,
+          events
+        );
         if (
           typeof hasRemovedLiquidity.hash !== 'undefined' &&
           confirmations >= 2 &&
@@ -747,6 +759,14 @@ export function LiquidityPage(props) {
             body: 'You have successfully remove the liquidity',
             type: 'success',
           });
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Remove ${OutputValueForToken2} ${liquidityToRemove.path[1].token} and ${OutputValueForToken1} ${
+                liquidityToRemove.path[0].token
+              }`}
+            />,
+          );
           back('ADDLIQUIDITY');
         }
       } catch (error) {
