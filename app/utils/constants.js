@@ -82,8 +82,8 @@ const BSCTestnet = {
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
 };
 
-export const networkURLS = 
-checkNetVersion() === BSC_MAIN_NET_ID.toString() ? 'bscscan.com' : 'testnet.bscscan.com';
+export const networkURLS =
+  checkNetVersion() === BSC_MAIN_NET_ID.toString() ? 'bscscan.com' : 'testnet.bscscan.com';
 
 
 export const SMART_SWAP =
@@ -91,12 +91,14 @@ export const SMART_SWAP =
 
 export const tokenList = () => {
   let allToken = [];
-  const storedReducer = JSON.parse(localStorage.getItem('persist:root'));
-  if (storedReducer != null) {
+  const persistedRoot = window.localStorage.getItem('persist:root')
+
+  if (persistedRoot) {
+    const storedReducer = JSON.parse(persistedRoot);
     const extendedList = JSON.parse(storedReducer.ExtendedTokenList);
     allToken =
       extendedList !== undefined &&
-      extendedList.defaultTokenList[1].token.length > 0
+        extendedList.defaultTokenList[1].token.length > 0
         ? extendedList.defaultTokenList[1].token
         : [];
   }

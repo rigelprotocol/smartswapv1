@@ -6,11 +6,12 @@ import ChartGraph from 'components/charts/ShowChart';
 import SendToken from 'components/sendToken';
 import History from 'components/history';
 import Layout from 'components/layout';
-import styles from '../../styles/Home.css';
 import Tour from 'reactour';
-import style from '../../styles/intro.css';
 import Step from 'components/onboarding/Step';
 import Modal from 'components/onboarding/WelcomeModal/WelcomeModal';
+import { Toaster } from 'react-hot-toast';
+import style from '../../styles/intro.css';
+import styles from '../../styles/Home.css';
 
 export const TABS = {
   MANUAL: 'MANUAL',
@@ -25,10 +26,11 @@ export default function HomePage(props) {
   const [isMobileDevice] = useMediaQuery('(max-width: 750px)');
 
   useEffect(() => {
-    if (!localStorage.noFirstVisit) {
+    const visits = window.localStorage.getItem('noFirstVisit');
+    if (!visits) {
       setWelcomeModal(true);
 
-      localStorage.noFirstVisit = '1';
+      window.localStorage.setItem('noFirstVisit', 1);
     }
   }, []);
 
@@ -37,11 +39,9 @@ export default function HomePage(props) {
       selector: '._3aVZgjuOcUs7jDx7puQe62 ',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Connect Wallet'}
-          description={
-            'Click here to connect us to your wallet on the Ethereum or Binance Smartchain'
-          }
-          desc1={true}
+          title="Connect Wallet"
+          description="Click here to connect us to your wallet on the Ethereum or Binance Smartchain"
+          desc1
           mobile={isMobileDevice}
         >
           <button
@@ -75,11 +75,100 @@ export default function HomePage(props) {
       content: ({ goTo, inDom }) => (
         <Step
           mobile={isMobileDevice}
-          title={'Order History'}
-          description={
-            'Click here to view your Order History and Market History for all your previous transactions'
-          }
-          desc2={true}
+          title="Order History"
+          description="Click here to view your Order History and Market History for all your previous transactions"
+          desc2
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(2)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectFrom__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title="Swap From"
+          description="Click here to select the token you would like to swap for another token."
+          desc3
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(3)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectedTo__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title="Swap To"
+          description="Click here to select the token you would like to receive."
+          desc4
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button
+            onClick={() => {
+              window.scroll(300, 0);
+              goTo(4);
+            }}
+            className={style.nextbutton}
+          >
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+
+      content: ({ goTo, inDom }) => (
+        <Step
+          mobile={isMobileDevice}
+          title="Token Amount To Change"
+          description="Enter the amount of tokens you would like to change from."
+          desc5
         >
           <button
             onClick={() => setIsTourOpen(false)}
@@ -110,11 +199,9 @@ export default function HomePage(props) {
       selector: '.connect__wallet__button',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Connect Wallet'}
-          description={
-            'Click here to connect us to your wallet on the Ethereum or Binance Smartchain'
-          }
-          desc1={true}
+          title="Connect Wallet"
+          description="Click here to connect us to your wallet on the Ethereum or Binance Smartchain"
+          desc1
         >
           <button
             onClick={() => setIsTourOpen(false)}
@@ -139,7 +226,7 @@ export default function HomePage(props) {
     {
       selector: '.css-1dv2wbq',
       content: ({ goTo, inDom }) => (
-        <Step title={'Details'} desc2={true}>
+        <Step title="Details" desc2>
           <button
             onClick={() => setIsTourOpen(false)}
             className={style.skipbutton}
@@ -163,11 +250,90 @@ export default function HomePage(props) {
       selector: '.css-1jo4mlf',
       content: ({ goTo, inDom }) => (
         <Step
-          title={'Order History'}
-          description={
-            'Click here to view your Order History and Market History for all your previous transactions'
-          }
-          desc3={true}
+          title="Order History"
+          description="Click here to view your Order History and Market History for all your previous transactions"
+          desc3
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(3)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectFrom__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title="Swap From"
+          description="Click here to select the token you would like to swap for another token."
+          desc4
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(4)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.selectedTo__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title="Swap To"
+          description="Click here to select the token you would like to receive."
+          desc5
+        >
+          <button
+            onClick={() => setIsTourOpen(false)}
+            className={style.skipbutton}
+          >
+            Skip
+          </button>
+          <button onClick={() => goTo(5)} className={style.nextbutton}>
+            Next
+          </button>
+        </Step>
+      ),
+      style: {
+        borderRadius: '10px',
+        backgroundColor: '#34215F',
+        color: '#fff',
+        padding: '24px 20px',
+        width: '280px',
+      },
+    },
+    {
+      selector: '.from__button',
+      content: ({ goTo, inDom }) => (
+        <Step
+          title="Token Amount To Change"
+          description="Click here to Enter the amount of tokens you would like to change from."
+          desc6
         >
           <button
             onClick={() => setIsTourOpen(false)}
@@ -226,9 +392,11 @@ export default function HomePage(props) {
           showCloseButton={false}
           showNumber={false}
           startAt={0}
-          disableFocusLock={true}
+          disableFocusLock
           inViewThreshold={560}
-          // disableInteraction={false}
+          disableInteraction
+          rounded={10}
+          maskSpace={5}
         />
 
         <Flex mb="100px" mx={2} flexWrap="wrap">
