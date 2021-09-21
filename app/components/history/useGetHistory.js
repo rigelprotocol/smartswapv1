@@ -3,7 +3,7 @@ import abiDecoder from 'abi-decoder';
 import { convertFromWei } from 'utils/UtilFunc';
 import testNetToken from '../../utils/test-net-tokens.json';
 import mainNetToken from '../../utils/main-token.json';
-import SmartSwapRouter02 from '../../utils/abis/SmartSwapRouter02.json';
+import SmartSwapRouter02 from '../../utils/abis/swapAbiForDecoder.json';
 import { getTokenDetails } from '../../utils/tokens';
 import tokenImage from '../../assets/tokenImg.png'
 
@@ -63,13 +63,10 @@ const useGetHistory = wallet => {
         const jsondata = await rewData.json();
 
 
-        const filterOutArray = (_array) => {
-          return _array.filter(itemOnArray => itemOnArray.length == 5)
-        }
 
         console.log("raw data is :", jsondata)
         const dataFiltered = jsondata.result
-          .filter(items => decodeInput(items.input) !== undefined && decodeInput(items.input).params.length == 5)
+          .filter(items => decodeInput(items.input) !== undefined)//&& decodeInput(items.input).params.length == 5)
           .map(items => ({
             value: items.value,
             transactionObj: decodeInput(items.input).params,
