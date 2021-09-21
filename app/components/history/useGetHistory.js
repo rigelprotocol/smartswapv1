@@ -91,8 +91,8 @@ const useGetHistory = wallet => {
               : data.transactionObj[2].value[0],
           tokenOut:
             Number(data.value) > 0
-              ? data.transactionObj[1].value[1]
-              : data.transactionObj[2].value[1],
+              ? data.transactionObj[1].value[data.transactionObj[1].value.length - 1]
+              : data.transactionObj[2].value[data.transactionObj[2].value.length - 1],
           time: convertToTime(data.timestamp),
           transactionFee: convertFromWei(data.transactionfee),
         }));
