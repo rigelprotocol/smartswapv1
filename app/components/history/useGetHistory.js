@@ -5,7 +5,7 @@ import testNetToken from '../../utils/test-net-tokens.json';
 import mainNetToken from '../../utils/main-token.json';
 import SmartSwapRouter02 from '../../utils/abis/SmartSwapRouter02.json';
 import { getTokenDetails } from '../../utils/tokens';
-import NullImage24 from '../../assets/Null-24.svg';
+import tokenImage from '../../assets/tokenImg.png'
 
 const useGetHistory = wallet => {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +42,13 @@ const useGetHistory = wallet => {
 
       function getTokenSymbol(symbol) {
         const tokensList = isTestNet ? testNetToken : mainNetToken;
-        return tokensList.find(token => token.symbol === symbol);
+        let tokenIconOnList = tokensList.find(token => token.symbol === symbol);
+
+
+        if (!tokenIconOnList) {
+          return tokenImage
+        }
+        return tokenIconOnList.logoURI
       }
 
       try {
@@ -107,13 +113,13 @@ const useGetHistory = wallet => {
           })),
         );
 
-        // console.log("Third Data: ", swapDataForWallet)
+        console.log("Third Data: ", swapDataForWallet)
         // final modifications
         const userSwapHistory = swapDataForWallet.map(data => ({
           token1Icon:
-            getTokenSymbol(data.tokenIn.symbol).logoURI || NullImage24,
+            getTokenSymbol(data.tokenIn.symbol),
           token2Icon:
-            getTokenSymbol(data.tokenOut.symbol).logoURI || NullImage24,
+            getTokenSymbol(data.tokenOut.symbol),
           token1: data.tokenIn,
           token2: data.tokenOut,
           amountIn: convertFromWei(data.amountIn, data.tokenIn.decimals),
@@ -122,6 +128,7 @@ const useGetHistory = wallet => {
           time: data.time,
         }));
 
+        console.log("finals: ", userSwapHistory)
         sethistoryData(userSwapHistory);
         setIsLoading(false);
       } catch (error) {
