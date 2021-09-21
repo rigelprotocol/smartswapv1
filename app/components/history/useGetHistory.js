@@ -50,15 +50,20 @@ const useGetHistory = wallet => {
         const latestBlock = await provider.getBlockNumber();
         const etherAPI = latestBlock - 3000;
 
-        const uri = `https://api${
-          isTestNet ? '-testnet.bscscan.com' : '.bscscan.com'
-        }/api?module=account&action=txlist&address=${address}&startblock=${etherAPI}&endblock=tatest&sort=desc&apikey=AATZWFQ47VX3Y1DN7M97BJ5FEJR6MGRQSD`;
+        const uri = `https://api${isTestNet ? '-testnet.bscscan.com' : '.bscscan.com'
+          }/api?module=account&action=txlist&address=${address}&startblock=${etherAPI}&endblock=tatest&sort=desc&apikey=AATZWFQ47VX3Y1DN7M97BJ5FEJR6MGRQSD`;
 
         const rewData = await fetch(uri);
         const jsondata = await rewData.json();
 
+
+        const filterOutArray = (_array) => {
+          return _array.filter(itemOnArray => itemOnArray.length == 5)
+        }
+
+        console.log("raw data is :", jsondata)
         const dataFiltered = jsondata.result
-          .filter(items => decodeInput(items.input) !== undefined)
+          .filter(items => decodeInput(items.input) !== undefined && decodeInput(items.input).params.length == 5)
           .map(items => ({
             value: items.value,
             transactionObj: decodeInput(items.input).params,
@@ -66,7 +71,9 @@ const useGetHistory = wallet => {
             transactionfee: items.gasPrice * items.gasUsed,
           }));
 
-        console.log('First Data: ', dataFiltered);
+
+
+        console.log('First decoded: ', dataFiltered);
         // data ready
         const useruserData = dataFiltered.map(data => ({
           inputAmount:
@@ -87,7 +94,7 @@ const useGetHistory = wallet => {
           transactionFee: convertFromWei(data.transactionfee),
         }));
 
-        // console.log("Second Data: ", useruserData)
+        console.log("Second Data: ", useruserData)
         // geting tokens name
         const swapDataForWallet = await Promise.all(
           useruserData.map(async data => ({
