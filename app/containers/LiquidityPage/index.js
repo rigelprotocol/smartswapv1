@@ -35,6 +35,7 @@ import {
 } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { create } from 'react-test-renderer';
+import toast from 'react-hot-toast';
 import {
   tokenList,
   tokenWhere,
@@ -48,12 +49,12 @@ import {
   isNotEmpty,
   getDeadline,
   createURLNetwork,
+  getOutPutDataFromEvent,
 } from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
 
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
 import Notification from '../../components/ToastNotification/Notification';
-import toast from 'react-hot-toast';
 
 // 35,200
 export function LiquidityPage(props) {
@@ -592,14 +593,17 @@ export function LiquidityPage(props) {
         setTimeout(() => setURLNetwork(createURLNetwork(hash,'tx')), 3000);
         closeModal2();
         openModal3();
-        const { confirmations } = await data.wait(3);
+        const { confirmations, events } = await data.wait(3);
+        const { trhash } = data;
         if (confirmations >= 3) {
+          const inputTokenAmount = await getOutPutDataFromEvent(fromSelectedToken.address, events)
+          const outpputTokenAmount = await getOutPutDataFromEvent(toSelectedToken.address, events)
+
           toast.custom(
             <Notification
-              hash={hash}
-              message={`Add ${fromSelectedToken.symbol}/${
-                toSelectedToken.symbol
-              } liquidity`}
+              hash={trhash}
+              message={`Added  ${inputTokenAmount} of ${fromSelectedToken.symbol}/ ${outpputTokenAmount} ${toSelectedToken.symbol
+                } liquidity`}
             />,
           );
         }
@@ -692,15 +696,17 @@ export function LiquidityPage(props) {
         setTrxHashed(data);
         closeModal2();
         openModal3();
-        const { confirmations } = await data.wait(3);
+        const { confirmations, events } = await data.wait(3);
         const { hash } = data;
         if (confirmations >= 3) {
+          const inputTokenAmount = await getOutPutDataFromEvent(fromSelectedToken.address, events)
+          const outpputTokenAmount = await getOutPutDataFromEvent(toSelectedToken.address, events)
+
           toast.custom(
             <Notification
               hash={hash}
-              message={`Add ${fromSelectedToken.symbol}/${
-                toSelectedToken.symbol
-              } liquidity`}
+              message={`Added  ${inputTokenAmount} of ${fromSelectedToken.symbol}/ ${outpputTokenAmount} ${toSelectedToken.symbol
+                } liquidity`}
             />,
           );
         }
@@ -896,8 +902,7 @@ export function LiquidityPage(props) {
         closeModal6();
         openModal4();
         setPopupText(
-          `Added ${fromValue} ${fromSelectedToken.name} and ${toValue} ${
-            toSelectedToken.name
+          `Added ${fromValue} ${fromSelectedToken.name} and ${toValue} ${toSelectedToken.name
           }`,
         );
       }
@@ -1047,7 +1052,7 @@ export function LiquidityPage(props) {
         return await eth.allowance(wallet.address, SMART_SWAP.MasterChef, {
           from: wallet.address,
         });
-      } catch (error) {}
+      } catch (error) { }
     }
   }
 
