@@ -58,7 +58,7 @@ export function Home(props) {
         </Flex>
       </Flex>
 
-      <Box overflowY="auto" maxH={460}>
+      <Box overflowY="auto" maxH={460} >
         {show &&
           historyData &&
           historyData.map(data => (
