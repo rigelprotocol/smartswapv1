@@ -93,9 +93,9 @@ const removeALiquidity = ({
   }, []);
   useEffect(()=>{
     if(determineInputChange==="zero"){
-       setTheValueForTokenOne() 
+       setTheValueForTokenOne()
     }else if(determineInputChange==="one"){
-      setTheValueForTokenZero() 
+      setTheValueForTokenZero()
     }else if(determineInputChange==="position"){
       setTheValueForTokenOneAndTokenTwo()
     }else if(determineInputChange==="slider"){
@@ -117,7 +117,7 @@ if(selectedValue>100){
       const toPath = ethers.utils.getAddress(liquidityToRemove.path[1].toPath);
       const LPAddress = liquidityToRemove.pairAddress
       const LPcontract = await LPTokenContract(LPAddress)
-      
+
       const [tokenAReserve, tokenBreserve] = await LPcontract.getReserves()
       const token0 = await LPcontract.token0();
       let liquidityRatio;
@@ -154,6 +154,7 @@ if(selectedValue>100){
           gasPrice: ethers.utils.parseUnits('21', 'gwei'),
         },
       );
+      console.log({data})
     } catch (error) {
       console.error('******', error);
     }
@@ -181,7 +182,7 @@ if(selectedValue>100){
     if(val==="zero"){
       calculatedValue = Math.floor((100 * tokenOneAmount) / liquidityToRemove.pooledToken1)
     }else{
-      calculatedValue = Math.floor((100 * tokenZeroAmount) / liquidityToRemove.pooledToken0) 
+      calculatedValue = Math.floor((100 * tokenZeroAmount) / liquidityToRemove.pooledToken0)
     }
     setSelectedValue(calculatedValue)
     return calculatedValue
@@ -221,7 +222,7 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
       alert("error")
 
     }
-    
+
   };
   const sliderValues = [0, 25, 50, 75, 100];
   const selectedButton = val => {
@@ -231,7 +232,7 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
   };
   const removeMaxAmount = () =>{
     setSelectedValue(100);
-    
+
     setUserSelectedPositionValue(liquidityToRemove.poolToken)
     setTokenZeroAmount(liquidityToRemove.pooledToken0)
     setTokenOneAmount(liquidityToRemove.pooledToken1)
@@ -285,13 +286,13 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
             <Text mt="0px">Amount</Text>
             <Text mt="0px" color="#9869FC" onClick={toggleViewOfRemoveLiquidity}
             cursor="pointer">
-              {simpleRemoveLiquidityPool ? "Detailed" : "Simple"}  
+              {simpleRemoveLiquidityPool ? "Detailed" : "Simple"}
             </Text>
           </Flex>
           <Heading as="h2" size="3xl">
             {selectedValue}%
           </Heading>
-          {simpleRemoveLiquidityPool && 
+          {simpleRemoveLiquidityPool &&
         <Box>
           <Slider
             defaultValue={sliderValues[1]}
@@ -326,10 +327,10 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
                 {val}
               </Button>
             ))}
-          </Flex> 
+          </Flex>
         </Box>
           }
-          {!simpleRemoveLiquidityPool && 
+          {!simpleRemoveLiquidityPool &&
         <Box>
            <Flex justifyContent="space-between">
            <InputGroup size="md">
@@ -348,7 +349,7 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
           />
           <InputRightElement marginRight="5px">
               <Text
-              cursor="pointer" 
+              cursor="pointer"
               color="rgba(64, 186, 213, 1)"
               onClick={()=>removeMaxAmount()}>
                 max
@@ -373,8 +374,8 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
               </Button>
             </Menu>
           </Flex>
-        </Flex> 
-       
+        </Flex>
+
          </Box>
           }
           </Box>
@@ -428,7 +429,7 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
                   : liquidityToRemove.path[1].token}
               </Text>
             </Flex>
-          </Box> : 
+          </Box> :
           <Box>
         <Flex justifyContent="space-between" my="2">
           <Input
@@ -471,7 +472,7 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
               </Button>
             </Menu>
           </Flex>
-        </Flex> 
+        </Flex>
         <Flex justifyContent="space-between" my="2">
           <Input
             type="number"
@@ -517,7 +518,7 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
          </Box>
 
           }
-      
+
           <Text textAlign="right" color="#9869FC">
             Recieve RGP
           </Text>

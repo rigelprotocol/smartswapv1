@@ -44,7 +44,6 @@ import {
   updateFarmBalances,
   farmDataLoading,
 } from './actions';
-// import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
   const { wallet, wallet_props } = props.wallet;
 

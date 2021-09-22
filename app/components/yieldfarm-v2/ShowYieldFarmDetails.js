@@ -32,7 +32,6 @@ import {
   rigelToken,
   BUSDToken,
   RGPSpecialPool,
-  masterChefContract,
   masterChefV2Contract,
   smartSwapLPTokenPoolOne,
   smartSwapLPTokenPoolTwo,
@@ -255,7 +254,7 @@ const ShowYieldFarmDetails = ({
   };
 
   const allowance = contract =>
-    contract.allowance(wallet.address, SMART_SWAP.masterChef);
+    contract.allowance(wallet.address, SMART_SWAP.masterChefV2);
   useEffect(() => {
     getAllowances();
   }, []);
@@ -295,7 +294,7 @@ const ShowYieldFarmDetails = ({
           const rgp = await rigelToken();
           const rgpApproval = await rgp.allowance(
             wallet.address,
-            SMART_SWAP.masterChef,
+            SMART_SWAP.masterChefV2,
           );
           return !(rgpApproval.toString() <= 0);
         }
@@ -307,7 +306,7 @@ const ShowYieldFarmDetails = ({
         const poolTwo = await smartSwapLPTokenPoolTwo();
         const rgpApproval = await poolTwo.allowance(
           wallet.address,
-          SMART_SWAP.masterChef,
+          SMART_SWAP.masterChefV2,
         );
         return !(rgpApproval.toString() <= 0);
       }
@@ -317,7 +316,7 @@ const ShowYieldFarmDetails = ({
         const poolOne = await smartSwapLPTokenPoolOne();
         const rgpApproval = await poolOne.allowance(
           wallet.address,
-          SMART_SWAP.masterChef,
+          SMART_SWAP.masterChefV2,
         );
         return !(rgpApproval.toString() <= 0);
       }
@@ -327,7 +326,7 @@ const ShowYieldFarmDetails = ({
         const poolThree = await smartSwapLPTokenPoolThree();
         const rgpApproval = await poolThree.allowance(
           wallet.address,
-          SMART_SWAP.masterChef,
+          SMART_SWAP.masterChefV2,
         );
         return !(rgpApproval.toString() <= 0);
       }
@@ -382,7 +381,7 @@ const ShowYieldFarmDetails = ({
       try {
         const rgp = await rigelToken();
         const walletBal = (await rgp.balanceOf(wallet.address)) + 400e18;
-        const data = await rgp.approve(SMART_SWAP.masterChef, walletBal, {
+        const data = await rgp.approve(SMART_SWAP.masterChefV2, walletBal, {
           from: wallet.address,
           gasLimit: 150000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
@@ -547,7 +546,7 @@ const ShowYieldFarmDetails = ({
       try {
         const slpTwo = await smartSwapLPTokenPoolTwo();
         const walletBal = (await slpTwo.balanceOf(wallet.address)) + 400e18;
-        const data = await slpTwo.approve(SMART_SWAP.masterChef, walletBal, {
+        const data = await slpTwo.approve(SMART_SWAP.masterChefV2, walletBal, {
           from: wallet.address,
           gasLimit: 150000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
@@ -611,7 +610,7 @@ const ShowYieldFarmDetails = ({
       try {
         const poolOne = await smartSwapLPTokenPoolOne();
         const walletBal = (await poolOne.balanceOf(wallet.address)) + 400e18;
-        const data = await poolOne.approve(SMART_SWAP.masterChef, walletBal, {
+        const data = await poolOne.approve(SMART_SWAP.masterChefV2, walletBal, {
           from: wallet.address,
           gasLimit: 150000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
@@ -671,7 +670,7 @@ const ShowYieldFarmDetails = ({
       try {
         const poolThree = await smartSwapLPTokenPoolThree();
         const walletBal = (await poolThree.balanceOf(wallet.address)) + 400e18;
-        const data = await poolThree.approve(SMART_SWAP.masterChef, walletBal, {
+        const data = await poolThree.approve(SMART_SWAP.masterChefV2, walletBal, {
           from: wallet.address,
           gasLimit: 150000,
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
