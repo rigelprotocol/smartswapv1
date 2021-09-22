@@ -56,3 +56,7 @@
 .input2:checked + .radioButton {
   background: blue;
 }
+
+svg:not(:root) {
+  overflow: visible;
+}
