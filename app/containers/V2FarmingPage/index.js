@@ -619,7 +619,7 @@ export function FarmingPage(props) {
 
   return (
     <div>
-      <Layout title="Farming Page">
+      <Layout title="V2 Farming Page">
         <InfoModal
           isOpenModal={isOpenModal}
           onCloseModal={onCloseModal}
@@ -748,7 +748,7 @@ export function FarmingPage(props) {
                       <Text>Total Liquidity</Text>
                       <Text />
                     </Flex>
-                    {props.farming.contents.map(content => (
+                    {props.farmingv2.contents.map(content => (
                       <YieldFarm
                         isAddressWhitelist={isAddressWhitelist}
                         onOpenModal={onOpenModal}
@@ -757,7 +757,7 @@ export function FarmingPage(props) {
                         key={content.id}
                         wallet={wallet}
                         refreshTokenStaked={refreshTokenStaked}
-                        loadingTotalLiquidity={props.farming.loading}
+                        loadingTotalLiquidity={props.farmingv2.loading}
                       />
                     ))}
                   </Box>
@@ -779,8 +779,8 @@ FarmingPage.propTypes = {
   farmingPage: PropTypes.object,
 };
 
-const mapStateToProps = ({ farming, wallet }) => ({
-  farming,
+const mapStateToProps = ({ farmingv2, wallet }) => ({
+  farmingv2,
   wallet,
 });
 
