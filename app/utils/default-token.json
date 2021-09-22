@@ -36,5 +36,13 @@
     "chainId": 56,
     "address": "0xfd5840cd36d94d7229439859c0112a4185bc0255",
     "logoURI": "https://bscscan.com/token/images/venus-vusdt_32.png"
+  },
+  {
+    "name": "Axie Infinity Shard",
+    "symbol": "AXS",
+    "available": true,
+    "imported": false,
+    "logoURI": "https://www.bscscan.com/token/images/axieinfinity_32.png",
+    "address": "0x715D400F88C167884bbCc41C5FeA407ed4D2f8A0"
   }
 ]
