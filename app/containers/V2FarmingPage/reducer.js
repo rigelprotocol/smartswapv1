@@ -85,7 +85,7 @@ export const initialState = {
       // deposit: 'BNB-BUSD', to
       deposit: 'BNB-BUSD',
       earn: 'RGP',
-      ARYValue: '325',
+      ARYValue: '23',
       type: 'LP',
       totalLiquidity: '',
       tokensStaked: ['BNB-BUSD', '0'],
@@ -105,7 +105,7 @@ export const initialState = {
       // deposit: 'BNB-BUSD', to
       deposit: 'AXS-RGP',
       earn: 'RGP',
-      ARYValue: '325',
+      ARYValue: '23',
       type: 'LP',
       totalLiquidity: '',
       tokensStaked: ['AXS-RGP', '0'],
