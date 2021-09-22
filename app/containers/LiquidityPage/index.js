@@ -502,18 +502,32 @@ export function LiquidityPage(props) {
       }
     }
   };
-  const setFromInputMax = () => {
+  const setFromInputMax = async () => {
     try {
-      setDetermineInputChange('from');
-      setFromValue(fromSelectedToken.balance);
+      if (fromSelectedToken.balance == undefined) {
+        const balance = await tokenBalance(
+          fromSelectedToken.address,
+          wallet.address,
+        );
+        setDetermineInputChange('from');
+        setFromValue(balance);
+      } else {
+        setDetermineInputChange('from');
+        setFromValue(fromSelectedToken.balance);
+      }
     } catch (e) {
       console.log(e);
     }
   };
   const setToInputMax = () => {
     try {
-      setDetermineInputChange('to');
-      setToValue(toSelectedToken.balance);
+      if (toSelectedToken.balance == undefined) {
+        setToValue(0);
+        setDetermineInputChange('to');
+      } else {
+        setDetermineInputChange('to');
+        setToValue(toSelectedToken.balance);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -590,20 +604,27 @@ export function LiquidityPage(props) {
         setTrxHashed(data);
         const { hash } = data;
         setURLNetwork('');
-        setTimeout(() => setURLNetwork(createURLNetwork(hash,'tx')), 3000);
+        setTimeout(() => setURLNetwork(createURLNetwork(hash, 'tx')), 3000);
         closeModal2();
         openModal3();
         const { confirmations, events } = await data.wait(3);
         const { trhash } = data;
         if (confirmations >= 3) {
-          const inputTokenAmount = await getOutPutDataFromEvent(fromSelectedToken.address, events)
-          const outpputTokenAmount = await getOutPutDataFromEvent(toSelectedToken.address, events)
+          const inputTokenAmount = await getOutPutDataFromEvent(
+            fromSelectedToken.address,
+            events,
+          );
+          const outpputTokenAmount = await getOutPutDataFromEvent(
+            toSelectedToken.address,
+            events,
+          );
 
           toast.custom(
             <Notification
               hash={trhash}
-              message={`Added  ${inputTokenAmount} of ${fromSelectedToken.symbol}/ ${outpputTokenAmount} ${toSelectedToken.symbol
-                } liquidity`}
+              message={`Added  ${inputTokenAmount} of ${
+                fromSelectedToken.symbol
+              }/ ${outpputTokenAmount} ${toSelectedToken.symbol} liquidity`}
             />,
           );
         }
@@ -699,14 +720,21 @@ export function LiquidityPage(props) {
         const { confirmations, events } = await data.wait(3);
         const { hash } = data;
         if (confirmations >= 3) {
-          const inputTokenAmount = await getOutPutDataFromEvent(fromSelectedToken.address, events)
-          const outpputTokenAmount = await getOutPutDataFromEvent(toSelectedToken.address, events)
+          const inputTokenAmount = await getOutPutDataFromEvent(
+            fromSelectedToken.address,
+            events,
+          );
+          const outpputTokenAmount = await getOutPutDataFromEvent(
+            toSelectedToken.address,
+            events,
+          );
 
           toast.custom(
             <Notification
               hash={hash}
-              message={`Added  ${inputTokenAmount} of ${fromSelectedToken.symbol}/ ${outpputTokenAmount} ${toSelectedToken.symbol
-                } liquidity`}
+              message={`Added  ${inputTokenAmount} of ${
+                fromSelectedToken.symbol
+              }/ ${outpputTokenAmount} ${toSelectedToken.symbol} liquidity`}
             />,
           );
         }
@@ -902,7 +930,8 @@ export function LiquidityPage(props) {
         closeModal6();
         openModal4();
         setPopupText(
-          `Added ${fromValue} ${fromSelectedToken.name} and ${toValue} ${toSelectedToken.name
+          `Added ${fromValue} ${fromSelectedToken.name} and ${toValue} ${
+            toSelectedToken.name
           }`,
         );
       }
@@ -1052,7 +1081,7 @@ export function LiquidityPage(props) {
         return await eth.allowance(wallet.address, SMART_SWAP.MasterChef, {
           from: wallet.address,
         });
-      } catch (error) { }
+      } catch (error) {}
     }
   }
 
