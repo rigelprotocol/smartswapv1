@@ -64,7 +64,6 @@ const useGetHistory = wallet => {
 
 
 
-        console.log("raw data is :", jsondata)
         const dataFiltered = jsondata.result
           .filter(items => decodeInput(items.input) !== undefined)//&& decodeInput(items.input).params.length == 5)
           .map(items => ({
@@ -76,7 +75,6 @@ const useGetHistory = wallet => {
 
 
 
-        console.log('First decoded: ', dataFiltered);
         // data ready
         const useruserData = dataFiltered.map(data => ({
           inputAmount:
@@ -97,7 +95,6 @@ const useGetHistory = wallet => {
           transactionFee: convertFromWei(data.transactionfee),
         }));
 
-        console.log("Second Data: ", useruserData)
         // geting tokens name
         const swapDataForWallet = await Promise.all(
           useruserData.map(async data => ({
@@ -110,7 +107,6 @@ const useGetHistory = wallet => {
           })),
         );
 
-        console.log("Third Data: ", swapDataForWallet)
         // final modifications
         const userSwapHistory = swapDataForWallet.map(data => ({
           token1Icon:
@@ -125,7 +121,6 @@ const useGetHistory = wallet => {
           time: data.time,
         }));
 
-        console.log("finals: ", userSwapHistory)
         sethistoryData(userSwapHistory);
         setIsLoading(false);
       } catch (error) {
