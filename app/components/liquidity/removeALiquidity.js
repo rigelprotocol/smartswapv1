@@ -43,6 +43,7 @@ const removeALiquidity = ({
   approving,
   setPercentValue,
   removingLiquidity,
+  removeLiquidityForETH,
   liquidityToRemove,
   hasApprovedLPTokens,
   approveSmartSwapLPTokens,
@@ -142,31 +143,6 @@ if(selectedValue>100){
 
   }
 
-  const removeLiquidityForETH = async (tokenAddress, liquidity) => {
-    const rout = await router();
-    const deadLine = getDeadline(deadline);
-    const liquidityAmount = ethers.utils.parseEther(
-      liquidity.toString(),
-      'ether',
-    );
-    try {
-      const data = await rout.removeLiquidityETH(
-        tokenAddress,
-        liquidityAmount,
-        0,
-        0,
-        wallet.address,
-        deadLine,
-        {
-          from: wallet.address,
-          gasLimit: 390000,
-          gasPrice: ethers.utils.parseUnits('21', 'gwei'),
-        },
-      );
-    } catch (error) {
-      console.error('******', error);
-    }
-  };
   const setInputZeroAndOne = () =>{
     let inputZero = liquidityToRemove.pooledToken0 * (selectedValue / 100)
     let inputOne = liquidityToRemove.pooledToken1 * (selectedValue / 100)
