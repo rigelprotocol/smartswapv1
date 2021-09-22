@@ -775,21 +775,61 @@ export function LiquidityPage(props) {
           status
         ) {
           setApproving(false);
-          props.notify({
-            title: 'Process Completed',
-            body: 'You have successfully remove the liquidity',
-            type: 'success',
-          });
-          back('ADDLIQUIDITY');
+        displaySuccessProps('Process Completed','You have successfully remove the liquidity', 'success',"INDEX")
         }
       } catch (error) {
-        props.showErrorMessage(
-          'Oops we encountered an error please try again later',
-        );
+       displayFailureProps('Oops we encountered an error please try again later')
       }
     }
   };
-
+  const removeLiquidityForETH = async (tokenAddress, liquidity) => {
+    const rout = await router();
+    const deadLine = getDeadline(deadline);
+    const liquidityAmount = ethers.utils.parseEther(
+      liquidity.toString(),
+      'ether',
+    );
+    try {
+      setApproving(true);
+      const hasRemovedLiquidity = await rout.removeLiquidityETH(
+        tokenAddress,
+        liquidityAmount,
+        0,
+        0,
+        wallet.address,
+        deadLine,
+        {
+          from: wallet.address,
+          gasLimit: 390000,
+          gasPrice: ethers.utils.parseUnits('21', 'gwei'),
+        },
+      );
+      const { confirmations, status } = await hasRemovedLiquidity.wait(2);
+      if (
+        typeof hasRemovedLiquidity.hash !== 'undefined' &&
+        confirmations >= 2 &&
+        status
+      ) {
+        setApproving(false);
+      displaySuccessProps('Process Completed','You have successfully remove the liquidity', 'success',"INDEX")
+      }
+    } catch (error) {
+      displayFailureProps('Oops we encountered an error please try again later')
+    }
+  };
+  const displaySuccessProps = (title,body,type,text) =>{
+    props.notify({
+      title,
+      body,
+      type
+    });
+    if(text){
+      back(text)
+    };
+  }
+  const displayFailureProps = (msg)=>{
+ props.showErrorMessage(msg);
+  }
   async function approveSmartSwapLPTokens(LPTokenAddress) {
     if (wallet.signer !== 'signer') {
       try {
@@ -1200,6 +1240,7 @@ export function LiquidityPage(props) {
               approving={approving}
               approveSmartSwapLPTokens={approveSmartSwapLPTokens}
               removingLiquidity={removingLiquidity}
+              removeLiquidityForETH={removeLiquidityForETH}
               setPercentValue={setPercentValue}
               wallet={wallet}
               liquidityToRemove={liquidityToRemove}
