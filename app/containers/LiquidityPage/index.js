@@ -802,7 +802,7 @@ export function LiquidityPage(props) {
       setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
       const { confirmations, status, events } = await hasRemovedLiquidity.wait(2);
       const OutputValueForToken1 = await getOutPutDataFromEvent(
-        tokenAddress,
+        fromSelectedToken.address,
         events
       );
       const OutputValueForToken2 = await getOutPutDataFromEvent(

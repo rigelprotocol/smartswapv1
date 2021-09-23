@@ -142,4 +142,5 @@ export const getInPutDataFromEvent = (
   }
 };
 
-export const createURLNetwork = (hash,url) => `https://${networkURLS}/${url}/${hash}`;
+export const createURLNetwork = (hash, url) =>
+  `https://${networkURLS}/${url}/${hash}`;
