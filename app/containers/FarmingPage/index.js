@@ -151,7 +151,7 @@ export function FarmingPage(props) {
         pool3.getReserves(),
 
       ])
-
+      console.log({rgpTotalStaking,pool1Reserve,pool2Reserve,pool3Reserve})
       const RGPprice = ethers.utils.formatUnits(pool1Reserve[0]
         .mul(1000)
         .div(pool1Reserve[1]), 3);

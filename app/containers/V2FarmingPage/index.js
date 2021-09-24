@@ -171,7 +171,11 @@ export function FarmingPage(props) {
         smartSwapLPTokenPoolTwo(),
         smartSwapLPTokenPoolThree(),
       ]);
-
+      let masterChef = await masterChefV2Contract()
+      let len = await masterChef.poolLength()
+      let pool = await masterChef.poolInfo(1)
+let length = ethers.utils.formatEther(len)
+      console.log({length,len,pool})
       const [
         rgpTotalStaking,
         pool1Reserve,
@@ -183,7 +187,16 @@ export function FarmingPage(props) {
         pool2.getReserves(),
         pool3.getReserves(),
       ]);
-
+      const liquidity = await LiquidityPairInstance("0x0B0a1E07931bD7991a104218eE15BAA682c05e01");
+      const [balance, totalSupply, reserves, token0, token1] = await Promise.all([
+        liquidity.balanceOf(wallet.address),
+        liquidity.totalSupply(),
+        liquidity.getReserves(),
+        liquidity.token0(),
+        liquidity.token1(),
+      ]);
+      console.log(12,reserves.toString())
+      console.log(34,pool1Reserve.toString())
       const RGPprice = ethers.utils.formatUnits(
         pool1Reserve[0].mul(1000).div(pool1Reserve[1]),
         3,
@@ -635,7 +648,7 @@ export function FarmingPage(props) {
         >
           <RGPFarmInfo />
         </InfoModal>
-        {closeInfoModal && 
+        {closeInfoModal &&
             <Box mx={[5, 10, 15, 20]} my={4}>
             <Alert color="#FFFFFF" background="#726AC8" borderRadius="8px">
               <AlertSvg />
@@ -664,7 +677,7 @@ export function FarmingPage(props) {
               />
             </Alert>
           </Box>
-          
+
        }
         <Flex justifyContent="flex-end">
           <Tabs
