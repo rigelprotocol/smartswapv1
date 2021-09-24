@@ -6,9 +6,12 @@ import React, { useState } from 'react';
 import OrderHistory from './OrderHistory';
 import styles from '../../styles/history.css';
 import useGetHistory from './useGetHistory';
+import MarketHisory from './marketHisory';
 
 export function Home(props) {
   const [show, setShow] = useState(false);
+
+  const [showMarketHistory, setShowMarketHistory] = useState(false);
 
   const { wallet } = props.wallet;
 
@@ -24,9 +27,13 @@ export function Home(props) {
         className={styles.header__container}
       >
         <Flex>
-          <Text className={styles.header}>Order history</Text>
+          <Text className={!showMarketHistory ? styles.header : styles.market__history__header} onClick={() => {
+            setShowMarketHistory(false);
+          }}>Order history</Text>
           {show && (
-            <Text className={styles.market__history__header}>
+            <Text className={showMarketHistory ? styles.header : styles.market__history__header} onClick={() => {
+              setShowMarketHistory(true);
+            }}>
               Market history
             </Text>
           )}
@@ -59,7 +66,7 @@ export function Home(props) {
       </Flex>
 
       <Box overflowY="auto" maxH={460} >
-        {show &&
+        {show && !showMarketHistory &&
           historyData &&
           historyData.map(data => (
             <OrderHistory
@@ -70,6 +77,17 @@ export function Home(props) {
             />
           ))}
       </Box>
+
+
+
+      <Box overflowY="auto" maxH={460} >
+        {show &&
+          showMarketHistory &&
+          <MarketHisory />
+        }
+      </Box>
+
+
     </Box>
   );
 }
