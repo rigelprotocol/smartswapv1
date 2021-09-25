@@ -87,7 +87,6 @@ export function FarmingPage(props) {
         const minFarmingFee = await masterChefV2.farmingFee();
         const fee = Web3.utils.fromWei(minFarmingFee.toString());
         setFarmingFee(fee);
-        console.log({fee})
         props.changeRGPFarmingFee({
           fee,
         });
@@ -171,11 +170,6 @@ export function FarmingPage(props) {
         smartSwapLPTokenPoolTwo(),
         smartSwapLPTokenPoolThree(),
       ]);
-      let masterChef = await masterChefV2Contract()
-      let len = await masterChef.poolLength()
-      let pool = await masterChef.poolInfo(1)
-let length = ethers.utils.formatEther(len)
-      console.log({length,len,pool})
       const [
         rgpTotalStaking,
         pool1Reserve,
@@ -187,16 +181,6 @@ let length = ethers.utils.formatEther(len)
         pool2.getReserves(),
         pool3.getReserves(),
       ]);
-      const liquidity = await LiquidityPairInstance("0x0B0a1E07931bD7991a104218eE15BAA682c05e01");
-      const [balance, totalSupply, reserves, token0, token1] = await Promise.all([
-        liquidity.balanceOf(wallet.address),
-        liquidity.totalSupply(),
-        liquidity.getReserves(),
-        liquidity.token0(),
-        liquidity.token1(),
-      ]);
-      console.log(12,reserves.toString())
-      console.log(34,pool1Reserve.toString())
       const RGPprice = ethers.utils.formatUnits(
         pool1Reserve[0].mul(1000).div(pool1Reserve[1]),
         3,
