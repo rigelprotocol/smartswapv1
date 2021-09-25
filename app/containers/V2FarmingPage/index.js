@@ -56,7 +56,7 @@ import {
   farmDataLoading,
 } from './actions';
 
-export function FarmingPage(props) {
+export function FarmingV2Page(props) {
   const history = useHistory();
 
   const { wallet } = props.wallet;
@@ -214,6 +214,14 @@ export function FarmingPage(props) {
         {
           liquidity: BUSD_BNBLiquidity,
           apy: calculateApy(RGPprice, BUSD_BNBLiquidity, 1333.33),
+        },
+        {
+          liquidity: 100, //BUSD_RGPLiquidity,
+          apy: '200%', //calculateApy(RGPprice, AXS_RGPLiquidity, 2000),
+        },
+        {
+          liquidity: 100, //BUSD_BNBLiquidity,
+          apy: '300%', //calculateApy(RGPprice, AXS_BUSDLiquidity, 1333.33),
         },
       ]);
     } catch (error) {
@@ -570,6 +578,7 @@ export function FarmingPage(props) {
       const pairs = [];
       const smartFactory = await SmartFactory();
       const allLiquidityPairs = await smartFactory.allPairsLength();
+      
       for (let i = 0; i < allLiquidityPairs.toString(); i++) {
         const pairAddress = await smartFactory.allPairs(i);
         const liquidity = await LiquidityPairInstance(pairAddress);
@@ -774,7 +783,7 @@ export function FarmingPage(props) {
   );
 }
 
-FarmingPage.propTypes = {
+FarmingV2Page.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   farmingPage: PropTypes.object,
 };
@@ -804,4 +813,4 @@ export default connect(
     farmDataLoading,
     notify,
   },
-)(FarmingPage);
+)(FarmingV2Page);
