@@ -14,9 +14,8 @@ import {
   UPDATE_TOKEN_STAKED,
   UPDATE_FARM_BALANCES,
   UPDATE_FARM_ALLOWANCE,
-  FARM_DATA_LOADING
+  FARM_DATA_LOADING,
 } from './constants';
-
 
 const totalLiquidity = '';
 // const RGPBUSDLiquidity = action.payload.reserves1;
@@ -27,9 +26,9 @@ export const initialState = {
       id: '1',
       img: 'rgp.svg',
       // deposit: 'RGP',
-      deposit: "RGP",
+      deposit: 'RGP',
       earn: 'RGP',
-      type: "RGP",
+      type: 'RGP',
       ARYValue: '1235',
       totalLiquidity: '',
       tokensStaked: ['RGP', '0'],
@@ -40,14 +39,14 @@ export const initialState = {
       totalVolumePerPool: 0,
       farmingFee: 0,
       pId: 0,
-      poolAllowance: ''
+      poolAllowance: '',
     },
     {
       id: '2',
       img: 'rgp.svg',
       deposit: 'RGP-BNB',
       earn: 'RGP',
-      type: "LP",
+      type: 'LP',
       ARYValue: '1625',
       totalLiquidity: '',
       tokensStaked: ['RGP-BNB', '0'],
@@ -58,17 +57,17 @@ export const initialState = {
       totalVolumePerPool: 0,
       farmingFee: 0,
       pId: 2,
-      poolAllowance: ''
+      poolAllowance: '',
     },
     {
       id: '3',
       img: 'rgp.svg',
-      //changed from
+      // changed from
       // deposit: 'RGP-BUSD', to
-      deposit: "RGP-BUSD",
+      deposit: 'RGP-BUSD',
       earn: 'RGP',
-      type: "LP",
-      ARYValue: "725",
+      type: 'LP',
+      ARYValue: '725',
       totalLiquidity: '',
       tokensStaked: ['RGP-BUSD', '0'],
       RGPEarned: '0',
@@ -77,17 +76,17 @@ export const initialState = {
       tokenPrice: 0,
       totalVolumePerPool: 0,
       farmingFee: 0,
-      pId: 1
+      pId: 1,
     },
     {
       id: '4',
       img: 'rgp.svg',
-      //changed from
+      // changed from
       // deposit: 'BNB-BUSD', to
-      deposit: "BNB-BUSD",
+      deposit: 'BNB-BUSD',
       earn: 'RGP',
       ARYValue: '325',
-      type: "LP",
+      type: 'LP',
       totalLiquidity: '',
       tokensStaked: ['BNB-BUSD', '0'],
       RGPEarned: '0',
@@ -97,7 +96,7 @@ export const initialState = {
       totalVolumePerPool: 0,
       farmingFee: 0,
       pId: 3,
-      poolAllowance: ''
+      poolAllowance: '',
     },
   ],
   loading: false,
@@ -123,8 +122,8 @@ const farmingPageReducer = (state = initialState, action) =>
       case DEFAULT_ACTION:
         break;
       case CHANGE_FARMING_CONTENT:
-        let id = `${action.payload.symbol0}-${action.payload.symbol1}`
-        let current = draft.contents.findIndex(obj => obj.deposit === id)
+        const id = `${action.payload.symbol0}-${action.payload.symbol1}`;
+        let current = draft.contents.findIndex(obj => obj.deposit === id);
         if (current >= 0) {
           draft.contents[current].totalLiquidity =
             parseInt(action.payload.reserves1) +
@@ -132,54 +131,63 @@ const farmingPageReducer = (state = initialState, action) =>
         }
         break;
       case CHANGE_FARMING_CONTENT_TOKEN:
-        let token = action.payload.deposit
-        current = draft.contents.findIndex(obj => obj.deposit === token)
+        const token = action.payload.deposit;
+        current = draft.contents.findIndex(obj => obj.deposit === token);
         if (current >= 0) {
-          draft.contents[current].RGPEarned = parseInt(action.payload.tokenEarned).toFixed(4)
-          draft.contents[current].inflationPerDay = action.payload.inflationPerDay
-          draft.contents[current].tokenPrice = action.payload.tokenPrice
-          draft.contents[current].totalVolumePerPool = action.payload.totalVolumePerPool
-          draft.contents[current].ARYValue = action.payload.ARYValue
-          draft.contents[current].availableToken = action.payload.availableToken
-          draft.contents[current].tokensStaked[0] = action.payload.tokenStakedVal
-          draft.contents[current].tokensStaked[1] = action.payload.tokenEarnedVal
+          draft.contents[current].RGPEarned = parseInt(
+            action.payload.tokenEarned,
+          ).toFixed(4);
+          draft.contents[current].inflationPerDay =
+            action.payload.inflationPerDay;
+          draft.contents[current].tokenPrice = action.payload.tokenPrice;
+          draft.contents[current].totalVolumePerPool =
+            action.payload.totalVolumePerPool;
+          draft.contents[current].ARYValue = action.payload.ARYValue;
+          draft.contents[current].availableToken =
+            action.payload.availableToken;
+          draft.contents[current].tokensStaked[0] =
+            action.payload.tokenStakedVal;
+          draft.contents[current].tokensStaked[1] =
+            action.payload.tokenEarnedVal;
         }
-        break
+        break;
       case CHANGE_RGP_FARMING_FEE:
-        let farmingFee = action.payload.fee
-        draft.contents.forEach(obj => obj.farmingFee = farmingFee
-        )
-        break
+        const farmingFee = action.payload.fee;
+        draft.contents.forEach(obj => (obj.farmingFee = farmingFee));
+        break;
       case UPDATE_TOTAL_LIQUIDITY:
-        let totalLiquidity = action.payload
+        const totalLiquidity = action.payload;
         totalLiquidity.forEach((item, index) => {
-          draft.contents[index].totalLiquidity = item.liquidity
-          draft.contents[index].ARYValue = item.apy
-        })
+          draft.contents[index].totalLiquidity = item.liquidity;
+          draft.contents[index].ARYValue = item.apy;
+        });
         break;
       case UPDATE_TOKEN_STAKED:
-        let stakedToken = action.payload
+        const stakedToken = action.payload;
         stakedToken.forEach((item, index) => {
-          draft.contents[index].tokensStaked = [draft.contents[index].tokensStaked[0], item.staked]
-          draft.contents[index].RGPEarned = item.earned
-        })
-        break
+          draft.contents[index].tokensStaked = [
+            draft.contents[index].tokensStaked[0],
+            item.staked,
+          ];
+          draft.contents[index].RGPEarned = item.earned;
+        });
+        break;
       case UPDATE_FARM_BALANCES:
-        let balances = action.payload
+        const balances = action.payload;
         balances.forEach((item, index) => {
           draft.contents[index].availableToken = item;
-        })
-        break
+        });
+        break;
       case UPDATE_FARM_ALLOWANCE:
-        let allowances = action.payload
+        const allowances = action.payload;
         allowances.forEach((item, index) => {
           draft.contents[index].poolAllowance = item;
-        })
-        break
+        });
+        break;
 
       case FARM_DATA_LOADING:
         draft.loading = action.payload;
-        break
+        break;
       default:
         return state;
     }
