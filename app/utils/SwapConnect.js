@@ -47,11 +47,6 @@ export const router = async () =>
     SmartSwapRouter02,
     getSigner(),
   );
-console.log({masterChefV2})
-console.log({masterChef})
-console.log({SmartSwapLPTokenOne})
-console.log({SmartSwapLPTokenThree})
-console.log({SmartSwapLPToken})
 export const updateOutPutAmountForRouter = async () =>
   new ethers.Contract(
     SMART_SWAP.SMART_SWAPPING,
