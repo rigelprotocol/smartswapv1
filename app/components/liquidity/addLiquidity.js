@@ -162,6 +162,7 @@ const AddLiquidity = ({
     )}
     <Box mt={5} p={5}>
       {toSelectedToken.symbol !== 'BNB' &&
+      toSelectedToken.symbol !== 'WBNB' &&
       !hasAllowedToToken &&
         toSelectedToken.symbol !== 'SELECT A TOKEN' &&
         !insufficientBalanceButton &&
@@ -186,7 +187,8 @@ const AddLiquidity = ({
             Approve {toSelectedToken.symbol}
           </Button>
         )}
-      {fromSelectedToken.symbol !== 'BNB' && 
+      {fromSelectedToken.symbol !== 'BNB' &&
+       fromSelectedToken.symbol !== 'WBNB' &&
       !hasAllowedFromToken &&
         fromSelectedToken.symbol !== 'SELECT A TOKEN' &&
         fromValue >= 0 &&

@@ -1,12 +1,20 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import React, { useState } from 'react';
+import OrderHistory from './OrderHistory';
 import styles from '../../styles/history.css';
-import Empty from './EmptyHistory';
+import useGetHistory from './useGetHistory';
 
-export default function Home() {
+export function Home(props) {
   const [show, setShow] = useState(false);
 
+  const { wallet } = props.wallet;
+
+  const { historyData, isLoading } = useGetHistory(wallet);
+
+  // console.log("......: wallet", historyData)
   return (
     <Box className={styles.container}>
       <Flex
@@ -36,20 +44,39 @@ export default function Home() {
               className={styles.icon}
             />
           ) : (
-              <AddIcon
-                w={6}
-                h={6}
-                color="gray.400"
-                cursor="pointer"
-                onClick={() => {
-                  setShow(true);
-                }}
-                className={styles.icon}
-              />
-            )}
+            <AddIcon
+              w={6}
+              h={6}
+              color="gray.400"
+              cursor="pointer"
+              onClick={() => {
+                setShow(true);
+              }}
+              className={styles.icon}
+            />
+          )}
         </Flex>
       </Flex>
-      {show && <Empty />}
+
+      <Box overflowY="auto" maxH={460} >
+        {show &&
+          historyData &&
+          historyData.map(data => (
+            <OrderHistory
+              key={data.blockNumber}
+              data={data}
+              loading={isLoading}
+              dataIsEmpty={historyData.length < 1}
+            />
+          ))}
+      </Box>
     </Box>
   );
 }
+
+Home.propTypes = {
+  wallet: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = ({ wallet }) => ({ wallet });
+export default connect(mapStateToProps)(Home);
