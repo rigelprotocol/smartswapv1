@@ -42,6 +42,7 @@ import {
   smartSwapLPTokenPoolOne,
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
+  smartSwapV2LPToken,
 } from 'utils/SwapConnect';
 
 import { tokenList } from '../../utils/constants';
@@ -163,23 +164,25 @@ export function FarmingV2Page(props) {
   const getFarmData = async () => {
     props.farmDataLoading(true);
     try {
-      const [specialPool, pool1, pool2, pool3] = await Promise.all([
+      const [specialPool, pool1, pool2, pool3, pool4] = await Promise.all([
         RGPSpecialPool(),
         smartSwapLPTokenPoolOne(),
         smartSwapLPTokenPoolTwo(),
         smartSwapLPTokenPoolThree(),
+        smartSwapV2LPToken(),
       ]);
-
       const [
         rgpTotalStaking,
         pool1Reserve,
         pool2Reserve,
         pool3Reserve,
+        pool4Reserve,
       ] = await Promise.all([
         specialPool.totalStaking(),
         pool1.getReserves(),
         pool2.getReserves(),
         pool3.getReserves(),
+        pool4.getReserves(),
       ]);
 
       const RGPprice = ethers.utils.formatUnits(
@@ -193,12 +196,19 @@ export function FarmingV2Page(props) {
       const BUSD_RGPLiquidity = ethers.utils
         .formatEther(pool1Reserve[0].mul(2))
         .toString();
-
+        
       const RGP_BNBLiquidity = ethers.utils
         .formatUnits(pool2Reserve[0].mul(Math.floor(BNBprice * 1000 * 2)), 21)
         .toString();
 
       const BUSD_BNBLiquidity = getBusdBnbLiquidity(pool3, pool3Reserve);
+      const AXS_BUSDLiquidity = ethers.utils
+            .formatEther(pool4Reserve[1].mul(2))
+            .toString();
+    const AXS_RGPLiquidity = ethers.utils
+    .formatEther(pool4Reserve[0].mul(2))
+    .toString();
+          
       props.updateTotalLiquidity([
         {
           liquidity: RGPLiquidity,
@@ -217,16 +227,15 @@ export function FarmingV2Page(props) {
           apy: calculateApy(RGPprice, BUSD_BNBLiquidity, 1333.33),
         },
         {
-          liquidity: 100, // BUSD_RGPLiquidity,
-          apy: '200%', // calculateApy(RGPprice, AXS_RGPLiquidity, 2000),
+          liquidity: AXS_RGPLiquidity,
+          apy: calculateApy(RGPprice, AXS_RGPLiquidity, 2000),
         },
         {
-          liquidity: 100, // BUSD_BNBLiquidity,
-          apy: '300%', // calculateApy(RGPprice, AXS_BUSDLiquidity, 1333.33),
+          liquidity: AXS_BUSDLiquidity,
+          apy: calculateApy(RGPprice, AXS_BUSDLiquidity, 1333.33),
         },
       ]);
     } catch (error) {
-      console.log(error);
       if (!toast.isActive(id)) {
         showErrorToast();
       }
@@ -248,6 +257,21 @@ export function FarmingV2Page(props) {
         .toString();
     }
     return BUSD_BNBLiquidity;
+  };
+
+  const getAxsBusdLiquidity = (pool4, pool4Reserve) => {
+    const pool3Testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
+    let AXS_BUSDLiquidity;
+    if (pool4 && pool4.address === pool3Testnet) {
+      AXS_BUSDLiquidity = ethers.utils
+        .formatEther(pool4Reserve[0].mul(2))
+        .toString();
+    } else {
+      AXS_BUSDLiquidity = ethers.utils
+        .formatEther(pool4Reserve[1].mul(2))
+        .toString();
+    }
+    return AXS_BUSDLiquidity;
   };
 
   const getBnbPrice = (pool3, pool3Reserve) => {
@@ -288,7 +312,6 @@ export function FarmingV2Page(props) {
         ]);
         return RGPStakedEarned;
       } catch (error) {
-        console.log(error);
         return error;
       }
     }

@@ -89,6 +89,21 @@ export const smartSwapLPToken = async () =>
     getSigner(),
   );
 
+  // router contract where trx is made for both liquidity and swap
+export const smartSwapV2LPToken = async () =>
+new ethers.Contract(
+  SMART_SWAP.masterChefV2PoolOne,
+  SmartSwapLPToken,
+  getSigner(),
+);
+
+export const smartSwapV2Token = async () =>
+new ethers.Contract(
+  SMART_SWAP.masterChefV2,
+  SmartSwapLPToken,
+  getSigner(),
+);
+
 // contract for LPs tokens
 export const BNBRGPliquidityProviderTokensContract = async () =>
   new ethers.Contract(
