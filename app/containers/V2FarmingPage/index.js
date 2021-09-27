@@ -32,7 +32,6 @@ import RGPFarmInfo from 'components/yieldfarm-v2/RGPFarmInfo';
 import { notify } from 'containers/NoticeProvider/actions';
 
 import {
-  masterChefContract,
   masterChefV2Contract,
   rigelToken,
   router,
@@ -84,8 +83,8 @@ export function FarmingV2Page(props) {
   useEffect(() => {
     const RGPfarmingFee = async () => {
       if (wallet.signer !== 'signer') {
-        const masterChef = await masterChefContract();
-        const minFarmingFee = await masterChef.farmingFee();
+        const masterChefV2 = await masterChefV2Contract();
+        const minFarmingFee = await masterChefV2.farmingFee();
         const fee = Web3.utils.fromWei(minFarmingFee.toString());
         setFarmingFee(fee);
         props.changeRGPFarmingFee({
@@ -307,7 +306,6 @@ export function FarmingV2Page(props) {
   const getTokenStaked = async () => {
     try {
       if (wallet.address != '0x') {
-        const masterChef = await masterChefContract();
         const masterChefV2 = await masterChefV2Contract();
 
         const [
@@ -323,14 +321,14 @@ export function FarmingV2Page(props) {
           poolFiveStaked,
 
         ] = await Promise.all([
-          masterChef.pendingRigel(1, wallet.address),
-          masterChef.pendingRigel(2, wallet.address),
-          masterChef.pendingRigel(3, wallet.address),
+          masterChefV2.pendingRigel(1, wallet.address),
+          masterChefV2.pendingRigel(2, wallet.address),
+          masterChefV2.pendingRigel(3, wallet.address),
           masterChefV2.pendingRigel(4, wallet.address),
           masterChefV2.pendingRigel(5, wallet.address),
-          masterChef.userInfo(1, wallet.address),
-          masterChef.userInfo(2, wallet.address),
-          masterChef.userInfo(3, wallet.address),
+          masterChefV2.userInfo(1, wallet.address),
+          masterChefV2.userInfo(2, wallet.address),
+          masterChefV2.userInfo(3, wallet.address),
           masterChefV2.userInfo(4, wallet.address),
           masterChefV2.userInfo(5, wallet.address),
 
@@ -467,7 +465,7 @@ export function FarmingV2Page(props) {
   // changeTokenUserInfo
   const changeTokenUserInfo = async val => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
+      const lpTokens = await masterChefV2Contract();
       const pid = val;
 
       return await lpTokens.userInfo(pid, wallet.address);
@@ -522,32 +520,32 @@ export function FarmingV2Page(props) {
 
   const poolInForAlloc = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract();
-      const rigelAllocPoint = await masterChef.poolInfo(0);
+      const masterChefV2 = await masterChefV2Contract();
+      const rigelAllocPoint = await masterChefV2.poolInfo(0);
       return rigelAllocPoint.allocPoint.toString();
     }
   };
 
   const poolInForAllocPoolTwo = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract();
-      const rigelAllocPoint = await masterChef.poolInfo(1);
+      const masterChefV2 = await masterChefV2Contract();
+      const rigelAllocPoint = await masterChefV2.poolInfo(1);
       return rigelAllocPoint.allocPoint.toString();
     }
   };
 
   const poolInForAllocPoolThree = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract();
-      const rigelAllocPoint = await masterChef.poolInfo(2);
+      const masterChefV2 = await masterChefV2Contract();
+      const rigelAllocPoint = await masterChefV2.poolInfo(2);
       return rigelAllocPoint.allocPoint;
     }
   };
 
   const poolInForAllocPoolFour = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract();
-      const rigelAllocPoint = await masterChef.poolInfo(3);
+      const masterChefV2 = await masterChefV2Contract();
+      const rigelAllocPoint = await masterChefV2.poolInfo(3);
       return rigelAllocPoint.allocPoint;
     }
   };
