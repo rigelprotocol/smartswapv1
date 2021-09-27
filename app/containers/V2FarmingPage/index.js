@@ -33,6 +33,7 @@ import { notify } from 'containers/NoticeProvider/actions';
 
 import {
   masterChefContract,
+  masterChefV2Contract,
   rigelToken,
   router,
   erc20Token,
@@ -259,20 +260,6 @@ export function FarmingV2Page(props) {
     return BUSD_BNBLiquidity;
   };
 
-  const getAxsBusdLiquidity = (pool4, pool4Reserve) => {
-    const pool3Testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
-    let AXS_BUSDLiquidity;
-    if (pool4 && pool4.address === pool3Testnet) {
-      AXS_BUSDLiquidity = ethers.utils
-        .formatEther(pool4Reserve[0].mul(2))
-        .toString();
-    } else {
-      AXS_BUSDLiquidity = ethers.utils
-        .formatEther(pool4Reserve[1].mul(2))
-        .toString();
-    }
-    return AXS_BUSDLiquidity;
-  };
 
   const getBnbPrice = (pool3, pool3Reserve) => {
     const pool3testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
@@ -321,21 +308,32 @@ export function FarmingV2Page(props) {
     try {
       if (wallet.address != '0x') {
         const masterChef = await masterChefContract();
+        const masterChefV2 = await masterChefV2Contract();
 
         const [
           poolOneEarned,
           poolTwoEarned,
           poolThreeEarned,
+          poolFourEarned,
+          poolFiveEarned,
           poolOneStaked,
           poolTwoStaked,
           poolThreeStaked,
+          poolFourStaked,
+          poolFiveStaked,
+
         ] = await Promise.all([
           masterChef.pendingRigel(1, wallet.address),
           masterChef.pendingRigel(2, wallet.address),
           masterChef.pendingRigel(3, wallet.address),
+          masterChefV2.pendingRigel(4, wallet.address),
+          masterChefV2.pendingRigel(5, wallet.address),
           masterChef.userInfo(1, wallet.address),
           masterChef.userInfo(2, wallet.address),
           masterChef.userInfo(3, wallet.address),
+          masterChefV2.userInfo(4, wallet.address),
+          masterChefV2.userInfo(5, wallet.address),
+
         ]);
 
         const RGPStakedEarned = await specialPoolStaked();
@@ -362,6 +360,14 @@ export function FarmingV2Page(props) {
           {
             staked: formatBigNumber(poolThreeStaked.amount),
             earned: formatBigNumber(poolThreeEarned),
+          },
+          {
+            staked: formatBigNumber(poolFourStaked.amount),
+            earned: formatBigNumber(poolFourEarned),
+          },
+          {
+            staked: formatBigNumber(poolFiveStaked.amount),
+            earned: formatBigNumber(poolFiveEarned),
           },
         ]);
         setInitialLoad(false);
@@ -392,11 +398,13 @@ export function FarmingV2Page(props) {
   const getFarmTokenBalance = async () => {
     if (wallet.address != '0x') {
       try {
-        const [RGPToken, poolOne, poolTwo, poolThree] = await Promise.all([
+        const [RGPToken, poolOne, poolTwo, poolThree, poolFour] = await Promise.all([
           rigelToken(),
           smartSwapLPTokenPoolOne(),
           smartSwapLPTokenPoolTwo(),
           smartSwapLPTokenPoolThree(),
+          smartSwapV2LPToken(),
+
         ]);
 
         const [
@@ -404,11 +412,15 @@ export function FarmingV2Page(props) {
           poolOneBalance,
           poolTwoBalance,
           poolThreeBalance,
+          poolFourBalance,
+          poolFiveBalance,
         ] = await Promise.all([
           RGPToken.balanceOf(wallet.address),
           poolOne.balanceOf(wallet.address),
           poolTwo.balanceOf(wallet.address),
           poolThree.balanceOf(wallet.address),
+          poolFour.balanceOf(wallet.address),
+          poolFour.balanceOf(wallet.address),
         ]);
 
         props.updateFarmBalances([
@@ -416,6 +428,9 @@ export function FarmingV2Page(props) {
           formatBigNumber(poolTwoBalance),
           formatBigNumber(poolOneBalance),
           formatBigNumber(poolThreeBalance),
+          formatBigNumber(poolFourBalance),
+          formatBigNumber(poolFiveBalance),
+
         ]);
       } catch (error) {
         console.error(error);
