@@ -42,6 +42,7 @@ import {
   smartSwapLPTokenPoolOne,
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
+  smartSwapV2LPToken,
 } from 'utils/SwapConnect';
 
 import { tokenList } from '../../utils/constants';
@@ -56,14 +57,13 @@ import {
   farmDataLoading,
 } from './actions';
 
-export function FarmingPage(props) {
+export function FarmingV2Page(props) {
   const history = useHistory();
 
   const { wallet } = props.wallet;
   const [isAddressWhitelist, setIsAddressWhitelist] = useState(false);
   const [dataInputToGetWhiteListed] = useState('');
   const [farmingModal, setFarmingModal] = useState(false);
-  const [closeInfoModal, setCloseInfoModal] = useState(true);
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true);
   const [setShowModalWithInput] = useState(false);
@@ -164,23 +164,27 @@ export function FarmingPage(props) {
   const getFarmData = async () => {
     props.farmDataLoading(true);
     try {
-      const [specialPool, pool1, pool2, pool3] = await Promise.all([
+      const [specialPool, pool1, pool2, pool3, pool4] = await Promise.all([
         RGPSpecialPool(),
         smartSwapLPTokenPoolOne(),
         smartSwapLPTokenPoolTwo(),
         smartSwapLPTokenPoolThree(),
+        smartSwapV2LPToken(),
       ]);
       const [
         rgpTotalStaking,
         pool1Reserve,
         pool2Reserve,
         pool3Reserve,
+        pool4Reserve,
       ] = await Promise.all([
         specialPool.totalStaking(),
         pool1.getReserves(),
         pool2.getReserves(),
         pool3.getReserves(),
+        pool4.getReserves(),
       ]);
+
       const RGPprice = ethers.utils.formatUnits(
         pool1Reserve[0].mul(1000).div(pool1Reserve[1]),
         3,
@@ -192,12 +196,19 @@ export function FarmingPage(props) {
       const BUSD_RGPLiquidity = ethers.utils
         .formatEther(pool1Reserve[0].mul(2))
         .toString();
-
+        
       const RGP_BNBLiquidity = ethers.utils
         .formatUnits(pool2Reserve[0].mul(Math.floor(BNBprice * 1000 * 2)), 21)
         .toString();
 
       const BUSD_BNBLiquidity = getBusdBnbLiquidity(pool3, pool3Reserve);
+      const AXS_BUSDLiquidity = ethers.utils
+            .formatEther(pool4Reserve[1].mul(2))
+            .toString();
+    const AXS_RGPLiquidity = ethers.utils
+    .formatEther(pool4Reserve[0].mul(2))
+    .toString();
+          
       props.updateTotalLiquidity([
         {
           liquidity: RGPLiquidity,
@@ -215,9 +226,16 @@ export function FarmingPage(props) {
           liquidity: BUSD_BNBLiquidity,
           apy: calculateApy(RGPprice, BUSD_BNBLiquidity, 1333.33),
         },
+        {
+          liquidity: AXS_RGPLiquidity,
+          apy: calculateApy(RGPprice, AXS_RGPLiquidity, 2000),
+        },
+        {
+          liquidity: AXS_BUSDLiquidity,
+          apy: calculateApy(RGPprice, AXS_BUSDLiquidity, 1333.33),
+        },
       ]);
     } catch (error) {
-      console.log(error);
       if (!toast.isActive(id)) {
         showErrorToast();
       }
@@ -240,6 +258,7 @@ export function FarmingPage(props) {
     }
     return BUSD_BNBLiquidity;
   };
+
 
   const getBnbPrice = (pool3, pool3Reserve) => {
     const pool3testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
@@ -279,7 +298,6 @@ export function FarmingPage(props) {
         ]);
         return RGPStakedEarned;
       } catch (error) {
-        console.log(error);
         return error;
       }
     }
@@ -294,17 +312,28 @@ export function FarmingPage(props) {
           poolOneEarned,
           poolTwoEarned,
           poolThreeEarned,
+          poolFourEarned,
+          poolFiveEarned,
           poolOneStaked,
           poolTwoStaked,
           poolThreeStaked,
+          poolFourStaked,
+          poolFiveStaked,
+
         ] = await Promise.all([
           masterChefV2.pendingRigel(1, wallet.address),
           masterChefV2.pendingRigel(2, wallet.address),
           masterChefV2.pendingRigel(3, wallet.address),
+          masterChefV2.pendingRigel(4, wallet.address),
+          masterChefV2.pendingRigel(5, wallet.address),
           masterChefV2.userInfo(1, wallet.address),
           masterChefV2.userInfo(2, wallet.address),
           masterChefV2.userInfo(3, wallet.address),
+          masterChefV2.userInfo(4, wallet.address),
+          masterChefV2.userInfo(5, wallet.address),
+
         ]);
+
         const RGPStakedEarned = await specialPoolStaked();
         let RGPStaked;
         let RGPEarned;
@@ -329,6 +358,14 @@ export function FarmingPage(props) {
           {
             staked: formatBigNumber(poolThreeStaked.amount),
             earned: formatBigNumber(poolThreeEarned),
+          },
+          {
+            staked: formatBigNumber(poolFourStaked.amount),
+            earned: formatBigNumber(poolFourEarned),
+          },
+          {
+            staked: formatBigNumber(poolFiveStaked.amount),
+            earned: formatBigNumber(poolFiveEarned),
           },
         ]);
         setInitialLoad(false);
@@ -359,11 +396,13 @@ export function FarmingPage(props) {
   const getFarmTokenBalance = async () => {
     if (wallet.address != '0x') {
       try {
-        const [RGPToken, poolOne, poolTwo, poolThree] = await Promise.all([
+        const [RGPToken, poolOne, poolTwo, poolThree, poolFour] = await Promise.all([
           rigelToken(),
           smartSwapLPTokenPoolOne(),
           smartSwapLPTokenPoolTwo(),
           smartSwapLPTokenPoolThree(),
+          smartSwapV2LPToken(),
+
         ]);
 
         const [
@@ -371,11 +410,15 @@ export function FarmingPage(props) {
           poolOneBalance,
           poolTwoBalance,
           poolThreeBalance,
+          poolFourBalance,
+          poolFiveBalance,
         ] = await Promise.all([
           RGPToken.balanceOf(wallet.address),
           poolOne.balanceOf(wallet.address),
           poolTwo.balanceOf(wallet.address),
           poolThree.balanceOf(wallet.address),
+          poolFour.balanceOf(wallet.address),
+          poolFour.balanceOf(wallet.address),
         ]);
 
         props.updateFarmBalances([
@@ -383,6 +426,9 @@ export function FarmingPage(props) {
           formatBigNumber(poolTwoBalance),
           formatBigNumber(poolOneBalance),
           formatBigNumber(poolThreeBalance),
+          formatBigNumber(poolFourBalance),
+          formatBigNumber(poolFiveBalance),
+
         ]);
       } catch (error) {
         console.error(error);
@@ -570,6 +616,7 @@ export function FarmingPage(props) {
       const pairs = [];
       const smartFactory = await SmartFactory();
       const allLiquidityPairs = await smartFactory.allPairsLength();
+
       for (let i = 0; i < allLiquidityPairs.toString(); i++) {
         const pairAddress = await smartFactory.allPairs(i);
         const liquidity = await LiquidityPairInstance(pairAddress);
@@ -619,7 +666,7 @@ export function FarmingPage(props) {
 
   return (
     <div>
-      <Layout title="Farming Page">
+      <Layout title="V2 Farming Page">
         <InfoModal
           isOpenModal={isOpenModal}
           onCloseModal={onCloseModal}
@@ -632,37 +679,32 @@ export function FarmingPage(props) {
         >
           <RGPFarmInfo />
         </InfoModal>
-        {closeInfoModal &&
-            <Box mx={[5, 10, 15, 20]} my={4}>
-            <Alert color="#FFFFFF" background="#726AC8" borderRadius="8px">
-              <AlertSvg />
-              <AlertDescription
-                fontFamily="Inter"
-                fontSize={{ base: '16px', md: '18px', lg: '20px' }}
-                fontWeight="500"
-                lineHeight="24px"
-                letterSpacing="0em"
-                textAlign="left"
-                padding="30px"
-              >
-                This is the V2 Farm. You should migrate your stakings from V1 Farm
-              </AlertDescription>
-              <CloseButton
-                position="absolute"
-                height="14px"
-                width="14px"
-                background="#726AC8"
-                color="#fff"
-                right="20px"
-                border="2px solid #726AC8"
-                textAign="center"
-                cursor="pointer"
-                onClick={()=>setCloseInfoModal(false)}
-              />
-            </Alert>
-          </Box>
-
-       }
+        <Box mx={[5, 10, 15, 20]} my={4}>
+          <Alert color="#FFFFFF" background="#726AC8" borderRadius="8px">
+            <AlertSvg />
+            <AlertDescription
+              fontFamily="Inter"
+              fontSize={{ base: '16px', md: '18px', lg: '20px' }}
+              fontWeight="500"
+              lineHeight="24px"
+              letterSpacing="0em"
+              textAlign="left"
+              padding="30px"
+            >
+              This is the V2 Farm. You should migrate your stakings from V1 Farm
+            </AlertDescription>
+            <CloseButton
+              position="absolute"
+              height="14px"
+              width="14px"
+              background="#726AC8"
+              color="#fff"
+              right="20px"
+              border="2px solid #726AC8"
+              textAign="center"
+            />
+          </Alert>
+        </Box>
         <Flex justifyContent="flex-end">
           <Tabs
             variant="soft-rounded"
@@ -748,7 +790,7 @@ export function FarmingPage(props) {
                       <Text>Total Liquidity</Text>
                       <Text />
                     </Flex>
-                    {props.farming.contents.map(content => (
+                    {props.farmingv2.contents.map(content => (
                       <YieldFarm
                         isAddressWhitelist={isAddressWhitelist}
                         onOpenModal={onOpenModal}
@@ -757,7 +799,7 @@ export function FarmingPage(props) {
                         key={content.id}
                         wallet={wallet}
                         refreshTokenStaked={refreshTokenStaked}
-                        loadingTotalLiquidity={props.farming.loading}
+                        loadingTotalLiquidity={props.farmingv2.loading}
                       />
                     ))}
                   </Box>
@@ -774,13 +816,13 @@ export function FarmingPage(props) {
   );
 }
 
-FarmingPage.propTypes = {
+FarmingV2Page.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   farmingPage: PropTypes.object,
 };
 
-const mapStateToProps = ({ farming, wallet }) => ({
-  farming,
+const mapStateToProps = ({ farmingv2, wallet }) => ({
+  farmingv2,
   wallet,
 });
 
@@ -804,4 +846,4 @@ export default connect(
     farmDataLoading,
     notify,
   },
-)(FarmingPage);
+)(FarmingV2Page);
