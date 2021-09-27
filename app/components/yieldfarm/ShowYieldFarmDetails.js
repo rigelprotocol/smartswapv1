@@ -36,15 +36,18 @@ import {
   smartSwapLPTokenPoolOne,
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
+  erc20Token,
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
 import { updateFarmAllowances } from '../../containers/FarmingPage/actions';
+import { notify } from '../../containers/NoticeProvider/actions';
 
 const ShowYieldFarmDetails = ({
   content,
   wallet,
   refreshTokenStaked,
   updateFarmAllowances,
+  notify,
 }) => {
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
@@ -74,6 +77,7 @@ const ShowYieldFarmDetails = ({
     onClose: onCloseModal,
   } = useDisclosure();
   const [approvalLoading, setApprovalLoading] = useState(false);
+  const [farmingFee, setFarmingFee] = useState(10);
 
   const toast = useToast();
   const addPrevBal = 'addPrevBal';
@@ -85,7 +89,7 @@ const ShowYieldFarmDetails = ({
     if (depositTokenValue !== '') {
       if (
         isNaN(parseFloat(depositTokenValue)) ||
-        !Math.sign(parseFloat(depositTokenValue)) || 
+        !Math.sign(parseFloat(depositTokenValue)) ||
         Math.sign(parseFloat(depositTokenValue)) == -1
       ) {
         setDepositInputHasError(true);
@@ -99,13 +103,27 @@ const ShowYieldFarmDetails = ({
     }
   }, [depositTokenValue]);
 
+  //set farming fee based on network
+
+  useEffect(() => {
+    const RGPfarmingFee = async () => {
+      if (wallet.signer !== 'signer') {
+        const masterChef = await masterChefContract();
+        const minFarmingFee = await masterChef.farmingFee();
+        const fee = Web3.utils.fromWei(minFarmingFee.toString());
+        setFarmingFee(fee);
+      }
+    };
+    RGPfarmingFee();
+  }, [wallet]);
+
   useEffect(() => {
     setInputHasError(false);
     setErrorButtonText('');
     if (unstakeToken !== '') {
       if (
         isNaN(parseFloat(unstakeToken)) ||
-        !Math.sign(parseFloat(unstakeToken)) || 
+        !Math.sign(parseFloat(unstakeToken)) ||
         Math.sign(parseFloat(unstakeToken)) == -1
       ) {
         setInputHasError(true);
@@ -212,6 +230,18 @@ const ShowYieldFarmDetails = ({
     };
     return stakeSubscription();
   }, [wallet.address]);
+
+  const tokenBalance = async () => {
+    try {
+      if (wallet.address != '0x') {
+        const token = await rigelToken();
+        const balance = await token.balanceOf(wallet.address);
+        return ethers.utils.formatEther(balance);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getAllowances = async () => {
     try {
@@ -461,19 +491,44 @@ const ShowYieldFarmDetails = ({
   // deposit for the Liquidity Provider tokens for
   const BNBRGPlpDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
-      const pid = 2;
-      const data = await lpTokens.deposit(
-        pid,
-        ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-      const { confirmations, status } = await fetchTransactionData(data);
-      callRefreshFarm(confirmations, status);
+      const balance = await tokenBalance();
+      if (parseFloat(content.tokensStaked[1]) == 0) {
+        if (balance < farmingFee) {
+          notify({
+            title: 'Insufficient Balance',
+            body: `Insufficient RGP, you need at least ${farmingFee} RGP to enter this pool`,
+            type: 'error',
+          });
+        } else {
+          const lpTokens = await masterChefContract();
+          const pid = 2;
+          const data = await lpTokens.deposit(
+            pid,
+            ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
+            {
+              from: wallet.address,
+              gasLimit: 250000,
+              gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+            },
+          );
+          const { confirmations, status } = await fetchTransactionData(data);
+          callRefreshFarm(confirmations, status);
+        }
+      } else {
+        const lpTokens = await masterChefContract();
+        const pid = 2;
+        const data = await lpTokens.deposit(
+          pid,
+          ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
+          {
+            from: wallet.address,
+            gasLimit: 250000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
+        const { confirmations, status } = await fetchTransactionData(data);
+        callRefreshFarm(confirmations, status);
+      }
     }
   };
 
@@ -569,19 +624,44 @@ const ShowYieldFarmDetails = ({
   // deposit for the Liquidity Provider tokens for
   const RGPBUSDlpDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
-      const pid = 1;
-      const data = await lpTokens.deposit(
-        pid,
-        ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-      const { confirmations, status } = await fetchTransactionData(data);
-      callRefreshFarm(confirmations, status);
+      const balance = await tokenBalance();
+      if (parseFloat(content.tokensStaked[1]) == 0) {
+        if (balance < farmingFee) {
+          notify({
+            title: 'Insufficient Balance',
+            body: `Insufficient RGP, you need at least ${farmingFee} RGP to enter this pool`,
+            type: 'error',
+          });
+        } else {
+          const lpTokens = await masterChefContract();
+          const pid = 1;
+          const data = await lpTokens.deposit(
+            pid,
+            ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
+            {
+              from: wallet.address,
+              gasLimit: 250000,
+              gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+            },
+          );
+          const { confirmations, status } = await fetchTransactionData(data);
+          callRefreshFarm(confirmations, status);
+        }
+      } else {
+        const lpTokens = await masterChefContract();
+        const pid = 1;
+        const data = await lpTokens.deposit(
+          pid,
+          ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
+          {
+            from: wallet.address,
+            gasLimit: 250000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
+        const { confirmations, status } = await fetchTransactionData(data);
+        callRefreshFarm(confirmations, status);
+      }
     }
   };
 
@@ -631,17 +711,40 @@ const ShowYieldFarmDetails = ({
 
   const BNBBUSDlpDeposit = async depositToken => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
-      const pid = 3;
-      const data = await lpTokens.deposit(
-        pid,
-        ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
+      const balance = await tokenBalance();
+      if (parseFloat(content.tokensStaked[1]) == 0) {
+        if (balance < farmingFee) {
+          notify({
+            title: 'Insufficient Balance',
+            body: `Insufficient RGP, you need at least ${farmingFee} RGP to enter this pool`,
+            type: 'error',
+          });
+        } else {
+          const lpTokens = await masterChefContract();
+          const pid = 3;
+          const data = await lpTokens.deposit(
+            pid,
+            ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
+            {
+              from: wallet.address,
+              gasLimit: 250000,
+              gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+            },
+          );
+        }
+      } else {
+        const lpTokens = await masterChefContract();
+        const pid = 3;
+        const data = await lpTokens.deposit(
+          pid,
+          ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
+          {
+            from: wallet.address,
+            gasLimit: 250000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
+      }
     }
   };
 
@@ -934,15 +1037,15 @@ const ShowYieldFarmDetails = ({
               borderRadius="12px"
               bg={
                 approveValueForRGP &&
-                  approveValueForOtherToken &&
-                  content.tokensStaked[1] <= 0
+                approveValueForOtherToken &&
+                content.tokensStaked[1] <= 0
                   ? '#444159'
                   : 'rgba(64, 186,213, 0.1)'
               }
               color={
                 approveValueForRGP &&
-                  approveValueForOtherToken &&
-                  content.tokensStaked[1] <= 0
+                approveValueForOtherToken &&
+                content.tokensStaked[1] <= 0
                   ? 'rgba(190, 190, 190, 1)'
                   : '#40BAD5'
               }
@@ -1097,14 +1200,14 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
@@ -1117,11 +1220,11 @@ const ShowYieldFarmDetails = ({
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
-                    onClick={() => { }}
+                    onClick={() => {}}
                   >
                     {depositErrorButtonText}
                   </Button>
@@ -1245,14 +1348,14 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
@@ -1265,11 +1368,11 @@ const ShowYieldFarmDetails = ({
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
-                    onClick={() => { }}
+                    onClick={() => {}}
                   >
                     {errorButtonText}
                   </Button>
@@ -1281,14 +1384,14 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
@@ -1301,7 +1404,7 @@ const ShowYieldFarmDetails = ({
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                        unstakeButtonValue === 'Confirmed'
+                      unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
@@ -1355,5 +1458,6 @@ export default connect(
   mapStateToProps,
   {
     updateFarmAllowances,
+    notify,
   },
 )(ShowYieldFarmDetails);

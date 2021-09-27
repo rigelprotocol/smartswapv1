@@ -44,7 +44,6 @@ import {
   updateFarmBalances,
   farmDataLoading,
 } from './actions';
-// import masterChefContract from "../../utils/abis/masterChef.json"
 export function FarmingPage(props) {
   const { wallet, wallet_props } = props.wallet;
 
@@ -152,7 +151,6 @@ export function FarmingPage(props) {
         pool3.getReserves(),
 
       ])
-
       const RGPprice = ethers.utils.formatUnits(pool1Reserve[0]
         .mul(1000)
         .div(pool1Reserve[1]), 3);

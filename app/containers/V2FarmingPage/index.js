@@ -32,7 +32,7 @@ import RGPFarmInfo from 'components/yieldfarm-v2/RGPFarmInfo';
 import { notify } from 'containers/NoticeProvider/actions';
 
 import {
-  masterChefContract,
+  masterChefV2Contract,
   rigelToken,
   router,
   erc20Token,
@@ -63,6 +63,7 @@ export function FarmingPage(props) {
   const [isAddressWhitelist, setIsAddressWhitelist] = useState(false);
   const [dataInputToGetWhiteListed] = useState('');
   const [farmingModal, setFarmingModal] = useState(false);
+  const [closeInfoModal, setCloseInfoModal] = useState(true);
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true);
   const [setShowModalWithInput] = useState(false);
@@ -82,8 +83,8 @@ export function FarmingPage(props) {
   useEffect(() => {
     const RGPfarmingFee = async () => {
       if (wallet.signer !== 'signer') {
-        const masterChef = await masterChefContract();
-        const minFarmingFee = await masterChef.farmingFee();
+        const masterChefV2 = await masterChefV2Contract();
+        const minFarmingFee = await masterChefV2.farmingFee();
         const fee = Web3.utils.fromWei(minFarmingFee.toString());
         setFarmingFee(fee);
         props.changeRGPFarmingFee({
@@ -169,7 +170,6 @@ export function FarmingPage(props) {
         smartSwapLPTokenPoolTwo(),
         smartSwapLPTokenPoolThree(),
       ]);
-
       const [
         rgpTotalStaking,
         pool1Reserve,
@@ -181,7 +181,6 @@ export function FarmingPage(props) {
         pool2.getReserves(),
         pool3.getReserves(),
       ]);
-
       const RGPprice = ethers.utils.formatUnits(
         pool1Reserve[0].mul(1000).div(pool1Reserve[1]),
         3,
@@ -289,7 +288,7 @@ export function FarmingPage(props) {
   const getTokenStaked = async () => {
     try {
       if (wallet.address != '0x') {
-        const masterChef = await masterChefContract();
+        const masterChefV2 = await masterChefV2Contract();
 
         const [
           poolOneEarned,
@@ -299,14 +298,13 @@ export function FarmingPage(props) {
           poolTwoStaked,
           poolThreeStaked,
         ] = await Promise.all([
-          masterChef.pendingRigel(1, wallet.address),
-          masterChef.pendingRigel(2, wallet.address),
-          masterChef.pendingRigel(3, wallet.address),
-          masterChef.userInfo(1, wallet.address),
-          masterChef.userInfo(2, wallet.address),
-          masterChef.userInfo(3, wallet.address),
+          masterChefV2.pendingRigel(1, wallet.address),
+          masterChefV2.pendingRigel(2, wallet.address),
+          masterChefV2.pendingRigel(3, wallet.address),
+          masterChefV2.userInfo(1, wallet.address),
+          masterChefV2.userInfo(2, wallet.address),
+          masterChefV2.userInfo(3, wallet.address),
         ]);
-
         const RGPStakedEarned = await specialPoolStaked();
         let RGPStaked;
         let RGPEarned;
@@ -421,7 +419,7 @@ export function FarmingPage(props) {
   // changeTokenUserInfo
   const changeTokenUserInfo = async val => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefContract();
+      const lpTokens = await masterChefV2Contract();
       const pid = val;
 
       return await lpTokens.userInfo(pid, wallet.address);
@@ -476,32 +474,32 @@ export function FarmingPage(props) {
 
   const poolInForAlloc = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract();
-      const rigelAllocPoint = await masterChef.poolInfo(0);
+      const masterChefV2 = await masterChefV2Contract();
+      const rigelAllocPoint = await masterChefV2.poolInfo(0);
       return rigelAllocPoint.allocPoint.toString();
     }
   };
 
   const poolInForAllocPoolTwo = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract();
-      const rigelAllocPoint = await masterChef.poolInfo(1);
+      const masterChefV2 = await masterChefV2Contract();
+      const rigelAllocPoint = await masterChefV2.poolInfo(1);
       return rigelAllocPoint.allocPoint.toString();
     }
   };
 
   const poolInForAllocPoolThree = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract();
-      const rigelAllocPoint = await masterChef.poolInfo(2);
+      const masterChefV2 = await masterChefV2Contract();
+      const rigelAllocPoint = await masterChefV2.poolInfo(2);
       return rigelAllocPoint.allocPoint;
     }
   };
 
   const poolInForAllocPoolFour = async () => {
     if (wallet.signer !== 'signer') {
-      const masterChef = await masterChefContract();
-      const rigelAllocPoint = await masterChef.poolInfo(3);
+      const masterChefV2 = await masterChefV2Contract();
+      const rigelAllocPoint = await masterChefV2.poolInfo(3);
       return rigelAllocPoint.allocPoint;
     }
   };
@@ -634,32 +632,37 @@ export function FarmingPage(props) {
         >
           <RGPFarmInfo />
         </InfoModal>
-        <Box mx={[5, 10, 15, 20]} my={4}>
-          <Alert color="#FFFFFF" background="#726AC8" borderRadius="8px">
-            <AlertSvg />
-            <AlertDescription
-              fontFamily="Inter"
-              fontSize={{ base: '16px', md: '18px', lg: '20px' }}
-              fontWeight="500"
-              lineHeight="24px"
-              letterSpacing="0em"
-              textAlign="left"
-              padding="30px"
-            >
-              This is the V2 Farm. You should migrate your stakings from V1 Farm
-            </AlertDescription>
-            <CloseButton
-              position="absolute"
-              height="14px"
-              width="14px"
-              background="#726AC8"
-              color="#fff"
-              right="20px"
-              border="2px solid #726AC8"
-              textAign="center"
-            />
-          </Alert>
-        </Box>
+        {closeInfoModal &&
+            <Box mx={[5, 10, 15, 20]} my={4}>
+            <Alert color="#FFFFFF" background="#726AC8" borderRadius="8px">
+              <AlertSvg />
+              <AlertDescription
+                fontFamily="Inter"
+                fontSize={{ base: '16px', md: '18px', lg: '20px' }}
+                fontWeight="500"
+                lineHeight="24px"
+                letterSpacing="0em"
+                textAlign="left"
+                padding="30px"
+              >
+                This is the V2 Farm. You should migrate your stakings from V1 Farm
+              </AlertDescription>
+              <CloseButton
+                position="absolute"
+                height="14px"
+                width="14px"
+                background="#726AC8"
+                color="#fff"
+                right="20px"
+                border="2px solid #726AC8"
+                textAign="center"
+                cursor="pointer"
+                onClick={()=>setCloseInfoModal(false)}
+              />
+            </Alert>
+          </Box>
+
+       }
         <Flex justifyContent="flex-end">
           <Tabs
             variant="soft-rounded"
