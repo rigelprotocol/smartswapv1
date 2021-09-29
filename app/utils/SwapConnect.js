@@ -80,6 +80,18 @@ export const smartSwapLPTokenPoolThree = async () =>
     SmartSwapLPTokenThree,
     getSigner(),
   );
+export const smartSwapLPTokenV2PoolFour = async () =>
+  new ethers.Contract(
+    SMART_SWAP.masterChefV2PoolFour,
+    SmartSwapLPTokenThree,
+    getSigner(),
+  );
+export const smartSwapLPTokenV2PoolFive = async () =>
+  new ethers.Contract(
+    SMART_SWAP.masterChefV2PoolFive,
+    SmartSwapLPTokenThree,
+    getSigner(),
+  );
 
 // router contract where trx is made for both liquidity and swap
 export const smartSwapLPToken = async () =>

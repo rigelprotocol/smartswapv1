@@ -42,6 +42,8 @@ import {
   smartSwapLPTokenPoolOne,
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
+  smartSwapLPTokenV2PoolFour,
+  smartSwapLPTokenV2PoolFive,
   smartSwapV2LPToken,
 } from 'utils/SwapConnect';
 
@@ -164,12 +166,13 @@ export function FarmingV2Page(props) {
   const getFarmData = async () => {
     props.farmDataLoading(true);
     try {
-      const [specialPool, pool1, pool2, pool3, pool4] = await Promise.all([
+      const [specialPool, pool1, pool2, pool3, pool4, pool5] = await Promise.all([
         RGPSpecialPool(),
         smartSwapLPTokenPoolOne(),
         smartSwapLPTokenPoolTwo(),
         smartSwapLPTokenPoolThree(),
-        smartSwapV2LPToken(),
+        smartSwapLPTokenV2PoolFour(),
+        smartSwapLPTokenV2PoolFive(),
       ]);
       const [
         rgpTotalStaking,
@@ -177,38 +180,36 @@ export function FarmingV2Page(props) {
         pool2Reserve,
         pool3Reserve,
         pool4Reserve,
+        pool5Reserve,
       ] = await Promise.all([
         specialPool.totalStaking(),
         pool1.getReserves(),
         pool2.getReserves(),
         pool3.getReserves(),
         pool4.getReserves(),
+        pool5.getReserves(),
       ]);
-
       const RGPprice = ethers.utils.formatUnits(
         pool1Reserve[0].mul(1000).div(pool1Reserve[1]),
         3,
       );
       const BNBprice = getBnbPrice(pool3, pool3Reserve);
+      const AXSprice = getAXSPrice(pool5, pool5Reserve);
       const RGPLiquidity = ethers.utils
         .formatUnits(rgpTotalStaking.mul(Math.floor(1000 * RGPprice)), 21)
         .toString();
       const BUSD_RGPLiquidity = ethers.utils
         .formatEther(pool1Reserve[0].mul(2))
         .toString();
-        
+
       const RGP_BNBLiquidity = ethers.utils
         .formatUnits(pool2Reserve[0].mul(Math.floor(BNBprice * 1000 * 2)), 21)
         .toString();
-
       const BUSD_BNBLiquidity = getBusdBnbLiquidity(pool3, pool3Reserve);
-      const AXS_BUSDLiquidity = ethers.utils
-            .formatEther(pool4Reserve[1].mul(2))
-            .toString();
+      const AXS_BUSDLiquidity = getAXSBUSDLiquidity(pool5, pool5Reserve);
     const AXS_RGPLiquidity = ethers.utils
-    .formatEther(pool4Reserve[0].mul(2))
-    .toString();
-          
+    .formatUnits(pool5Reserve[1].mul(Math.floor(AXSprice * 1000 * 2)), 21)
+        .toString();
       props.updateTotalLiquidity([
         {
           liquidity: RGPLiquidity,
@@ -256,7 +257,23 @@ export function FarmingV2Page(props) {
         .formatEther(pool3Reserve[1].mul(2))
         .toString();
     }
+
     return BUSD_BNBLiquidity;
+  };
+  const getAXSBUSDLiquidity = (pool5, pool5Reserve) => {
+    const pool5Testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
+    let AXS_BUSDLiquidity;
+    if (pool5 && pool5.address === pool5Testnet) {
+      AXS_BUSDLiquidity = ethers.utils
+        .formatEther(pool5Reserve[0].mul(2))
+        .toString();
+    } else {
+      AXS_BUSDLiquidity = ethers.utils
+        .formatEther(pool5Reserve[1].mul(2))
+        .toString();
+    }
+
+    return AXS_BUSDLiquidity;
   };
 
 
@@ -275,6 +292,27 @@ export function FarmingV2Page(props) {
       );
     }
     return BNBprice;
+  };
+  const getAXSPrice = (pool5, pool5Reserve) => {
+    const pool5testnet = '0x816b823d9C7F30327B2c626DEe4aD731Dc9D3641';
+    let AXSprice;
+    if (pool5 && pool5.address === pool5testnet) {
+      AXSprice = ethers.utils.formatUnits(
+        pool5Reserve[0].mul(1000).div(pool5Reserve[1]),
+        3,
+      );
+    } else {
+      AXSprice = ethers.utils.formatUnits(
+        pool5Reserve[1].mul(1000).div(pool5Reserve[0]),
+        3,
+      );
+    }
+    console.log(ethers.utils
+      .formatEther(pool5Reserve[0].mul(1000).div(pool5Reserve[1]),18)
+      .toString(),ethers.utils
+      .formatEther( pool5Reserve[1].mul(1000).div(pool5Reserve[0],18)
+      .toString()))
+    return AXSprice;
   };
 
   const showErrorToast = () =>

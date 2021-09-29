@@ -36,6 +36,8 @@ import {
   smartSwapLPTokenPoolOne,
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
+  smartSwapLPTokenV2PoolFour,
+  smartSwapLPTokenV2PoolFive
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
 import { updateFarmAllowances } from '../../containers/FarmingPage/actions';
@@ -331,6 +333,26 @@ const ShowYieldFarmDetails = ({
         return !(rgpApproval.toString() <= 0);
       }
     };
+    const AXSRGPAllowance = async () => {
+      if (wallet.signer !== 'signer') {
+        const poolFour = await smartSwapLPTokenV2PoolFour();
+        const rgpApproval = await poolFour.allowance(
+          wallet.address,
+          SMART_SWAP.masterChefV2,
+        );
+        return !(rgpApproval.toString() <= 0);
+      }
+    };
+    const AXSBUSDAllowance = async () => {
+      if (wallet.signer !== 'signer') {
+        const poolFive = await smartSwapLPTokenV2PoolFive();
+        const rgpApproval = await poolFive.allowance(
+          wallet.address,
+          SMART_SWAP.masterChefV2,
+        );
+        return !(rgpApproval.toString() <= 0);
+      }
+    };
     const checkForApproval = async () => {
       if (content.deposit === 'RGP') {
         setIsPoolRGP(true);
@@ -348,6 +370,14 @@ const ShowYieldFarmDetails = ({
         const approvalForBNBBUSD = await BNBBUSDAllowance();
         const approvalForRGP = await rgpAllowancePool();
         changeApprovalButton(approvalForBNBBUSD, approvalForRGP);
+      }else if(content.deposit ==='AXS-RGP'){
+        const approveForAXSRGP = await AXSRGPAllowance()
+        const rgpApproval3 = await rgpAllowancePool()
+        changeApprovalButton(approveForAXSRGP, rgpApproval3);
+      }else if(content.deposit ==='AXS-BUSD'){
+        const approveForAXSBUSD = await AXSBUSDAllowance()
+        const rgpApproval4 = await rgpAllowancePool()
+        changeApprovalButton(approveForAXSBUSD, rgpApproval4);
       }
     };
 
@@ -625,6 +655,46 @@ const ShowYieldFarmDetails = ({
       }
     }
   };
+  const AXSRGPlpApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      try {
+        const poolFour = await smartSwapLPTokenV2PoolFour();
+        const walletBal = (await poolFour.balanceOf(wallet.address)) + 400e18;
+        const data = await poolFour.approve(SMART_SWAP.masterChefV2, walletBal, {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        });
+        setApprovalLoading(true);
+        const { confirmations, status } = await fetchTransactionData(data);
+        getAllowances();
+      } catch (e) {
+        props.showErrorMessage(e);
+      } finally {
+        setApprovalLoading(false);
+      }
+    }
+  };
+  const AXSBUSDlpApproval = async () => {
+    if (wallet.signer !== 'signer') {
+      try {
+        const poolFive = await smartSwapLPTokenV2PoolFive();
+        const walletBal = (await poolFive.balanceOf(wallet.address)) + 400e18;
+        const data = await poolFive.approve(SMART_SWAP.masterChefV2, walletBal, {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        });
+        setApprovalLoading(true);
+        const { confirmations, status } = await fetchTransactionData(data);
+        getAllowances();
+      } catch (e) {
+        props.showErrorMessage(e);
+      } finally {
+        setApprovalLoading(false);
+      }
+    }
+  };
   // ............................................END LP FOR RGP-BUSD TOKENS .........................................
 
   // .......................................... START LP FOR BNB-BUSD TOKENS ...............................
@@ -879,7 +949,28 @@ const ShowYieldFarmDetails = ({
         } else {
           await RGPBUSDlpApproval();
         }
-
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
+      } else if(val === "AXS-RGP"){
+        if (!approveValueForOtherToken && !approveValueForRGP) {
+          await RGPApproval();
+          await AXSRGPlpApproval();
+        } else if (!approveValueForRGP) {
+          await RGPApproval();
+        } else {
+          await AXSRGPlpApproval();
+        }
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
+      }else if(val === "AXS-BUSD"){
+        if (!approveValueForOtherToken && !approveValueForRGP) {
+          await RGPApproval();
+          await AXSBUSDlpApproval();
+        } else if (!approveValueForRGP) {
+          await RGPApproval();
+        } else {
+          await AXSBUSDlpApproval();
+        }
         setApproveValueForOtherToken(true);
         setApproveValueForRGP(true);
       } else if (val === 'RGP') {
