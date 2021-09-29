@@ -488,11 +488,10 @@ const ShowYieldFarmDetails = ({
 
   // .......................................... START LP FOR BNB-RGP TOKENS ...............................
 
-  // deposit for the Liquidity Provider tokens for
-  const BNBRGPlpDeposit = async depositToken => {
+  // deposit for the Liquidity Provider tokens for all pools
+  const LPDeposit = async pid => {
     if (wallet.signer !== 'signer') {
       const lpTokens = await masterChefV2Contract();
-      const pid = 2;
       const data = await lpTokens.deposit(
         pid,
         ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
@@ -596,24 +595,6 @@ const ShowYieldFarmDetails = ({
 
   // .......................................... START LP FOR RGP-BUSD TOKENS ...............................
 
-  // deposit for the Liquidity Provider tokens for
-  const RGPBUSDlpDeposit = async depositToken => {
-    if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefV2Contract();
-      const pid = 1;
-      const data = await lpTokens.deposit(
-        pid,
-        ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-      const { confirmations, status } = await fetchTransactionData(data);
-      callRefreshFarm(confirmations, status);
-    }
-  };
 
   // withdrawal for the Liquidity Provider tokens for
   const RGPBUSDlpTokensWithdrawal = async depositToken => {
@@ -699,21 +680,6 @@ const ShowYieldFarmDetails = ({
 
   // .......................................... START LP FOR BNB-BUSD TOKENS ...............................
 
-  const BNBBUSDlpDeposit = async depositToken => {
-    if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefV2Contract();
-      const pid = 3;
-      const data = await lpTokens.deposit(
-        pid,
-        ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-    }
-  };
 
   // withdrawal for the Liquidity Provider tokens for
   const BNBBUSDlpTokensWithdrawal = async depositToken => {
@@ -862,13 +828,15 @@ const ShowYieldFarmDetails = ({
         if (val === 'RGP') {
           await RGPuseStake(depositTokenValue);
         } else if (val === 'RGP-BNB') {
-          await BNBRGPlpDeposit(depositTokenValue);
+          await LPDeposit(2);
         } else if (val === 'BNB-BUSD') {
-          await BNBBUSDlpDeposit(depositTokenValue);
+          await LPDeposit(3);
         } else if (val === 'RGP-BUSD') {
-          await RGPBUSDlpDeposit(depositTokenValue);
-        } else {
-          // await RGPuseStake(depositTokenValue)
+          await LPDeposit(1);
+        } else if (val === 'AXS-RGP') {
+          await LPDeposit(4);
+        } else if (val === 'AXS-BUSD') {
+          await LPDeposit(5);
         }
       }
     } catch (e) {

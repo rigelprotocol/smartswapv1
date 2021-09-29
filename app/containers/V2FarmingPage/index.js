@@ -434,12 +434,13 @@ export function FarmingV2Page(props) {
   const getFarmTokenBalance = async () => {
     if (wallet.address != '0x') {
       try {
-        const [RGPToken, poolOne, poolTwo, poolThree, poolFour] = await Promise.all([
+        const [RGPToken, poolOne, poolTwo, poolThree, poolFour,poolFive] = await Promise.all([
           rigelToken(),
           smartSwapLPTokenPoolOne(),
           smartSwapLPTokenPoolTwo(),
           smartSwapLPTokenPoolThree(),
-          smartSwapV2LPToken(),
+          smartSwapLPTokenV2PoolFour(),
+          smartSwapLPTokenV2PoolFive(),
 
         ]);
 
@@ -456,7 +457,7 @@ export function FarmingV2Page(props) {
           poolTwo.balanceOf(wallet.address),
           poolThree.balanceOf(wallet.address),
           poolFour.balanceOf(wallet.address),
-          poolFour.balanceOf(wallet.address),
+          poolFive.balanceOf(wallet.address),
         ]);
 
         props.updateFarmBalances([
