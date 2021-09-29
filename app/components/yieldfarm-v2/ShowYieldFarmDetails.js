@@ -36,6 +36,8 @@ import {
   smartSwapLPTokenPoolOne,
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
+  smartSwapLPTokenV2PoolFour,
+  smartSwapLPTokenV2PoolFive
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
 import { updateFarmAllowances } from '../../containers/FarmingPage/actions';
@@ -287,44 +289,9 @@ const ShowYieldFarmDetails = ({
         }
       }
     };
-
-    const rgpAllowancePool = async () => {
+    const poolAllowance = async contract => {
       if (wallet.signer !== 'signer') {
-        if (wallet.signer !== 'signer') {
-          const rgp = await rigelToken();
-          const rgpApproval = await rgp.allowance(
-            wallet.address,
-            SMART_SWAP.masterChefV2,
-          );
-          return !(rgpApproval.toString() <= 0);
-        }
-      }
-    };
-
-    const BNBRGPAllowance = async () => {
-      if (wallet.signer !== 'signer') {
-        const poolTwo = await smartSwapLPTokenPoolTwo();
-        const rgpApproval = await poolTwo.allowance(
-          wallet.address,
-          SMART_SWAP.masterChefV2,
-        );
-        return !(rgpApproval.toString() <= 0);
-      }
-    };
-    const BUSDRGPAllowance = async () => {
-      if (wallet.signer !== 'signer') {
-        const poolOne = await smartSwapLPTokenPoolOne();
-        const rgpApproval = await poolOne.allowance(
-          wallet.address,
-          SMART_SWAP.masterChefV2,
-        );
-        return !(rgpApproval.toString() <= 0);
-      }
-    };
-    const BNBBUSDAllowance = async () => {
-      if (wallet.signer !== 'signer') {
-        const poolThree = await smartSwapLPTokenPoolThree();
-        const rgpApproval = await poolThree.allowance(
+        const rgpApproval = await contract.allowance(
           wallet.address,
           SMART_SWAP.masterChefV2,
         );
@@ -336,18 +303,30 @@ const ShowYieldFarmDetails = ({
         setIsPoolRGP(true);
         const specialPoolApproval = await specailPoolAllowance();
         changeApprovalButton(true, specialPoolApproval);
-      } else if (content.deposit === 'RGP-BNB') {
-        const approvalForRGPBNB = await BNBRGPAllowance();
-        const rgpApproval2 = await rgpAllowancePool();
-        changeApprovalButton(approvalForRGPBNB, rgpApproval2);
-      } else if (content.deposit === 'RGP-BUSD') {
-        const approvalForRGPBUSD = await BUSDRGPAllowance();
-        const rgpApproval1 = await rgpAllowancePool();
-        changeApprovalButton(approvalForRGPBUSD, rgpApproval1);
-      } else if (content.deposit === 'BNB-BUSD') {
-        const approvalForBNBBUSD = await BNBBUSDAllowance();
-        const approvalForRGP = await rgpAllowancePool();
-        changeApprovalButton(approvalForBNBBUSD, approvalForRGP);
+      }else{
+        const rgp = await rigelToken();
+        const rgpApproval = await poolAllowance(rgp);
+        if (content.deposit === 'RGP-BNB') {
+          const poolTwo = await smartSwapLPTokenPoolTwo();
+          const approvalForRGPBNB = await poolAllowance(poolTwo);
+          changeApprovalButton(approvalForRGPBNB, rgpApproval);
+        } else if (content.deposit === 'RGP-BUSD') {
+          const poolOne = await smartSwapLPTokenPoolOne();
+          const approvalForRGPBUSD = await poolAllowance(poolOne);
+          changeApprovalButton(approvalForRGPBUSD, rgpApproval);
+        } else if (content.deposit === 'BNB-BUSD') {
+          const poolThree = await smartSwapLPTokenPoolThree();
+          const approvalForBNBBUSD = await poolAllowance(poolThree);
+          changeApprovalButton(approvalForBNBBUSD, rgpApproval);
+        }else if(content.deposit ==='AXS-RGP'){
+          const poolFour = await smartSwapLPTokenV2PoolFour();
+          const approveForAXSRGP = await poolAllowance(poolFour)
+          changeApprovalButton(approveForAXSRGP, rgpApproval);
+        }else if(content.deposit ==='AXS-BUSD'){
+          const poolFive = await smartSwapLPTokenV2PoolFive();
+          const approveForAXSBUSD = await poolAllowance(poolFive)
+          changeApprovalButton(approveForAXSBUSD, rgpApproval);
+        }
       }
     };
 
@@ -458,11 +437,10 @@ const ShowYieldFarmDetails = ({
 
   // .......................................... START LP FOR BNB-RGP TOKENS ...............................
 
-  // deposit for the Liquidity Provider tokens for
-  const BNBRGPlpDeposit = async depositToken => {
+  // deposit for the Liquidity Provider tokens for all pools
+  const LPDeposit = async pid => {
     if (wallet.signer !== 'signer') {
       const lpTokens = await masterChefV2Contract();
-      const pid = 2;
       const data = await lpTokens.deposit(
         pid,
         ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
@@ -477,11 +455,10 @@ const ShowYieldFarmDetails = ({
     }
   };
 
-  // withdrawal for the Liquidity Provider tokens for
-  const BNBRGPlpTokensWithdrawal = async depositToken => {
+  // withdrawal for the Liquidity Provider tokens for all pools
+  const tokensWithdrawal = async pid => {
     if (wallet.signer !== 'signer') {
       const lpTokens = await masterChefV2Contract();
-      const pid = 2;
       const data = await lpTokens.withdraw(
         pid,
         ethers.utils.parseEther(unstakeToken.toString(), 'ether'),
@@ -497,16 +474,47 @@ const ShowYieldFarmDetails = ({
     }
   };
 
-  const approveLPToken = LPToken => {
+  const LPApproval = async contract => {
+    if (wallet.signer !== 'signer') {
+      try {
+        const walletBal = (await contract.balanceOf(wallet.address)) + 400e18;
+        const data = await contract.approve(SMART_SWAP.masterChefV2, walletBal, {
+          from: wallet.address,
+          gasLimit: 150000,
+          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+        });
+        setApprovalLoading(true);
+        const { confirmations, status } = await fetchTransactionData(data);
+        getAllowances();
+      } catch (e) {
+        props.showErrorMessage(e);
+      } finally {
+        setApprovalLoading(false);
+      }
+    }
+  };
+
+  const approveLPToken = async LPToken => {
     switch (LPToken) {
       case 'RGP-BUSD':
-        RGPBUSDlpApproval();
+        const poolOne = await smartSwapLPTokenPoolOne();
+        LPApproval(poolOne);
         break;
       case 'RGP-BNB':
-        BNBRGPlpApproval();
+        const poolTwo = await smartSwapLPTokenPoolTwo();
+        LPApproval(poolTwo);
         break;
       case 'BNB-BUSD':
-        BNBBUSDlpApproval();
+        const poolThree = await smartSwapLPTokenPoolThree();
+        LPApproval(poolThree);
+        break;
+      case 'AXS-RGP':
+        const poolFour = await smartSwapLPTokenV2PoolFour();
+        LPApproval(poolFour);
+        break;
+      case 'AXS-BUSD':
+        const poolFive = await smartSwapLPTokenV2PoolFive();
+        LPApproval(poolFive);
         break;
       default:
         RGPApproval();
@@ -541,150 +549,9 @@ const ShowYieldFarmDetails = ({
     </Button>
   );
 
-  const BNBRGPlpApproval = async () => {
-    if (wallet.signer !== 'signer') {
-      try {
-        const slpTwo = await smartSwapLPTokenPoolTwo();
-        const walletBal = (await slpTwo.balanceOf(wallet.address)) + 400e18;
-        const data = await slpTwo.approve(SMART_SWAP.masterChefV2, walletBal, {
-          from: wallet.address,
-          gasLimit: 150000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        });
-        setApprovalLoading(true);
-        const { confirmations, status } = await fetchTransactionData(data);
-        getAllowances();
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setApprovalLoading(false);
-      }
-    }
-  };
 
-  // ............................................END LP FOR BNB-RGP TOKENS .........................................
-
-  // .......................................... START LP FOR RGP-BUSD TOKENS ...............................
-
-  // deposit for the Liquidity Provider tokens for
-  const RGPBUSDlpDeposit = async depositToken => {
-    if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefV2Contract();
-      const pid = 1;
-      const data = await lpTokens.deposit(
-        pid,
-        ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-      const { confirmations, status } = await fetchTransactionData(data);
-      callRefreshFarm(confirmations, status);
-    }
-  };
-
-  // withdrawal for the Liquidity Provider tokens for
-  const RGPBUSDlpTokensWithdrawal = async depositToken => {
-    if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefV2Contract();
-      const pid = 1;
-      const data = await lpTokens.withdraw(
-        pid,
-        ethers.utils.parseEther(unstakeToken.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-      const { confirmations, status } = await fetchTransactionData(data);
-      // dispatch the getTokenStaked action from here when data changes
-      callRefreshFarm(confirmations, status);
-    }
-  };
-
-  const RGPBUSDlpApproval = async () => {
-    if (wallet.signer !== 'signer') {
-      try {
-        const poolOne = await smartSwapLPTokenPoolOne();
-        const walletBal = (await poolOne.balanceOf(wallet.address)) + 400e18;
-        const data = await poolOne.approve(SMART_SWAP.masterChefV2, walletBal, {
-          from: wallet.address,
-          gasLimit: 150000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        });
-        setApprovalLoading(true);
-        const { confirmations, status } = await fetchTransactionData(data);
-        getAllowances();
-      } catch (e) {
-        props.showErrorMessage(e);
-      } finally {
-        setApprovalLoading(false);
-      }
-    }
-  };
   // ............................................END LP FOR RGP-BUSD TOKENS .........................................
 
-  // .......................................... START LP FOR BNB-BUSD TOKENS ...............................
-
-  const BNBBUSDlpDeposit = async depositToken => {
-    if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefV2Contract();
-      const pid = 3;
-      const data = await lpTokens.deposit(
-        pid,
-        ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-    }
-  };
-
-  // withdrawal for the Liquidity Provider tokens for
-  const BNBBUSDlpTokensWithdrawal = async depositToken => {
-    if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefV2Contract();
-      const pid = 3;
-      const data = await lpTokens.withdraw(
-        pid,
-        ethers.utils.parseEther(unstakeToken.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-      const { confirmations, status } = await fetchTransactionData(data);
-      // dispatch the getTokenStaked action from here when data changes
-      callRefreshFarm(confirmations, status);
-    }
-  };
-
-  const BNBBUSDlpApproval = async () => {
-    if (wallet.signer !== 'signer') {
-      try {
-        const poolThree = await smartSwapLPTokenPoolThree();
-        const walletBal = (await poolThree.balanceOf(wallet.address)) + 400e18;
-        const data = await poolThree.approve(SMART_SWAP.masterChefV2, walletBal, {
-          from: wallet.address,
-          gasLimit: 150000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        });
-        setApprovalLoading(true);
-        const { confirmations, status } = await fetchTransactionData(data);
-        getAllowances();
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setApprovalLoading(false);
-      }
-    }
-  };
 
   // ............................................END LP FOR BNB-BUSD TOKENS .........................................
   const harvest = async pId => {
@@ -792,13 +659,15 @@ const ShowYieldFarmDetails = ({
         if (val === 'RGP') {
           await RGPuseStake(depositTokenValue);
         } else if (val === 'RGP-BNB') {
-          await BNBRGPlpDeposit(depositTokenValue);
+          await LPDeposit(2);
         } else if (val === 'BNB-BUSD') {
-          await BNBBUSDlpDeposit(depositTokenValue);
+          await LPDeposit(3);
         } else if (val === 'RGP-BUSD') {
-          await RGPBUSDlpDeposit(depositTokenValue);
-        } else {
-          // await RGPuseStake(depositTokenValue)
+          await LPDeposit(1);
+        } else if (val === 'AXS-RGP') {
+          await LPDeposit(4);
+        } else if (val === 'AXS-BUSD') {
+          await LPDeposit(5);
         }
       }
     } catch (e) {
@@ -811,6 +680,7 @@ const ShowYieldFarmDetails = ({
     }
   };
   const confirmUnstakeDeposit = async val => {
+
     setUnstakeButtonValue('Pending Confirmation');
     openSpinModal('Unstaking...', `Unstaking ${unstakeToken} ${val}`);
     try {
@@ -818,11 +688,15 @@ const ShowYieldFarmDetails = ({
         if (val === 'RGP') {
           await RGPUnstake();
         } else if (val === 'RGP-BNB') {
-          await BNBRGPlpTokensWithdrawal();
+          await tokensWithdrawal(2);
         } else if (val === 'BNB-BUSD') {
-          await BNBBUSDlpTokensWithdrawal();
+          await tokensWithdrawal(3);
         } else if (val === 'RGP-BUSD') {
-          await RGPBUSDlpTokensWithdrawal();
+          await tokensWithdrawal(1);
+        } else if (val === 'AXS-RGP') {
+          await tokensWithdrawal(4);
+        } else if (val === 'AXS-BUSD') {
+          await tokensWithdrawal(5);
         }
       }
     } catch (e) {
@@ -849,37 +723,63 @@ const ShowYieldFarmDetails = ({
     // try {
     if (wallet.signer !== 'signer') {
       if (val === 'RGP-BNB') {
+        const poolTwo = await smartSwapLPTokenPoolTwo();
         if (!approveValueForOtherToken && !approveValueForRGP) {
           await RGPApproval();
-          await BNBRGPlpApproval();
+          await LPApproval(poolTwo);
         } else if (!approveValueForRGP) {
           await RGPApproval();
         } else {
-          await BNBRGPlpApproval();
+          await LPApproval(poolTwo);
         }
         setApproveValueForOtherToken(true);
         setApproveValueForRGP(true);
       } else if (val === 'BNB-BUSD') {
+        const poolThree = await smartSwapLPTokenPoolThree();
         if (!approveValueForOtherToken && !approveValueForRGP) {
           await RGPApproval();
-          await BNBBUSDlpApproval();
+          await LPApproval(poolThree);
         } else if (!approveValueForRGP) {
           await RGPApproval();
         } else {
-          await BNBBUSDlpApproval();
+          await LPApproval(poolThree);
         }
         setApproveValueForOtherToken(true);
         setApproveValueForRGP(true);
       } else if (val === 'RGP-BUSD') {
+        const poolOne = await smartSwapLPTokenPoolOne();
         if (!approveValueForOtherToken && !approveValueForRGP) {
           await RGPApproval();
-          await RGPBUSDlpApproval();
+          await LPApproval(poolOne);
         } else if (!approveValueForRGP) {
           await RGPApproval();
         } else {
-          await RGPBUSDlpApproval();
+          await LPApproval(poolOne);
         }
-
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
+      } else if(val === "AXS-RGP"){
+        const poolFour = await smartSwapLPTokenV2PoolFour();
+        if (!approveValueForOtherToken && !approveValueForRGP) {
+          await RGPApproval();
+          await LPApproval(poolFour);
+        } else if (!approveValueForRGP) {
+          await RGPApproval();
+        } else {
+          await LPApproval(poolFour);
+        }
+        setApproveValueForOtherToken(true);
+        setApproveValueForRGP(true);
+      }else if(val === "AXS-BUSD"){
+        const poolFive = await smartSwapLPTokenV2PoolFive();
+        if (!approveValueForOtherToken && !approveValueForRGP) {
+          await RGPApproval();
+          await LPApproval(poolFive);
+        } else if (!approveValueForRGP) {
+          await RGPApproval();
+        } else {
+          await LPApproval(poolFive);
+        }
         setApproveValueForOtherToken(true);
         setApproveValueForRGP(true);
       } else if (val === 'RGP') {
