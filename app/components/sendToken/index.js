@@ -230,59 +230,71 @@ export const Manual = props => {
   const calculatePriceImpact = async () => {
     const rout = await router();
     if (routeAddress.length === 2) {
-      const price = await rout.getAmountsOut(
-        '1000000000000000000',
-        routeAddress,
-      );
+      try {
+        const price = await rout.getAmountsOut(
+          '1000000000000000000',
+          routeAddress,
+        );
 
-      const marketPrice = ethers.utils.formatEther(price[1].toString());
-      const swapPrice = amountIn / fromAmount;
-      const priceDifference = swapPrice - marketPrice;
-      const priceImpact = (priceDifference / marketPrice) * 100;
-      setPriceImpact(parseFloat(priceImpact).toFixed(2));
+        const marketPrice = ethers.utils.formatEther(price[1].toString());
+        const swapPrice = amountIn / fromAmount;
+        const priceDifference = swapPrice - marketPrice;
+        const priceImpact = (priceDifference / marketPrice) * 100;
+        setPriceImpact(parseFloat(priceImpact).toFixed(2));
+      } catch (e) {
+        setPriceImpact(0);
+      }
     } else if (routeAddress.length === 3) {
-      const price1 = await rout.getAmountsOut('1000000000000000000', [
-        routeAddress[0],
-        routeAddress[1],
-      ]);
+      try {
+        const price1 = await rout.getAmountsOut('1000000000000000000', [
+          routeAddress[0],
+          routeAddress[1],
+        ]);
 
-      const price1String = await price1.toString().split(',');
+        const price1String = price1.toString().split(',');
 
-      const price2 = await rout.getAmountsOut(price1String[1], [
-        routeAddress[1],
-        routeAddress[2],
-      ]);
+        const price2 = await rout.getAmountsOut(price1String[1], [
+          routeAddress[1],
+          routeAddress[2],
+        ]);
 
-      const marketPrice = ethers.utils.formatEther(price2[1].toString());
-      const swapPrice = amountIn / fromAmount;
-      const priceDifference = swapPrice - marketPrice;
-      const priceImpact = (priceDifference / marketPrice) * 100;
-      setPriceImpact(parseFloat(priceImpact).toFixed(2));
+        const marketPrice = ethers.utils.formatEther(price2[1].toString());
+        const swapPrice = amountIn / fromAmount;
+        const priceDifference = swapPrice - marketPrice;
+        const priceImpact = (priceDifference / marketPrice) * 100;
+        setPriceImpact(parseFloat(priceImpact).toFixed(2));
+      } catch (e) {
+        setPriceImpact(0);
+      }
     } else if (routeAddress.length === 4) {
-      const price1 = await rout.getAmountsOut('1000000000000000000', [
-        routeAddress[0],
-        routeAddress[1],
-      ]);
+      try {
+        const price1 = await rout.getAmountsOut('1000000000000000000', [
+          routeAddress[0],
+          routeAddress[1],
+        ]);
 
-      const price1String = await price1.toString().split(',');
+        const price1String = price1.toString().split(',');
 
-      const price2 = await rout.getAmountsOut(price1String[1], [
-        routeAddress[1],
-        routeAddress[2],
-      ]);
+        const price2 = await rout.getAmountsOut(price1String[1], [
+          routeAddress[1],
+          routeAddress[2],
+        ]);
 
-      const price2String = await price2.toString().split(',');
+        const price2String = price2.toString().split(',');
 
-      const price3 = await rout.getAmountsOut(price2String[1], [
-        routeAddress[2],
-        routeAddress[3],
-      ]);
+        const price3 = await rout.getAmountsOut(price2String[1], [
+          routeAddress[2],
+          routeAddress[3],
+        ]);
 
-      const marketPrice = ethers.utils.formatEther(price3[1].toString());
-      const swapPrice = amountIn / fromAmount;
-      const priceDifference = swapPrice - marketPrice;
-      const priceImpact = (priceDifference / marketPrice) * 100;
-      setPriceImpact(parseFloat(priceImpact).toFixed(2));
+        const marketPrice = ethers.utils.formatEther(price3[1].toString());
+        const swapPrice = amountIn / fromAmount;
+        const priceDifference = swapPrice - marketPrice;
+        const priceImpact = (priceDifference / marketPrice) * 100;
+        setPriceImpact(parseFloat(priceImpact).toFixed(2));
+      } catch (e) {
+        setPriceImpact(0);
+      }
     } else {
       setPriceImpact(0);
     }
@@ -1817,8 +1829,6 @@ async function update_RGP_ETH_SendAmount(
         Web3.utils.toWei(askAmount.toString()),
         field != 'to' ? [fromPath, toPath] : [toPath, fromPath],
       );
-      // * calculateSlippage()
-      console.log('setting amount in');
 
       return field != 'to'
         ? setAmountIn(
