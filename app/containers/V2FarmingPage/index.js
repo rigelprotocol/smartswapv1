@@ -26,6 +26,7 @@ import {
 import { useHistory } from 'react-router-dom';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm-v2/YieldFarm';
+import StakingFarm from 'components/stakingFarm/StakingFarm';
 import InfoModal from 'components/modal/InfoModal';
 import FarmingPageModal from 'components/yieldfarm-v2/FarmingPageModal';
 import RGPFarmInfo from 'components/yieldfarm-v2/RGPFarmInfo';
@@ -157,7 +158,7 @@ export function FarmingV2Page(props) {
       const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) {}
+    } catch (error) { }
   };
   useEffect(() => {
     getFarmData();
@@ -207,8 +208,8 @@ export function FarmingV2Page(props) {
         .toString();
       const BUSD_BNBLiquidity = getBusdBnbLiquidity(pool3, pool3Reserve);
       const AXS_BUSDLiquidity = getAXSBUSDLiquidity(pool5, pool5Reserve);
-    const AXS_RGPLiquidity = ethers.utils
-    .formatUnits(pool5Reserve[1].mul(Math.floor(AXSprice * 1000 * 2)), 21)
+      const AXS_RGPLiquidity = ethers.utils
+        .formatUnits(pool5Reserve[1].mul(Math.floor(AXSprice * 1000 * 2)), 21)
         .toString();
       props.updateTotalLiquidity([
         {
@@ -217,23 +218,23 @@ export function FarmingV2Page(props) {
         },
         {
           liquidity: RGP_BNBLiquidity,
-          apy: calculateApy(RGPprice, RGP_BNBLiquidity, 3333.33),
+          apy: calculateApy(RGPprice, RGP_BNBLiquidity, 953.3333333),
         },
         {
           liquidity: BUSD_RGPLiquidity,
-          apy: calculateApy(RGPprice, BUSD_RGPLiquidity, 2000),
+          apy: calculateApy(RGPprice, BUSD_RGPLiquidity, 3336.666667),
         },
         {
           liquidity: BUSD_BNBLiquidity,
-          apy: calculateApy(RGPprice, BUSD_BNBLiquidity, 1333.33),
+          apy: calculateApy(RGPprice, BUSD_BNBLiquidity, 476.6666667),
         },
         {
           liquidity: AXS_RGPLiquidity,
-          apy: calculateApy(RGPprice, AXS_RGPLiquidity, 2000),
+          apy: calculateApy(RGPprice, AXS_RGPLiquidity, 715),
         },
         {
           liquidity: AXS_BUSDLiquidity,
-          apy: calculateApy(RGPprice, AXS_BUSDLiquidity, 1333.33),
+          apy: calculateApy(RGPprice, AXS_BUSDLiquidity, 238.3333333),
         },
       ]);
     } catch (error) {
@@ -245,6 +246,14 @@ export function FarmingV2Page(props) {
     }
   };
 
+  /**
+   * The BUSD/BNB LP token contract's token0 and token1 are
+   * interchanged on the testnet and mainnet that's why 
+   * there is a check before calculating the liquidity.
+   * @param {*} pool3 
+   * @param {*} pool3Reserve 
+   * @returns BNB/BUSD Liquidity
+   */
   const getBusdBnbLiquidity = (pool3, pool3Reserve) => {
     const pool3Testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
     let BUSD_BNBLiquidity;
@@ -257,7 +266,6 @@ export function FarmingV2Page(props) {
         .formatEther(pool3Reserve[1].mul(2))
         .toString();
     }
-
     return BUSD_BNBLiquidity;
   };
   const getAXSBUSDLiquidity = (pool5, pool5Reserve) => {
@@ -308,10 +316,10 @@ export function FarmingV2Page(props) {
       );
     }
     console.log(ethers.utils
-      .formatEther(pool5Reserve[0].mul(1000).div(pool5Reserve[1]),18)
-      .toString(),ethers.utils
-      .formatEther( pool5Reserve[1].mul(1000).div(pool5Reserve[0],18)
-      .toString()))
+      .formatEther(pool5Reserve[0].mul(1000).div(pool5Reserve[1]), 18)
+      .toString(), ethers.utils
+        .formatEther(pool5Reserve[1].mul(1000).div(pool5Reserve[0], 18)
+          .toString()))
     return AXSprice;
   };
 
@@ -434,7 +442,7 @@ export function FarmingV2Page(props) {
   const getFarmTokenBalance = async () => {
     if (wallet.address != '0x') {
       try {
-        const [RGPToken, poolOne, poolTwo, poolThree, poolFour,poolFive] = await Promise.all([
+        const [RGPToken, poolOne, poolTwo, poolThree, poolFour, poolFive] = await Promise.all([
           rigelToken(),
           smartSwapLPTokenPoolOne(),
           smartSwapLPTokenPoolTwo(),
@@ -696,7 +704,7 @@ export function FarmingV2Page(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const changeVersion = () => {
@@ -728,9 +736,9 @@ export function FarmingV2Page(props) {
               lineHeight="24px"
               letterSpacing="0em"
               textAlign="left"
-              padding="30px"
+              padding="10px"
             >
-              This is the V2 Farm. You should migrate your stakings from V1 Farm
+              This is the V2 Farm. You should migrate your LP token deposit from V1 Farm to V2 LP pool
             </AlertDescription>
             <CloseButton
               position="absolute"
@@ -829,7 +837,7 @@ export function FarmingV2Page(props) {
                       <Text>Total Liquidity</Text>
                       <Text />
                     </Flex>
-                    {props.farmingv2.contents.map(content => (
+                    {props.farmingv2.contents.map((content, index) => ((index !== 0) ?
                       <YieldFarm
                         isAddressWhitelist={isAddressWhitelist}
                         onOpenModal={onOpenModal}
@@ -839,14 +847,66 @@ export function FarmingV2Page(props) {
                         wallet={wallet}
                         refreshTokenStaked={refreshTokenStaked}
                         loadingTotalLiquidity={props.farmingv2.loading}
-                      />
+                      /> : null
                     ))}
                   </Box>
                 </Box>
               </Flex>
             </TabPanel>
             <TabPanel>
-              <p>two!</p>
+              <Flex
+                justifyContent="center"
+                alignItems="center"
+                rounded="lg"
+                mb={4}
+              >
+                <Box
+                  bg="#120136"
+                  minHeight="89vh"
+                  w={['100%', '100%', '100%']}
+                  background="#29235e"
+                  rounded="lg"
+                >
+                  <Box mx="auto" w={['100%', '100%', '100%']} pb="70px">
+                    <Flex
+                      color="gray.400"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      px={4}
+                      pt={4}
+                      w={['100%', '100%', '100%']}
+                      align="left"
+                      background="#2D276A"
+                      border="1px solid #4D4693"
+                      display={{ base: 'none', md: 'flex', lg: 'flex' }}
+                    >
+                      <FarmingPageModal
+                        farmingModal={farmingModal}
+                        setFarmingModal={setFarmingModal}
+                        farmingFee={farmingFee}
+                      />
+                      <Text>Deposit</Text>
+                      <Text>Earn</Text>
+                      <Text>APY</Text>
+                      <Text>Total Liquidity</Text>
+                      <Text />
+                    </Flex>
+
+                    <StakingFarm
+                      isAddressWhitelist={isAddressWhitelist}
+                      onOpenModal={onOpenModal}
+                      setShowModalWithInput={setShowModalWithInput}
+                      content={props.farmingv2.contents[0]}
+
+                      wallet={wallet}
+                      refreshTokenStaked={refreshTokenStaked}
+                      loadingTotalLiquidity={props.farmingv2.loading}
+                    />
+
+                  </Box>
+                </Box>
+              </Flex>
+
             </TabPanel>
           </TabPanels>
         </Tabs>
