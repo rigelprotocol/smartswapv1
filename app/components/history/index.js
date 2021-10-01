@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import OrderHistory from './OrderHistory';
 import styles from '../../styles/history.css';
 import useGetHistory from './useGetHistory';
-import MarketHisory from './marketHisory';
+import MarketHisory from './MarketHisory';
 import useGetMarketHistory from './useGetMarketHistory';
 
 export function Home(props) {
