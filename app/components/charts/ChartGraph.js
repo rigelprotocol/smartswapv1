@@ -18,10 +18,8 @@ const Graph = ({ setShow }) => {
   let rgpToBnb = [];
     axios.get("https://api.coingecko.com/api/v3/coins/rigel-protocol/market_chart?vs_currency=bnb&days=30&interval=daily")
       .then(res=>{
-        console.log(res.data);
-        console.log(res.data.prices[0][1])
         for(const dataArray of res.data.prices){
-          rgpToBnb.push(dataArray[1])
+          rgpToBnb.push(dataArray[1].toFixed(5))
         }
         setRgpPrice(rgpToBnb)
         new Chart(chartRef, {
@@ -79,8 +77,20 @@ const Graph = ({ setShow }) => {
       })
   }
 
+  const getVolume = () =>{
+  axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=rigel-protocol&order=market_cap_desc&per_page=100&page=1&sparkline=false")
+    .then(res=>{
+      const totalVolume = res.data[0].total_volume;
+      setVolume24(totalVolume);
+    })
+    .catch(err =>{
+      console.log(err)
+    })
+}
+
   useEffect(() => {
     getPriceHistory();
+    getVolume();
   }, []);
   return (
 
@@ -94,7 +104,7 @@ const Graph = ({ setShow }) => {
         <div>
           <Text className={styles.text__market}>Volume (24)</Text>
           <Text className={styles.text}>
-            $22,364,064 <span className={styles.increase}>+3.07%</span>
+            ${volume24} <span className={styles.increase}>+3.07%</span>
           </Text>
         </div>
         <div>
