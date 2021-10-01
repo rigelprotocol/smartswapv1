@@ -7,6 +7,7 @@ import OrderHistory from './OrderHistory';
 import styles from '../../styles/history.css';
 import useGetHistory from './useGetHistory';
 import MarketHisory from './marketHisory';
+import useGetMarketHistory from './useGetMarketHistory';
 
 export function Home(props) {
   const [show, setShow] = useState(false);
@@ -17,7 +18,8 @@ export function Home(props) {
 
   const { historyData, isLoading } = useGetHistory(wallet);
 
-  // console.log("......: wallet", historyData)
+  const { marketHistoryData, isLoadingMarket } = useGetMarketHistory(wallet)
+  //console.log("......: marketHistory", marketHistoryData)
   return (
     <Box className={styles.container}>
       <Flex
@@ -82,8 +84,16 @@ export function Home(props) {
 
       <Box overflowY="auto" maxH={460} >
         {show &&
-          showMarketHistory &&
-          <MarketHisory />
+          showMarketHistory && marketHistoryData && marketHistoryData.map(trxn => (
+
+            <MarketHisory
+              key={trxn.time}
+              data={trxn}
+              loading={isLoadingMarket}
+              dataIsEmpty={marketHistoryData.length < 1}
+
+            />
+          ))
         }
       </Box>
 

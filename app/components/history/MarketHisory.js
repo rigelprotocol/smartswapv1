@@ -6,11 +6,24 @@ import rightArrow from '../../assets/right-arrow.png';
 
 import Empty from './EmptyHistory';
 
-function MarketHisory() {
+function MarketHisory({ data, loading, dataIsEmpty }) {
+
+    const {
+        token1Icon,
+        token2Icon,
+        token1,
+        token2,
+        amountIn,
+        amountOut,
+        time,
+        fee,
+    } = data;
 
 
     return (
         <>
+            {loading && <Spinner />}
+            {dataIsEmpty && <Empty />}
 
             <Flex p={3}>
                 <Box
@@ -31,16 +44,16 @@ function MarketHisory() {
                     </Text>
                     <Flex>
                         <Flex mr={4}>
-                            <img width={25} height={25} alt="logo" />
+                            <img src={token1Icon} width={25} height={25} alt="logo" />
                             <Text fontSize="sm" color="#fff" ml={2}>
-                                {32} <span>{"BID"}</span>
+                                {amountIn} <span>{token1.symbol}</span>
                             </Text>
                         </Flex>
                         <img src={rightArrow} width={15} height={15} alt="-" />
                         <Flex ml={4}>
-                            <img width={25} height={25} alt="logo" />
+                            <img src={token2Icon} width={25} height={25} alt="logo" />
                             <Text fontSize="sm" color="#fff" ml={2}>
-                                {23} <span>{"BnB"}</span>
+                                {amountOut} <span>{token2.symbol}</span>
                             </Text>
                         </Flex>
                     </Flex>
@@ -67,7 +80,7 @@ function MarketHisory() {
                                 Fee
                             </Text>
                             <Text color="#fff" fontSize="14px" fontWeight="regular">
-                                5
+                                {fee}
                             </Text>
                         </Box>
                         <Box>
@@ -79,7 +92,7 @@ function MarketHisory() {
                                 Time &nbsp;
                             </Text>
                             <Text color="#fff" fontSize="14px" fontWeight="regular">
-                                122
+                                {time}
                             </Text>
                         </Box>
                     </Flex>
@@ -101,6 +114,12 @@ function MarketHisory() {
         </>
     );
 }
+
+
+MarketHisory.propTypes = {
+    data: PropTypes.object.isRequired,
+    loading: PropTypes.bool,
+};
 
 
 export default MarketHisory;
