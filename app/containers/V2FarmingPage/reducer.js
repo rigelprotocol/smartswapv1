@@ -85,7 +85,7 @@ export const initialState = {
       // deposit: 'BNB-BUSD', to
       deposit: 'BNB-BUSD',
       earn: 'RGP',
-      ARYValue: '325',
+      ARYValue: '23',
       type: 'LP',
       totalLiquidity: '',
       tokensStaked: ['BNB-BUSD', '0'],
@@ -96,6 +96,44 @@ export const initialState = {
       totalVolumePerPool: 0,
       farmingFee: 0,
       pId: 3,
+      poolAllowance: '',
+    },
+    {
+      id: '5',
+      img: 'rgp.svg',
+      // changed from
+      // deposit: 'BNB-BUSD', to
+      deposit: 'AXS-RGP',
+      earn: 'RGP',
+      ARYValue: '23',
+      type: 'LP',
+      totalLiquidity: '',
+      tokensStaked: ['AXS-RGP', '0'],
+      RGPEarned: '0',
+      availableToken: '3.747948393',
+      inflationPerDay: 0,
+      tokenPrice: 0,
+      totalVolumePerPool: 0,
+      farmingFee: 0,
+      pId: 4,
+      poolAllowance: '',
+    },
+    {
+      id: '6',
+      img: 'rgp.svg',
+      deposit: 'AXS-BUSD',
+      earn: 'RGP',
+      ARYValue: '325',
+      type: 'LP',
+      totalLiquidity: '',
+      tokensStaked: ['AXS-BUSD', '0'],
+      RGPEarned: '0',
+      availableToken: '3.747948393',
+      inflationPerDay: 0,
+      tokenPrice: 0,
+      totalVolumePerPool: 0,
+      farmingFee: 0,
+      pId: 5,
       poolAllowance: '',
     },
   ],
@@ -116,7 +154,7 @@ export const initialState = {
 //   getStartBlock: getStartBlock.toString()
 // }
 
-const farmingPageReducer = (state = initialState, action) =>
+const farmingV2PageReducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
       case DEFAULT_ACTION:
@@ -193,4 +231,4 @@ const farmingPageReducer = (state = initialState, action) =>
     }
   });
 
-export default farmingPageReducer;
+export default farmingV2PageReducer;
