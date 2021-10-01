@@ -90,7 +90,7 @@ export function Home(props) {
               key={trxn.time}
               data={trxn}
               loading={isLoadingMarket}
-              dataIsEmpty={marketHistoryData.length < 1}
+              dataIsEmpty={marketHistoryData.length < 1 || marketHistoryData === null}
 
             />
           ))

@@ -1,8 +1,11 @@
-import { Box, Text, Flex } from '@chakra-ui/layout';
+import { Box, Text, Flex, Link } from '@chakra-ui/layout';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Spinner from 'components/spinner/spinner';
 import rightArrow from '../../assets/right-arrow.png';
+
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { createURLNetwork } from 'utils/UtilFunc';
 
 import Empty from './EmptyHistory';
 
@@ -16,11 +19,11 @@ function MarketHisory({ data, loading, dataIsEmpty }) {
         amountIn,
         amountOut,
         time,
-        fee,
+        hash,
     } = data;
 
-
     return (
+
         <>
             {loading && <Spinner />}
             {dataIsEmpty && <Empty />}
@@ -34,6 +37,7 @@ function MarketHisory({ data, loading, dataIsEmpty }) {
                     px={4}
                     py={2}
                     rounded="2xl"
+                    key={time}
                 >
                     <Text
                         color="rgba(255, 255, 255,0.25)"
@@ -77,11 +81,13 @@ function MarketHisory({ data, loading, dataIsEmpty }) {
                                 fontSize="12px"
                                 lineHeight="0"
                             >
-                                Fee
+                                Transaction
                             </Text>
-                            <Text color="#fff" fontSize="14px" fontWeight="regular">
-                                {fee}
-                            </Text>
+                            <Link color="#fff" fontSize="14px" fontWeight="regular" href={hash} isExternal>
+                                View <ExternalLinkIcon mx="2px" />
+                            </Link>
+
+
                         </Box>
                         <Box>
                             <Text
