@@ -16,7 +16,7 @@ const Graph = ({ setShow }) => {
   gradient.addColorStop(0.5, 'rgba(64, 186, 213,0)');
   gradient.addColorStop(1, 'rgba(64, 186, 213,0.25)');
   let rgpToBnb = [];
-    axios.get("https://api.coingecko.com/api/v3/coins/rigel-protocol/market_chart?vs_currency=bnb&days=30&interval=daily")
+    axios.get("https://api.coingecko.com/api/v3/coins/rigel-protocol/market_chart?vs_currency=bnb&days=14&interval=daily")
       .then(res=>{
         for(const dataArray of res.data.prices){
           rgpToBnb.push(dataArray[1].toFixed(5))
