@@ -194,6 +194,7 @@ export function FarmingV2Page(props) {
         pool1Reserve[0].mul(1000).div(pool1Reserve[1]),
         3,
       );
+
       const BNBprice = getBnbPrice(pool3, pool3Reserve);
       const AXSprice = getAXSPrice(pool5, pool5Reserve);
       const RGPLiquidity = ethers.utils
@@ -209,7 +210,7 @@ export function FarmingV2Page(props) {
       const BUSD_BNBLiquidity = getBusdBnbLiquidity(pool3, pool3Reserve);
       const AXS_BUSDLiquidity = getAXSBUSDLiquidity(pool5, pool5Reserve);
       const AXS_RGPLiquidity = ethers.utils
-        .formatUnits(pool5Reserve[1].mul(Math.floor(AXSprice * 1000 * 2)), 21)
+        .formatUnits(pool4Reserve[1].mul(Math.floor(RGPprice * 1000 * 2)), 21)
         .toString();
       props.updateTotalLiquidity([
         {
@@ -269,18 +270,11 @@ export function FarmingV2Page(props) {
     return BUSD_BNBLiquidity;
   };
   const getAXSBUSDLiquidity = (pool5, pool5Reserve) => {
-    const pool5Testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
-    let AXS_BUSDLiquidity;
-    if (pool5 && pool5.address === pool5Testnet) {
-      AXS_BUSDLiquidity = ethers.utils
-        .formatEther(pool5Reserve[0].mul(2))
-        .toString();
-    } else {
-      AXS_BUSDLiquidity = ethers.utils
-        .formatEther(pool5Reserve[1].mul(2))
-        .toString();
-    }
-
+    // The quatity of BUSD (pool5Reserve[0]) multiply by 2 
+    // is the total liquidity
+    const AXS_BUSDLiquidity = ethers.utils
+      .formatEther(pool5Reserve[0].mul(2))
+      .toString();
     return AXS_BUSDLiquidity;
   };
 
