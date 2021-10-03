@@ -196,7 +196,7 @@ export function FarmingV2Page(props) {
       );
 
       const BNBprice = getBnbPrice(pool3, pool3Reserve);
-      const AXSprice = getAXSPrice(pool5, pool5Reserve);
+      // const AXSprice = getAXSPrice(pool5, pool5Reserve);
       const RGPLiquidity = ethers.utils
         .formatUnits(rgpTotalStaking.mul(Math.floor(1000 * RGPprice)), 21)
         .toString();
@@ -208,6 +208,7 @@ export function FarmingV2Page(props) {
         .formatUnits(pool2Reserve[0].mul(Math.floor(BNBprice * 1000 * 2)), 21)
         .toString();
       const BUSD_BNBLiquidity = getBusdBnbLiquidity(pool3, pool3Reserve);
+
       const AXS_BUSDLiquidity = getAXSBUSDLiquidity(pool5, pool5Reserve);
       const AXS_RGPLiquidity = ethers.utils
         .formatUnits(pool4Reserve[1].mul(Math.floor(RGPprice * 1000 * 2)), 21)
@@ -272,9 +273,19 @@ export function FarmingV2Page(props) {
   const getAXSBUSDLiquidity = (pool5, pool5Reserve) => {
     // The quatity of BUSD (pool5Reserve[0]) multiply by 2 
     // is the total liquidity
-    const AXS_BUSDLiquidity = ethers.utils
-      .formatEther(pool5Reserve[0].mul(2))
-      .toString();
+    const pool5Testnet = '0x816b823d9C7F30327B2c626DEe4aD731Dc9D3641';
+    let AXS_BUSDLiquidity;
+    // BUSD is token0 on testnet but token1 on mainnet, thus the reason to check
+    // before calculating the liquidity based on BUSD
+    if (pool5 && pool5.address === pool5Testnet) {
+      AXS_BUSDLiquidity = ethers.utils
+        .formatEther(pool5Reserve[0].mul(2))
+        .toString();
+    } else {
+      AXS_BUSDLiquidity = ethers.utils
+        .formatEther(pool5Reserve[1].mul(2))
+        .toString();
+    }
     return AXS_BUSDLiquidity;
   };
 
@@ -763,11 +774,17 @@ export function FarmingV2Page(props) {
                 marginTop="3px"
                 background="none"
                 border="none"
+                color="white"
                 onClick={changeVersion}
               >
                 V1
               </Tab>
-              <Tab padding="8px 34px" marginTop="3px" background="#726AC8">
+              <Tab
+                padding="8px 34px"
+                marginTop="3px"
+                background="#726AC8"
+                color="white"
+              >
                 V2
               </Tab>
             </TabList>

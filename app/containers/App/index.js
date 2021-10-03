@@ -72,12 +72,18 @@ const App = props => {
   }, [wallet]);
 
   useEffect(() => {
+
+    const handleChainChanged = () => {
+      window.location.reload();
+    }
     if (window.ethereum) {
       checkchain();
-      const obj = ethereum.on('chainChanged', chainId => {
-        console.log(chainId);
-        window.location.reload();
-      });
+      ethereum.on('chainChanged', handleChainChanged);
+    }
+    return () => {
+      if (ethereum.removeListener) {
+        ethereum.removeListener('chainChanged', handleChainChanged)
+      }
     }
   }, []);
 
@@ -94,7 +100,7 @@ const App = props => {
         4,
       );
       props.updateRGPprice(RGPprice);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
