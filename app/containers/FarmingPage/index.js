@@ -608,7 +608,7 @@ export function FarmingPage(props) {
           <RGPFarmInfo />
         </InfoModal>
         <FarmingV2Alert
-          message="V2 LP farming has been lauched. Please move your LP deposits to the Farming V2 "
+          message="V2 LP farming has been launched. Please move your LP deposits to the Farming V2"
         />
         <Flex mb={3} justifyContent="flex-end">
           <Tabs
