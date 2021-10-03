@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom'
 import Web3 from 'web3';
 import { Box, Flex, Text, useDisclosure } from '@chakra-ui/layout';
 import Layout from 'components/layout';
@@ -16,6 +17,7 @@ import InfoModal from 'components/modal/InfoModal';
 import FarmingPageModal from 'components/yieldfarm/FarmingPageModal';
 import RGPFarmInfo from 'components/yieldfarm/RGPFarmInfo';
 import { notify } from 'containers/NoticeProvider/actions';
+import FarmingV2Alert from './../../components/Alerts/FarmingV2Alert';
 
 import {
   masterChefContract,
@@ -32,6 +34,9 @@ import {
 import {
   useDisclosure as useModalDisclosure,
   useToast,
+  Tab,
+  TabList,
+  Tabs,
 } from '@chakra-ui/react';
 import { tokenList, SMART_SWAP } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
@@ -59,6 +64,7 @@ export function FarmingPage(props) {
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true);
   const [showModalWithInput, setShowModalWithInput] = useState(false);
+  const history = useHistory()
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -582,6 +588,9 @@ export function FarmingPage(props) {
       setLiquidities([...pairs]);
     } catch (error) { }
   };
+  const changeVersion = () => {
+    history.push('/farming-v2');
+  };
 
   return (
     <div>
@@ -598,6 +607,42 @@ export function FarmingPage(props) {
         >
           <RGPFarmInfo />
         </InfoModal>
+        <FarmingV2Alert
+          message="V2 LP farming has been launched. Please move your LP deposits to the Farming V2"
+        />
+        <Flex mb={3} justifyContent="flex-end">
+          <Tabs
+            variant="soft-rounded"
+            colorScheme="#2D276A"
+            background="#2D276A"
+            mx={[5, 10, 15, 16]}
+
+            marginTop={{ base: '', md: '2px', lg: '2px' }}
+            position={{ base: 'relative', md: 'absolute' }}
+            paddingLeft={{ base: '1px', md: '5px', lg: '5px' }}
+            borderRadius="50px"
+          >
+            <TabList>
+              <Tab
+                padding="8px 34px"
+                marginTop="3px"
+                background="#726AC8"
+                color="white"
+              >
+                V1
+              </Tab>
+              <Tab
+                padding="8px 34px"
+                marginTop="3px"
+                background="none"
+                border="none"
+                color="white"
+                onClick={changeVersion}>
+                V2
+              </Tab>
+            </TabList>
+          </Tabs>
+        </Flex>
         <Flex
           mx={5}
           justifyContent="center"

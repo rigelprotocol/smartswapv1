@@ -61,10 +61,13 @@ const BSCMainnet = {
   SmartSwap_LP_Token: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
   RigelSmartContract: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
   masterChef: '0x7d59AAD43Cef13Cd077308D37C3A39D3b4B6C924',
-  masterChefV2: '0x1F5DABb92Aba96928d12e405D66275E20c53D846',
+  masterChefV2: '0xE1ECCCcb46755a38D218Bf7Fdcd6f26C2cd7671f',
   masterChefPoolOne: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
+  masterChefV2PoolOne: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
   masterChefPoolTwo: '0x9218BFB996A9385C3b9633f87e9D68304Ef5a1e5',
   masterChefPoolThree: '0xC8e6305376404Df37b9D231511cD27184fa8f10A',
+  masterChefV2PoolFour: '0x3b087F8a582090A51BED1BCa1A5Ad1859ea14cA4',
+  masterChefV2PoolFive: '0xF69f02FD07173CEB87808088e791F192fCCf1187',
   BNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   BUSD: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
   ETH: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
@@ -108,7 +111,7 @@ export const tokenList = () => {
     const extendedList = JSON.parse(storedReducer.ExtendedTokenList);
     allToken =
       extendedList !== undefined &&
-      extendedList.defaultTokenList[1].token.length > 0
+        extendedList.defaultTokenList[1].token.length > 0
         ? extendedList.defaultTokenList[1].token
         : [];
   }
