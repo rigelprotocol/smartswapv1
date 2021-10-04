@@ -4,8 +4,10 @@ import {
     AlertIcon,
     AlertDescription,
     CloseButton,
-    Box
+    Box,
+    Link
 } from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 
 function AlertSvg(props) {
     return (
@@ -44,6 +46,10 @@ function FarmingV2Alert({ message }) {
                     padding="10px"
                 >
                     {message}
+                    {' '}
+                    <Link href="http://link.medium.com/4xqFCYZb3jb" isExternal>
+                        More Details <ExternalLinkIcon />
+                    </Link>
                 </AlertDescription>
                 <CloseButton
                     position="absolute"
