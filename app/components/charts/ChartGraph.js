@@ -9,6 +9,8 @@ const Graph = ({ setShow }) => {
   const ref = React.createRef();
   const [rgpPrice, setRgpPrice] = useState([]);
   const [volume24, setVolume24] = useState([]);
+  const [pricePercentageChange, setPricePercentageChange] = useState('');
+  const [volumeChange, setVolumeChange] = useState('');
   const getPriceHistory = () =>{
   const chartRef = ref.current.getContext('2d');
   const ctx = ref.current.getContext('2d');
@@ -16,7 +18,7 @@ const Graph = ({ setShow }) => {
   gradient.addColorStop(0.5, 'rgba(64, 186, 213,0)');
   gradient.addColorStop(1, 'rgba(64, 186, 213,0.25)');
   let rgpToBnb = [];
-    axios.get("https://api.coingecko.com/api/v3/coins/rigel-protocol/market_chart?vs_currency=bnb&days=14&interval=daily")
+    axios.get("https://cors-anywhere.herokuapp.com/https://api.coingecko.com/api/v3/coins/rigel-protocol/market_chart?vs_currency=bnb&days=14&interval=daily")
       .then(res=>{
         for(const dataArray of res.data.prices){
           rgpToBnb.push(dataArray[1].toFixed(5))
@@ -78,7 +80,7 @@ const Graph = ({ setShow }) => {
   }
 
   const getVolume = () =>{
-  axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=rigel-protocol&order=market_cap_desc&per_page=100&page=1&sparkline=false")
+  axios.get("https://cors-anywhere.herokuapp.com/https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=rigel-protocol&order=market_cap_desc&per_page=100&page=1&sparkline=false")
     .then(res=>{
       const totalVolume = res.data[0].total_volume;
       setVolume24(totalVolume);
@@ -86,11 +88,35 @@ const Graph = ({ setShow }) => {
     .catch(err =>{
       console.log(err)
     })
-}
+};
 
+  const getPriceChangePercentageBNB = () =>{
+    axios.get("https://cors-anywhere.herokuapp.com/https://api.coingecko.com/api/v3/coins/markets?vs_currency=bnb&ids=rigel-protocol&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h")
+    .then(res =>{
+      const priceChangePercentage = res.data[0].price_change_percentage_24h.toFixed(2);
+      setPricePercentageChange(priceChangePercentage);
+    })
+    .catch(err =>{
+      console.log(err)
+    })
+  };
+
+  const getVolumeChange = () =>{
+    axios.get("https://cors-anywhere.herokuapp.com/https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=rigel-protocol&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h")
+    .then(res =>{
+      const volumeChange = res.data[0].price_change_percentage_24h.toFixed(2);
+      setVolumeChange(volumeChange)
+    })
+    .catch(err =>{
+      console.log(err)
+    })
+  };
+  
   useEffect(() => {
     getPriceHistory();
     getVolume();
+    getPriceChangePercentageBNB();
+    getVolumeChange();
   }, []);
   return (
 
@@ -104,13 +130,15 @@ const Graph = ({ setShow }) => {
         <div>
           <Text className={styles.text__market}>Volume (24)</Text>
           <Text className={styles.text}>
-            ${volume24} <span className={styles.increase}>+3.07%</span>
+            ${volume24} <span className={volumeChange > 0 ? styles.increase : styles.decrease}>{volumeChange}%</span>
           </Text>
         </div>
         <div>
           <Text className={styles.text__market}>Current Price</Text>
           <Text className={styles.text}>
-            {rgpPrice[rgpPrice.length - 1]} BNB <span className={styles.decrease}>-0.03%</span>
+            {rgpPrice[rgpPrice.length - 1]} BNB <span className={pricePercentageChange > 0 ? styles.increase : styles.decrease}>
+            {pricePercentageChange}%
+            </span>
           </Text>
         </div>
         <MinusIcon
