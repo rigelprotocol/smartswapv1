@@ -84,7 +84,6 @@ const Graph = ({ setShow }) => {
   })
 }
 
-
   const getVolume = () =>{
     axios({
       method: 'get',
