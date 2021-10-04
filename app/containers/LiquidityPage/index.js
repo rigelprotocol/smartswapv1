@@ -35,6 +35,7 @@ import {
 } from 'utils/SwapConnect';
 import { runApproveCheck, approveToken } from 'utils/wallet-wiget/TokensUtils';
 import { create } from 'react-test-renderer';
+import toast from 'react-hot-toast';
 import {
   tokenList,
   tokenWhere,
@@ -48,12 +49,12 @@ import {
   isNotEmpty,
   getDeadline,
   createURLNetwork,
+  getOutPutDataFromEvent,
 } from '../../utils/UtilFunc';
 import { getTokenList } from '../../utils/tokens';
 
 import { useLocalStorage } from '../../utils/hooks/storageHooks';
 import Notification from '../../components/ToastNotification/Notification';
-import toast from 'react-hot-toast';
 
 // 35,200
 export function LiquidityPage(props) {
@@ -525,6 +526,7 @@ export function LiquidityPage(props) {
   const modal5Disclosure = useDisclosure();
   const modal6Disclosure = useDisclosure();
   const modal7Disclosure = useDisclosure();
+  const approveSmartSwapLPTokensDisclosure = useDisclosure();
 
   function closeInput() {
     setApproveBNBPopup(false);
@@ -589,17 +591,20 @@ export function LiquidityPage(props) {
         setTrxHashed(data);
         const { hash } = data;
         setURLNetwork('');
-        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
+        setTimeout(() => setURLNetwork(createURLNetwork(hash,'tx')), 3000);
         closeModal2();
         openModal3();
-        const { confirmations } = await data.wait(3);
+        const { confirmations, events } = await data.wait(3);
+        const { trhash } = data;
         if (confirmations >= 3) {
+          const inputTokenAmount = await getOutPutDataFromEvent(fromSelectedToken.address, events)
+          const outpputTokenAmount = await getOutPutDataFromEvent(toSelectedToken.address, events)
+
           toast.custom(
             <Notification
-              hash={hash}
-              message={`Add ${fromSelectedToken.symbol}/${
-                toSelectedToken.symbol
-              } liquidity`}
+              hash={trhash}
+              message={`Added  ${inputTokenAmount} of ${fromSelectedToken.symbol}/ ${outpputTokenAmount} ${toSelectedToken.symbol
+                } liquidity`}
             />,
           );
         }
@@ -692,15 +697,17 @@ export function LiquidityPage(props) {
         setTrxHashed(data);
         closeModal2();
         openModal3();
-        const { confirmations } = await data.wait(3);
+        const { confirmations, events } = await data.wait(3);
         const { hash } = data;
         if (confirmations >= 3) {
+          const inputTokenAmount = await getOutPutDataFromEvent(fromSelectedToken.address, events)
+          const outpputTokenAmount = await getOutPutDataFromEvent(toSelectedToken.address, events)
+
           toast.custom(
             <Notification
               hash={hash}
-              message={`Add ${fromSelectedToken.symbol}/${
-                toSelectedToken.symbol
-              } liquidity`}
+              message={`Added  ${inputTokenAmount} of ${fromSelectedToken.symbol}/ ${outpputTokenAmount} ${toSelectedToken.symbol
+                } liquidity`}
             />,
           );
         }
@@ -734,27 +741,107 @@ export function LiquidityPage(props) {
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
           },
         );
-        const { confirmations, status } = await hasRemovedLiquidity.wait(2);
+        const { hash } = hasRemovedLiquidity;
+        setURLNetwork('');
+        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
+        const { confirmations, status, events } = await hasRemovedLiquidity.wait(2);
+        const OutputValueForToken1 = await getOutPutDataFromEvent(
+          tokenA,
+          events
+        );
+        const OutputValueForToken2 = await getOutPutDataFromEvent(
+          tokenB,
+          events
+        );
         if (
           typeof hasRemovedLiquidity.hash !== 'undefined' &&
           confirmations >= 2 &&
           status
         ) {
           setApproving(false);
-          props.notify({
-            title: 'Process Completed',
-            body: 'You have successfully remove the liquidity',
-            type: 'success',
-          });
-          back('ADDLIQUIDITY');
+        displaySuccessProps('Process Completed','You have successfully remove the liquidity', 'success',"INDEX")
+          toast.custom(
+            <Notification
+              hash={hash}
+              message={`Remove ${OutputValueForToken2} ${liquidityToRemove.path[1].token} and ${OutputValueForToken1} ${
+                liquidityToRemove.path[0].token
+              }`}
+            />,
+          );
         }
       } catch (error) {
-        props.showErrorMessage(
-          'Oops we encountered an error please try again later',
-        );
+        displayFailureProps('Oops we encountered an error please try again later')
       }
     }
   };
+
+  const removeLiquidityForETH = async (tokenAddress, liquidity) => {
+    const rout = await router();
+    const deadLine = getDeadline(deadline);
+    const liquidityAmount = ethers.utils.parseEther(
+      liquidity.toString(),
+      'ether',
+    );
+    try {
+      setApproving(true);
+      const hasRemovedLiquidity = await rout.removeLiquidityETH(
+        tokenAddress,
+        liquidityAmount,
+        0,
+        0,
+        wallet.address,
+        deadLine,
+        {
+          from: wallet.address,
+          gasLimit: 390000,
+          gasPrice: ethers.utils.parseUnits('21', 'gwei'),
+        },
+      );
+      const { hash } = hasRemovedLiquidity;
+      setURLNetwork('');
+      setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
+      const { confirmations, status, events } = await hasRemovedLiquidity.wait(2);
+      const OutputValueForToken1 = await getOutPutDataFromEvent(
+        fromSelectedToken.address,
+        events
+      );
+      const OutputValueForToken2 = await getOutPutDataFromEvent(
+        liquidityToRemove.path[0].fromPath,
+        events
+      );
+      if (
+        typeof hasRemovedLiquidity.hash !== 'undefined' &&
+        confirmations >= 2 &&
+        status
+      ) {
+        setApproving(false);
+        displaySuccessProps('Process Completed','You have successfully remove the liquidity', 'success',"INDEX")
+        toast.custom(
+          <Notification
+            hash={hash}
+            message={`Remove ${OutputValueForToken1} ${fromSelectedToken.symbol} and ${OutputValueForToken2} ${
+              liquidityToRemove.path[0].token
+            }`}
+          />,
+        );
+      }
+    } catch (error) {
+      displayFailureProps('Oops we encountered an error please try again later')
+    }
+  };
+  const displaySuccessProps = (title,body,type,text) =>{
+    props.notify({
+      title,
+      body,
+      type
+    });
+    if(text){
+      back(text)
+    };
+  }
+  const displayFailureProps = (msg)=>{
+ props.showErrorMessage(msg);
+  }
 
   async function approveSmartSwapLPTokens(LPTokenAddress) {
     if (wallet.signer !== 'signer') {
@@ -776,6 +863,7 @@ export function LiquidityPage(props) {
           status
         ) {
           setHasApprovedLPTokens(true);
+          approveSmartSwapLPTokensDisclosure.onOpen();
           setApproving(false);
         }
       } catch (e) {
@@ -830,6 +918,9 @@ export function LiquidityPage(props) {
   const closeModal1 = () => {
     modal1Disclosure.onClose();
   };
+  const closeApproveSmartSwapLPTokensSuccessModal = () => {
+    approveSmartSwapLPTokensDisclosure.onClose();
+  }
   const closeModal3 = () => {
     modal3Disclosure.onClose();
     // close all modal one by one
@@ -896,8 +987,7 @@ export function LiquidityPage(props) {
         closeModal6();
         openModal4();
         setPopupText(
-          `Added ${fromValue} ${fromSelectedToken.name} and ${toValue} ${
-            toSelectedToken.name
+          `Added ${fromValue} ${fromSelectedToken.name} and ${toValue} ${toSelectedToken.name
           }`,
         );
       }
@@ -1047,7 +1137,7 @@ export function LiquidityPage(props) {
         return await eth.allowance(wallet.address, SMART_SWAP.MasterChef, {
           from: wallet.address,
         });
-      } catch (error) {}
+      } catch (error) { }
     }
   }
 
@@ -1166,10 +1256,13 @@ export function LiquidityPage(props) {
               approving={approving}
               approveSmartSwapLPTokens={approveSmartSwapLPTokens}
               removingLiquidity={removingLiquidity}
+              removeLiquidityForETH={removeLiquidityForETH}
               setPercentValue={setPercentValue}
               wallet={wallet}
               liquidityToRemove={liquidityToRemove}
               hasApprovedLPTokens={hasApprovedLPTokens}
+              closeApproveSmartSwapLPTokensSuccessModal={closeApproveSmartSwapLPTokensSuccessModal}
+              approveSmartSwapLPTokensDisclosure={approveSmartSwapLPTokensDisclosure}
             />
           )}
           {liquidityTab === LIQUIDITYTABS.ADDLIQUIDITY && (

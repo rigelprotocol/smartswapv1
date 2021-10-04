@@ -26,5 +26,12 @@
     "C_supply": "168,137,036",
     "t_supply": "168,137,036",
     "details": "Launched in July 2017, Binance is one of the biggest cryptocurrency exchanges globally. By aiming to bring cryptocurrency exchanges to the forefront of financial activity globally. The idea behind Binance’s name is to show this new paradigm in global finance — Binary Finance, or Binance.Aside from being the largest cryptocurrency exchange globally, Binance has launched a whole ecosystem of functionalities for its users. The Binance network includes the Binance Chain, Academy, Trusted Wallet and Research projects, which all employ the powers of blockchain technology to bring new-age finance to the world. Binance Coin is an integral part of the successful functioning of many of the Binance sub-projects"
+  },
+  {
+    "name": "Axie Infinity Shard",
+    "symbol": "AXS",
+    "C_supply": "60,907,500",
+    "t_supply": "270,000,000",
+    "details": "Axie Infinity is a Pokémon-inspired digital pet universe where anyone can earn tokens through skilled gameplay and contributions to the ecosystem. Players can battle, collect, raise, and build a land-based kingdom for their pets (known as Axies)."
   }
 ]

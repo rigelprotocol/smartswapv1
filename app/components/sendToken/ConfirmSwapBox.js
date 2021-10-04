@@ -44,6 +44,7 @@ const ConfirmSwapBox = props => {
     openLoadingSpinnerAndSwap,
     liquidityProviderFee,
     route,
+    priceImpact,
   } = props;
 
   return (
@@ -122,7 +123,9 @@ const ConfirmSwapBox = props => {
                   Price Impact <QuestionIcon />{' '}
                 </Text>
                 <Box textAlign="right">
-                  <Text>1.49%</Text>
+                  <Text color={priceImpact < -5 && 'red.400'}>
+                    {priceImpact}%
+                  </Text>
                 </Box>
               </Flex>
               {/* swap route */}
@@ -164,8 +167,9 @@ const ConfirmSwapBox = props => {
               fontSize="16px"
               _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
               onClick={openLoadingSpinnerAndSwap}
+              disabled={priceImpact < -15}
             >
-              Confirm Swap
+              {priceImpact < -15 ? 'Price impact is too high' : 'Confirm Swap'}
             </Button>
           </ModalBody>
         </ModalContent>

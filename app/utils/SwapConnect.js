@@ -9,6 +9,7 @@ import SmartSwapRouter02 from 'utils/abis/SmartSwapRouter02.json';
 import SmartSwapLPToken from 'utils/abis/smartSwapLPToken.json';
 import ETHRGPSMARTSWAPPAIR from 'utils/abis/ETHRGPSMARTSWAPPAIR.json';
 import masterChef from 'utils/abis/masterChef.json';
+import masterChefV2 from 'utils/abis/masterChefV2.json';
 import SmartSwapLPTokenOne from 'utils/abis/SmartSwapLPTokenOne.json';
 import SmartSwapLPTokenTwo from 'utils/abis/SmartSwapLPTokenTwo.json';
 import SmartSwapLPTokenThree from 'utils/abis/SmartSwapLPTokenThree.json';
@@ -46,7 +47,6 @@ export const router = async () =>
     SmartSwapRouter02,
     getSigner(),
   );
-
 export const updateOutPutAmountForRouter = async () =>
   new ethers.Contract(
     SMART_SWAP.SMART_SWAPPING,
@@ -56,6 +56,9 @@ export const updateOutPutAmountForRouter = async () =>
 
 export const masterChefContract = async () =>
   new ethers.Contract(SMART_SWAP.masterChef, masterChef, getSigner());
+
+export const masterChefV2Contract = async () =>
+  new ethers.Contract(SMART_SWAP.masterChefV2, masterChefV2, getSigner());
 
 export const smartSwapLPTokenPoolOne = async () =>
   new ethers.Contract(
@@ -77,6 +80,18 @@ export const smartSwapLPTokenPoolThree = async () =>
     SmartSwapLPTokenThree,
     getSigner(),
   );
+export const smartSwapLPTokenV2PoolFour = async () =>
+  new ethers.Contract(
+    SMART_SWAP.masterChefV2PoolFour,
+    SmartSwapLPTokenThree,
+    getSigner(),
+  );
+export const smartSwapLPTokenV2PoolFive = async () =>
+  new ethers.Contract(
+    SMART_SWAP.masterChefV2PoolFive,
+    SmartSwapLPTokenThree,
+    getSigner(),
+  );
 
 // router contract where trx is made for both liquidity and swap
 export const smartSwapLPToken = async () =>
@@ -85,6 +100,21 @@ export const smartSwapLPToken = async () =>
     SmartSwapLPToken,
     getSigner(),
   );
+
+  // router contract where trx is made for both liquidity and swap
+export const smartSwapV2LPToken = async () =>
+new ethers.Contract(
+  SMART_SWAP.masterChefV2PoolOne,
+  SmartSwapLPToken,
+  getSigner(),
+);
+
+export const smartSwapV2Token = async () =>
+new ethers.Contract(
+  SMART_SWAP.masterChefV2,
+  SmartSwapLPToken,
+  getSigner(),
+);
 
 // contract for LPs tokens
 export const BNBRGPliquidityProviderTokensContract = async () =>

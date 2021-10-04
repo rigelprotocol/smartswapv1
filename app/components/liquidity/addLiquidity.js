@@ -186,7 +186,7 @@ const AddLiquidity = ({
             Approve {toSelectedToken.symbol}
           </Button>
         )}
-      {fromSelectedToken.symbol !== 'BNB' && 
+      {fromSelectedToken.symbol !== 'BNB' &&
       !hasAllowedFromToken &&
         fromSelectedToken.symbol !== 'SELECT A TOKEN' &&
         fromValue >= 0 &&

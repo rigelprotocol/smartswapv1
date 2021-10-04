@@ -35,6 +35,7 @@ const BSCTestnetTokens = {
   BUSD: '0x10249e900b919fdee9e2ed38b4cd83c4df857254', // This can be use
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   RGP: '0x9f0227a21987c1ffab1785ba3eba60578ec1501b',
+  AXS: '0x6b9a9df1e6a29f17bfc79040a8f505aaa8866b6e',
 };
 
 const BSCmainnetTokens = {
@@ -42,6 +43,7 @@ const BSCmainnetTokens = {
   BUSD: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', // This can be use
   ETH: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   RGP: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
+  AXS: '0x715d400f88c167884bbcc41c5fea407ed4d2f8a0',
 };
 const BSC_MAIN_NET_ID =
   window.ethereum !== undefined && window.ethereum.isTrust ? '56' : '0x38';
@@ -59,12 +61,17 @@ const BSCMainnet = {
   SmartSwap_LP_Token: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
   RigelSmartContract: '0xFA262F303Aa244f9CC66f312F0755d89C3793192',
   masterChef: '0x7d59AAD43Cef13Cd077308D37C3A39D3b4B6C924',
+  masterChefV2: '0xE1ECCCcb46755a38D218Bf7Fdcd6f26C2cd7671f',
   masterChefPoolOne: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
+  masterChefV2PoolOne: '0x7f91f8B8Dac13DAc386058C12113936987F6Be9d',
   masterChefPoolTwo: '0x9218BFB996A9385C3b9633f87e9D68304Ef5a1e5',
   masterChefPoolThree: '0xC8e6305376404Df37b9D231511cD27184fa8f10A',
+  masterChefV2PoolFour: '0x3b087F8a582090A51BED1BCa1A5Ad1859ea14cA4',
+  masterChefV2PoolFive: '0xF69f02FD07173CEB87808088e791F192fCCf1187',
   BNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   BUSD: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
   ETH: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  AXS: '0x715d400f88c167884bbcc41c5fea407ed4d2f8a0',
 };
 
 const BSCTestnet = {
@@ -74,24 +81,30 @@ const BSCTestnet = {
   specialPool: '0x7fE2Ec631716FeF3657BcB8d80CffBB2A34F7617',
   RigelSmartContract: '0x9f0227A21987c1fFab1785BA3eBa60578eC1501B',
   masterChef: '0x71C07230dF8b60aef6e3821CA2Dee530966EFc2D',
+  masterChefV2: '0x1F5DABb92Aba96928d12e405D66275E20c53D846',
   masterChefPoolOne: '0x0B0a1E07931bD7991a104218eE15BAA682c05e01',
+  masterChefV2PoolOne: '0x0B0a1E07931bD7991a104218eE15BAA682c05e01',
   masterChefPoolTwo: '0xca01606438556b299005b36B86B38Fe506eadF9F',
   masterChefPoolThree: '0x120f3E6908899Af930715ee598BE013016cde8A5',
+  masterChefV2PoolFour: '0x30d8621d919b69c0D7920A7dC8936d457F3f8965',
+  masterChefV2PoolFive: '0x816b823d9C7F30327B2c626DEe4aD731Dc9D3641',
   BNB: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
   BUSD: '0x10249e900b919fdee9e2ed38b4cd83c4df857254',
   ETH: '0x23967E68bB6FeA03fcc3676F8E55272106F44A4A',
+  AXS: '0x6b9a9df1e6a29f17bfc79040a8f505aaa8866b6e',
 };
 
 export const networkURLS =
-  checkNetVersion() === BSC_MAIN_NET_ID.toString() ? 'bscscan.com' : 'testnet.bscscan.com';
-
+  checkNetVersion() === BSC_MAIN_NET_ID.toString()
+    ? 'bscscan.com'
+    : 'testnet.bscscan.com';
 
 export const SMART_SWAP =
   checkNetVersion() === BSC_MAIN_NET_ID.toString() ? BSCMainnet : BSCTestnet;
 
 export const tokenList = () => {
   let allToken = [];
-  const persistedRoot = window.localStorage.getItem('persist:root')
+  const persistedRoot = window.localStorage.getItem('persist:root');
 
   if (persistedRoot) {
     const storedReducer = JSON.parse(persistedRoot);

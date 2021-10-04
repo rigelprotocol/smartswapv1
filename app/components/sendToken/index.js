@@ -119,6 +119,8 @@ export const Manual = props => {
   // Array of path address, based on routes
   const [routeAddress, setRouteAddress] = useState([]);
 
+  const [priceImpact, setPriceImpact] = useState(0);
+
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -220,6 +222,83 @@ export const Manual = props => {
   useEffect(async () => {
     await checkLiquidityPair();
   }, [selectedToken, selectedToToken, path]);
+
+  useEffect(async () => {
+    calculatePriceImpact();
+  }, [amountIn, fromAmount]);
+
+  const calculatePriceImpact = async () => {
+    const rout = await router();
+    if (routeAddress.length === 2) {
+      try {
+        const price = await rout.getAmountsOut(
+          '1000000000000000000',
+          routeAddress,
+        );
+
+        const marketPrice = ethers.utils.formatEther(price[1].toString());
+        const swapPrice = amountIn / fromAmount;
+        const priceDifference = swapPrice - marketPrice;
+        const priceImpact = (priceDifference / marketPrice) * 100;
+        setPriceImpact(parseFloat(priceImpact).toFixed(2));
+      } catch (e) {
+        setPriceImpact(0);
+      }
+    } else if (routeAddress.length === 3) {
+      try {
+        const price1 = await rout.getAmountsOut('1000000000000000000', [
+          routeAddress[0],
+          routeAddress[1],
+        ]);
+
+        const price1String = price1.toString().split(',');
+
+        const price2 = await rout.getAmountsOut(price1String[1], [
+          routeAddress[1],
+          routeAddress[2],
+        ]);
+
+        const marketPrice = ethers.utils.formatEther(price2[1].toString());
+        const swapPrice = amountIn / fromAmount;
+        const priceDifference = swapPrice - marketPrice;
+        const priceImpact = (priceDifference / marketPrice) * 100;
+        setPriceImpact(parseFloat(priceImpact).toFixed(2));
+      } catch (e) {
+        setPriceImpact(0);
+      }
+    } else if (routeAddress.length === 4) {
+      try {
+        const price1 = await rout.getAmountsOut('1000000000000000000', [
+          routeAddress[0],
+          routeAddress[1],
+        ]);
+
+        const price1String = price1.toString().split(',');
+
+        const price2 = await rout.getAmountsOut(price1String[1], [
+          routeAddress[1],
+          routeAddress[2],
+        ]);
+
+        const price2String = price2.toString().split(',');
+
+        const price3 = await rout.getAmountsOut(price2String[1], [
+          routeAddress[2],
+          routeAddress[3],
+        ]);
+
+        const marketPrice = ethers.utils.formatEther(price3[1].toString());
+        const swapPrice = amountIn / fromAmount;
+        const priceDifference = swapPrice - marketPrice;
+        const priceImpact = (priceDifference / marketPrice) * 100;
+        setPriceImpact(parseFloat(priceImpact).toFixed(2));
+      } catch (e) {
+        setPriceImpact(0);
+      }
+    } else {
+      setPriceImpact(0);
+    }
+  };
 
   const checkLiquidityPair = async () => {
     setNoLiquidity(false);
@@ -790,7 +869,7 @@ export const Manual = props => {
         setTimeout(() => openModal3(), 1000);
         const { hash } = sendTransaction;
         setURLNetwork('');
-        setTimeout(() => setURLNetwork(createURLNetwork(hash)), 3000);
+        setTimeout(() => setURLNetwork(createURLNetwork(hash, 'tx')), 3000);
         const { confirmations, status } = await sendTransaction.wait(3);
         const receipt = await sendTransaction.wait();
         const OutputAmountForNotification = await getOutPutDataFromEvent(
@@ -1560,6 +1639,7 @@ export const Manual = props => {
           openLiquidityPage={openLiquidityPage}
           openLoadingSpinnerAndSwap={openLoadingSpinnerAndSwap}
           route={route}
+          priceImpact={priceImpact}
         />
       </Box>
     </div>
@@ -1749,7 +1829,6 @@ async function update_RGP_ETH_SendAmount(
         Web3.utils.toWei(askAmount.toString()),
         field != 'to' ? [fromPath, toPath] : [toPath, fromPath],
       );
-      // * calculateSlippage()
 
       return field != 'to'
         ? setAmountIn(

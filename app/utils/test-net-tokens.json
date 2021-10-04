@@ -36,5 +36,13 @@
     "name": "BNB",
     "logoURI": "https://bscscan.com/token/images/binance_32.png",
     "address": "0x23967E68bB6FeA03fcc3676F8E55272106F44A4A"
+  },
+  {
+    "symbol": "AXS",
+    "available": true,
+    "imported": false,
+    "name": "Axie Infinity Shard",
+    "logoURI": "https://www.bscscan.com/token/images/axieinfinity_32.png",
+    "address": "0x6b9a9df1e6a29f17bfc79040a8f505aaa8866b6e"
   }
 ]
