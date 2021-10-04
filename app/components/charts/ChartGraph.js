@@ -150,7 +150,7 @@ const Graph = ({ setShow }) => {
         <div>
           <Text className={styles.text__market}>Volume (24)</Text>
           <Text className={styles.text}>
-            ${volume24} <span className={volumeChange > 0 ? styles.increase : styles.decrease}>{volumeChange}%</span>
+            ${volume24.toLocaleString()} <span className={volumeChange > 0 ? styles.increase : styles.decrease}>{volumeChange}%</span>
           </Text>
         </div>
         <div>
