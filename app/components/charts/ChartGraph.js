@@ -21,7 +21,7 @@ const Graph = ({ setShow }) => {
     axios({
     method: 'get',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    url: `https://api.coingecko.com/api/v3/coins/rigel-protocol/market_chart?vs_currency=bnb&days=14&interval=daily`,
+    url: `https://api.coingecko.com/api/v3/coins/rigel-protocol/market_chart?vs_currency=bnb&days=7&interval=daily`,
     withCredentials: false,
   })
   .then(res=>{
