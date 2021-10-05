@@ -628,7 +628,7 @@ const ShowYieldFarmDetails = ({
           toastNotify.custom(
             <Notification
               hash={specialWithdraw.hash}
-              message={` Harvested ${amountOfRgbSpecial} RGB to your wallet`}
+              message={` Harvested ${amountOfRgbSpecial} RGP to your wallet`}
             />,
           );
           callRefreshFarm(confirmations, status);
@@ -643,7 +643,7 @@ const ShowYieldFarmDetails = ({
           toastNotify.custom(
             <Notification
               hash={withdraw.hash}
-              message={` Harvested ${amountOfRgb} RGB to your wallet`}
+              message={` Harvested ${amountOfRgb} RGP to your wallet`}
             />,
           );
           callRefreshFarm(confirmations, status);
