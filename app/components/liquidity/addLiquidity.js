@@ -626,5 +626,3 @@ AddLiquidity.propTypes = {
 
 const mapStateToProps = ({ wallet }) => ({ wallet });
 export default connect(mapStateToProps)(AddLiquidity);
-
-// export default AddLiquidity;
