@@ -37,16 +37,18 @@ import {
   smartSwapLPTokenPoolTwo,
   smartSwapLPTokenPoolThree,
   smartSwapLPTokenV2PoolFour,
-  smartSwapLPTokenV2PoolFive
+  smartSwapLPTokenV2PoolFive,
 } from '../../utils/SwapConnect';
 import { SMART_SWAP } from '../../utils/constants';
 import { updateFarmAllowances } from '../../containers/FarmingPage/actions';
+import { notify } from '../../containers/NoticeProvider/actions';
 
 const ShowYieldFarmDetails = ({
   content,
   wallet,
   refreshTokenStaked,
   updateFarmAllowances,
+  notify,
 }) => {
   const [depositValue, setDepositValue] = useState('Confirm');
   const [deposit, setDeposit] = useState(false);
@@ -77,9 +79,23 @@ const ShowYieldFarmDetails = ({
   } = useDisclosure();
   const [approvalLoading, setApprovalLoading] = useState(false);
 
+  const [farmingFee, setFarmingFee] = useState(10);
+
   const toast = useToast();
   const addPrevBal = 'addPrevBal';
   const stakeId = 'stakeId';
+
+  useEffect(() => {
+    const RGPfarmingFee = async () => {
+      if (wallet.signer !== 'signer') {
+        const masterChef = await masterChefV2Contract();
+        const minFarmingFee = await masterChef.farmingFee();
+        const fee = Web3.utils.fromWei(minFarmingFee.toString());
+        setFarmingFee(fee);
+      }
+    };
+    RGPfarmingFee();
+  }, [wallet]);
 
   useEffect(() => {
     setDepositInputHasError(false);
@@ -215,6 +231,18 @@ const ShowYieldFarmDetails = ({
     return stakeSubscription();
   }, [wallet.address]);
 
+  const tokenBalance = async () => {
+    try {
+      if (wallet.address != '0x') {
+        const token = await rigelToken();
+        const balance = await token.balanceOf(wallet.address);
+        return ethers.utils.formatEther(balance);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const getAllowances = async () => {
     try {
       const [rigel, pool1, pool2, pool3] = await Promise.all([
@@ -303,7 +331,7 @@ const ShowYieldFarmDetails = ({
         setIsPoolRGP(true);
         const specialPoolApproval = await specailPoolAllowance();
         changeApprovalButton(true, specialPoolApproval);
-      }else{
+      } else {
         const rgp = await rigelToken();
         const rgpApproval = await poolAllowance(rgp);
         if (content.deposit === 'RGP-BNB') {
@@ -318,13 +346,13 @@ const ShowYieldFarmDetails = ({
           const poolThree = await smartSwapLPTokenPoolThree();
           const approvalForBNBBUSD = await poolAllowance(poolThree);
           changeApprovalButton(approvalForBNBBUSD, rgpApproval);
-        }else if(content.deposit ==='AXS-RGP'){
+        } else if (content.deposit === 'AXS-RGP') {
           const poolFour = await smartSwapLPTokenV2PoolFour();
-          const approveForAXSRGP = await poolAllowance(poolFour)
+          const approveForAXSRGP = await poolAllowance(poolFour);
           changeApprovalButton(approveForAXSRGP, rgpApproval);
-        }else if(content.deposit ==='AXS-BUSD'){
+        } else if (content.deposit === 'AXS-BUSD') {
           const poolFive = await smartSwapLPTokenV2PoolFive();
-          const approveForAXSBUSD = await poolAllowance(poolFive)
+          const approveForAXSBUSD = await poolAllowance(poolFive);
           changeApprovalButton(approveForAXSBUSD, rgpApproval);
         }
       }
@@ -440,18 +468,42 @@ const ShowYieldFarmDetails = ({
   // deposit for the Liquidity Provider tokens for all pools
   const LPDeposit = async pid => {
     if (wallet.signer !== 'signer') {
-      const lpTokens = await masterChefV2Contract();
-      const data = await lpTokens.deposit(
-        pid,
-        ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
-        {
-          from: wallet.address,
-          gasLimit: 250000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        },
-      );
-      const { confirmations, status } = await fetchTransactionData(data);
-      callRefreshFarm(confirmations, status);
+      const balance = await tokenBalance();
+      if (parseFloat(content.tokensStaked[1]) == 0) {
+        if (balance < farmingFee) {
+          notify({
+            title: 'Insufficient Balance',
+            body: `Insufficient RGP, you need at least ${farmingFee} RGP to enter this pool`,
+            type: 'error',
+          });
+        } else {
+          const lpTokens = await masterChefV2Contract();
+          const data = await lpTokens.deposit(
+            pid,
+            ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
+            {
+              from: wallet.address,
+              gasLimit: 250000,
+              gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+            },
+          );
+          const { confirmations, status } = await fetchTransactionData(data);
+          callRefreshFarm(confirmations, status);
+        }
+      } else {
+        const lpTokens = await masterChefV2Contract();
+        const data = await lpTokens.deposit(
+          pid,
+          ethers.utils.parseEther(depositTokenValue.toString(), 'ether'),
+          {
+            from: wallet.address,
+            gasLimit: 250000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
+        const { confirmations, status } = await fetchTransactionData(data);
+        callRefreshFarm(confirmations, status);
+      }
     }
   };
 
@@ -478,11 +530,15 @@ const ShowYieldFarmDetails = ({
     if (wallet.signer !== 'signer') {
       try {
         const walletBal = (await contract.balanceOf(wallet.address)) + 400e18;
-        const data = await contract.approve(SMART_SWAP.masterChefV2, walletBal, {
-          from: wallet.address,
-          gasLimit: 150000,
-          gasPrice: ethers.utils.parseUnits('20', 'gwei'),
-        });
+        const data = await contract.approve(
+          SMART_SWAP.masterChefV2,
+          walletBal,
+          {
+            from: wallet.address,
+            gasLimit: 150000,
+            gasPrice: ethers.utils.parseUnits('20', 'gwei'),
+          },
+        );
         setApprovalLoading(true);
         const { confirmations, status } = await fetchTransactionData(data);
         getAllowances();
@@ -549,9 +605,7 @@ const ShowYieldFarmDetails = ({
     </Button>
   );
 
-
   // ............................................END LP FOR RGP-BUSD TOKENS .........................................
-
 
   // ............................................END LP FOR BNB-BUSD TOKENS .........................................
   const harvest = async pId => {
@@ -680,7 +734,6 @@ const ShowYieldFarmDetails = ({
     }
   };
   const confirmUnstakeDeposit = async val => {
-
     setUnstakeButtonValue('Pending Confirmation');
     openSpinModal('Unstaking...', `Unstaking ${unstakeToken} ${val}`);
     try {
@@ -758,7 +811,7 @@ const ShowYieldFarmDetails = ({
         }
         setApproveValueForOtherToken(true);
         setApproveValueForRGP(true);
-      } else if(val === "AXS-RGP"){
+      } else if (val === 'AXS-RGP') {
         const poolFour = await smartSwapLPTokenV2PoolFour();
         if (!approveValueForOtherToken && !approveValueForRGP) {
           await RGPApproval();
@@ -770,7 +823,7 @@ const ShowYieldFarmDetails = ({
         }
         setApproveValueForOtherToken(true);
         setApproveValueForRGP(true);
-      }else if(val === "AXS-BUSD"){
+      } else if (val === 'AXS-BUSD') {
         const poolFive = await smartSwapLPTokenV2PoolFive();
         if (!approveValueForOtherToken && !approveValueForRGP) {
           await RGPApproval();
@@ -1309,5 +1362,6 @@ export default connect(
   mapStateToProps,
   {
     updateFarmAllowances,
+    notify,
   },
 )(ShowYieldFarmDetails);
