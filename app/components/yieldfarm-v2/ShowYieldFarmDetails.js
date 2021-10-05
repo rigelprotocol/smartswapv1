@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toastNotify from 'react-hot-toast';
 import {
   Box,
   Flex,
@@ -23,6 +24,10 @@ import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
+import Notification from '../ToastNotification/Notification'
+import abiDecoder from 'abi-decoder';
+import specialPoolAbi from '../../utils/abis/specialPool.json';
+import masterChefV2Abi from '../../utils/abis/masterChefV2.json'
 import configureStore from 'configureStore';
 import { connect } from 'react-redux';
 import styles from '../../styles/yieldFarmdetails.css';
@@ -618,12 +623,28 @@ const ShowYieldFarmDetails = ({
           const { confirmations, status } = await fetchTransactionData(
             specialWithdraw,
           );
+          abiDecoder.addABI(specialPoolAbi);
+          const amountOfRgbSpecial = abiDecoder.decodeMethod(specialWithdraw.data).params[1].value
+          toastNotify.custom(
+            <Notification
+              hash={specialWithdraw.hash}
+              message={` Harvested ${amountOfRgbSpecial} RGB to your wallet`}
+            />,
+          );
           callRefreshFarm(confirmations, status);
         } else {
           const lpTokens = await masterChefV2Contract();
           const withdraw = await lpTokens.withdraw(pId, 0);
           const { confirmations, status } = await fetchTransactionData(
             withdraw,
+          );
+          abiDecoder.addABI(masterChefV2Abi);
+          const amountOfRgb = abiDecoder.decodeMethod(withdraw.data).params[1].value
+          toastNotify.custom(
+            <Notification
+              hash={withdraw.hash}
+              message={` Harvested ${amountOfRgb} RGB to your wallet`}
+            />,
           );
           callRefreshFarm(confirmations, status);
         }
@@ -865,7 +886,7 @@ const ShowYieldFarmDetails = ({
         paddingBottom="4px"
         border="1px solid #4D4693"
         width="100%"
-        // borderBottomRadius="14px"
+      // borderBottomRadius="14px"
       >
         <Box
           flexBasis="30%"
@@ -895,15 +916,15 @@ const ShowYieldFarmDetails = ({
                 borderRadius="0px"
                 bg={
                   approveValueForRGP &&
-                  approveValueForOtherToken &&
-                  content.tokensStaked[1] <= 0
+                    approveValueForOtherToken &&
+                    content.tokensStaked[1] <= 0
                     ? '#4D4693'
                     : 'rgba(64, 186,213, 0.1)'
                 }
                 color={
                   approveValueForRGP &&
-                  approveValueForOtherToken &&
-                  content.tokensStaked[1] <= 0
+                    approveValueForOtherToken &&
+                    content.tokensStaked[1] <= 0
                     ? 'rgba(190, 190, 190, 1)'
                     : '#40BAD5'
                 }
@@ -1037,8 +1058,8 @@ const ShowYieldFarmDetails = ({
                 display="inline-flex"
                 marginLeft="40px"
                 marginBottom="10px"
-                // marginLeft="10px"
-                // marginRight="10px"
+              // marginLeft="10px"
+              // marginRight="10px"
               >
                 <Tooltip label="Auto Harvest (weekly)" fontSize="md">
                   <QuestionOutlineIcon color="#120136" cursor="pointer" />
@@ -1104,14 +1125,14 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
@@ -1124,11 +1145,11 @@ const ShowYieldFarmDetails = ({
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
-                    onClick={() => {}}
+                    onClick={() => { }}
                   >
                     {depositErrorButtonText}
                   </Button>
@@ -1252,14 +1273,14 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
@@ -1272,11 +1293,11 @@ const ShowYieldFarmDetails = ({
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
-                    onClick={() => {}}
+                    onClick={() => { }}
                   >
                     {errorButtonText}
                   </Button>
@@ -1288,14 +1309,14 @@ const ShowYieldFarmDetails = ({
                     mx="auto"
                     color={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? 'rgba(190, 190, 190, 1)'
                         : '#40BAD5'
                     }
                     width="100%"
                     background={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? 'rgba(64, 186, 213, 0.15)'
                         : '#444159'
                     }
@@ -1308,7 +1329,7 @@ const ShowYieldFarmDetails = ({
                     fontSize="16px"
                     _hover={
                       unstakeButtonValue === 'Confirm' ||
-                      unstakeButtonValue === 'Confirmed'
+                        unstakeButtonValue === 'Confirmed'
                         ? { background: 'rgba(64, 186, 213, 0.15)' }
                         : { background: '#444159' }
                     }
