@@ -18,6 +18,7 @@ const From = ({
   selectedToken,
   setSelectedToken,
   wallet,
+  handleMaxAmount,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -73,6 +74,8 @@ const From = ({
           max
           onOpen={onOpen}
           selectedToken={selectedToken}
+          balance={balance}
+          handleMaxAmount={handleMaxAmount}
         />
       </Box>
       <TokenListBox
