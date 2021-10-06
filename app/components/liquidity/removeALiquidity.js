@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Flex } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
+import styles from "../../styles/slider.css"
 import {
   Text,
   Heading,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
   Input,
   InputGroup,
   InputRightElement,
@@ -120,6 +117,9 @@ if(selectedValue>100){
 }
   },[selectedValue])
 
+  const inputSlider = (e) =>{
+    setSelectedValue(e.target.value)
+      }
   const getLiquidityPairRatio = async () => {
     try {
       const factory = await SmartFactory();
@@ -278,23 +278,25 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
           </Heading>
           {simpleRemoveLiquidityPool &&
         <Box>
-          <Slider
-            defaultValue={sliderValues[1]}
-            value={selectedValue}
-            min={sliderValues[0]}
-            max={sliderValues[sliderValues.length - 1]}
-            step={sliderValues[1]}
-            onChangeEnd={value => {
-              setDetermineInputChange("slider")
-              setSelectedValue(value)}
-            }
-          >
-            <SliderTrack bg="#999999">
-              <Box position="relative" right={10} />
-              <SliderFilledTrack bg="#999999" opacity={0.5} />
-            </SliderTrack>
-            <SliderThumb boxSize={6} bg="#C4C4C4" />
-          </Slider>
+         <div className={styles.range}>
+   <div className={styles.field}>
+    <div className={`${styles.value} ${styles.left}`}>
+      0
+      </div>
+   <input
+   type="range"
+   min="0"
+   max="100"
+   value={selectedValue}
+   steps="1"
+   onChange={(e)=>inputSlider(e)}
+   />
+   <div className={`${styles.value} ${styles.right}`}>
+     100
+     </div>
+ </div>
+
+ </div>
           <Flex justifyContent="space-between" my="4">
             {sliderValues.splice(1).map((val, index) => (
               <Button
