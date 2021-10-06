@@ -25,13 +25,10 @@ import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import Notification from '../ToastNotification/Notification'
-import abiDecoder from 'abi-decoder';
-import specialPoolAbi from '../../utils/abis/specialPool.json';
-import masterChefV2Abi from '../../utils/abis/masterChefV2.json'
 import configureStore from 'configureStore';
 import { connect } from 'react-redux';
 import styles from '../../styles/yieldFarmdetails.css';
-import { clearInputInfo } from '../../utils/UtilFunc';
+import { clearInputInfo, convertFromWei } from '../../utils/UtilFunc';
 import SpinModal from '../modal/SpinModal';
 import {
   rigelToken,
@@ -44,7 +41,7 @@ import {
   smartSwapLPTokenV2PoolFour,
   smartSwapLPTokenV2PoolFive,
 } from '../../utils/SwapConnect';
-import { SMART_SWAP } from '../../utils/constants';
+import { convertToNumber, SMART_SWAP } from '../../utils/constants';
 import { updateFarmAllowances } from '../../containers/FarmingPage/actions';
 import { notify } from '../../containers/NoticeProvider/actions';
 
@@ -620,30 +617,29 @@ const ShowYieldFarmDetails = ({
         if (pId === 0) {
           const specialPool = await RGPSpecialPool();
           const specialWithdraw = await specialPool.unStake(0);
-          const { confirmations, status } = await fetchTransactionData(
+          const { confirmations, status, logs } = await fetchTransactionData(
             specialWithdraw,
           );
-          abiDecoder.addABI(specialPoolAbi);
-          const amountOfRgbSpecial = abiDecoder.decodeMethod(specialWithdraw.data).params[1].value
+          const amountOfRgbSpecial = convertToNumber(logs[1].data)
           toastNotify.custom(
             <Notification
               hash={specialWithdraw.hash}
-              message={` Harvested ${amountOfRgbSpecial} RGP to your wallet`}
+              message={` Harvested ${convertFromWei(amountOfRgbSpecial)} RGP `}
             />,
           );
           callRefreshFarm(confirmations, status);
         } else {
           const lpTokens = await masterChefV2Contract();
           const withdraw = await lpTokens.withdraw(pId, 0);
-          const { confirmations, status } = await fetchTransactionData(
+          const { confirmations, status, logs } = await fetchTransactionData(
             withdraw,
           );
-          abiDecoder.addABI(masterChefV2Abi);
-          const amountOfRgb = abiDecoder.decodeMethod(withdraw.data).params[1].value
+          const amountOfRgb = convertToNumber(logs[1].data)
+
           toastNotify.custom(
             <Notification
               hash={withdraw.hash}
-              message={` Harvested ${amountOfRgb} RGP to your wallet`}
+              message={` Harvested ${convertFromWei(amountOfRgb)} RGP`}
             />,
           );
           callRefreshFarm(confirmations, status);
@@ -703,9 +699,9 @@ const ShowYieldFarmDetails = ({
   };
 
   const fetchTransactionData = async sendTransaction => {
-    const { confirmations, status } = await sendTransaction.wait(1);
+    const { confirmations, status, logs } = await sendTransaction.wait(1);
 
-    return { confirmations, status };
+    return { confirmations, status, logs };
   };
   const openSpinModal = (title, text) => {
     setSpinModalText(text);
