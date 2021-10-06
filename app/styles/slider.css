@@ -1,0 +1,57 @@
+.range{
+  width:75%;
+  margin: 0 auto;
+  margin-bottom: 50px;
+  margin-left:26px
+
+}
+.field{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  background:green
+}
+.field .value{
+  position: absolute;
+  font-size: 18px;
+  color: white !important;
+  font-weight: 600;
+}
+.field .value.left{
+  left: -22px;
+}
+.field .value.right{
+  right: -43px;
+}
+.range input{
+  -webkit-appearance: none;
+  width: 100%;
+  height: 3px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+}
+.range input::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #191D4E;
+  border: 1px solid #191D4E;
+  cursor: pointer;
+}
+.range input::-moz-range-thumb{
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #191D4E;
+  border: 1px solid #191D4E;
+  cursor: pointer;
+}
+.range input::-moz-range-thumb{
+  background: #191D4E;
+}
