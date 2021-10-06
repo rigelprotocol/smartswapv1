@@ -24,6 +24,7 @@ import LiquidityPriceBox from './LiquidityPriceBox';
 import Plus from '../../assets/plus-c.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 import BreakdownBg from '../../assets/breakdown-bg.svg';
+import { connect } from 'react-redux';
 
 const AddLiquidity = ({
   fromValue,
@@ -76,6 +77,7 @@ const AddLiquidity = ({
   setToInputMax,
   onCloseModal,
   isOpenModal,
+  wallet,
 }) => (
   <Box
     bg="#120136"
@@ -125,6 +127,7 @@ const AddLiquidity = ({
       setFromInputMax={setFromInputMax}
       setFromSelectedToken={setFromSelectedToken}
       checkIfLiquidityPairExist={checkIfLiquidityPairExist}
+      wallet={wallet}
     />
     <Flex justifyContent="center" my={3}>
       <Plus />
@@ -162,7 +165,7 @@ const AddLiquidity = ({
     )}
     <Box mt={5} p={5}>
       {toSelectedToken.symbol !== 'BNB' &&
-      !hasAllowedToToken &&
+        !hasAllowedToToken &&
         toSelectedToken.symbol !== 'SELECT A TOKEN' &&
         !insufficientBalanceButton &&
         toValue >= 0 && (
@@ -187,7 +190,7 @@ const AddLiquidity = ({
           </Button>
         )}
       {fromSelectedToken.symbol !== 'BNB' &&
-      !hasAllowedFromToken &&
+        !hasAllowedFromToken &&
         fromSelectedToken.symbol !== 'SELECT A TOKEN' &&
         fromValue >= 0 &&
         fromValue !== '' &&
@@ -313,8 +316,8 @@ const AddLiquidity = ({
                   {newTokenPairButton
                     ? '100'
                     : fromValue > 0 && toValue > 0
-                      ? (parseFloat(fromValue) * 3) / 100
-                      : 0.0}
+                    ? (parseFloat(fromValue) * 3) / 100
+                    : 0.0}
                   %
                 </Text>
               </Box>
@@ -618,6 +621,8 @@ AddLiquidity.propTypes = {
   modal7Disclosure: PropTypes.object,
   tokenFromValue: PropTypes.string.isRequired,
   tokenToValue: PropTypes.string.isRequired,
+  wallet: PropTypes.object,
 };
 
-export default AddLiquidity;
+const mapStateToProps = ({ wallet }) => ({ wallet });
+export default connect(mapStateToProps)(AddLiquidity);
