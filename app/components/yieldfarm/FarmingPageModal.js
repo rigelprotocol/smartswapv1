@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Text,
@@ -9,15 +9,20 @@ import {
   useDisclosure,
   ModalBody,
   Button,
+  Spinner
 } from '@chakra-ui/react';
 import styles from '../../styles/yieldFarmdetails.css';
 const FarmingPageModal = ({ farmingModal, setFarmingModal, farmingFee }) => {
   const modal3Disclosure = useDisclosure();
+  const [showSpinner,setShowSpinner] = useState(true)
   useEffect(() => {
     if (farmingModal) {
       openModal3();
     }
-  }, [farmingModal]);
+    if(farmingFee !==""){
+      setShowSpinner(false)
+    }
+  }, [farmingModal,farmingFee]);
   const openModal3 = () => {
     modal3Disclosure.onOpen();
   };
@@ -45,7 +50,7 @@ const FarmingPageModal = ({ farmingModal, setFarmingModal, farmingFee }) => {
           <Text color="gray.400">
             You will be required to pay atleast{' '}
             <span style={{ fontSize: '20px', color: 'white' }}>
-              {farmingFee}
+              {showSpinner ? <Spinner speed="0.65s" color="blue.500" /> : farmingFee}
             </span>{' '}
             RGP to join any pool.
           </Text>

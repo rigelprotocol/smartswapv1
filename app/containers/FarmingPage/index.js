@@ -61,7 +61,7 @@ export function FarmingPage(props) {
     '',
   );
   const [farmingModal, setFarmingModal] = useState(false);
-  const [farmingFee, setFarmingFee] = useState(10);
+  const [farmingFee, setFarmingFee] = useState("");
   const [initialLoad, setInitialLoad] = useState(true);
   const [showModalWithInput, setShowModalWithInput] = useState(false);
   const history = useHistory()
