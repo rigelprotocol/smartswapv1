@@ -591,6 +591,11 @@ export const Manual = props => {
     getToAmount(value || balance, 'from');
   };
 
+  const handleMaxAmount = balance => {
+    setFromAmount(balance);
+    callTransformFunction(balance);
+  };
+
   const changeData = () => {
     props.changeDeadlineValue({ actualTransactionDeadline, slippageValue });
   };
@@ -1489,6 +1494,7 @@ export const Manual = props => {
           getToAmount={getToAmount}
           userWallet={props.wallet}
           setPath={setPath}
+          handleMaxAmount={handleMaxAmount}
         />
         <Box textAlign="center">
           <ArrowDownImage />

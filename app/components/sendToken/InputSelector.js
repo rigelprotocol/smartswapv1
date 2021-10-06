@@ -16,6 +16,8 @@ const InputSelector = ({
   handleChange,
   selectedToken,
   selectedToToken,
+  balance,
+  handleMaxAmount,
 }) => {
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
   if (isMobileDevice) {
@@ -53,7 +55,9 @@ const InputSelector = ({
                 color="#72cfe4"
                 _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
                 onClick={e => {
-                  handleChange(e, tokenWhere(selectedToken.symbol).balance);
+                  handleMaxAmount(
+                    selectedToken.balance ? selectedToken.balance : balance,
+                  );
                 }}
               >
                 MAX
@@ -135,7 +139,9 @@ const InputSelector = ({
             color="#72cfe4"
             _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
             onClick={e => {
-              handleChange(e, tokenWhere(selectedToken.symbol).balance);
+              handleMaxAmount(
+                selectedToken.balance ? selectedToken.balance : balance,
+              );
             }}
           >
             MAX
