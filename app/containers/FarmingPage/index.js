@@ -64,7 +64,7 @@ export function FarmingPage(props) {
   const [farmingFee, setFarmingFee] = useState("");
   const [initialLoad, setInitialLoad] = useState(true);
   const [showModalWithInput, setShowModalWithInput] = useState(false);
-  const history = useHistory()
+  const history = useHistory();
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -74,9 +74,8 @@ export function FarmingPage(props) {
   const id = 'totalLiquidityToast';
 
 
-
   useEffect(() => {
-    checkIfUserAddressHasBeenWhiteListed()
+    checkIfUserAddressHasBeenWhiteListed();
     refreshTokenStaked();
   }, [wallet]);
 
@@ -109,7 +108,7 @@ export function FarmingPage(props) {
     if (wallet.address != '0x') {
       try {
         const specialPool = await RGPSpecialPool();
-        const isItWhiteListed = await specialPool.isWhitelist(wallet.address)
+        const isItWhiteListed = await specialPool.isWhitelist(wallet.address);
         setIsAddressWhitelist(isItWhiteListed)
       } catch (e) {
         console.error(e)
@@ -118,8 +117,8 @@ export function FarmingPage(props) {
 
   }
   const submitDataToGetWhitelisted = () => {
-    console.log({ dataInputToGetWhiteListed })
-    onCloseModal()
+    console.log({ dataInputToGetWhiteListed });
+    onCloseModal();
     toast({
       title: 'Address successfully submitted',
       description: 'You will be notified if you are eligible for this pool',
@@ -138,7 +137,7 @@ export function FarmingPage(props) {
   };
   useEffect(() => {
     getFarmData()
-  }, [])
+  }, []);
 
   const getFarmData = async () => {
     props.farmDataLoading(true);
@@ -156,7 +155,7 @@ export function FarmingPage(props) {
         pool2.getReserves(),
         pool3.getReserves(),
 
-      ])
+      ]);
       const RGPprice = ethers.utils.formatUnits(pool1Reserve[0]
         .mul(1000)
         .div(pool1Reserve[1]), 3);
@@ -607,27 +606,29 @@ export function FarmingPage(props) {
         >
           <RGPFarmInfo />
         </InfoModal>
-        <FarmingV2Alert
-          message="V2 LP farming has been launched. Please move your LP deposits to the Farming V2."
-        />
-        <Flex mb={3} justifyContent="flex-end">
+          <FarmingV2Alert
+            message="This is the V1 Farm."
+          />
+
+        <Flex justifyContent="flex-end">
           <Tabs
             variant="soft-rounded"
             colorScheme="#2D276A"
             background="#2D276A"
-            mx={[5, 10, 15, 16]}
-
-            marginTop={{ base: '', md: '2px', lg: '2px' }}
-            position={{ base: 'relative', md: 'absolute' }}
-            paddingLeft={{ base: '1px', md: '5px', lg: '5px' }}
+            mx={[5, 10, 15, 20]}
+            //position={{ base: 'relative', md: 'absolute' }}
             borderRadius="50px"
+            border={'2px solid #726ac8'}
+            p={1}
           >
             <TabList>
               <Tab
                 padding="8px 34px"
                 marginTop="3px"
                 background="#726AC8"
+                border="none"
                 color="white"
+
               >
                 V1
               </Tab>
@@ -635,9 +636,10 @@ export function FarmingPage(props) {
                 padding="8px 34px"
                 marginTop="3px"
                 background="none"
-                border="none"
                 color="white"
-                onClick={changeVersion}>
+                border={'none'}
+                onClick={changeVersion}
+              >
                 V2
               </Tab>
             </TabList>

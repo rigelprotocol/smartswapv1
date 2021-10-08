@@ -886,7 +886,7 @@ const ShowYieldFarmDetails = ({
         flexDirection={['column', 'column', 'row']}
         color="white"
         // margin="0 auto"
-        background="#29235E"
+        background="#221D4F"
         padding="0 20px"
         paddingBottom="4px"
         border="1px solid #4D4693"
@@ -894,7 +894,7 @@ const ShowYieldFarmDetails = ({
       // borderBottomRadius="14px"
       >
         <Box
-          flexBasis="30%"
+          flexBasis="35%"
           width="100%"
           textAlign="right"
           display="flex"
@@ -902,7 +902,7 @@ const ShowYieldFarmDetails = ({
         >
           <Box>
             <Flex>
-              <Text fontSize="20px" marginRight="20px">
+              <Text fontSize="20px" marginRight="20px" fontWeight={'bold'}>
                 {content.tokensStaked[1]}
               </Text>{' '}
               <Text fontSize="14px" color="gray.400" marginTop="25px">
@@ -916,7 +916,7 @@ const ShowYieldFarmDetails = ({
 
             <Flex>
               <Button
-                w="60%"
+                w="90%"
                 h="50px"
                 borderRadius="0px"
                 bg={
@@ -931,7 +931,7 @@ const ShowYieldFarmDetails = ({
                     approveValueForOtherToken &&
                     content.tokensStaked[1] <= 0
                     ? 'rgba(190, 190, 190, 1)'
-                    : '#40BAD5'
+                    : '#FFF'
                 }
                 border="0"
                 mb="4"
@@ -972,14 +972,14 @@ const ShowYieldFarmDetails = ({
         </Box>
         {/* margin={['0', '0', '0 20px']} */}
         <Box
-          flexBasis="30%"
+          flexBasis="35%"
           width="100%"
           display="flex"
           justifyContent="space-around"
         >
-          <Box>
-            <Flex>
-              <Text fontSize="20px" marginRight="30px">
+          <Box width={'80%'} margin={'0 auto'}>
+            <Flex justifyContent={'center'}>
+              <Text fontSize="20px" marginRight="30px" textAlign={'center'}>
                 {content.RGPEarned}
               </Text>{' '}
               <Text color="gray.400" marginTop="25px">
@@ -987,8 +987,9 @@ const ShowYieldFarmDetails = ({
               </Text>
             </Flex>
             <Button
-              w="100%"
+              w="80%"
               h="50px"
+              margin={'0 auto'}
               borderRadius="0px"
               bg={content.RGPEarned <= 0 ? '#4D4693' : 'rgba(64, 186,213, 0.1)'}
               color={
@@ -1010,7 +1011,7 @@ const ShowYieldFarmDetails = ({
         </Box>
 
         <Box
-          flexBasis="25%"
+          flexBasis="20%"
           width="100%"
           display="flex"
           justifyContent="space-around"
@@ -1038,7 +1039,7 @@ const ShowYieldFarmDetails = ({
           </Box>
         </Box>
         <Box
-          flexBasis="15%"
+          flexBasis="10%"
           width="100%"
           margin={['0', '0', '0 20px']}
           justifySelf="end"

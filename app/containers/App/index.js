@@ -75,7 +75,7 @@ const App = props => {
 
     const handleChainChanged = () => {
       window.location.reload();
-    }
+    };
     if (window.ethereum) {
       checkchain();
       ethereum.on('chainChanged', handleChainChanged);

@@ -60,6 +60,7 @@ function FarmingV2Alert({ message }) {
                     right="20px"
                     border="2px solid #726AC8"
                     textAign="center"
+                    cursor={'pointer'}
                 />
             </Alert>
         </Box >

@@ -250,10 +250,10 @@ export function FarmingV2Page(props) {
 
   /**
    * The BUSD/BNB LP token contract's token0 and token1 are
-   * interchanged on the testnet and mainnet that's why 
+   * interchanged on the testnet and mainnet that's why
    * there is a check before calculating the liquidity.
-   * @param {*} pool3 
-   * @param {*} pool3Reserve 
+   * @param {*} pool3
+   * @param {*} pool3Reserve
    * @returns BNB/BUSD Liquidity
    */
   const getBusdBnbLiquidity = (pool3, pool3Reserve) => {
@@ -271,7 +271,7 @@ export function FarmingV2Page(props) {
     return BUSD_BNBLiquidity;
   };
   const getAXSBUSDLiquidity = (pool5, pool5Reserve) => {
-    // The quatity of BUSD (pool5Reserve[0]) multiply by 2 
+    // The quatity of BUSD (pool5Reserve[0]) multiply by 2
     // is the total liquidity
     const pool5Testnet = '0x816b823d9C7F30327B2c626DEe4aD731Dc9D3641';
     let AXS_BUSDLiquidity;
@@ -743,7 +743,7 @@ export function FarmingV2Page(props) {
               textAlign="left"
               padding="10px"
             >
-              This is the V2 Farm. You should migrate your LP token deposit from V1 Farm to V2 LP pool
+              This is the V2 Farm. You should migrate your stakings from V1 Farm.
             </AlertDescription>
             <CloseButton
               position="absolute"
@@ -763,10 +763,11 @@ export function FarmingV2Page(props) {
             colorScheme="#2D276A"
             background="#2D276A"
             mx={[5, 10, 15, 20]}
-            marginTop={{ base: '', md: '2px', lg: '2px' }}
             position={{ base: 'relative', md: 'absolute' }}
-            paddingLeft={{ base: '1px', md: '10px', lg: '15px' }}
             borderRadius="50px"
+            border={'2px solid #726ac8'}
+            p={1}
+            mt={3}
           >
             <TabList>
               <Tab
@@ -784,6 +785,7 @@ export function FarmingV2Page(props) {
                 marginTop="3px"
                 background="#726AC8"
                 color="white"
+                border={'none'}
               >
                 V2
               </Tab>
@@ -797,6 +799,9 @@ export function FarmingV2Page(props) {
               border="1px solid #2D276A"
               background="#2D276A"
               color="#fff"
+              px={5}
+              py={4}
+              minWidth={'200px'}
             >
               Liquidity Pools
             </Tab>
@@ -805,6 +810,10 @@ export function FarmingV2Page(props) {
               border="1px solid #2D276A"
               background="#2D276A"
               color="#fff"
+              px={5}
+              py={4}
+              outline={'none'}
+              minWidth={'200px'}
             >
               Staking
             </Tab>
@@ -826,7 +835,7 @@ export function FarmingV2Page(props) {
                 >
                   <Box mx="auto" w={['100%', '100%', '100%']} pb="70px">
                     <Flex
-                      color="gray.400"
+                      color="#8B82E5"
                       alignItems="center"
                       justifyContent="space-between"
                       px={4}

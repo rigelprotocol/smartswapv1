@@ -109,8 +109,8 @@ const YieldFarm = ({
             <Button
               w={['100%', '100%', '146px']}
               h="40px"
-              bg="rgba(64, 186, 213, 0.1);"
-              color="#40BAD5"
+              bg="#4D4693"
+              color="#FFF"
               border="0"
               borderRadius="0px"
               mb="4"
@@ -123,8 +123,8 @@ const YieldFarm = ({
             <Button
               w={['100%', '100%', '146px']}
               h="40px"
-              bg="rgba(64, 186, 213, 0.1);"
-              color="#40BAD5"
+              bg="#4D4693"
+              color="#FFF"
               border="0"
               mb="4"
               cursor="pointer"
