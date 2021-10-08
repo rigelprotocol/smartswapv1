@@ -522,7 +522,15 @@ const ShowYieldFarmDetails = ({
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data);
+      const { confirmations, status, logs } = await fetchTransactionData(data);
+      const {hash} = data;
+      const amountUnstaked = convertToNumber(logs[1].data)
+      toastNotify.custom(
+        <Notification
+          hash={hash}
+          message={` Successfully unstaked ${convertFromWei(amountUnstaked)} RGP `}
+        />,
+      );
       // dispatch the getTokenStaked action from here when data changes
       callRefreshFarm(confirmations, status);
     }
@@ -753,6 +761,7 @@ const ShowYieldFarmDetails = ({
   const confirmUnstakeDeposit = async val => {
     setUnstakeButtonValue('Pending Confirmation');
     openSpinModal('Unstaking...', `Unstaking ${unstakeToken} ${val}`);
+
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
