@@ -40,4 +40,5 @@ describe('configureStore', () => {
       expect(compose).toHaveBeenCalled();
       /* eslint-enable */
     });
-  })});
+  });
+});

@@ -72,7 +72,6 @@ const App = props => {
   }, [wallet]);
 
   useEffect(() => {
-
     const handleChainChanged = () => {
       window.location.reload();
     };
@@ -82,9 +81,9 @@ const App = props => {
     }
     return () => {
       if (ethereum.removeListener) {
-        ethereum.removeListener('chainChanged', handleChainChanged)
+        ethereum.removeListener('chainChanged', handleChainChanged);
       }
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -100,7 +99,7 @@ const App = props => {
         4,
       );
       props.updateRGPprice(RGPprice);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   useEffect(() => {

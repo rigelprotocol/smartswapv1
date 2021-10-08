@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ethers } from 'ethers';
 import { connect } from 'react-redux';
-import { useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
 import Web3 from 'web3';
 import { Box, Flex, Text, useDisclosure } from '@chakra-ui/layout';
 import Layout from 'components/layout';
@@ -17,7 +17,6 @@ import InfoModal from 'components/modal/InfoModal';
 import FarmingPageModal from 'components/yieldfarm/FarmingPageModal';
 import RGPFarmInfo from 'components/yieldfarm/RGPFarmInfo';
 import { notify } from 'containers/NoticeProvider/actions';
-import FarmingV2Alert from './../../components/Alerts/FarmingV2Alert';
 
 import {
   masterChefContract,
@@ -38,6 +37,7 @@ import {
   TabList,
   Tabs,
 } from '@chakra-ui/react';
+import FarmingV2Alert from '../../components/Alerts/FarmingV2Alert';
 import { tokenList, SMART_SWAP } from '../../utils/constants';
 import { changeRGPValue } from '../WalletProvider/actions';
 import {
@@ -61,7 +61,7 @@ export function FarmingPage(props) {
     '',
   );
   const [farmingModal, setFarmingModal] = useState(false);
-  const [farmingFee, setFarmingFee] = useState("");
+  const [farmingFee, setFarmingFee] = useState('');
   const [initialLoad, setInitialLoad] = useState(true);
   const [showModalWithInput, setShowModalWithInput] = useState(false);
   const history = useHistory();
@@ -72,7 +72,6 @@ export function FarmingPage(props) {
   } = useModalDisclosure();
   const toast = useToast();
   const id = 'totalLiquidityToast';
-
 
   useEffect(() => {
     checkIfUserAddressHasBeenWhiteListed();
@@ -109,13 +108,12 @@ export function FarmingPage(props) {
       try {
         const specialPool = await RGPSpecialPool();
         const isItWhiteListed = await specialPool.isWhitelist(wallet.address);
-        setIsAddressWhitelist(isItWhiteListed)
+        setIsAddressWhitelist(isItWhiteListed);
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
     }
-
-  }
+  };
   const submitDataToGetWhitelisted = () => {
     console.log({ dataInputToGetWhiteListed });
     onCloseModal();
@@ -133,10 +131,10 @@ export function FarmingPage(props) {
       const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) { }
+    } catch (error) {}
   };
   useEffect(() => {
-    getFarmData()
+    getFarmData();
   }, []);
 
   const getFarmData = async () => {
@@ -147,18 +145,23 @@ export function FarmingPage(props) {
         smartSwapLPTokenPoolOne(),
         smartSwapLPTokenPoolTwo(),
         smartSwapLPTokenPoolThree(),
-      ])
+      ]);
 
-      const [rgpTotalStaking, pool1Reserve, pool2Reserve, pool3Reserve] = await Promise.all([
+      const [
+        rgpTotalStaking,
+        pool1Reserve,
+        pool2Reserve,
+        pool3Reserve,
+      ] = await Promise.all([
         specialPool.totalStaking(),
         pool1.getReserves(),
         pool2.getReserves(),
         pool3.getReserves(),
-
       ]);
-      const RGPprice = ethers.utils.formatUnits(pool1Reserve[0]
-        .mul(1000)
-        .div(pool1Reserve[1]), 3);
+      const RGPprice = ethers.utils.formatUnits(
+        pool1Reserve[0].mul(1000).div(pool1Reserve[1]),
+        3,
+      );
       const BNBprice = getBnbPrice(pool3, pool3Reserve);
       const RGPLiquidity = ethers.utils
         .formatUnits(rgpTotalStaking.mul(Math.floor(1000 * RGPprice)), 21)
@@ -198,12 +201,12 @@ export function FarmingPage(props) {
     } finally {
       props.farmDataLoading(false);
     }
-  }
+  };
 
   const getBusdBnbLiquidity = (pool3, pool3Reserve) => {
     const pool3Testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
     let BUSD_BNBLiquidity;
-    if (pool3 && (pool3.address === pool3Testnet)) {
+    if (pool3 && pool3.address === pool3Testnet) {
       BUSD_BNBLiquidity = ethers.utils
         .formatEther(pool3Reserve[0].mul(2))
         .toString();
@@ -213,12 +216,12 @@ export function FarmingPage(props) {
         .toString();
     }
     return BUSD_BNBLiquidity;
-  }
+  };
 
   const getBnbPrice = (pool3, pool3Reserve) => {
-    const pool3testnet = "0x120f3E6908899Af930715ee598BE013016cde8A5";
+    const pool3testnet = '0x120f3E6908899Af930715ee598BE013016cde8A5';
     let BNBprice;
-    if (pool3 && (pool3.address === pool3testnet)) {
+    if (pool3 && pool3.address === pool3testnet) {
       BNBprice = ethers.utils.formatUnits(
         pool3Reserve[0].mul(1000).div(pool3Reserve[1]),
         3,
@@ -230,8 +233,7 @@ export function FarmingPage(props) {
       );
     }
     return BNBprice;
-  }
-
+  };
 
   const showErrorToast = () =>
     toast({
@@ -585,7 +587,7 @@ export function FarmingPage(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) { }
+    } catch (error) {}
   };
   const changeVersion = () => {
     history.push('/farming-v2');
@@ -606,9 +608,7 @@ export function FarmingPage(props) {
         >
           <RGPFarmInfo />
         </InfoModal>
-          <FarmingV2Alert
-            message="This is the V1 Farm."
-          />
+        <FarmingV2Alert message="This is the V1 Farm." />
 
         <Flex justifyContent="flex-end">
           <Tabs
@@ -616,9 +616,9 @@ export function FarmingPage(props) {
             colorScheme="#2D276A"
             background="#2D276A"
             mx={[5, 10, 15, 20]}
-            //position={{ base: 'relative', md: 'absolute' }}
+            // position={{ base: 'relative', md: 'absolute' }}
             borderRadius="50px"
-            border={'2px solid #726ac8'}
+            border="2px solid #726ac8"
             p={1}
           >
             <TabList>
@@ -628,7 +628,6 @@ export function FarmingPage(props) {
                 background="#726AC8"
                 border="none"
                 color="white"
-
               >
                 V1
               </Tab>
@@ -637,7 +636,7 @@ export function FarmingPage(props) {
                 marginTop="3px"
                 background="none"
                 color="white"
-                border={'none'}
+                border="none"
                 onClick={changeVersion}
               >
                 V2
