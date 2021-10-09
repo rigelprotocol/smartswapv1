@@ -503,7 +503,22 @@ const ShowYieldFarmDetails = ({
             gasPrice: ethers.utils.parseUnits('20', 'gwei'),
           },
         );
-        const { confirmations, status } = await fetchTransactionData(data);
+        const { confirmations, status, logs } = await fetchTransactionData(
+          data,
+        );
+          const { hash } = data;
+          const amountstaked = convertToNumber(logs[1].data);
+          toastNotify.custom(
+            <Notification
+            hash={hash}
+            message={` Successfully staked ${convertFromWei(
+              amountstaked,
+            )} RGP `}
+            />,
+          {
+            position: "bottom-center",
+          },
+        );
         callRefreshFarm(confirmations, status);
       }
     }
