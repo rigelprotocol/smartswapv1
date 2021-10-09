@@ -109,9 +109,9 @@ const YieldFarm = ({
             <Button
               w={['100%', '100%', '146px']}
               h="40px"
-              bg="rgba(64, 186, 213, 0.1);"
-              color="#40BAD5"
-              border="0"
+              bg="#4D4693"
+              color="#FFF"
+              border="none"
               borderRadius="0px"
               mb="4"
               _hover={{ color: '#423a85' }}
@@ -123,9 +123,9 @@ const YieldFarm = ({
             <Button
               w={['100%', '100%', '146px']}
               h="40px"
-              bg="rgba(64, 186, 213, 0.1);"
-              color="#40BAD5"
-              border="0"
+              bg="#4D4693"
+              color="#FFF"
+              border="none"
               mb="4"
               cursor="pointer"
               borderRadius="0px"
