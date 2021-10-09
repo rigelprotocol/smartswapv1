@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toastNotify from 'react-hot-toast';
 import {
   Box,
   Flex,
@@ -25,8 +26,9 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import configureStore from 'configureStore';
 import { connect } from 'react-redux';
+import Notification from '../ToastNotification/Notification';
 import styles from '../../styles/yieldFarmdetails.css';
-import { clearInputInfo } from '../../utils/UtilFunc';
+import { clearInputInfo, convertFromWei } from '../../utils/UtilFunc';
 import SpinModal from '../modal/SpinModal';
 import {
   rigelToken,
@@ -39,7 +41,7 @@ import {
   smartSwapLPTokenV2PoolFour,
   smartSwapLPTokenV2PoolFive,
 } from '../../utils/SwapConnect';
-import { SMART_SWAP } from '../../utils/constants';
+import { convertToNumber, SMART_SWAP } from '../../utils/constants';
 import { updateFarmAllowances } from '../../containers/FarmingPage/actions';
 import { notify } from '../../containers/NoticeProvider/actions';
 
@@ -520,7 +522,17 @@ const ShowYieldFarmDetails = ({
           gasPrice: ethers.utils.parseUnits('20', 'gwei'),
         },
       );
-      const { confirmations, status } = await fetchTransactionData(data);
+      const { confirmations, status, logs } = await fetchTransactionData(data);
+      const { hash } = data;
+      const amountUnstaked = convertToNumber(logs[1].data);
+      toastNotify.custom(
+        <Notification
+          hash={hash}
+          message={` Successfully unstaked ${convertFromWei(
+            amountUnstaked,
+          )} RGP `}
+        />,
+      );
       // dispatch the getTokenStaked action from here when data changes
       callRefreshFarm(confirmations, status);
     }
@@ -615,15 +627,30 @@ const ShowYieldFarmDetails = ({
         if (pId === 0) {
           const specialPool = await RGPSpecialPool();
           const specialWithdraw = await specialPool.unStake(0);
-          const { confirmations, status } = await fetchTransactionData(
+          const { confirmations, status, logs } = await fetchTransactionData(
             specialWithdraw,
+          );
+          const amountOfRgbSpecial = convertToNumber(logs[1].data);
+          toastNotify.custom(
+            <Notification
+              hash={specialWithdraw.hash}
+              message={` Harvested ${convertFromWei(amountOfRgbSpecial)} RGP `}
+            />,
           );
           callRefreshFarm(confirmations, status);
         } else {
           const lpTokens = await masterChefV2Contract();
           const withdraw = await lpTokens.withdraw(pId, 0);
-          const { confirmations, status } = await fetchTransactionData(
+          const { confirmations, status, logs } = await fetchTransactionData(
             withdraw,
+          );
+          const amountOfRgb = convertToNumber(logs[1].data);
+
+          toastNotify.custom(
+            <Notification
+              hash={withdraw.hash}
+              message={` Harvested ${convertFromWei(amountOfRgb)} RGP`}
+            />,
           );
           callRefreshFarm(confirmations, status);
         }
@@ -682,9 +709,9 @@ const ShowYieldFarmDetails = ({
   };
 
   const fetchTransactionData = async sendTransaction => {
-    const { confirmations, status } = await sendTransaction.wait(1);
+    const { confirmations, status, logs } = await sendTransaction.wait(1);
 
-    return { confirmations, status };
+    return { confirmations, status, logs };
   };
   const openSpinModal = (title, text) => {
     setSpinModalText(text);
@@ -736,6 +763,7 @@ const ShowYieldFarmDetails = ({
   const confirmUnstakeDeposit = async val => {
     setUnstakeButtonValue('Pending Confirmation');
     openSpinModal('Unstaking...', `Unstaking ${unstakeToken} ${val}`);
+
     try {
       if (wallet.signer !== 'signer') {
         if (val === 'RGP') {
@@ -860,7 +888,7 @@ const ShowYieldFarmDetails = ({
         flexDirection={['column', 'column', 'row']}
         color="white"
         // margin="0 auto"
-        background="#29235E"
+        background="#221D4F"
         padding="0 20px"
         paddingBottom="4px"
         border="1px solid #4D4693"
@@ -868,7 +896,7 @@ const ShowYieldFarmDetails = ({
         // borderBottomRadius="14px"
       >
         <Box
-          flexBasis="30%"
+          flexBasis="35%"
           width="100%"
           textAlign="right"
           display="flex"
@@ -876,7 +904,7 @@ const ShowYieldFarmDetails = ({
         >
           <Box>
             <Flex>
-              <Text fontSize="20px" marginRight="20px">
+              <Text fontSize="20px" marginRight="20px" fontWeight="bold">
                 {content.tokensStaked[1]}
               </Text>{' '}
               <Text fontSize="14px" color="gray.400" marginTop="25px">
@@ -890,7 +918,7 @@ const ShowYieldFarmDetails = ({
 
             <Flex>
               <Button
-                w="60%"
+                w="90%"
                 h="50px"
                 borderRadius="0px"
                 bg={
@@ -905,7 +933,7 @@ const ShowYieldFarmDetails = ({
                   approveValueForOtherToken &&
                   content.tokensStaked[1] <= 0
                     ? 'rgba(190, 190, 190, 1)'
-                    : '#40BAD5'
+                    : '#FFF'
                 }
                 border="0"
                 mb="4"
@@ -946,14 +974,14 @@ const ShowYieldFarmDetails = ({
         </Box>
         {/* margin={['0', '0', '0 20px']} */}
         <Box
-          flexBasis="30%"
+          flexBasis="35%"
           width="100%"
           display="flex"
           justifyContent="space-around"
         >
-          <Box>
-            <Flex>
-              <Text fontSize="20px" marginRight="30px">
+          <Box width="80%" margin="0 auto">
+            <Flex justifyContent="center">
+              <Text fontSize="20px" marginRight="30px" textAlign="center">
                 {content.RGPEarned}
               </Text>{' '}
               <Text color="gray.400" marginTop="25px">
@@ -961,8 +989,9 @@ const ShowYieldFarmDetails = ({
               </Text>
             </Flex>
             <Button
-              w="100%"
+              w="80%"
               h="50px"
+              margin="0 auto"
               borderRadius="0px"
               bg={content.RGPEarned <= 0 ? '#4D4693' : 'rgba(64, 186,213, 0.1)'}
               color={
@@ -984,7 +1013,7 @@ const ShowYieldFarmDetails = ({
         </Box>
 
         <Box
-          flexBasis="25%"
+          flexBasis="20%"
           width="100%"
           display="flex"
           justifyContent="space-around"
@@ -1012,7 +1041,7 @@ const ShowYieldFarmDetails = ({
           </Box>
         </Box>
         <Box
-          flexBasis="15%"
+          flexBasis="10%"
           width="100%"
           margin={['0', '0', '0 20px']}
           justifySelf="end"
