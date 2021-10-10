@@ -504,6 +504,18 @@ const ShowYieldFarmDetails = ({
           },
         );
         const { confirmations, status } = await fetchTransactionData(data);
+        const { hash } = data;
+        toastNotify.custom(
+          <Notification
+            hash={hash}
+            message={` Successfully staked ${depositTokenValue} ${
+              tokenPair[pid]
+            } pair`}
+          />,
+          {
+            position: 'top-right',
+          },
+        );
         callRefreshFarm(confirmations, status);
       }
     }
@@ -731,6 +743,14 @@ const ShowYieldFarmDetails = ({
   };
   const closeModal = () => {
     modal2Disclosure.onClose();
+  };
+
+  const tokenPair = {
+    1: 'RGP-BUSD',
+    2: 'RGP-BNB',
+    3: 'BNB-BUSD',
+    4: 'AXS-RGP',
+    5: 'AXS-BUSD',
   };
   const confirmDeposit = async val => {
     setDepositValue('Pending Confirmation');
