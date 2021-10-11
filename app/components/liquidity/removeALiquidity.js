@@ -54,6 +54,7 @@ const removeALiquidity = ({
   const [tokenZeroAmount, setTokenZeroAmount] = useState("");
   const [tokenOneAmount, setTokenOneAmount] = useState("");
   const [above100Percent, setAbove100Percent] = useState(false);
+  const [invalidInput, setInvalidInput] = useState(false);
   const [determineInputChange, setDetermineInputChange] = useState("");
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const [selectedValue, setSelectedValue] = useState(0);
@@ -169,6 +170,7 @@ if(selectedValue>100){
   }
   const PercentValue = (val) =>{
     let calculatedValue
+   checkForValidInput()
     if(val==="zero"){
       calculatedValue = Math.floor((100 * tokenOneAmount) / liquidityToRemove.pooledToken1)
     }else{
@@ -182,6 +184,13 @@ if(selectedValue>100){
     }
 
     return calculatedValue
+  }
+  const checkForValidInput = () =>{
+    if(tokenZeroAmount<0||tokenOneAmount<0){
+      setInvalidInput(true)
+    }else{
+      setInvalidInput(false)
+    }
   }
   const userPositionValue = (percent) => {
     let calculatedValue =  liquidityToRemove.poolToken * (percent / 100)
@@ -551,14 +560,19 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
             <Button
               rounded="lg"
               color="white"
-              bgColor="#3841AE"
+              background={
+                approving || above100Percent || invalidInput
+                  ? 'rgba(64, 186, 213, 0.15)'
+                  : '#3841AE'
+              }
+              bgColor=""
               border="0"
               width="100%"
               mr="2"
               height="56px"
               cursor="pointer"
               _hover={{ background: '#3801AE' }}
-              disabled={approving || above100Percent}
+              disabled={approving || above100Percent || invalidInput}
               onClick={() =>
                 approveSmartSwapLPTokens(liquidityToRemove.pairAddress)
               }
