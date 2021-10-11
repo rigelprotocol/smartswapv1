@@ -245,9 +245,14 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
   const setTheValueForTokenOneAndTokenTwo =()=>{
    if(userSelectedPositionValue<= liquidityToRemove.poolToken){
     let calculatedValue =  Math.floor((100 * userSelectedPositionValue) / liquidityToRemove.poolToken)
+    calculatedValue = calculatedValue > 100 ? 100 : calculatedValue
+
     setSelectedValue(calculatedValue)
     setTokenZeroAmount(liquidityToRemove.pooledToken0 * (calculatedValue / 100) )
     setTokenOneAmount(liquidityToRemove.pooledToken1 * (calculatedValue / 100) )
+    if(calculatedValue===100){
+       setUserSelectedPositionValue(liquidityToRemove.poolToken)
+    }
    }
   }
   const deleteLiquidity = () => {
