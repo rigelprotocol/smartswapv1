@@ -155,11 +155,17 @@ if(selectedValue>100){
     let percent = PercentValue("one")
     userPositionValue(percent)
     setTokenOneAmount(liquidityToRemove.pooledToken1 * (percent / 100))
+    if(percent===100){
+      setTokenZeroAmount(liquidityToRemove.pooledToken0 * (percent / 100))
+    }
   }
   const setTheValueForTokenZero =() => {
     let percent = PercentValue("zero")
     userPositionValue(percent)
     setTokenZeroAmount(liquidityToRemove.pooledToken0 * (percent / 100))
+    if(percent===100){
+      setTokenOneAmount(liquidityToRemove.pooledToken1 * (percent / 100))
+    }
   }
   const PercentValue = (val) =>{
     let calculatedValue
@@ -168,7 +174,13 @@ if(selectedValue>100){
     }else{
       calculatedValue = Math.floor((100 * tokenZeroAmount) / liquidityToRemove.pooledToken0)
     }
-    setSelectedValue(calculatedValue)
+    if(calculatedValue>100){
+      setSelectedValue(100)
+      calculatedValue= 100
+    }else{
+      setSelectedValue(calculatedValue)
+    }
+
     return calculatedValue
   }
   const userPositionValue = (percent) => {
