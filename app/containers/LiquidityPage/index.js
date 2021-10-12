@@ -138,7 +138,7 @@ export function LiquidityPage(props) {
     }
   }, [wallet]);
 
-  useEffect(() => {
+  useEffect(async () => {
     setUpUrl(fromSelectedToken, toSelectedToken);
     if (
       fromSelectedToken.symbol !== 'SELECT A TOKEN' &&
@@ -148,6 +148,18 @@ export function LiquidityPage(props) {
         fromSelectedToken.address,
         toSelectedToken.address,
       );
+      const tokenToAllowance = await runApproveCheck(
+        toSelectedToken,
+        wallet.address,
+        wallet.signer,
+      );
+      setToTokenAllowance(tokenToAllowance);
+      const tokenFromAllowance = await runApproveCheck(
+        fromSelectedToken,
+        wallet.address,
+        wallet.signer,
+      );
+      setFromTokenAllowance(tokenFromAllowance);
     }
   }, [fromSelectedToken, toSelectedToken, fromAddress, toAddress]);
 
@@ -158,28 +170,15 @@ export function LiquidityPage(props) {
       handleToAmount();
     }
     if (!isNotEmpty(fromSelectedToken) && fromValue != '') {
-      const tokenAllowance = await runApproveCheck(
-        fromSelectedToken,
-        wallet.address,
-        wallet.signer,
-      );
-      setFromTokenAllowance(tokenAllowance);
-
-      if (Number(tokenAllowance) > Number(fromValue)) {
+      if ((Number(fromTokenAllowance) > Number(fromValue))  || fromSelectedToken.symbol ==="BNB") {
         setHasAllowedFromToken(true);
       } else {
         setHasAllowedFromToken(false);
       }
     }
     if (!isNotEmpty(toSelectedToken) && toValue != '') {
-      const tokenAllowance = await runApproveCheck(
-        toSelectedToken,
-        wallet.address,
-        wallet.signer,
-      );
-      setToTokenAllowance(tokenAllowance);
 
-      if (Number(tokenAllowance) > Number(toValue)) {
+      if ((Number(toTokenAllowance) > Number(toValue)) || toSelectedToken.symbol ==="BNB") {
         setHasAllowedToToken(true);
       } else {
         setHasAllowedToToken(false);
@@ -438,12 +437,17 @@ export function LiquidityPage(props) {
 
         const { hash } = approveResponse;
         if (confirmations >= 1 && status) {
-          closeModal6();
           setShowApprovalBox(false);
           setHasAllowedToToken(true);
           // setOpenSupplyButton(false);
           checkIfTokensHasBeenApproved();
           console.log('approved1', toSelectedToken.symbol);
+          const tokenToAllowance = await runApproveCheck(
+            toSelectedToken,
+            wallet.address,
+            wallet.signer,
+          );
+          setToTokenAllowance(tokenToAllowance);
           toast.custom(
             <Notification
               hash={hash}
@@ -454,6 +458,8 @@ export function LiquidityPage(props) {
       }
     } catch (error) {
       console.log(error);
+    }finally{
+      closeModal6();
     }
   };
 
@@ -470,7 +476,8 @@ export function LiquidityPage(props) {
   };
 
   const approveFromToken = async () => {
-    if (!isNotEmpty(fromSelectedToken)) {
+    try{
+     if (!isNotEmpty(fromSelectedToken)) {
       const balance = await tokenBalance(
         fromSelectedToken.address,
         wallet.address,
@@ -487,10 +494,15 @@ export function LiquidityPage(props) {
 
       const { hash } = approveResponse;
       if (confirmations >= 1 && status) {
-        closeModal6();
         setShowApprovalBox(false);
         setHasAllowedFromToken(true);
         // setOpenSupplyButton(false);
+        const tokenFromAllowance = await runApproveCheck(
+        fromSelectedToken,
+          wallet.address,
+          wallet.signer,
+        );
+        setFromTokenAllowance(tokenFromAllowance);
         checkIfTokensHasBeenApproved();
         console.log('approved2', fromSelectedToken.symbol);
         toast.custom(
@@ -501,6 +513,12 @@ export function LiquidityPage(props) {
         );
       }
     }
+    }catch(e){
+      console.log(e)
+    }finally{
+      closeModal6();
+    }
+
   };
   const setFromInputMax = () => {
     try {
@@ -535,10 +553,10 @@ export function LiquidityPage(props) {
     setOpenSupplyButton(false);
     setPopupText('Approve');
     setDisplayButton(false);
-    setFromSelectedToken(tokenWhere('rgp'));
-    setToSelectedToken(tokenWhere('SELECT A TOKEN'));
-    setFromAddress('');
-    setToAddress('');
+    // setFromSelectedToken(tokenWhere('rgp'));
+    // setToSelectedToken(tokenWhere('SELECT A TOKEN'));
+    // setFromAddress('');
+    // setToAddress('');
     setNewTokenPairButton(false);
     setButtonValue('Supply');
     setInsufficientBalanceButton(false);
