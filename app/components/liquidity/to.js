@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { Box, Flex, Text,Circle } from '@chakra-ui/layout';
 import { Input, Button, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Menu } from '@chakra-ui/menu';
@@ -11,6 +11,8 @@ import { useDisclosure } from '@chakra-ui/hooks';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import TokenListBox from 'components/TokenListBox';
 import NullImage24 from '../../assets/Null-24.svg';
+import { erc20Token } from '../../utils/SwapConnect';
+import { ethers } from 'ethers';
 import {
   NumberInput,
   NumberInputField,
@@ -26,11 +28,32 @@ const Manual = ({
   checkIfLiquidityPairExist,
   setDetermineInputChange,
   setToInputMax,
-  setToValue
+  setToValue,
+  wallet
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure()
   const [isMobileDevice] = useMediaQuery('(min-width: 560px)');
+  const [balance, setBalance] = useState('');
+
+  useEffect(() => {
+    const getBalance = async () => {
+      if (wallet.wallet.address != '0x' && toSelectedToken.address) {
+        try {
+          const token = await erc20Token(toSelectedToken.address);
+          const balance = await token.balanceOf(wallet.wallet.address);
+          const formattedBalance = ethers.utils.formatEther(balance).toString();
+          setBalance(parseFloat(formattedBalance).toFixed(4));
+          console.log(parseFloat(formattedBalance).toFixed(4))
+        } catch (err) {
+          setBalance('');
+          console.log({err})
+        }
+      }
+    };
+
+    getBalance();
+  }, [wallet]);
   return (
     <>
       <Box
@@ -49,7 +72,7 @@ const Manual = ({
           </Text>
           <Text fontSize="sm" color=" rgba(255, 255, 255,0.50)">
             Balance: {` `}
-            {toSelectedToken.balance}
+            {toSelectedToken.balance ? toSelectedToken.balance : balance}
           </Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
@@ -62,7 +85,7 @@ const Manual = ({
             variant="unstyled"
             value={toValue}
           >
-            <NumberInputField  
+            <NumberInputField
             padding="0"
             border="0"
             placeholder="0.0"
@@ -74,7 +97,7 @@ const Manual = ({
           </NumberInput>
              <InputRightElement marginRight="5px">
               <Text
-              cursor="pointer" 
+              cursor="pointer"
               color="rgba(64, 186, 213, 1)"
               onClick={()=>setToInputMax()}
               marginTop="2px"
@@ -99,14 +122,14 @@ const Manual = ({
                 rightIcon={<ChevronDownIcon />}
                 px={toSelectedToken.symbol !== "SELECT A TOKEN" ? '3' : '1'}
               >
-                 {(typeof toSelectedToken.symbol !== 'undefined' && toSelectedToken.symbol!=="SELECT A TOKEN" && !toSelectedToken.imported) &&  
+                 {(typeof toSelectedToken.symbol !== 'undefined' && toSelectedToken.symbol!=="SELECT A TOKEN" && !toSelectedToken.imported) &&
                  <>
                  <Circle size="40px" color="rgba(64, 186, 213,0.35)">
                         <Image src={toSelectedToken.logoURI} />
                       </Circle>
                       </>
                       }
-                {toSelectedToken.imported && 
+                {toSelectedToken.imported &&
                       <Box px="0">
                       <NullImage24 />
                       </Box>
@@ -140,5 +163,6 @@ Manual.propTypes = {
   setToValue: PropTypes.func.isRequired,
   disableToSelectInputBox: PropTypes.bool.isRequired,
   label: PropTypes.string,
+  wallet:PropTypes.object
 };
 export default Manual;
