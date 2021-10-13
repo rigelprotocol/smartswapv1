@@ -196,6 +196,8 @@ export function LiquidityPage(props) {
       fromValue<=0 || toValue<=0 ||
       isNotEmpty(toSelectedToken) || isNotEmpty(fromSelectedToken)){
       setOpenSupplyButton(false)
+    }else{
+      setOpenSupplyButton(true)
     }
   }, [fromValue, toValue]);
 
