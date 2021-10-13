@@ -143,6 +143,7 @@ const AddLiquidity = ({
       disableToSelectInputBox={disableToSelectInputBox}
       checkIfLiquidityPairExist={checkIfLiquidityPairExist}
       setToValue={setToValue}
+      wallet={wallet}
     />
     {toSelectedToken.symbol !== 'SELECT A TOKEN' && fromValue > 0 ? (
       <LiquidityPriceBox

@@ -192,6 +192,11 @@ export function LiquidityPage(props) {
     } else {
       setInsufficientBalanceButton(false);
     }
+    if(fromValue ===""|| toValue===""||
+      fromValue<=0 || toValue<=0 ||
+      isNotEmpty(toSelectedToken) || isNotEmpty(fromSelectedToken)){
+      setOpenSupplyButton(false)
+    }
   }, [fromValue, toValue]);
 
   useEffect(() => {
