@@ -64,7 +64,7 @@ export function FarmingV2Page(props) {
   const history = useHistory();
 
   const { wallet } = props.wallet;
-  const [isAddressWhitelist, setIsAddressWhitelist] = useState(false);
+  const [isAddressWhitelist, setIsAddressWhitelist] = useState(true);
   const [dataInputToGetWhiteListed] = useState('');
   const [farmingModal, setFarmingModal] = useState(false);
   const [farmingFee, setFarmingFee] = useState(10);
@@ -158,7 +158,7 @@ export function FarmingV2Page(props) {
       const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) {}
+    } catch (error) { }
   };
   useEffect(() => {
     getFarmData();
@@ -724,7 +724,7 @@ export function FarmingV2Page(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const changeVersion = () => {
