@@ -131,7 +131,7 @@ export function FarmingPage(props) {
       const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) {}
+    } catch (error) { }
   };
   useEffect(() => {
     getFarmData();
@@ -587,7 +587,7 @@ export function FarmingPage(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) {}
+    } catch (error) { }
   };
   const changeVersion = () => {
     history.push('/farming-v2');
@@ -608,7 +608,7 @@ export function FarmingPage(props) {
         >
           <RGPFarmInfo />
         </InfoModal>
-        <FarmingV2Alert message="This is the V1 Farm." />
+        <FarmingV2Alert message="This is the V1 Farm. Please move your LP deposits to the V2 farm" />
 
         <Flex justifyContent="flex-end">
           <Tabs

@@ -54,6 +54,7 @@ const removeALiquidity = ({
   const [tokenZeroAmount, setTokenZeroAmount] = useState("");
   const [tokenOneAmount, setTokenOneAmount] = useState("");
   const [above100Percent, setAbove100Percent] = useState(false);
+  const [invalidInput, setInvalidInput] = useState(false);
   const [determineInputChange, setDetermineInputChange] = useState("");
   const [deadline, setDeadline] = useLocalStorage('deadline', 20)
   const [selectedValue, setSelectedValue] = useState(0);
@@ -155,21 +156,41 @@ if(selectedValue>100){
     let percent = PercentValue("one")
     userPositionValue(percent)
     setTokenOneAmount(liquidityToRemove.pooledToken1 * (percent / 100))
+    if(percent===100){
+      setTokenZeroAmount(liquidityToRemove.pooledToken0 * (percent / 100))
+    }
   }
   const setTheValueForTokenZero =() => {
     let percent = PercentValue("zero")
     userPositionValue(percent)
     setTokenZeroAmount(liquidityToRemove.pooledToken0 * (percent / 100))
+    if(percent===100){
+      setTokenOneAmount(liquidityToRemove.pooledToken1 * (percent / 100))
+    }
   }
   const PercentValue = (val) =>{
     let calculatedValue
+   checkForValidInput()
     if(val==="zero"){
       calculatedValue = Math.floor((100 * tokenOneAmount) / liquidityToRemove.pooledToken1)
     }else{
       calculatedValue = Math.floor((100 * tokenZeroAmount) / liquidityToRemove.pooledToken0)
     }
-    setSelectedValue(calculatedValue)
+    if(calculatedValue>100){
+      setSelectedValue(100)
+      calculatedValue= 100
+    }else{
+      setSelectedValue(calculatedValue)
+    }
+
     return calculatedValue
+  }
+  const checkForValidInput = () =>{
+    if(tokenZeroAmount<0||tokenOneAmount<0){
+      setInvalidInput(true)
+    }else{
+      setInvalidInput(false)
+    }
   }
   const userPositionValue = (percent) => {
     let calculatedValue =  liquidityToRemove.poolToken * (percent / 100)
@@ -224,9 +245,14 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
   const setTheValueForTokenOneAndTokenTwo =()=>{
    if(userSelectedPositionValue<= liquidityToRemove.poolToken){
     let calculatedValue =  Math.floor((100 * userSelectedPositionValue) / liquidityToRemove.poolToken)
+    calculatedValue = calculatedValue > 100 ? 100 : calculatedValue
+
     setSelectedValue(calculatedValue)
     setTokenZeroAmount(liquidityToRemove.pooledToken0 * (calculatedValue / 100) )
     setTokenOneAmount(liquidityToRemove.pooledToken1 * (calculatedValue / 100) )
+    if(calculatedValue===100){
+       setUserSelectedPositionValue(liquidityToRemove.poolToken)
+    }
    }
   }
   const deleteLiquidity = () => {
@@ -539,14 +565,19 @@ const smartSwapLP = await LPTokenContract(liquidityToRemove.pairAddress);
             <Button
               rounded="lg"
               color="white"
-              bgColor="#3841AE"
+              background={
+                approving || above100Percent || invalidInput
+                  ? 'rgba(64, 186, 213, 0.15)'
+                  : '#3841AE'
+              }
+              bgColor=""
               border="0"
               width="100%"
               mr="2"
               height="56px"
               cursor="pointer"
               _hover={{ background: '#3801AE' }}
-              disabled={approving || above100Percent}
+              disabled={approving || above100Percent || invalidInput}
               onClick={() =>
                 approveSmartSwapLPTokens(liquidityToRemove.pairAddress)
               }

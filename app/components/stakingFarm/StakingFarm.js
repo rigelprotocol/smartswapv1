@@ -105,7 +105,7 @@ const YieldFarm = ({
           </Box>
         </Flex>
         <Box align="right" mt={['4', '0']} ml="2">
-          {content.id === 1 ? (
+          {content.id === '1' ? (
             <Button
               w={['100%', '100%', '146px']}
               h="40px"
