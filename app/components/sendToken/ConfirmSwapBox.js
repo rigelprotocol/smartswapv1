@@ -167,9 +167,8 @@ const ConfirmSwapBox = props => {
               fontSize="16px"
               _hover={{ background: 'rgba(64, 186, 213, 0.15)' }}
               onClick={openLoadingSpinnerAndSwap}
-              disabled={priceImpact < -15}
             >
-              {priceImpact < -15 ? 'Price impact is too high' : 'Confirm Swap'}
+              {priceImpact < -15 ? 'Swap Anyway' : 'Confirm Swap'}
             </Button>
           </ModalBody>
         </ModalContent>
