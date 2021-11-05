@@ -397,6 +397,9 @@ const ShowYieldFarmDetails = ({
         });
         setApprovalLoading(true);
         const { confirmations, status } = await fetchTransactionData(data);
+        if (confirmations >= 3) {
+          setApproveValueForRGP(true);
+        }
         getAllowances();
       } catch (error) {
         console.error(error);
@@ -565,6 +568,10 @@ const ShowYieldFarmDetails = ({
         );
         setApprovalLoading(true);
         const { confirmations, status } = await fetchTransactionData(data);
+
+        if (confirmations >= 3) {
+          setApproveValueForOtherToken(true);
+        }
         getAllowances();
       } catch (e) {
         props.showErrorMessage(e);
