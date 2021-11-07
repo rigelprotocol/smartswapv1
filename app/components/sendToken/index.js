@@ -89,6 +89,8 @@ export const Manual = props => {
     tokenWhere('SELECT A TOKEN'),
   );
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [isLoadingValue, setIsLoadingValue] = useState(false);
   const [isSendingTransaction, setIsSendingTransaction] = useState(false);
   const [userHasApproveToken, setUserHasApproveToken] = useState(false);
   const [transactionDeadline, setTransactionDeadline] = useState('');
@@ -204,7 +206,7 @@ export const Manual = props => {
             );
             parseFloat(ethers.utils.formatEther(fromPathReserve).toString()) <
               fromAmount ||
-            parseFloat(ethers.utils.formatEther(toPathReserve).toString()) <
+              parseFloat(ethers.utils.formatEther(toPathReserve).toString()) <
               amountIn
               ? setLowLiquidity(true)
               : null;
@@ -655,6 +657,7 @@ export const Manual = props => {
   };
 
   const callTransformFunction = async (askAmount = '', field = 'from') => {
+    setIsLoadingValue(true)
     if (wallet.signer !== 'signer' && askAmount.length > 0 && path[1]) {
       if (
         (selectedToken.symbol === 'RGP' && selectedToToken.symbol === 'BUSD') ||
@@ -672,7 +675,9 @@ export const Manual = props => {
           field,
           calculateSlippage,
         );
+        setIsLoadingValue(false)
         setDisableSwapTokenButton(false);
+
       } else if (
         (selectedToken.symbol === 'RGP' && selectedToToken.symbol === 'BNB') ||
         (selectedToken.symbol === 'BNB' && selectedToToken.symbol === 'RGP')
@@ -689,6 +694,7 @@ export const Manual = props => {
           field,
           calculateSlippage,
         );
+        setIsLoadingValue(false)
         setDisableSwapTokenButton(false);
       } else if (
         (selectedToken.symbol === 'WBNB' && selectedToToken.symbol === 'BNB') ||
@@ -702,6 +708,7 @@ export const Manual = props => {
           field,
           calculateSlippage,
         );
+        setIsLoadingValue(false)
         setDisableSwapTokenButton(false);
       } else if (routeAddress.length === 2) {
         await updateSendAmount(
@@ -716,6 +723,7 @@ export const Manual = props => {
           field,
           calculateSlippage,
         );
+        setIsLoadingValue(false)
         setDisableSwapTokenButton(false);
       } else if (routeAddress.length >= 3) {
         await updateSendAmountForRoute(
@@ -729,12 +737,15 @@ export const Manual = props => {
           field,
           calculateSlippage,
         );
+        setIsLoadingValue(false)
         setDisableSwapTokenButton(false);
       } else {
+        setIsLoadingValue(false)
         setDisableSwapTokenButton(true);
       }
     } else {
       setAmountIn('');
+      setIsLoadingValue(false)
       setDisableSwapTokenButton(true);
     }
   };
@@ -903,8 +914,7 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${InputAmountForNotification}  ${
-                selectedToken.symbol
+              message={`Swap ${InputAmountForNotification}  ${selectedToken.symbol
               } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
@@ -979,8 +989,7 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${InputAmountForNotification}  ${
-                selectedToken.symbol
+              message={`Swap ${InputAmountForNotification}  ${selectedToken.symbol
               } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
@@ -1052,8 +1061,7 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${InputAmountForNotification}  ${
-                selectedToken.symbol
+              message={`Swap ${InputAmountForNotification}  ${selectedToken.symbol
               } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
@@ -1126,8 +1134,7 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${InputAmountForNotification}  ${
-                selectedToken.symbol
+              message={`Swap ${InputAmountForNotification}  ${selectedToken.symbol
               } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
@@ -1196,8 +1203,7 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${InputAmountForNotification}  ${
-                selectedToken.symbol
+              message={`Swap ${InputAmountForNotification}  ${selectedToken.symbol
               } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
@@ -1266,8 +1272,7 @@ export const Manual = props => {
           toast.custom(
             <Notification
               hash={hash}
-              message={`Swap ${InputAmountForNotification}  ${
-                selectedToken.symbol
+              message={`Swap ${InputAmountForNotification}  ${selectedToken.symbol
               } for ${OutputAmountForNotification}  ${selectedToToken.symbol}`}
             />,
           );
@@ -1463,6 +1468,7 @@ export const Manual = props => {
     setTimeout(() => closeModal1(), 1200);
     setTimeout(() => resetAllField(), 1800);
   };
+
   return (
     <div>
       <Box
@@ -1558,69 +1564,91 @@ export const Manual = props => {
             >
               No liquidity for this trade
             </Button>
-          ) : (
-            <Button
-              d="block"
-              w="100%"
-              h="50px"
-              color="#40BAD5"
-              border="none"
-              fontWeight="regular"
-              fontSize="lg"
-              cursor="pointer"
-              rounded="2xl"
-              bg="rgba(64, 186, 213,0.25)"
-              borderColor="#40BAD5"
-              _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
-              _active={{ outline: '#29235E', background: '#29235E' }}
-              disabled={disableSwapTokenButton}
-              onClick={() => {
-                wallet.signer === 'signer'
-                  ? sendNotice('Please use the Connect button above')
-                  : (typeof wallet.signer === 'object' &&
+          ) :
+            isLoadingValue ? (
+              <Button
+                d="block"
+                w="100%"
+                h="50px"
+                color="#40BAD5"
+                border="none"
+                fontWeight="regular"
+                fontSize="lg"
+                cursor="pointer"
+                rounded="2xl"
+                bg="rgba(64, 186, 213,0.25)"
+                borderColor="#40BAD5"
+                _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+                _active={{ outline: '#29235E', background: '#29235E' }}
+              >
+                Loading...
+              </Button>
+            ) :
+
+
+              (
+                <Button
+                  d="block"
+                  w="100%"
+                  h="50px"
+                  color="#40BAD5"
+                  border="none"
+                  fontWeight="regular"
+                  fontSize="lg"
+                  cursor="pointer"
+                  rounded="2xl"
+                  bg="rgba(64, 186, 213,0.25)"
+                  borderColor="#40BAD5"
+                  _hover={{ background: 'rgba(64, 186, 213,0.35)' }}
+                  _active={{ outline: '#29235E', background: '#29235E' }}
+                  disabled={disableSwapTokenButton}
+                  onClick={() => {
+                    wallet.signer === 'signer'
+                      ? sendNotice('Please use the Connect button above')
+                      : (typeof wallet.signer === 'object' &&
+                        fromAmount === undefined) ||
+                        fromAmount.length == parseFloat(0.0)
+                        ? sendNotice('Enter the amount of token to exchange')
+                        : typeof wallet.signer === 'object' &&
+                          fromAmount > parseFloat(0) &&
+                          selectedToToken.name === 'Select a token'
+                          ? sendNotice('Select the designated token')
+                          : typeof wallet.signer === 'object' &&
+                            fromAmount != parseFloat(0.0) &&
+                            selectedToToken.name !== 'Select a token'
+                            ? selectedToken.symbol == selectedToToken.symbol
+                              ? sendNotice(
+                                'Improper token selection, you selected the same token',
+                              )
+                              : insufficientBalanceButton
+                                ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
+                                : triggerAccountCheck()
+                            : null;
+                  }}
+                >
+                  {wallet.signer === 'signer'
+                    ? 'connect to Wallet'
+                    : (typeof wallet.signer === 'object' &&
                       fromAmount === undefined) ||
-                    fromAmount.length == parseFloat(0.0)
-                  ? sendNotice('Enter the amount of token to exchange')
-                  : typeof wallet.signer === 'object' &&
-                    fromAmount > parseFloat(0) &&
-                    selectedToToken.name === 'Select a token'
-                  ? sendNotice('Select the designated token')
-                  : typeof wallet.signer === 'object' &&
-                    fromAmount != parseFloat(0.0) &&
-                    selectedToToken.name !== 'Select a token'
-                  ? selectedToken.symbol == selectedToToken.symbol
-                    ? sendNotice(
-                        'Improper token selection, you selected the same token',
-                      )
-                    : insufficientBalanceButton
-                    ? sendNotice(`Insufficient ${selectedToken.symbol} balance`)
-                    : triggerAccountCheck()
-                  : null;
-              }}
-            >
-              {wallet.signer === 'signer'
-                ? 'connect to Wallet'
-                : (typeof wallet.signer === 'object' &&
-                    fromAmount === undefined) ||
-                  fromAmount.length == parseFloat(0.0)
-                ? 'Enter Amount'
-                : typeof wallet.signer === 'object' &&
-                  fromAmount != parseFloat(0.0) &&
-                  selectedToToken.name === 'Select a token'
-                ? 'Click Select a Token'
-                : typeof wallet.signer === 'object' &&
-                  fromAmount != parseFloat(0.0) &&
-                  selectedToToken.name !== 'Select a token'
-                ? selectedToken.symbol == selectedToToken.symbol
-                  ? 'Improper token selection'
-                  : insufficientBalanceButton
-                  ? `Insufficient ${selectedToken.symbol} balance`
-                  : !userHasApproveToken
-                  ? 'Approve Transaction'
-                  : 'Swap Tokens'
-                : ''}
-            </Button>
-          )}
+                      fromAmount.length == parseFloat(0.0)
+                      ? 'Enter Amount'
+                      : typeof wallet.signer === 'object' &&
+                        fromAmount != parseFloat(0.0) &&
+                        selectedToToken.name === 'Select a token'
+                        ? 'Click Select a Token'
+                        : typeof wallet.signer === 'object' &&
+                          fromAmount != parseFloat(0.0) &&
+                          selectedToToken.name !== 'Select a token'
+                          ? selectedToken.symbol == selectedToToken.symbol
+                            ? 'Improper token selection'
+                            : insufficientBalanceButton
+                              ? `Insufficient ${selectedToken.symbol} balance`
+                              : !userHasApproveToken
+                                ? 'Approve Transaction'
+                                : 'Swap Tokens'
+                          : ''}
+                </Button>
+              )}
         </Box>
         <ConfirmSwapBox
           path={path}
@@ -1689,8 +1717,8 @@ async function updateSendAmount(
       // if(field != 'to' && )
       return field != 'to'
         ? setAmountIn(
-            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-          )
+          ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+        )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
@@ -1747,8 +1775,8 @@ async function updateSendAmountForRoute(
 
         return field != 'to'
           ? setAmountIn(
-              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-            )
+            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+          )
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
@@ -1800,8 +1828,8 @@ async function updateSendAmountForRoute(
         );
         return field != 'to'
           ? setAmountIn(
-              ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
-            )
+            ethers.utils.formatEther(calculateSlippage(amount[1].toString())),
+          )
           : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
       } catch (e) {
         setAmountIn('');
@@ -1838,8 +1866,8 @@ async function update_RGP_ETH_SendAmount(
 
       return field != 'to'
         ? setAmountIn(
-            ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
-          )
+          ethers.utils.formatEther(calculateSlippage(amount[1]).toString()),
+        )
         : setFromAmount(ethers.utils.formatEther(amount[1]).toString());
     } catch (e) {
       setAmountIn('');
