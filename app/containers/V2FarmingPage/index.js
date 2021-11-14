@@ -23,7 +23,7 @@ import {
   Tab,
   TabPanel,
 } from '@chakra-ui/react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import Layout from 'components/layout';
 import YieldFarm from 'components/yieldfarm-v2/YieldFarm';
 import StakingFarm from 'components/stakingFarm/StakingFarm';
@@ -62,6 +62,7 @@ import {
 
 export function FarmingV2Page(props) {
   const history = useHistory();
+  const match = useRouteMatch('/farming-V2/staking-RGP');
 
   const { wallet } = props.wallet;
   const [isAddressWhitelist, setIsAddressWhitelist] = useState(true);
@@ -70,6 +71,8 @@ export function FarmingV2Page(props) {
   const [farmingFee, setFarmingFee] = useState(10);
   const [initialLoad, setInitialLoad] = useState(true);
   const [setShowModalWithInput] = useState(false);
+ const [selected, setSelected] = useState('LIQUIDITY');
+
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -158,7 +161,7 @@ export function FarmingV2Page(props) {
       const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) { }
+    } catch (error) {}
   };
   useEffect(() => {
     getFarmData();
@@ -724,11 +727,23 @@ export function FarmingV2Page(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) { }
+    } catch (error) {}
   };
 
-  const changeVersion = () => {
-    history.push('/farming');
+
+
+  const changeVersion = version => {
+    history.push(version);
+  };
+
+  const handleSelect = value => {
+    if (value === 'LIQUIDITY') {
+      setSelected('LIQUIDITY');
+      changeVersion('/farming-v2');
+    } else if (value === 'STAKING') {
+      setSelected('STAKING');
+      changeVersion('/farming-v2/staking-RGP');
+    }
   };
 
   return (
@@ -792,7 +807,7 @@ export function FarmingV2Page(props) {
                 background="none"
                 border="none"
                 color="white"
-                onClick={changeVersion}
+                onClick={() => changeVersion('/farming-v2')}
               >
                 V1
               </Tab>
@@ -802,34 +817,42 @@ export function FarmingV2Page(props) {
                 background="#726AC8"
                 color="white"
                 border="none"
+                onClick={() => changeVersion('/farming-v2')}
               >
                 V2
               </Tab>
             </TabList>
           </Tabs>
         </Flex>
-        <Tabs isManual variant="enclosed" mx={[5, 10, 15, 20]} my={4}>
+        <Tabs
+          defaultIndex={match ? 1 : 0}
+          variant="enclosed"
+          mx={[5, 10, 15, 20]}
+          my={4}
+        >
           <TabList border="none">
             <Tab
               borderRadius="0px"
               border="1px solid #2D276A"
-              background="#2D276A"
+              background={selected === 'LIQUIDITY' ? '#2D276A' : '#2D276A'}
               color="#fff"
               px={5}
               py={4}
               minWidth="200px"
+              onClick={() => handleSelect('LIQUIDITY')}
             >
               Liquidity Pools
             </Tab>
             <Tab
               borderRadius="0px"
               border="1px solid #2D276A"
-              background="#2D276A"
+              background={selected === 'STAKING' ? '#2D276A' : '#2D276A'}
               color="#fff"
               px={5}
               py={4}
               outline="none"
               minWidth="200px"
+              onClick={() => handleSelect('STAKING')}
             >
               Staking
             </Tab>
@@ -891,7 +914,7 @@ export function FarmingV2Page(props) {
                 </Box>
               </Flex>
             </TabPanel>
-            <TabPanel>
+            <TabPanel padding="0px">
               <Flex
                 justifyContent="center"
                 alignItems="center"
