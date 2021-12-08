@@ -18,7 +18,7 @@ import {
   ModalBody,
   Tooltip,
   useToast,
-  Spinner,
+  Spinner
 } from '@chakra-ui/react';
 import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -105,7 +105,7 @@ const ShowYieldFarmDetails = ({
     }
   }, [depositTokenValue]);
 
-  // set farming fee based on network
+  //set farming fee based on network
 
   useEffect(() => {
     const RGPfarmingFee = async () => {
@@ -348,26 +348,26 @@ const ShowYieldFarmDetails = ({
         const specialPoolApproval = await specailPoolAllowance();
         changeApprovalButton(true, specialPoolApproval);
       } else if (content.deposit === 'RGP-BNB') {
-        setShowLoadingApproval(true)
-        const poolTwo = await smartSwapLPTokenPoolTwo();
-        const approvalForRGPBNB = await contractAllowance(poolTwo);
-        const rgpApproval1 = await rgpAllowancePool();
-        changeApprovalButton(approvalForRGPBNB, rgpApproval1);
-        setShowLoadingApproval(false)
-      } else if (content.deposit === 'RGP-BUSD') {
-        setShowLoadingApproval(true)
-        const poolOne = await smartSwapLPTokenPoolOne();
-        const approvalForRGPBUSD = await contractAllowance(poolOne);
-        const rgpApproval2 = await rgpAllowancePool();
-        changeApprovalButton(approvalForRGPBUSD, rgpApproval2);
-        setShowLoadingApproval(false)
-      } else if (content.deposit === 'BNB-BUSD') {
-        setShowLoadingApproval(true)
-        const poolThree = await smartSwapLPTokenPoolThree();
-        const approvalForBNBBUSD = await contractAllowance(poolThree);
-        const rgpApproval3 = await rgpAllowancePool();
-        changeApprovalButton(approvalForBNBBUSD, rgpApproval3);
-        setShowLoadingApproval(false)
+          setShowLoadingApproval(true)
+          const poolTwo = await smartSwapLPTokenPoolTwo();
+          const approvalForRGPBNB = await contractAllowance(poolTwo);
+          const rgpApproval1 = await rgpAllowancePool();
+          changeApprovalButton(approvalForRGPBNB, rgpApproval1);
+          setShowLoadingApproval(false)
+        } else if (content.deposit === 'RGP-BUSD') {
+          setShowLoadingApproval(true)
+          const poolOne = await smartSwapLPTokenPoolOne();
+          const approvalForRGPBUSD = await contractAllowance(poolOne);
+          const rgpApproval2 = await rgpAllowancePool();
+          changeApprovalButton(approvalForRGPBUSD, rgpApproval2);
+          setShowLoadingApproval(false)
+        } else if (content.deposit === 'BNB-BUSD') {
+          setShowLoadingApproval(true)
+          const poolThree = await smartSwapLPTokenPoolThree();
+          const approvalForBNBBUSD = await contractAllowance(poolThree);
+          const rgpApproval3 = await rgpAllowancePool();
+          changeApprovalButton(approvalForBNBBUSD, rgpApproval3);
+          setShowLoadingApproval(false)
       }
     };
     function changeApprovalButton(otherTokenApproval, rgpApproval) {
@@ -382,6 +382,7 @@ const ShowYieldFarmDetails = ({
         setApproveValueForRGP(false);
         setApproveValueForOtherToken(false);
       }
+
     }
     setApproveValueForRGP(false);
     setApproveValueForOtherToken(false);
@@ -409,27 +410,28 @@ const ShowYieldFarmDetails = ({
 
         const { confirmations, status } = await fetchTransactionData(data);
         getAllowances();
-        setApprovalToTrue(confirmations, status, 'rgp');
+        setApprovalToTrue(confirmations,status,"rgp")
       } catch (error) {
-        setApproveValueForRGP(false);
+
+        setApproveValueForRGP(false)
         console.error(error);
       } finally {
         setApprovalLoading(false);
       }
     }
   };
-  const setApprovalToTrue = (confirmations, status, approval) => {
-    if (confirmations >= 1 && status) {
-      if (approval === 'rgp') {
-        setApproveValueForRGP(true);
-      } else if (approval === 'LP') {
-        setApproveValueForOtherToken(true);
+  const setApprovalToTrue =(confirmations,status,approval) =>{
+    if(confirmations >= 1 && status){
+      if(approval === "rgp"){
+        setApproveValueForRGP(true)
+      }else if(approval=== "LP"){
+        setApproveValueForOtherToken(true)
       }
-    } else {
-      setApproveValueForOtherToken(false)
-      setApproveValueForRGP(false)
+    }else{
+        setApproveValueForOtherToken(false)
+        setApproveValueForRGP(false)
     }
-  };
+  }
   // .......................................... START SPECAIL POOL CALLS..........................................
   const RGPuseStake = async depositToken => {
     if (wallet.signer !== 'signer') {
@@ -492,6 +494,7 @@ const ShowYieldFarmDetails = ({
 
   // .......................................... START LP FOR BNB-RGP TOKENS ...............................
 
+
   const approveLPToken = async LPToken => {
     switch (LPToken) {
       case 'RGP-BUSD':
@@ -538,6 +541,7 @@ const ShowYieldFarmDetails = ({
       {approvalLoading ? 'Approving...' : 'Approve'} {LPToken}
     </Button>
   );
+
 
   // ............................................END LP FOR BNB-RGP TOKENS .........................................
 
@@ -600,7 +604,7 @@ const ShowYieldFarmDetails = ({
       callRefreshFarm(confirmations, status);
     }
   };
-  const LPApproval = async contract => {
+   const LPApproval = async contract => {
     if (wallet.signer !== 'signer') {
       try {
         const walletBal = (await contract.balanceOf(wallet.address)) + 400e18;
@@ -613,15 +617,16 @@ const ShowYieldFarmDetails = ({
 
         const { confirmations, status } = await fetchTransactionData(data);
         getAllowances();
-        setApprovalToTrue(confirmations, status, 'LP');
+        setApprovalToTrue(confirmations,status,"LP")
       } catch (error) {
         console.error(error);
-        setApproveValueForOtherToken(false);
+        setApproveValueForOtherToken(false)
       } finally {
         setApprovalLoading(false);
       }
     }
   };
+
 
   // ............................................END LP FOR RGP-BUSD TOKENS ........................................
   // ............................................END LP FOR BNB-BUSD TOKENS .........................................
@@ -750,7 +755,7 @@ const ShowYieldFarmDetails = ({
         if (val === 'RGP') {
           await RGPUnstake();
         } else {
-          await LPTokensWithdrawal();
+          await LPTokensWithdrawal()
         }
       }
     } catch (e) {
@@ -888,11 +893,10 @@ const ShowYieldFarmDetails = ({
               }
               onClick={() => setApprove(content.deposit)}
             >
-              {showLoadingApproval || approvalLoading ? (
-                <Spinner speed="0.65s" color="blue.500" />
-                approveValueForRGP && approveValueForOtherToken
-                  ? 'Unstake'
-                  : 'Approve'}
+              {showLoadingApproval || approvalLoading ? <Spinner speed="0.65s" color="blue.500" /> :
+               approveValueForRGP && approveValueForOtherToken
+                ? 'Unstake'
+                : 'Approve'}
             </Button>
             <Square
               size="40px"
@@ -912,10 +916,11 @@ const ShowYieldFarmDetails = ({
 
         <Box width="100%" textAlign="right" margin={['0', '0', '0 20px']}>
           <Flex>
-            <Text fontSize="16px" marginRight="30px">
-                content.RGPEarned === "" ?
-                  <Spinner speed="0.65s" color="blue.500" /> : content.RGPEarned
-              )}
+            <Text  fontSize="16px" marginRight="30px">
+            {
+              content.RGPEarned === "" ?
+              <Spinner speed="0.65s" color="blue.500" /> : content.RGPEarned
+              }
             </Text>{' '}
             <Text color="gray.400" marginTop="25px">
               RGP Earned
@@ -1067,39 +1072,39 @@ const ShowYieldFarmDetails = ({
                     content.poolAllowance,
                     content.availableToken,
                   ) ? (
-                      <Button
-                        my="2"
-                        mx="auto"
-                        color={
-                          depositValue === 'Confirm'
-                            ? 'rgba(190, 190, 190, 1)'
-                            : '#40BAD5'
-                        }
-                        width="100%"
-                        background={
-                          depositValue === 'Confirm'
-                            ? 'rgba(64, 186, 213, 0.15)'
-                            : '#444159'
-                        }
-                        disabled={depositValue !== 'Confirm'}
-                        cursor="pointer"
-                        border="none"
-                        borderRadius="13px"
-                        padding="10px"
-                        height="50px"
-                        fontSize="16px"
-                        _hover={
-                          depositValue === 'Confirm'
-                            ? { background: 'rgba(64, 186, 213, 0.15)' }
-                            : { background: '#444159' }
-                        }
-                        onClick={() => confirmDeposit(content.deposit)}
-                      >
-                        {depositValue}
-                      </Button>
-                    ) : (
-                      approvalButton(content.deposit)
-                    )}
+                    <Button
+                      my="2"
+                      mx="auto"
+                      color={
+                        depositValue === 'Confirm'
+                          ? 'rgba(190, 190, 190, 1)'
+                          : '#40BAD5'
+                      }
+                      width="100%"
+                      background={
+                        depositValue === 'Confirm'
+                          ? 'rgba(64, 186, 213, 0.15)'
+                          : '#444159'
+                      }
+                      disabled={depositValue !== 'Confirm'}
+                      cursor="pointer"
+                      border="none"
+                      borderRadius="13px"
+                      padding="10px"
+                      height="50px"
+                      fontSize="16px"
+                      _hover={
+                        depositValue === 'Confirm'
+                          ? { background: 'rgba(64, 186, 213, 0.15)' }
+                          : { background: '#444159' }
+                      }
+                      onClick={() => confirmDeposit(content.deposit)}
+                    >
+                      {depositValue}
+                    </Button>
+                  ) : (
+                    approvalButton(content.deposit)
+                  )}
                   <Button
                     my="2"
                     mx="auto"

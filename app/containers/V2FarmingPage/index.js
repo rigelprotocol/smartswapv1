@@ -807,7 +807,7 @@ export function FarmingV2Page(props) {
                 background="none"
                 border="none"
                 color="white"
-                onClick={() => changeVersion('/farming-v2')}
+                onClick={() => changeVersion('/farming')}
               >
                 V1
               </Tab>
