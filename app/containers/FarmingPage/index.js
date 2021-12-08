@@ -589,8 +589,8 @@ export function FarmingPage(props) {
       setLiquidities([...pairs]);
     } catch (error) {}
   };
-  const changeVersion = () => {
-    history.push('/farming-v2');
+  const changeVersion = (route) => {
+    history.push(route);
   };
 
   return (
@@ -628,6 +628,7 @@ export function FarmingPage(props) {
                 background="#726AC8"
                 border="none"
                 color="white"
+                onClick={() => changeVersion('/farming')}
               >
                 V1
               </Tab>
@@ -637,7 +638,7 @@ export function FarmingPage(props) {
                 background="none"
                 color="white"
                 border="none"
-                onClick={changeVersion}
+                onClick={) => changeVersion('/farming-v2')}
               >
                 V2
               </Tab>
