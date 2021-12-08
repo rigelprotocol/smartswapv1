@@ -297,15 +297,15 @@ export function FarmingPage(props) {
           { staked: RGPStaked, earned: RGPEarned },
           {
             staked: formatBigNumber(poolTwoStaked.amount),
-            earned: formatBigNumber(poolTwoEarned),
+            earned: "Migrate LP to V2",
           },
           {
             staked: formatBigNumber(poolOneStaked.amount),
-            earned: formatBigNumber(poolOneEarned),
+            earned: "Migrate LP to V2",
           },
           {
             staked: formatBigNumber(poolThreeStaked.amount),
-            earned: formatBigNumber(poolThreeEarned),
+            earned: "Migrate LP to V2",
           },
         ]);
         setInitialLoad(false);
