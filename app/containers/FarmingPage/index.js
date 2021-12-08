@@ -131,7 +131,7 @@ export function FarmingPage(props) {
       const specialPool = await RGPSpecialPool();
       const totalStaking = await specialPool.totalStaking();
       return totalStaking;
-    } catch (error) { }
+    } catch (error) {}
   };
   useEffect(() => {
     getFarmData();
@@ -297,15 +297,15 @@ export function FarmingPage(props) {
           { staked: RGPStaked, earned: RGPEarned },
           {
             staked: formatBigNumber(poolTwoStaked.amount),
-            earned: "Migrate LP to V2",
+            earned: 'Migrate LP to V2',
           },
           {
             staked: formatBigNumber(poolOneStaked.amount),
-            earned: "Migrate LP to V2",
+            earned: 'Migrate LP to V2',
           },
           {
             staked: formatBigNumber(poolThreeStaked.amount),
-            earned: "Migrate LP to V2",
+            earned: 'Migrate LP to V2',
           },
         ]);
         setInitialLoad(false);
@@ -587,7 +587,7 @@ export function FarmingPage(props) {
         });
       }
       setLiquidities([...pairs]);
-    } catch (error) { }
+    } catch (error) {}
   };
   const changeVersion = () => {
     history.push('/farming-v2');
