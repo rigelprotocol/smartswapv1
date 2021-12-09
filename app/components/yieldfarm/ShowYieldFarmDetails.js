@@ -916,7 +916,7 @@ const ShowYieldFarmDetails = ({
 
         <Box width="100%" textAlign="right" margin={['0', '0', '0 20px']}>
           <Flex>
-            <Text fontSize="23px" marginRight="30px">
+            <Text  fontSize="16px" marginRight="30px">
             {
               content.RGPEarned === "" ?
               <Spinner speed="0.65s" color="blue.500" /> : content.RGPEarned
