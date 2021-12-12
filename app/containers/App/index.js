@@ -139,6 +139,12 @@ const App = props => {
         <Switch>
           <Route exact path="/" component={Splash} />
           <Route exact path="/farming" component={FarmingPage} />
+          <Route
+            exact
+            strict
+            path="/farming-v2/staking-RGP"
+            component={FarmingPageV2}
+          />
           <Route exact path="/farming-v2" component={FarmingPageV2} />
           <Route exact path="/liquidity" component={LiquidityPage} />
           <Route exact path="/liquidity/:pair" component={LiquidityPage} />
