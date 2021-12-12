@@ -18,7 +18,8 @@ import {
   ModalBody,
   Tooltip,
   useToast,
-  Spinner
+  Spinner,
+  Link
 } from '@chakra-ui/react';
 import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -916,15 +917,15 @@ const ShowYieldFarmDetails = ({
 
         <Box width="100%" textAlign="right" margin={['0', '0', '0 20px']}>
           <Flex>
-            <Text  fontSize="16px" marginRight="30px">
+
+            <Text color="gray.400" marginTop="25px">
+             - RGP Earned
+            </Text>{' '} <Link textDecoration="underline" isExternal href='https://medium.com/rigelprotocol/rigel-protocol-yield-farming-v2-launching-soon-7c73a1f2c671'  fontSize="13px" marginRight="5px" marginTop="28px">
             {
               content.RGPEarned === "" ?
-              <Spinner speed="0.65s" color="blue.500" /> : content.RGPEarned
+              <Spinner speed="0.65s" color="blue.500" /> : ` (${content.RGPEarned})`
               }
-            </Text>{' '}
-            <Text color="gray.400" marginTop="25px">
-              RGP Earned
-            </Text>
+            </Link>
           </Flex>
           <Button
             w="100%"
