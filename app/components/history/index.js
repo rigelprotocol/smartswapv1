@@ -19,7 +19,7 @@ export function Home(props) {
   const { historyData, isLoading } = useGetHistory(wallet);
 
   const { marketHistoryData, isLoadingMarket } = useGetMarketHistory(wallet)
-  //console.log("......: marketHistory", marketHistoryData)
+
   return (
     <Box className={styles.container}>
       <Flex
