@@ -34,99 +34,106 @@ const useGetHistory = wallet => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      const { provider, address } = wallet;
 
-      // Testnet or Mainet
-      const { chainId } = await provider.getNetwork();
-      const isTestNet = chainId === 97;
+      if (wallet) {
 
-      function getTokenSymbol(symbol) {
-        const tokensList = isTestNet ? testNetToken : mainNetToken;
-        let tokenIconOnList = tokensList.find(token => token.symbol === symbol);
+        const { provider, address } = wallet;
+
+        // Testnet or Mainet
+        const { chainId } = await provider.getNetwork();
+        const isTestNet = chainId === 97;
+
+        function getTokenSymbol(symbol) {
+          const tokensList = isTestNet ? testNetToken : mainNetToken;
+          let tokenIconOnList = tokensList.find(token => token.symbol === symbol);
 
 
-        if (!tokenIconOnList) {
-          return tokenImage
+          if (!tokenIconOnList) {
+            return tokenImage
+          }
+          return tokenIconOnList.logoURI
         }
-        return tokenIconOnList.logoURI
-      }
 
-      try {
-        // block management,
-        const latestBlock = await provider.getBlockNumber();
-        const etherAPI = latestBlock - 3000;
+        try {
+          // block management,
+          const latestBlock = await provider.getBlockNumber();
+          const etherAPI = latestBlock - 3000;
 
-        const uri = `https://api${isTestNet ? '-testnet.bscscan.com' : '.bscscan.com'
-          }/api?module=account&action=txlist&address=${address}&startblock=${etherAPI}&endblock=tatest&sort=desc&apikey=AATZWFQ47VX3Y1DN7M97BJ5FEJR6MGRQSD`;
+          const uri = `https://api${isTestNet ? '-testnet.bscscan.com' : '.bscscan.com'
+            }/api?module=account&action=txlist&address=${address}&startblock=${etherAPI}&endblock=tatest&sort=desc&apikey=AATZWFQ47VX3Y1DN7M97BJ5FEJR6MGRQSD`;
 
-        const rewData = await fetch(uri);
-        const jsondata = await rewData.json();
+          const rewData = await fetch(uri);
+          const jsondata = await rewData.json();
 
 
 
-        const dataFiltered = jsondata.result
-          .filter(items => decodeInput(items.input) !== undefined)//&& decodeInput(items.input).params.length == 5)
-          .map(items => ({
-            value: items.value,
-            transactionObj: decodeInput(items.input).params,
-            timestamp: items.timeStamp,
-            transactionfee: items.gasPrice * items.gasUsed,
+          const dataFiltered = jsondata.result
+            .filter(items => decodeInput(items.input) !== undefined)//&& decodeInput(items.input).params.length == 5)
+            .map(items => ({
+              value: items.value,
+              transactionObj: decodeInput(items.input).params,
+              timestamp: items.timeStamp,
+              transactionfee: items.gasPrice * items.gasUsed,
+            }));
+
+
+
+          // data ready
+          const useruserData = dataFiltered.map(data => ({
+            inputAmount:
+              Number(data.value) > 0 ? data.value : data.transactionObj[0].value,
+            outputAmount:
+              Number(data.value) > 0
+                ? data.transactionObj[0].value
+                : data.transactionObj[1].value,
+            tokenIn:
+              Number(data.value) > 0
+                ? data.transactionObj[1].value[0]
+                : data.transactionObj[2].value[0],
+            tokenOut:
+              Number(data.value) > 0
+                ? data.transactionObj[1].value[data.transactionObj[1].value.length - 1]
+                : data.transactionObj[2].value[data.transactionObj[2].value.length - 1],
+            time: convertToTime(data.timestamp),
+            transactionFee: convertFromWei(data.transactionfee),
           }));
 
+          // geting tokens name
+          const swapDataForWallet = await Promise.all(
+            useruserData.map(async data => ({
+              tokenIn: await getTokenDetails(data.tokenIn),
+              tokenOut: await getTokenDetails(data.tokenOut),
+              amountIn: data.inputAmount,
+              amouOut: data.outputAmount,
+              time: data.time,
+              fee: data.transactionFee,
+            })),
+          );
 
-
-        // data ready
-        const useruserData = dataFiltered.map(data => ({
-          inputAmount:
-            Number(data.value) > 0 ? data.value : data.transactionObj[0].value,
-          outputAmount:
-            Number(data.value) > 0
-              ? data.transactionObj[0].value
-              : data.transactionObj[1].value,
-          tokenIn:
-            Number(data.value) > 0
-              ? data.transactionObj[1].value[0]
-              : data.transactionObj[2].value[0],
-          tokenOut:
-            Number(data.value) > 0
-              ? data.transactionObj[1].value[data.transactionObj[1].value.length - 1]
-              : data.transactionObj[2].value[data.transactionObj[2].value.length - 1],
-          time: convertToTime(data.timestamp),
-          transactionFee: convertFromWei(data.transactionfee),
-        }));
-
-        // geting tokens name
-        const swapDataForWallet = await Promise.all(
-          useruserData.map(async data => ({
-            tokenIn: await getTokenDetails(data.tokenIn),
-            tokenOut: await getTokenDetails(data.tokenOut),
-            amountIn: data.inputAmount,
-            amouOut: data.outputAmount,
+          // final modifications
+          const userSwapHistory = swapDataForWallet.map(data => ({
+            token1Icon:
+              getTokenSymbol(data.tokenIn.symbol),
+            token2Icon:
+              getTokenSymbol(data.tokenOut.symbol),
+            token1: data.tokenIn,
+            token2: data.tokenOut,
+            amountIn: convertFromWei(data.amountIn, data.tokenIn.decimals),
+            amountOut: convertFromWei(data.amouOut, data.tokenOut.decimals),
+            fee: data.fee,
             time: data.time,
-            fee: data.transactionFee,
-          })),
-        );
+          }));
 
-        // final modifications
-        const userSwapHistory = swapDataForWallet.map(data => ({
-          token1Icon:
-            getTokenSymbol(data.tokenIn.symbol),
-          token2Icon:
-            getTokenSymbol(data.tokenOut.symbol),
-          token1: data.tokenIn,
-          token2: data.tokenOut,
-          amountIn: convertFromWei(data.amountIn, data.tokenIn.decimals),
-          amountOut: convertFromWei(data.amouOut, data.tokenOut.decimals),
-          fee: data.fee,
-          time: data.time,
-        }));
+          sethistoryData(userSwapHistory);
+          setIsLoading(false);
+        } catch (error) {
+          setServerError(error);
+          setIsLoading(false);
+        }
 
-        sethistoryData(userSwapHistory);
-        setIsLoading(false);
-      } catch (error) {
-        setServerError(error);
-        setIsLoading(false);
+
       }
+
     };
 
     fetchData();
