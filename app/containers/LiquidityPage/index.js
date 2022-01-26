@@ -106,6 +106,7 @@ export function LiquidityPage(props) {
   const [disableToSelectInputBox, setDisableToSelectInputBox] = useState(true);
   const [deadline, setDeadline] = useLocalStorage('deadline', 20);
   const [determineInputChange, setDetermineInputChange] = useState('');
+  const [slippage,setSlippage] = useLocalStorage('slippage',1.5)
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -572,15 +573,20 @@ export function LiquidityPage(props) {
     onCloseModal();
   }
 
+  const minimumAmountToReceive = (value) => ((100 - Number(slippage)) / 100) * Number(value)
   const addingLiquidity = async () => {
     if (wallet.signer !== 'signer') {
       try {
         const rout = await router();
         const deadLine = getDeadline(deadline);
         const amountADesired = Web3.utils.toWei(fromValue.toString());
+        console.log({slippage})
         const amountBDesired = Web3.utils.toWei(toValue.toString());
-        const amountAMin = Web3.utils.toWei((fromValue * 0.8).toString());
-        const amountBMin = Web3.utils.toWei((toValue * 0.8).toString());
+        const amountAMin = Web3.utils.toWei(minimumAmountToReceive(fromValue).toString())
+        const amountBMin = Web3.utils.toWei(minimumAmountToReceive(toValue).toString())
+        // const amountAMin = Web3.utils.toWei((fromValue * 0.8).toString());
+        // const amountBMin = Web3.utils.toWei((toValue * 0.8).toString());
+        console.log({amountAMin,amountBMin})
         closeModal1();
         modal2Disclosure.onOpen();
         const estimatedGasLimit = await rout.estimateGas.addLiquidity(
@@ -589,7 +595,7 @@ export function LiquidityPage(props) {
           amountADesired.toString(),
           amountBDesired.toString(),
           amountAMin.toString(),
-          amountBMin,
+          amountBMin.toString(),
           wallet.address,
           deadLine,
           {
